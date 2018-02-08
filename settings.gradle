@@ -1,0 +1,8 @@
+rootProject.name = 'job-ad-service'
+include ':core'
+include ':domain'
+include ':application'
+include ':infrastructure-web'
+include ':infrastructure-database'
+include ':infrastructure-elasticsearch'
+
