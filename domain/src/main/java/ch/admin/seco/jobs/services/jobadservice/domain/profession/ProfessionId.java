@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.profession;
 
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.IdGenerator;
 
 import java.util.Objects;
@@ -13,7 +14,7 @@ public class ProfessionId {
     }
 
     public ProfessionId(String value) {
-        this.value = value;
+        this.value = Condition.notBlank(value);
     }
 
     public String getValue() {

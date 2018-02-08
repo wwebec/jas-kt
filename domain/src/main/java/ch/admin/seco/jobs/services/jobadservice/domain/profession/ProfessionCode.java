@@ -5,21 +5,21 @@ import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 public class ProfessionCode {
 
     private ProfessionCodeType type;
-    private int code;
+    private String code;
 
     protected ProfessionCode() {
     }
 
-    public ProfessionCode(ProfessionCodeType type, int code) {
+    public ProfessionCode(ProfessionCodeType type, String code) {
         this.type = Condition.notNull(type);
-        this.code = code;
+        this.code = Condition.notBlank(code);
     }
 
     public ProfessionCodeType getType() {
         return type;
     }
 
-    public int getCode() {
+    public String getCode() {
         return code;
     }
 

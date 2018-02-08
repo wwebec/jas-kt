@@ -26,6 +26,13 @@ public class Condition {
         throw new ConditionException(message, arguments);
     }
 
+    public static <T extends Collection> T notEmpty(T value, String message, Object... arguments) {
+        if ((value != null) && !value.isEmpty()) {
+            return value;
+        }
+        throw new ConditionException(message, arguments);
+    }
+
     public static String notBlank(String value) {
         return notBlank(value, "Given value can't be null or blank!");
     }
@@ -33,7 +40,7 @@ public class Condition {
     public static String notBlank(String value, String message, Object... arguments) {
         if ((value != null) && !value.isEmpty()) {
             for (int i = 0; i < value.length(); i++) {
-                if ((Character.isWhitespace(value.charAt(i)) == false)) {
+                if (!Character.isWhitespace(value.charAt(i))) {
                     return value;
                 }
             }

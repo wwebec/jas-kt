@@ -5,6 +5,6 @@ import java.util.List;
 
 public interface TestDataProvider<T> {
 
-    List<T> getTestdata();
+    List<T> getTestData();
 
 }

@@ -1,7 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.core.domain.events;
 
-import com.fasterxml.jackson.annotation.JsonRawValue;
-
 import java.time.LocalDateTime;
 
 public class EventData {
@@ -22,7 +20,6 @@ public class EventData {
 
     private LocalDateTime registrationTime;
 
-    @JsonRawValue
     private String payload;
 
     EventData(Builder builder) {
