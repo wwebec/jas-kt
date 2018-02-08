@@ -15,6 +15,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     public List<JobAdvertisement> getTestData() {
         if (jobAdvertisements == null) {
             jobAdvertisements = new ArrayList<>();
+            jobAdvertisements.add(createJob01());
         }
         return jobAdvertisements;
     }
