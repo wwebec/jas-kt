@@ -4,8 +4,8 @@ import org.springframework.data.domain.Page;
 
 public interface EventStore {
 
-    Page<EventData> findByAggregateId(String aggregateId, AggregateType aggregateType, int page, int pageSize);
+    Page<EventData> findByAggregateId(String aggregateId, String aggregateType, int page, int pageSize);
 
-    EventData findLatestByType(String aggregateId, AggregateType aggregateType, DomainEventType domainEventType);
+    EventData findLatestByType(String aggregateId, String aggregateType, DomainEventType domainEventType);
 
 }

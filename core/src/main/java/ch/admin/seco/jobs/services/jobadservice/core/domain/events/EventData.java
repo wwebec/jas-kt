@@ -6,7 +6,7 @@ public class EventData {
 
     private String id;
 
-    private AggregateType aggregateType;
+    private String aggregateType;
 
     private String aggregateId;
 
@@ -38,7 +38,7 @@ public class EventData {
         return aggregateId;
     }
 
-    public AggregateType getAggregateType() {
+    public String getAggregateType() {
         return aggregateType;
     }
 
@@ -98,7 +98,7 @@ public class EventData {
 
         private String aggregateId;
 
-        private AggregateType aggregateType;
+        private String aggregateType;
 
         private String id;
 
@@ -123,7 +123,7 @@ public class EventData {
             return this;
         }
 
-        public Builder setAggregateType(AggregateType aggregateType) {
+        public Builder setAggregateType(String aggregateType) {
             this.aggregateType = aggregateType;
             return this;
         }
