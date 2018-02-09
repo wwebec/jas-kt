@@ -24,7 +24,7 @@ public class JobAdvertisementId implements AggregateId<JobAdvertisementId> {
     }
 
     @Override
-    public boolean isSameValueAs(JobAdvertisementId other) {
+    public boolean sameValueObjectAs(JobAdvertisementId other) {
         return (other != null) && this.value.equals(other.value);
     }
 
@@ -33,11 +33,12 @@ public class JobAdvertisementId implements AggregateId<JobAdvertisementId> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JobAdvertisementId that = (JobAdvertisementId) o;
-        return isSameValueAs(that);
+        return sameValueObjectAs(that);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
+
 }

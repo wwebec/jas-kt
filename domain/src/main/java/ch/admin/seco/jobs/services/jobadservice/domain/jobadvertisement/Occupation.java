@@ -1,10 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionId;
 
+import java.util.Objects;
 import java.util.Set;
 
-public class Occupation {
+public class Occupation implements ValueObject<Occupation> {
 
     private ProfessionId professionId;
     private WorkExperience workExperience;
@@ -30,4 +32,25 @@ public class Occupation {
     public Set<String> getProfessionCodes() {
         return professionCodes;
     }
+
+    @Override
+    public boolean sameValueObjectAs(Occupation other) {
+        return equals(other);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Occupation that = (Occupation) o;
+        return Objects.equals(professionId, that.professionId) &&
+                workExperience == that.workExperience &&
+                Objects.equals(professionCodes, that.professionCodes);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(professionId, workExperience, professionCodes);
+    }
+
 }

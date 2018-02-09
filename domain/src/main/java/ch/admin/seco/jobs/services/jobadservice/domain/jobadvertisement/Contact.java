@@ -1,6 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-public class Contact {
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+
+import java.util.Objects;
+
+public class Contact implements ValueObject<Contact> {
 
     private Salutation salutation;
     private String firstName;
@@ -39,4 +43,25 @@ public class Contact {
         return email;
     }
 
+    @Override
+    public boolean sameValueObjectAs(Contact other) {
+        return equals(other);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Contact contact = (Contact) o;
+        return salutation == contact.salutation &&
+                Objects.equals(firstName, contact.firstName) &&
+                Objects.equals(lastName, contact.lastName) &&
+                Objects.equals(phone, contact.phone) &&
+                Objects.equals(email, contact.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(salutation, firstName, lastName, phone, email);
+    }
 }

@@ -1,6 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-public class Locality {
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+
+import java.util.Objects;
+
+public class Locality implements ValueObject<Locality> {
 
     private String remarks;
     private String city;
@@ -56,4 +60,30 @@ public class Locality {
     public GeoPoint getLocation() {
         return location;
     }
+
+    @Override
+    public boolean sameValueObjectAs(Locality other) {
+        return equals(other);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Locality locality = (Locality) o;
+        return Objects.equals(remarks, locality.remarks) &&
+                Objects.equals(city, locality.city) &&
+                Objects.equals(zipCode, locality.zipCode) &&
+                Objects.equals(communalCode, locality.communalCode) &&
+                Objects.equals(regionCode, locality.regionCode) &&
+                Objects.equals(cantonCode, locality.cantonCode) &&
+                Objects.equals(countryCode, locality.countryCode) &&
+                Objects.equals(location, locality.location);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(remarks, city, zipCode, communalCode, regionCode, cantonCode, countryCode, location);
+    }
+
 }

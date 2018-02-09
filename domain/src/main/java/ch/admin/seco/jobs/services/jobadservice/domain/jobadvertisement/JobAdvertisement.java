@@ -82,8 +82,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     @Override
-    public boolean isSameAggregateAs(JobAdvertisement other) {
-        return (other != null) && id.isSameValueAs(other.id);
+    public boolean sameAggregateAs(JobAdvertisement other) {
+        return (other != null) && id.sameValueObjectAs(other.id);
     }
 
     public JobAdvertisementId getId() {

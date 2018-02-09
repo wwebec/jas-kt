@@ -1,6 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-public class LanguageSkill {
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+
+import java.util.Objects;
+
+public class LanguageSkill implements ValueObject<LanguageSkill> {
 
     private String languageCode;
     private LanguageLevel spokenLevel;
@@ -38,4 +42,27 @@ public class LanguageSkill {
     public boolean isLanguageStayRequired() {
         return languageStayRequired;
     }
+
+    @Override
+    public boolean sameValueObjectAs(LanguageSkill other) {
+        return equals(other);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        LanguageSkill that = (LanguageSkill) o;
+        return motherTongue == that.motherTongue &&
+                languageStayRequired == that.languageStayRequired &&
+                Objects.equals(languageCode, that.languageCode) &&
+                spokenLevel == that.spokenLevel &&
+                writtenLevel == that.writtenLevel;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(languageCode, spokenLevel, writtenLevel, motherTongue, languageStayRequired);
+    }
+
 }

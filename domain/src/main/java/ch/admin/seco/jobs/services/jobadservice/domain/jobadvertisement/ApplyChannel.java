@@ -25,14 +25,8 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
     }
 
     @Override
-    public boolean isSameValueAs(ApplyChannel other) {
-        return (other != null) && new EqualsBuilder()
-                .append(this.mailAddress, other.mailAddress)
-                .append(this.emailAddress, other.emailAddress)
-                .append(this.phoneNumber, other.phoneNumber)
-                .append(this.onlineUrl, other.onlineUrl)
-                .append(this.additionalInfo, other.additionalInfo)
-                .build();
+    public boolean sameValueObjectAs(ApplyChannel other) {
+        return equals(other);
     }
 
     public String getMailAddress() {
@@ -60,11 +54,16 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ApplyChannel that = (ApplyChannel) o;
-        return isSameValueAs(that);
+        return Objects.equals(mailAddress, that.mailAddress) &&
+                Objects.equals(emailAddress, that.emailAddress) &&
+                Objects.equals(phoneNumber, that.phoneNumber) &&
+                Objects.equals(onlineUrl, that.onlineUrl) &&
+                Objects.equals(additionalInfo, that.additionalInfo);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(mailAddress, emailAddress, phoneNumber, onlineUrl, additionalInfo);
     }
+
 }
