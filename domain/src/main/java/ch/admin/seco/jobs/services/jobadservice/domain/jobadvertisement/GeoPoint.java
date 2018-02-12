@@ -6,6 +6,7 @@ public class GeoPoint {
     private double latitude;
 
     protected GeoPoint() {
+        // For reflection libs
     }
 
     public GeoPoint(double longitude, double latitude) {

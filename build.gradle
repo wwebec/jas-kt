@@ -85,8 +85,8 @@ allprojects {
         }
         compile("com.ryantenney.metrics:metrics-spring:${metrics_spring_version}")
         compile("com.zaxxer:HikariCP:${hikaricp_version}")
-        compile("org.liquibase:liquibase-core")
-        compile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
+        //compile("org.liquibase:liquibase-core")
+        //compile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
         compile "org.apache.commons:commons-lang3:${commons_lang_version}"
         compile "org.springframework.boot:spring-boot-starter-data-jpa"
         compile("org.springframework.boot:spring-boot-starter-data-elasticsearch:")
@@ -120,7 +120,7 @@ allprojects {
         }
         testCompile "org.springframework.security:spring-security-test"
         testCompile "org.springframework.boot:spring-boot-test"
-        testCompile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
+        //testCompile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
     }
 
     dependencyManagement {

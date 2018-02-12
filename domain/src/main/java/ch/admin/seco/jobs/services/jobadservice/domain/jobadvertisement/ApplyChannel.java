@@ -14,6 +14,7 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
     private String additionalInfo;
 
     protected ApplyChannel() {
+        // For reflection libs
     }
 
     public ApplyChannel(String mailAddress, String emailAddress, String phoneNumber, String onlineUrl, String additionalInfo) {

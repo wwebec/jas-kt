@@ -14,8 +14,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private String fingerprint;
     private String sourceSystem;
     private String sourceEntryId;
-    private String externalViewUrl;
-    private String externalApplyUrl;
+    private String externalUrl;
     private JobAdvertisementStatus status;
     private LocalDate publicationStartDate;
     private LocalDate publicationEndDate;
@@ -24,9 +23,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private LocalDate employmentStartDate;
     private LocalDate employmentEndDate;
     private Boolean immediately;
+    private Boolean permanent;
     private int workloadPercentageMin;
     private int workloadPercentageMax;
-    private Boolean permanent;
     private Integer numberOfJobs; // TODO check if used anywhere outside JobRoom
     private Boolean accessibly; // TODO Add this in JobRoom (Improvement-Issue)
     private Boolean jobSharing; // TODO check if used anywhere outside JobRoom
@@ -38,9 +37,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private Contact contact;
     private Set<Locality> localities;
     private Set<Occupation> occupations;
-    private Set<LanguageSkill> languages;
+    private Set<LanguageSkill> languageSkills;
 
     protected JobAdvertisement() {
+        // For reflection libs
     }
 
     public JobAdvertisement(JobAdvertisementId id, JobAdvertisementStatus status, String title, String description) {
@@ -50,23 +50,22 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalViewUrl, String externalApplyUrl, JobAdvertisementStatus status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Boolean immediately, int workloadPercentageMin, int workloadPercentageMax, Boolean permanent, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Set<Locality> localities, Set<Occupation> occupations, Set<LanguageSkill> languages) {
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Set<Locality> localities, Set<Occupation> occupations, Set<LanguageSkill> languageSkills) {
         this(id, status, title, description);
         this.stellennummerAvam = stellennummerAvam;
         this.stellennummerEgov = stellennummerEgov;
         this.fingerprint = fingerprint;
         this.sourceSystem = sourceSystem;
         this.sourceEntryId = sourceEntryId;
-        this.externalViewUrl = externalViewUrl;
-        this.externalApplyUrl = externalApplyUrl;
+        this.externalUrl = externalUrl;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
         this.employmentStartDate = employmentStartDate;
         this.employmentEndDate = employmentEndDate;
         this.immediately = immediately;
+        this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
         this.workloadPercentageMax = workloadPercentageMax;
-        this.permanent = permanent;
         this.numberOfJobs = numberOfJobs;
         this.accessibly = accessibly;
         this.jobSharing = jobSharing;
@@ -78,7 +77,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.contact = contact;
         this.localities = localities;
         this.occupations = occupations;
-        this.languages = languages;
+        this.languageSkills = languageSkills;
     }
 
     @Override
@@ -110,12 +109,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return sourceEntryId;
     }
 
-    public String getExternalViewUrl() {
-        return externalViewUrl;
-    }
-
-    public String getExternalApplyUrl() {
-        return externalApplyUrl;
+    public String getExternalUrl() {
+        return externalUrl;
     }
 
     public JobAdvertisementStatus getStatus() {
@@ -150,16 +145,16 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return immediately;
     }
 
+    public Boolean getPermanent() {
+        return permanent;
+    }
+
     public int getWorkloadPercentageMin() {
         return workloadPercentageMin;
     }
 
     public int getWorkloadPercentageMax() {
         return workloadPercentageMax;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
     }
 
     public Integer getNumberOfJobs() {
@@ -206,7 +201,40 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return occupations;
     }
 
-    public Set<LanguageSkill> getLanguages() {
-        return languages;
+    public Set<LanguageSkill> getLanguageSkills() {
+        return languageSkills;
+    }
+
+    public void updateEmployment(LocalDate employmentStartDate, LocalDate employmentEndDate, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax) {
+        this.employmentStartDate = employmentStartDate;
+        this.employmentEndDate = employmentEndDate;
+        this.immediately = immediately;
+        this.permanent = permanent;
+        this.workloadPercentageMin = workloadPercentageMin;
+        this.workloadPercentageMax = workloadPercentageMax;
+    }
+
+    public void updateApplyChannel(ApplyChannel applyChannel) {
+        this.applyChannel = applyChannel;
+    }
+
+    public void updateCompany(Company company) {
+        this.company = company;
+    }
+
+    public void updateContact(Contact contact) {
+        this.contact = contact;
+    }
+
+    public void updateLocalities(Set<Locality> localities) {
+        this.localities = localities;
+    }
+
+    public void updateOccupations(Set<Occupation> occupations) {
+        this.occupations = occupations;
+    }
+
+    public void updateLanguageSkills(Set<LanguageSkill> languageSkills) {
+        this.languageSkills = languageSkills;
     }
 }
