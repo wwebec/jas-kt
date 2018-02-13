@@ -1,16 +1,18 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.database.eventstore;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventType;
-import com.google.common.base.Preconditions;
-import org.hibernate.validator.constraints.NotEmpty;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
-import java.util.Objects;
+
+import com.google.common.base.Preconditions;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventType;
 
 @Entity
 class StoredEvent {
@@ -100,15 +102,15 @@ class StoredEvent {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof StoredEvent)) return false;
-        StoredEvent that = (StoredEvent) o;
-        return Objects.equals(id, that.id);
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof StoredEvent)) { return false; }
+        StoredEvent that = (StoredEvent) o;
+        return Objects.equals(id, that.id);
     }
 }

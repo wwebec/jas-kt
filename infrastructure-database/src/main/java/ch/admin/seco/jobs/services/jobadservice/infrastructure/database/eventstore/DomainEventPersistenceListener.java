@@ -1,14 +1,20 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.database.eventstore;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditAttributeEnricher;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 
-import java.util.*;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditAttributeEnricher;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventException;
 
 class DomainEventPersistenceListener {
 
@@ -23,6 +29,11 @@ class DomainEventPersistenceListener {
         this.storedEventRepository = storedEventRepository;
     }
 
+    @Autowired(required = false)
+    public void setAuditAttributeEnrichers(List<AuditAttributeEnricher> auditAttributeEnrichers) {
+        this.auditAttributeEnricherList.addAll(auditAttributeEnrichers);
+    }
+
     @EventListener
     void persist(DomainEvent domainEvent) {
         final Map<String, Object> payload = extractAuditAttributes(domainEvent);
@@ -33,16 +44,11 @@ class DomainEventPersistenceListener {
         }
     }
 
-    @Autowired(required = false)
-    public void setAuditAttributeEnrichers(List<AuditAttributeEnricher> auditAttributeEnrichers) {
-        this.auditAttributeEnricherList.addAll(auditAttributeEnrichers);
-    }
-
     private Map<String, Object> extractAuditAttributes(final DomainEvent domainEvent) {
         final Map<String, Object> attributesMap = new HashMap<>(domainEvent.getAttributesMap());
         this.auditAttributeEnricherList.stream()
-                .filter(auditAttributeEnricher -> auditAttributeEnricher.supports(domainEvent))
-                .forEach(auditAttributeEnricher -> attributesMap.putAll(auditAttributeEnricher.enrichAttributes(domainEvent)));
+            .filter(auditAttributeEnricher -> auditAttributeEnricher.supports(domainEvent))
+            .forEach(auditAttributeEnricher -> attributesMap.putAll(auditAttributeEnricher.enrichAttributes(domainEvent)));
         return Collections.unmodifiableMap(attributesMap);
     }
 }
