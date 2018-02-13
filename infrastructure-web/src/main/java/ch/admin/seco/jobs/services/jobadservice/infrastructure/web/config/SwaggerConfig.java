@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.web;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

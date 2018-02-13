@@ -23,7 +23,7 @@ class JpaBasedEventStore implements EventStore {
 
     @Override
     public Page<EventData> findByAggregateId(String aggregateId, String aggregateType, int page, int pageSize) {
-        Pageable pageable = new PageRequest(page, pageSize);
+        Pageable pageable = PageRequest.of(page, pageSize);
         final Page<StoredEvent> storedEvents = storedEventRepository.findByAggregateId(aggregateId, aggregateType, pageable);
         return new PageImpl<>(toEventDtos(storedEvents.getContent()), pageable, storedEvents.getTotalElements());
     }
