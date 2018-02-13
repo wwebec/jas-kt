@@ -41,6 +41,6 @@ generateGitProperties {
 gitProperties {
 //    keys = ['git.branch', 'git.commit.id.abbrev']
     dateFormat = "yyyy-MM-dd'T'HH:mmZ"
-    dateFormatTimeZone = "CET"
+    dateFormatTimeZone = 'CET'
 }
 

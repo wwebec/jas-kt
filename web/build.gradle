@@ -7,7 +7,7 @@ apply plugin: 'org.ajoberstar.grgit'
 dependencies {
     compile project(':infrastructure')
     compile project(':infrastructure-database')
-    compile project(':infrastructure-elasticsearch')
+//    compile project(':infrastructure-elasticsearch')
 
     compile 'org.springframework.boot:spring-boot-autoconfigure'
 //    compile 'org.springframework.boot:spring-boot-loader-tools'
@@ -20,7 +20,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-undertow'
 
 //    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    compile 'org.zalando:problem-spring-web'
+//    compile 'org.zalando:problem-spring-web'
     compile 'org.springframework.cloud:spring-cloud-starter'
 //    compile 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon'
 //    compile 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
@@ -43,6 +43,8 @@ dependencies {
     compile 'io.dropwizard.metrics:metrics-servlets'
     compile 'com.ryantenney.metrics:metrics-spring'
     compile 'net.logstash.logback:logstash-logback-encoder'
+
+//    compile 'io.github.jhipster:jhipster:2.0.0-20171229.062627-3'
 
     testCompile 'org.springframework.boot:spring-boot-test'
     testCompile 'org.springframework.security:spring-security-test'

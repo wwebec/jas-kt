@@ -118,7 +118,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Valid
     private Set<LanguageSkill> languageSkills;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "JOB_ADVERTISEMENT_PROFESSION_CODES", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     private Set<String> professionCodes;
 
