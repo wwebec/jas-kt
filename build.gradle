@@ -24,8 +24,7 @@ plugins {
 group 'ch.admin.seco.jobs.services.jobadservice'
 version '1.0-SNAPSHOT'
 
-allprojects {
-
+subprojects {
     apply plugin: 'java'
     apply plugin: 'idea'
     apply plugin: 'io.spring.dependency-management'
@@ -36,7 +35,6 @@ allprojects {
     targetCompatibility = 1.8
 
     configurations {
-        providedRuntime
         compile.exclude module: 'spring-boot-starter-tomcat'
     }
 
@@ -51,7 +49,6 @@ allprojects {
 
     dependencyManagement {
         dependencies {
-//            dependency 'com.fasterxml.jackson.core:jackson-annotations:2.9.4'
             dependency 'org.codehaus.jackson:jackson-core-asl:1.9.13'
             dependency 'com.fasterxml.uuid:java-uuid-generator:3.1.4'
             dependency 'com.mattbertolini:liquibase-slf4j:2.0.0'
@@ -59,179 +56,16 @@ allprojects {
             dependency 'io.jsonwebtoken:jjwt:0.9.0'
             dependency 'io.springfox:springfox-bean-validators:2.8.0'
             dependency 'io.springfox:springfox-swagger2:2.8.0'
+            dependency 'io.springfox:springfox-swagger-ui:2.8.0'
+
             dependency 'net.logstash.logback:logstash-logback-encoder:4.11'
             dependency 'org.hibernate.validator:hibernate-validator:6.0.7.Final'
+            dependency 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final'
             dependency 'org.zalando:problem-spring-web:0.22.1'
         }
         imports {
             mavenBom 'org.springframework.boot:spring-boot-dependencies:2.0.0.RC1'
             mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Finchley.M5'
-        }
-    }
-
-    task cleanResources(type: Delete) {
-        delete 'build/resources'
-    }
-
-    compileJava.dependsOn processResources
-}
-
-project(':core') {
-    dependencies {
-        compile 'com.fasterxml.uuid:java-uuid-generator'
-        compile 'org.springframework.data:spring-data-commons'
-    }
-}
-
-project(':domain') {
-    dependencies {
-        compile project(':core')
-        compile 'org.apache.commons:commons-lang3'
-        compile 'org.springframework:spring-context'
-        compile 'javax.validation:validation-api'
-    }
-}
-
-project(':application') {
-    dependencies {
-        compile project(':domain')
-        compile 'org.springframework:spring-tx'
-    }
-}
-
-project(':infrastructure') {
-    dependencies {
-        compile project(':application')
-    }
-}
-
-project(':infrastructure-database') {
-    apply plugin: 'io.spring.dependency-management'
-
-    dependencies {
-        compile project(':infrastructure')
-
-        compile 'com.mattbertolini:liquibase-slf4j'
-        compile 'com.zaxxer:HikariCP'
-        compile 'org.codehaus.jackson:jackson-core-asl'
-        compile 'com.fasterxml.jackson.core:jackson-annotations'
-        compile 'com.fasterxml.jackson.core:jackson-databind'
-        compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-        compile 'com.google.guava:guava'
-        compile 'org.hibernate.validator:hibernate-validator'
-        compile 'org.liquibase:liquibase-core'
-        compile 'org.postgresql:postgresql'
-        compile 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-        testCompile 'com.h2database:h2'
-    }
-}
-
-project(':infrastructure-elasticsearch') {
-    apply plugin: 'io.spring.dependency-management'
-
-    dependencies {
-        compile project(':infrastructure')
-        compile 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
-    }
-}
-
-project(':infrastructure-web') {
-    apply plugin: 'io.spring.dependency-management'
-    apply plugin: 'org.springframework.boot'
-    apply plugin: 'org.ajoberstar.grgit'
-
-    apply from: "${rootProject.rootDir}/gradle/maven-publish.gradle"
-    if (project.hasProperty('prod')) {
-        apply from: "${rootProject.rootDir}/gradle/profile_prod.gradle"
-    } else {
-        apply from: "${rootProject.rootDir}/gradle/profile_dev.gradle"
-    }
-    if (project.hasProperty('zipkin')) {
-        apply from: "${rootProject.rootDir}/gradle/zipkin.gradle"
-    }
-
-    defaultTasks 'bootRun'
-
-    bootJar {
-        mainClassName = 'ch.admin.seco.jobs.services.jobadservice.Application'
-    }
-
-    springBoot {
-        buildInfo()
-    }
-
-    task stage(dependsOn: 'bootJar') {
-    }
-
-    processResources.dependsOn cleanResources, bootBuildInfo
-    bootBuildInfo.mustRunAfter cleanResources
-
-    dependencies {
-        compile project(':infrastructure')
-        compile project(':infrastructure-database')
-        compile project(':infrastructure-elasticsearch')
-
-        compile 'io.dropwizard.metrics:metrics-core'
-        compile 'io.dropwizard.metrics:metrics-json'
-        compile 'io.dropwizard.metrics:metrics-jvm'
-        compile 'io.dropwizard.metrics:metrics-servlet'
-        compile 'io.dropwizard.metrics:metrics-servlets'
-        compile 'com.ryantenney.metrics:metrics-spring'
-        compile 'net.logstash.logback:logstash-logback-encoder'
-
-        compile 'org.springframework.boot:spring-boot-autoconfigure'
-        compile 'org.springframework.boot:spring-boot-loader-tools'
-        compile 'org.springframework.boot:spring-boot-starter-mail'
-        compile 'org.springframework.boot:spring-boot-starter-logging'
-        compile 'org.springframework.boot:spring-boot-starter-actuator'
-
-        compile 'org.springframework.boot:spring-boot-starter-security'
-        compile('org.springframework.boot:spring-boot-starter-web') {
-            exclude module: 'spring-boot-starter-tomcat'
-        }
-        compile 'org.springframework.boot:spring-boot-starter-undertow'
-        compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
-        compile 'org.zalando:problem-spring-web'
-        compile 'org.springframework.cloud:spring-cloud-starter'
-        compile 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon'
-        compile 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
-        compile 'org.springframework.retry:spring-retry'
-        compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
-        compile 'org.springframework.cloud:spring-cloud-starter-config'
-        compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
-        compile 'org.springframework.cloud:spring-cloud-spring-service-connector'
-        compile 'org.springframework.security:spring-security-config'
-        compile 'org.springframework.security:spring-security-data'
-        compile 'org.springframework.security:spring-security-web'
-        compile 'io.jsonwebtoken:jjwt'
-        testCompile 'org.springframework.security:spring-security-test'
-        testCompile 'org.springframework.boot:spring-boot-test'
-
-        optional('org.springframework.boot:spring-boot-configuration-processor') {
-            exclude group: 'com.vaadin.external.google', module: 'android-json'
-        }
-    }
-
-
-    def repo = Grgit.open(dir: '.')
-    afterEvaluate {
-        bootJar {
-            manifest {
-                attributes(
-                        (java.util.jar.Attributes.Name.IMPLEMENTATION_TITLE.toString()): project.name,
-                        (java.util.jar.Attributes.Name.IMPLEMENTATION_VERSION.toString()): project.version,
-                        (java.util.jar.Attributes.Name.IMPLEMENTATION_VENDOR.toString()): 'mimacom ag',
-                        'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
-                        'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                        'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
-                        'Built-By': System.getProperty('user.name'),
-                        'Built-On': "${InetAddress.localHost.hostName}/${InetAddress.localHost.hostAddress}",
-                        'Spring-Version': org.springframework.core.SpringVersion.getVersion(),
-                        'Git-Commit': repo.head().getAbbreviatedId(8),
-                        'Git-Branch': repo.branch.getCurrent().getName()
-                )
-            }
         }
     }
 }

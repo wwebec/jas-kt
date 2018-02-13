@@ -1,0 +1,9 @@
+dependencies {
+    compile 'com.fasterxml.uuid:java-uuid-generator'
+    compile 'org.springframework.data:spring-data-commons'
+    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api'
+
+//    testCompile 'junit:junit'
+    testCompile 'org.mockito:mockito-core'
+    testCompile 'org.assertj:assertj-core'
+}
