@@ -4,4 +4,6 @@ public interface JobAdvertisementRepository {
 
     JobAdvertisement findById(JobAdvertisementId jobAdvertisementId);
 
+    JobAdvertisement save(JobAdvertisement jobAdvertisement);
+
 }

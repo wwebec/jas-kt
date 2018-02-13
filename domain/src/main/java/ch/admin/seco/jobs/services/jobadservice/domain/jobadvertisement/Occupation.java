@@ -13,6 +13,7 @@ public class Occupation implements ValueObject<Occupation> {
     private Set<String> professionCodes;
 
     protected Occupation() {
+        // For reflection libs
     }
 
     public Occupation(ProfessionId professionId, WorkExperience workExperience, Set<String> professionCodes) {

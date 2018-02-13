@@ -7,8 +7,8 @@ public class JobAdvertisementEvent extends DomainEvent {
 
     private JobAdvertisementId jobAdvertisementId;
 
-    public JobAdvertisementEvent(DomainEventType domainEventType, JobAdvertisement jobAdvertisement) {
-        super(domainEventType, JobAdvertisement.class.getSimpleName());
+    public JobAdvertisementEvent(JobAdvertisementEvents jobAdvertisementEventType, JobAdvertisement jobAdvertisement) {
+        super(jobAdvertisementEventType.getDomainEventType(), JobAdvertisement.class.getSimpleName());
         this.jobAdvertisementId = jobAdvertisement.getId();
         additionalAttributes.put("jobAdvertisementId", jobAdvertisementId.getValue());
     }

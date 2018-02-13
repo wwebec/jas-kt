@@ -13,6 +13,7 @@ public class Contact implements ValueObject<Contact> {
     private String email;
 
     protected Contact() {
+        // For reflection libs
     }
 
     public Contact(Salutation salutation, String firstName, String lastName, String phone, String email) {

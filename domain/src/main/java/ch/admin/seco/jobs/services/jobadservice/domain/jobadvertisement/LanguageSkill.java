@@ -13,6 +13,7 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
     private boolean languageStayRequired = false; // TODO check if it is removable
 
     protected LanguageSkill() {
+        // For reflection libs
     }
 
     public LanguageSkill(String languageCode, LanguageLevel spokenLevel, LanguageLevel writtenLevel, boolean motherTongue, boolean languageStayRequired) {

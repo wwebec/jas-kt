@@ -20,6 +20,7 @@ public class Company implements ValueObject<Company> {
     private String website;
 
     protected Company() {
+        // For reflection libs
     }
 
     public Company(String name, String street, String houseNumber, String zipCode, String city, String countryCode, String postOfficeBoxNumber, String postOfficeBoxZipCode, String postOfficeBoxCity, String phone, String email, String website) {

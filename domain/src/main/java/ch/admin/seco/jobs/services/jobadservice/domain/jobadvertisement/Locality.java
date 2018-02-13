@@ -16,6 +16,7 @@ public class Locality implements ValueObject<Locality> {
     private GeoPoint location;
 
     protected Locality() {
+        // For reflection libs
     }
 
     public Locality(String remarks, String city, String zipCode, String communalCode, String regionCode, String cantonCode, String countryCode, GeoPoint location) {
