@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.core.domain;
 
-public class AggregateNotFoundException extends Exception {
+public class AggregateNotFoundException extends RuntimeException {
 
     private String aggregateName;
 

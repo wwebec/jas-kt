@@ -8,6 +8,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/jobAdvertisement")
 public class JobAdvertisementRestController {
@@ -17,6 +19,11 @@ public class JobAdvertisementRestController {
     @Autowired
     public JobAdvertisementRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService) {
         this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
+    }
+
+    @GetMapping()
+    public List<JobAdvertisementDto> getJobAdvertisements() {
+        return jobAdvertisementApplicationService.findAll();
     }
 
     @PostMapping()

@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="now" value="now()" dbms="h2"/>
+    <property name="now" value="current_timestamp" dbms="postgresql"/>
+
+    <property name="floatType" value="float4" dbms="postgresql, h2"/>
+    <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
+
+    <changeSet id="20180211080000" author="jobroom">
+        <createTable tableName="STORED_EVENT">
+            <column name="ID" type="varchar(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="DOMAIN_EVENT_TYPE" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AGGREGATE_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AGGREGATE_TYPE" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_EMAIL" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_DISPLAY_NAME" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REGISTRATION_TIME" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PAYLOAD" type="clob"/>
+        </createTable>
+
+        <createTable tableName="JOB_ADVERTISEMENT">
+            <column name="ID" type="varchar(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="STELLENNUMMER_AVAM" type="varchar(12)"/>
+            <column name="STELLENNUMMER_EGOV" type="varchar(12)"/>
+            <column name="FINGERPRINT" type="varchar(100)"/>
+            <column name="SOURCE_SYSTEM" type="varchar(12)"/>
+            <column name="SOURCE_ENTRY_ID" type="varchar(255)"/>
+            <column name="EXTERNAL_URL" type="varchar(1024)"/>
+            <column name="STATUS" type="varchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PUBLICATION_START_DATE" type="date"/>
+            <column name="PUBLICATION_END_DATE" type="date"/>
+            <column name="TITLE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="longvarchar"/>
+            <column name="EMPLOYMENT_START_DATE" type="date"/>
+            <column name="EMPLOYMENT_END_DATE" type="date"/>
+            <column name="IMMEDIATELY" type="boolean"/>
+            <column name="PERMANENT" type="boolean"/>
+            <column name="WORKLOAD_PERCENTAGE_MIN" type="integer"/>
+            <column name="WORKLOAD_PERCENTAGE_MAX" type="integer"/>
+            <column name="NUMBER_OF_JOBS" type="integer"/>
+            <column name="ACCESSIBLY" type="boolean"/>
+            <column name="JOB_SHARING" type="boolean"/>
+            <column name="HAS_PERSONAL_VEHICLE" type="boolean"/>
+            <column name="JOB_CENTER_CODE" type="varchar(5)"/>
+            <column name="DRIVING_LICENSE_LEVEL" type="varchar(3)"/>
+            <column name="APPLY_CHANNEL_MAIL_ADDRESS" type="varchar(255)"/>
+            <column name="APPLY_CHANNEL_EMAIL_ADDRESS" type="varchar(255)"/>
+            <column name="APPLY_CHANNEL_PHONE_NUMBER" type="varchar(20)"/>
+            <column name="APPLY_CHANNEL_ONLINE_URL" type="varchar(1024)"/>
+            <column name="APPLY_CHANNEL_ADDITIONAL_INFO" type="varchar(255)"/>
+            <column name="COMPANY_NAME" type="varchar(255)"/>
+            <column name="COMPANY_STREET" type="varchar(50)"/>
+            <column name="COMPANY_HOUSE_NUMBER" type="varchar(10)"/>
+            <column name="COMPANY_ZIP_CODE" type="varchar(10)"/>
+            <column name="COMPANY_CITY" type="varchar(50)"/>
+            <column name="COMPANY_COUNTRY_CODE" type="varchar(2)"/>
+            <column name="COMPANY_POST_OFFICE_BOX_NUMBER" type="varchar(10)"/>
+            <column name="COMPANY_POST_OFFICE_BOX_ZIP_CODE" type="varchar(10)"/>
+            <column name="COMPANY_POST_OFFICE_BOX_CITY" type="varchar(50)"/>
+            <column name="COMPANY_PHONE" type="varchar(20)"/>
+            <column name="COMPANY_EMAIL" type="varchar(255)"/>
+            <column name="COMPANY_WEBSITE" type="varchar(255)"/>
+            <column name="CONTACT_SALUTATION" type="varchar(3)"/>
+            <column name="CONTACT_FIRST_NAME" type="varchar(50)"/>
+            <column name="CONTACT_LAST_NAME" type="varchar(50)"/>
+            <column name="CONTACT_PHONE" type="varchar(20)"/>
+            <column name="CONTACT_EMAIL" type="varchar(50)"/>
+        </createTable>
+
+        <createTable tableName="JOB_ADVERTISEMENT_LOCALITY">
+            <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="REMARKS" type="varchar(255)"/>
+            <column name="CITY" type="varchar(50)"/>
+            <column name="ZIP_CODE" type="varchar(10)"/>
+            <column name="COMMUNAL_CODE" type="varchar(4)"/>
+            <column name="REGION_CODE" type="varchar(4)"/>
+            <column name="CANTON_CODE" type="varchar(2)"/>
+            <column name="COUNTRY_CODE" type="varchar(12)"/>
+            <column name="LOCATION_LONGITUDE" type="double"/>
+            <column name="LOCATION_LATITUDE" type="double"/>
+        </createTable>
+
+        <createTable tableName="JOB_ADVERTISEMENT_OCCUPATION">
+            <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PROFESSION_ID" type="varchar(36)"/>
+            <column name="WORK_EXPERIENCE" type="varchar(64)"/>
+        </createTable>
+
+        <createTable tableName="JOB_ADVERTISEMENT_LANGUAGES_KILL">
+            <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LANGUAGE_CODE" type="varchar(5)"/>
+            <column name="SPOKEN_LEVEL" type="varchar(64)"/>
+            <column name="WRITTEN_LEVEL" type="varchar(64)"/>
+            <column name="MOTHER_TONGUE" type="boolean"/>
+            <column name="LANGUAGE_STAY_REQUIRED" type="boolean"/>
+        </createTable>
+
+        <createTable tableName="JOB_ADVERTISEMENT_PROFESSION_CODES">
+            <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PROFESSION_CODES" type="varchar(16)"/>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

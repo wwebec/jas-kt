@@ -2,17 +2,34 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
+import javax.persistence.*;
+import javax.validation.Valid;
 import java.util.Objects;
 
+@Embeddable
+@Access(AccessType.FIELD)
 public class Locality implements ValueObject<Locality> {
 
     private String remarks;
+
     private String city;
+
     private String zipCode;
+
     private String communalCode;
+
     private String regionCode;
+
     private String cantonCode;
+
     private String countryCode;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "longitude", column = @Column(name = "LOCATION_LONGITUDE")),
+            @AttributeOverride(name = "latitude", column = @Column(name = "LOCATION_LATITUDE"))
+    })
+    @Valid
     private GeoPoint location;
 
     protected Locality() {

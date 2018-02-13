@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -92,11 +94,11 @@ public class JobAdvertisementApplicationService {
         }
         OccupationDto occupationDto = createJobAdvertisementDto.getOccupation();
         if (occupationDto != null) {
+            // TODO update professionCodes
             Set<Occupation> occupations = new HashSet<>();
             occupations.add(new Occupation(
                     new ProfessionId(occupationDto.getProfessionId()),
-                    occupationDto.getWorkExperience(),
-                    occupationDto.getProfessionCodes()
+                    occupationDto.getWorkExperience()
             ));
             jobAdvertisement.updateOccupations(occupations);
         }
@@ -115,11 +117,18 @@ public class JobAdvertisementApplicationService {
         return newJobAdvertisement.getId();
     }
 
+    public List<JobAdvertisementDto> findAll() {
+        List<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findAll();
+        return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(Collectors.toList());
+    }
+
     public JobAdvertisementDto findById(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
-        if (jobAdvertisement == null) {
-            throw new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue());
-        }
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         return JobAdvertisementDto.toDto(jobAdvertisement);
+    }
+
+    private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
+        return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
     }
 }

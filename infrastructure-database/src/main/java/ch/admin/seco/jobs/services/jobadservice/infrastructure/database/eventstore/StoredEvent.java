@@ -3,9 +3,13 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.database.eventst
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -36,6 +40,9 @@ class StoredEvent {
     private String userDisplayName;
 
     @NotNull
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "domain_event_type"))
+    @Valid
     private DomainEventType domainEventType;
 
     @NotNull

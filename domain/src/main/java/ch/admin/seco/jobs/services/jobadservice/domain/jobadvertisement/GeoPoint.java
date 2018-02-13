@@ -1,5 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Embeddable;
+
+@Embeddable
+@Access(AccessType.FIELD)
 public class GeoPoint {
 
     private double longitude;

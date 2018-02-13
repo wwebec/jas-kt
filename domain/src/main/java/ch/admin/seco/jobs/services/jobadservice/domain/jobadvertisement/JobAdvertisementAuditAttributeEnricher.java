@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditAttributeEnricher;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class JobAdvertisementAuditAttributeEnricher implements AuditAttributeEnricher {
@@ -31,14 +33,14 @@ public class JobAdvertisementAuditAttributeEnricher implements AuditAttributeEnr
     public Map<String, Object> enrichAttributes(DomainEvent domainEvent) {
         JobAdvertisementEvent jobAdvertisementEvent = (JobAdvertisementEvent)domainEvent;
         final JobAdvertisementId jobAdvertisementId = jobAdvertisementEvent.getJobAdvertisementId();
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
-        if(jobAdvertisement == null) {
+        final Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
+        if(!jobAdvertisement.isPresent()) {
             LOGGER.info("JobAdvertisement with id {} was not found and can't be enrich Attributes with further information", jobAdvertisementId.getValue());
             return Collections.emptyMap();
         }
         // TODO enrich the attributes
         // return ImmutableMap.of(xxxx);
-        return null;
+        return Collections.emptyMap();
     }
 
 }
