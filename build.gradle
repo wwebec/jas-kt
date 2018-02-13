@@ -85,11 +85,11 @@ allprojects {
         }
         compile("com.ryantenney.metrics:metrics-spring:${metrics_spring_version}")
         compile("com.zaxxer:HikariCP:${hikaricp_version}")
-        //compile("org.liquibase:liquibase-core")
-        //compile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
+        compile("org.liquibase:liquibase-core")
+        compile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
         compile "org.apache.commons:commons-lang3:${commons_lang_version}"
         compile "org.springframework.boot:spring-boot-starter-data-jpa"
-        compile("org.springframework.boot:spring-boot-starter-data-elasticsearch:")
+        //compile("org.springframework.boot:spring-boot-starter-data-elasticsearch:")
         compile "org.springframework.boot:spring-boot-starter-security"
         compile("org.springframework.boot:spring-boot-starter-web") {
             exclude module: 'spring-boot-starter-tomcat'
@@ -106,9 +106,8 @@ allprojects {
         compile "org.springframework.cloud:spring-cloud-starter-feign"
         compile "org.springframework.boot:spring-boot-starter-cloud-connectors"
         compile "io.jsonwebtoken:jjwt:${jjwt_version}"
-        compile("io.springfox:springfox-swagger2:${springfox_version}") {
-            exclude module: 'mapstruct'
-        }
+        compile "io.springfox:springfox-swagger2:${springfox_version}"
+        compile "io.springfox:springfox-swagger-ui:${springfox_version}"
         compile "io.springfox:springfox-bean-validators:${springfox_version}"
         compile "org.postgresql:postgresql"
         compile "com.h2database:h2"
@@ -120,7 +119,7 @@ allprojects {
         }
         testCompile "org.springframework.security:spring-security-test"
         testCompile "org.springframework.boot:spring-boot-test"
-        //testCompile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
+        testCompile "com.mattbertolini:liquibase-slf4j:${liquibase_slf4j_version}"
     }
 
     dependencyManagement {

@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.events;
 
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import org.slf4j.Logger;
@@ -26,7 +27,9 @@ public class SpringDomainEventPublisher implements DomainEventPublisher, Applica
     @Override
     public void publishEvent(DomainEvent domainEvent) {
         LOGGER.debug("Starting Publishing Domain Event: ID '{}' | Type '{}' ", domainEvent.getId().getValue(), domainEvent.getDomainEventType().getValue());
+        // FIXME get the real user
         //domainEvent.setAuditUser(userContext.getAuditUser());
+        domainEvent.setAuditUser(new AuditUser("intern-1", "extern-1", "My", "User", "my.user@example.org"));
         applicationEventPublisher.publishEvent(domainEvent);
     }
 

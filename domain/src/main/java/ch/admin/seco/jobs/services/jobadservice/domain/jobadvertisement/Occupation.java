@@ -3,23 +3,27 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionId;
 
+import javax.persistence.*;
 import java.util.Objects;
-import java.util.Set;
 
+@Embeddable
+@Access(AccessType.FIELD)
 public class Occupation implements ValueObject<Occupation> {
 
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "PROFESSION_ID"))
     private ProfessionId professionId;
+
+    @Enumerated(EnumType.STRING)
     private WorkExperience workExperience;
-    private Set<String> professionCodes;
 
     protected Occupation() {
         // For reflection libs
     }
 
-    public Occupation(ProfessionId professionId, WorkExperience workExperience, Set<String> professionCodes) {
+    public Occupation(ProfessionId professionId, WorkExperience workExperience) {
         this.professionId = professionId;
         this.workExperience = workExperience;
-        this.professionCodes = professionCodes;
     }
 
     public ProfessionId getProfessionId() {
@@ -28,10 +32,6 @@ public class Occupation implements ValueObject<Occupation> {
 
     public WorkExperience getWorkExperience() {
         return workExperience;
-    }
-
-    public Set<String> getProfessionCodes() {
-        return professionCodes;
     }
 
     @Override
@@ -45,13 +45,12 @@ public class Occupation implements ValueObject<Occupation> {
         if (o == null || getClass() != o.getClass()) return false;
         Occupation that = (Occupation) o;
         return Objects.equals(professionId, that.professionId) &&
-                workExperience == that.workExperience &&
-                Objects.equals(professionCodes, that.professionCodes);
+                workExperience == that.workExperience;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(professionId, workExperience, professionCodes);
+        return Objects.hash(professionId, workExperience);
     }
 
 }

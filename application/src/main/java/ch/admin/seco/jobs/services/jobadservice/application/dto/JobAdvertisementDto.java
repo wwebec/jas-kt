@@ -37,12 +37,13 @@ public class JobAdvertisementDto {
     private Set<LocalityDto> localities;
     private Set<OccupationDto> occupations;
     private Set<LanguageSkillDto> languageSkills;
+    private Set<String> professionCodes;
 
     protected JobAdvertisementDto() {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, Set<OccupationDto> occupations, Set<LanguageSkillDto> languageSkills) {
+    public JobAdvertisementDto(String id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, Set<OccupationDto> occupations, Set<LanguageSkillDto> languageSkills, Set<String> professionCodes) {
         this.id = id;
         this.stellennummerAvam = stellennummerAvam;
         this.stellennummerEgov = stellennummerEgov;
@@ -73,6 +74,7 @@ public class JobAdvertisementDto {
         this.localities = localities;
         this.occupations = occupations;
         this.languageSkills = languageSkills;
+        this.professionCodes = professionCodes;
     }
 
     public String getId() {
@@ -315,6 +317,14 @@ public class JobAdvertisementDto {
         this.languageSkills = languageSkills;
     }
 
+    public Set<String> getProfessionCodes() {
+        return professionCodes;
+    }
+
+    public void setProfessionCodes(Set<String> professionCodes) {
+        this.professionCodes = professionCodes;
+    }
+
     public static JobAdvertisementDto toDto(JobAdvertisement jobAdvertisement) {
         JobAdvertisementDto jobAdvertisementDto = new JobAdvertisementDto();
         jobAdvertisementDto.setId(jobAdvertisement.getId().getValue());
@@ -347,6 +357,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setLocalities(LocalityDto.toDto(jobAdvertisement.getLocalities()));
         jobAdvertisementDto.setOccupations(OccupationDto.toDto(jobAdvertisement.getOccupations()));
         jobAdvertisementDto.setLanguageSkills(LanguageSkillDto.toDto(jobAdvertisement.getLanguageSkills()));
+        jobAdvertisementDto.setProfessionCodes(jobAdvertisement.getProfessionCodes());
         return jobAdvertisementDto;
     }
 }

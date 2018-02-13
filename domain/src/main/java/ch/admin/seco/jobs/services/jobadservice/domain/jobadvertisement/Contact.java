@@ -2,14 +2,22 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Embeddable
+@Access(AccessType.FIELD)
 public class Contact implements ValueObject<Contact> {
 
+    @Enumerated(EnumType.STRING)
     private Salutation salutation;
+
     private String firstName;
+
     private String lastName;
+
     private String phone;
+
     private String email;
 
     protected Contact() {

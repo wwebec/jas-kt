@@ -5,9 +5,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventTy
 import com.google.common.base.Preconditions;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -34,6 +33,9 @@ class StoredEvent {
     private String userDisplayName;
 
     @NotNull
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "domain_event_type"))
+    @Valid
     private DomainEventType domainEventType;
 
     @NotNull

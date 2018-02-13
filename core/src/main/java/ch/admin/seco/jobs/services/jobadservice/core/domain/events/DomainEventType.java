@@ -1,7 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.core.domain.events;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
 public class DomainEventType {
 
     private String value;
@@ -33,7 +35,9 @@ public class DomainEventType {
 
     @Override
     public String toString() {
-        return value;
+        return "DomainEventType{" +
+                "value=" + value +
+                '}';
     }
 
 

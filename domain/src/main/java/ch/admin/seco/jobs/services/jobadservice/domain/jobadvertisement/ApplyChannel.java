@@ -1,10 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
-import org.apache.commons.lang3.builder.EqualsBuilder;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Embeddable
+@Access(AccessType.FIELD)
 public class ApplyChannel implements ValueObject<ApplyChannel> {
 
     private String mailAddress;
