@@ -7,7 +7,6 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundExc
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventData;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -45,7 +44,7 @@ public class JobAdvertisementRestController {
     }
 
     @GetMapping("/{id}/events")
-    public Page<EventData> getJobAdvertisementEvents(@PathVariable String id) throws AggregateNotFoundException {
+    public Page<EventData> getEventsOfJobAdvertisement(@PathVariable String id) throws AggregateNotFoundException {
         return eventStore.findByAggregateId(id, JobAdvertisement.class.getSimpleName(), 0, 100);
     }
 
