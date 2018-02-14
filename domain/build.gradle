@@ -1,6 +1,5 @@
 dependencies {
     compile project(':core')
-    compile 'com.google.guava:guava'
     compile 'org.apache.commons:commons-lang3'
     compile 'org.springframework:spring-context'
     compile 'org.springframework:spring-tx'

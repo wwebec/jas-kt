@@ -13,8 +13,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import com.google.common.base.Preconditions;
-
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventType;
 
@@ -52,12 +51,12 @@ class StoredEvent {
     private String payload;
 
     StoredEvent(DomainEvent domainEvent, String payload) {
-        Preconditions.checkNotNull(domainEvent);
+        Condition.notNull(domainEvent);
         this.id = domainEvent.getId().getValue();
         this.aggregateId = domainEvent.getAggregateId();
-        this.userId = Preconditions.checkNotNull(domainEvent.getUserExternalId());
-        this.userDisplayName = Preconditions.checkNotNull(domainEvent.getUserDisplayName());
-        this.userEmail = Preconditions.checkNotNull(domainEvent.getUserEmail());
+        this.userId = Condition.notNull(domainEvent.getUserExternalId());
+        this.userDisplayName = Condition.notNull(domainEvent.getUserDisplayName());
+        this.userEmail = Condition.notNull(domainEvent.getUserEmail());
         this.domainEventType = domainEvent.getDomainEventType();
         this.registrationTime = domainEvent.getRegistrationTime();
         this.aggregateType = domainEvent.getAggregateType();

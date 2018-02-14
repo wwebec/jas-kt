@@ -1,17 +1,16 @@
 dependencies {
     compile project(':infrastructure')
 
-    compile 'com.mattbertolini:liquibase-slf4j'
-    compile 'com.zaxxer:HikariCP'
     compile 'org.codehaus.jackson:jackson-core-asl'
     compile 'com.fasterxml.jackson.core:jackson-annotations'
     compile 'com.fasterxml.jackson.core:jackson-databind'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    compile 'com.google.guava:guava'
     compile 'org.hibernate.validator:hibernate-validator'
-    compile 'org.liquibase:liquibase-core'
-    compile 'org.postgresql:postgresql'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    runtime 'org.liquibase:liquibase-core'
+    runtime 'org.postgresql:postgresql'
+    runtime 'com.mattbertolini:liquibase-slf4j'
 
     testCompile 'com.h2database:h2'
 }
