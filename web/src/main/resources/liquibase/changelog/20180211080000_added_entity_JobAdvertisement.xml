@@ -60,6 +60,7 @@
             <column name="DESCRIPTION" type="longvarchar"/>
             <column name="EMPLOYMENT_START_DATE" type="date"/>
             <column name="EMPLOYMENT_END_DATE" type="date"/>
+            <column name="DURATION_IN_DAYS" type="integer"/>
             <column name="IMMEDIATELY" type="boolean"/>
             <column name="PERMANENT" type="boolean"/>
             <column name="WORKLOAD_PERCENTAGE_MIN" type="integer"/>
@@ -92,6 +93,7 @@
             <column name="CONTACT_LAST_NAME" type="varchar(50)"/>
             <column name="CONTACT_PHONE" type="varchar(20)"/>
             <column name="CONTACT_EMAIL" type="varchar(50)"/>
+            <column name="EDUCATION_CODE" type="varchar(8)"/>
         </createTable>
 
         <createTable tableName="JOB_ADVERTISEMENT_LOCALITY">

@@ -50,6 +50,15 @@ class StoredEvent {
     @Lob
     private String payload;
 
+
+    protected StoredEvent() {
+        // For reflection libs
+    }
+
+    StoredEvent(DomainEvent domainEvent) {
+        this(domainEvent, null);
+    }
+
     StoredEvent(DomainEvent domainEvent, String payload) {
         Condition.notNull(domainEvent);
         this.id = domainEvent.getId().getValue();
@@ -61,14 +70,6 @@ class StoredEvent {
         this.registrationTime = domainEvent.getRegistrationTime();
         this.aggregateType = domainEvent.getAggregateType();
         this.payload = payload;
-    }
-
-    StoredEvent(DomainEvent domainEvent) {
-        this(domainEvent, null);
-    }
-
-    protected StoredEvent() {
-        // FOR JPA
     }
 
     public String getId() {

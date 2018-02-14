@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.dto;
 
+import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class JobAdvertisementDto {
     private String description;
     private LocalDate employmentStartDate;
     private LocalDate employmentEndDate;
+    private Integer durationInDays;
     private Boolean immediately;
     private Boolean permanent;
     private int workloadPercentageMin;
@@ -36,6 +38,7 @@ public class JobAdvertisementDto {
     private ContactDto contact;
     private Set<LocalityDto> localities;
     private Set<OccupationDto> occupations;
+    private String educationCode;
     private Set<LanguageSkillDto> languageSkills;
     private Set<String> professionCodes;
 
@@ -43,7 +46,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, Set<OccupationDto> occupations, Set<LanguageSkillDto> languageSkills, Set<String> professionCodes) {
+    public JobAdvertisementDto(String id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, Set<OccupationDto> occupations, String educationCode, Set<LanguageSkillDto> languageSkills, Set<String> professionCodes) {
         this.id = id;
         this.stellennummerAvam = stellennummerAvam;
         this.stellennummerEgov = stellennummerEgov;
@@ -58,6 +61,7 @@ public class JobAdvertisementDto {
         this.description = description;
         this.employmentStartDate = employmentStartDate;
         this.employmentEndDate = employmentEndDate;
+        this.durationInDays = durationInDays;
         this.immediately = immediately;
         this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
@@ -73,6 +77,7 @@ public class JobAdvertisementDto {
         this.contact = contact;
         this.localities = localities;
         this.occupations = occupations;
+        this.educationCode = educationCode;
         this.languageSkills = languageSkills;
         this.professionCodes = professionCodes;
     }
@@ -187,6 +192,14 @@ public class JobAdvertisementDto {
 
     public void setEmploymentEndDate(LocalDate employmentEndDate) {
         this.employmentEndDate = employmentEndDate;
+    }
+
+    public Integer getDurationInDays() {
+        return durationInDays;
+    }
+
+    public void setDurationInDays(Integer durationInDays) {
+        this.durationInDays = durationInDays;
     }
 
     public Boolean getImmediately() {
@@ -309,6 +322,14 @@ public class JobAdvertisementDto {
         this.occupations = occupations;
     }
 
+    public String getEducationCode() {
+        return educationCode;
+    }
+
+    public void setEducationCode(String educationCode) {
+        this.educationCode = educationCode;
+    }
+
     public Set<LanguageSkillDto> getLanguageSkills() {
         return languageSkills;
     }
@@ -341,6 +362,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setDescription(jobAdvertisement.getDescription());
         jobAdvertisementDto.setEmploymentStartDate(jobAdvertisement.getEmploymentStartDate());
         jobAdvertisementDto.setEmploymentEndDate(jobAdvertisement.getEmploymentEndDate());
+        jobAdvertisementDto.setDurationInDays(jobAdvertisement.getDurationInDays());
         jobAdvertisementDto.setImmediately(jobAdvertisement.getImmediately());
         jobAdvertisementDto.setPermanent(jobAdvertisement.getPermanent());
         jobAdvertisementDto.setWorkloadPercentageMin(jobAdvertisement.getWorkloadPercentageMin());
@@ -356,6 +378,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setContact(ContactDto.toDto(jobAdvertisement.getContact()));
         jobAdvertisementDto.setLocalities(LocalityDto.toDto(jobAdvertisement.getLocalities()));
         jobAdvertisementDto.setOccupations(OccupationDto.toDto(jobAdvertisement.getOccupations()));
+        jobAdvertisementDto.setEducationCode(jobAdvertisement.getEducationCode());
         jobAdvertisementDto.setLanguageSkills(LanguageSkillDto.toDto(jobAdvertisement.getLanguageSkills()));
         jobAdvertisementDto.setProfessionCodes(jobAdvertisement.getProfessionCodes());
         return jobAdvertisementDto;

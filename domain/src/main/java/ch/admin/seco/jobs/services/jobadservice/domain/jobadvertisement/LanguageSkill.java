@@ -9,7 +9,7 @@ import java.util.Objects;
 @Access(AccessType.FIELD)
 public class LanguageSkill implements ValueObject<LanguageSkill> {
 
-    private String languageCode;
+    private String languageIsoCode;
 
     @Enumerated(EnumType.STRING)
     private LanguageLevel spokenLevel;
@@ -17,24 +17,18 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
     @Enumerated(EnumType.STRING)
     private LanguageLevel writtenLevel;
 
-    private boolean motherTongue = false; // TODO check if it is part of the LanguageLevel, or removable
-
-    private boolean languageStayRequired = false; // TODO check if it is removable
-
     protected LanguageSkill() {
         // For reflection libs
     }
 
-    public LanguageSkill(String languageCode, LanguageLevel spokenLevel, LanguageLevel writtenLevel, boolean motherTongue, boolean languageStayRequired) {
-        this.languageCode = languageCode;
+    public LanguageSkill(String languageIsoCode, LanguageLevel spokenLevel, LanguageLevel writtenLevel) {
+        this.languageIsoCode = languageIsoCode;
         this.spokenLevel = spokenLevel;
         this.writtenLevel = writtenLevel;
-        this.motherTongue = motherTongue;
-        this.languageStayRequired = languageStayRequired;
     }
 
-    public String getLanguageCode() {
-        return languageCode;
+    public String getLanguageIsoCode() {
+        return languageIsoCode;
     }
 
     public LanguageLevel getSpokenLevel() {
@@ -43,14 +37,6 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
 
     public LanguageLevel getWrittenLevel() {
         return writtenLevel;
-    }
-
-    public boolean isMotherTongue() {
-        return motherTongue;
-    }
-
-    public boolean isLanguageStayRequired() {
-        return languageStayRequired;
     }
 
     @Override
@@ -63,16 +49,14 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         LanguageSkill that = (LanguageSkill) o;
-        return motherTongue == that.motherTongue &&
-                languageStayRequired == that.languageStayRequired &&
-                Objects.equals(languageCode, that.languageCode) &&
+        return Objects.equals(languageIsoCode, that.languageIsoCode) &&
                 spokenLevel == that.spokenLevel &&
                 writtenLevel == that.writtenLevel;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(languageCode, spokenLevel, writtenLevel, motherTongue, languageStayRequired);
+        return Objects.hash(languageIsoCode, spokenLevel, writtenLevel);
     }
 
 }

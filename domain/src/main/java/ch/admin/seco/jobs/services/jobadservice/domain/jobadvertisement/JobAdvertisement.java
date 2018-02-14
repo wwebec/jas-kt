@@ -18,7 +18,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String stellennummerAvam;
 
-    private String stellennummerEgov;
+    private String stellennummerEgov; // FIXME Ist eigentlich id
 
     private String fingerprint;
 
@@ -42,6 +42,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private LocalDate employmentStartDate;
 
     private LocalDate employmentEndDate;
+
+    private Integer durationInDays;
 
     private Boolean immediately;
 
@@ -113,6 +115,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Valid
     private Set<Occupation> occupations;
 
+    private String educationCode;
+
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGES_KILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
@@ -133,7 +137,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Set<Locality> localities, Set<Occupation> occupations, Set<LanguageSkill> languageSkills, Set<String> professionCodes) {
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Set<Locality> localities, Set<Occupation> occupations, String educationCode, Set<LanguageSkill> languageSkills, Set<String> professionCodes) {
         this(id, status, title, description);
         this.stellennummerAvam = stellennummerAvam;
         this.stellennummerEgov = stellennummerEgov;
@@ -145,6 +149,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.publicationEndDate = publicationEndDate;
         this.employmentStartDate = employmentStartDate;
         this.employmentEndDate = employmentEndDate;
+        this.durationInDays = durationInDays;
         this.immediately = immediately;
         this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
@@ -160,6 +165,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.contact = contact;
         this.localities = localities;
         this.occupations = occupations;
+        this.educationCode = educationCode;
         this.languageSkills = languageSkills;
         this.professionCodes = professionCodes;
     }
@@ -225,6 +231,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return employmentEndDate;
     }
 
+    public Integer getDurationInDays() {
+        return durationInDays;
+    }
+
     public Boolean getImmediately() {
         return immediately;
     }
@@ -285,6 +295,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return occupations;
     }
 
+    public String getEducationCode() {
+        return educationCode;
+    }
+
     public Set<LanguageSkill> getLanguageSkills() {
         return languageSkills;
     }
@@ -293,9 +307,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return professionCodes;
     }
 
-    public void updateEmployment(LocalDate employmentStartDate, LocalDate employmentEndDate, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax) {
+    public void updateEmployment(LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax) {
         this.employmentStartDate = employmentStartDate;
         this.employmentEndDate = employmentEndDate;
+        this.durationInDays = durationInDays;
         this.immediately = immediately;
         this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
@@ -318,8 +333,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.localities = localities;
     }
 
-    public void updateOccupations(Set<Occupation> occupations) {
+    public void updateRequirements(Set<Occupation> occupations, String educationId) {
         this.occupations = occupations;
+        this.educationCode = educationId;
     }
 
     public void updateLanguageSkills(Set<LanguageSkill> languageSkills) {

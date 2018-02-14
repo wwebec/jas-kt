@@ -8,36 +8,54 @@ public class CreateJobAdvertisementDto {
 
     @NotNull
     private String title;
+
     @NotNull
     private String description;
+
     private LocalDate employmentStartDate;
+
     private LocalDate employmentEndDate;
+
+    private Integer durationInDays;
+
     private Boolean immediately;
+
     private Boolean permanent;
+
     private int workloadPercentageMin;
+
     private int workloadPercentageMax;
+
     private String drivingLicenseLevel;
-    // FIXME Education
+
     private ApplyChannelDto applyChannel;
+
     @NotNull
     private CompanyDto company;
+
     @NotNull
     private ContactDto contact;
+
     @NotNull
     private Set<LocalityDto> localities;
+
     @NotNull
     private OccupationDto occupation;
+
+    private String educationCode;
+
     private Set<LanguageSkillDto> languageSkills;
 
     protected CreateJobAdvertisementDto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementDto(String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, OccupationDto occupation, Set<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementDto(String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, OccupationDto occupation, String educationCode, Set<LanguageSkillDto> languageSkills) {
         this.title = title;
         this.description = description;
         this.employmentStartDate = employmentStartDate;
         this.employmentEndDate = employmentEndDate;
+        this.durationInDays = durationInDays;
         this.immediately = immediately;
         this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
@@ -48,6 +66,7 @@ public class CreateJobAdvertisementDto {
         this.contact = contact;
         this.localities = localities;
         this.occupation = occupation;
+        this.educationCode = educationCode;
         this.languageSkills = languageSkills;
     }
 
@@ -81,6 +100,14 @@ public class CreateJobAdvertisementDto {
 
     public void setEmploymentEndDate(LocalDate employmentEndDate) {
         this.employmentEndDate = employmentEndDate;
+    }
+
+    public Integer getDurationInDays() {
+        return durationInDays;
+    }
+
+    public void setDurationInDays(Integer durationInDays) {
+        this.durationInDays = durationInDays;
     }
 
     public Boolean getImmediately() {
@@ -161,6 +188,14 @@ public class CreateJobAdvertisementDto {
 
     public void setOccupation(OccupationDto occupation) {
         this.occupation = occupation;
+    }
+
+    public String getEducationCode() {
+        return educationCode;
+    }
+
+    public void setEducationCode(String educationCode) {
+        this.educationCode = educationCode;
     }
 
     public Set<LanguageSkillDto> getLanguageSkills() {

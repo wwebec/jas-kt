@@ -18,7 +18,7 @@ public class Locality implements ValueObject<Locality> {
 
     private String communalCode;
 
-    private String regionCode;
+    private String regionCode; // TODO Still needed?
 
     private String cantonCode;
 

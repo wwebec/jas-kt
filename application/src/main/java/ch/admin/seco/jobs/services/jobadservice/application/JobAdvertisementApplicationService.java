@@ -36,6 +36,7 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.updateEmployment(
                 createJobAdvertisementDto.getEmploymentStartDate(),
                 createJobAdvertisementDto.getEmploymentEndDate(),
+                createJobAdvertisementDto.getDurationInDays(),
                 createJobAdvertisementDto.getImmediately(),
                 createJobAdvertisementDto.getPermanent(),
                 createJobAdvertisementDto.getWorkloadPercentageMin(),
@@ -47,7 +48,7 @@ public class JobAdvertisementApplicationService {
                     applyChannelDto.getMailAddress(),
                     applyChannelDto.getEmailAddress(),
                     applyChannelDto.getPhoneNumber(),
-                    applyChannelDto.getOnlineUrl(),
+                    applyChannelDto.getApplicationUrl(),
                     applyChannelDto.getAdditionalInfo()
             ));
         }
@@ -100,16 +101,14 @@ public class JobAdvertisementApplicationService {
                     new ProfessionId(occupationDto.getProfessionId()),
                     occupationDto.getWorkExperience()
             ));
-            jobAdvertisement.updateOccupations(occupations);
+            jobAdvertisement.updateRequirements(occupations, createJobAdvertisementDto.getEducationCode());
         }
         Set<LanguageSkillDto> languageSkillDtos = createJobAdvertisementDto.getLanguageSkills();
         if (languageSkillDtos != null) {
             jobAdvertisement.updateLanguageSkills(languageSkillDtos.stream().map(languageSkillDto -> new LanguageSkill(
-                    languageSkillDto.getLanguageCode(),
+                    languageSkillDto.getLanguageIsoCode(),
                     LanguageLevel.valueOf(languageSkillDto.getSpokenLevel()),
-                    LanguageLevel.valueOf(languageSkillDto.getWrittenLevel()),
-                    languageSkillDto.isMotherTongue(),
-                    languageSkillDto.isLanguageStayRequired()
+                    LanguageLevel.valueOf(languageSkillDto.getWrittenLevel())
             )).collect(Collectors.toSet()));
         }
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);

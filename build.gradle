@@ -29,7 +29,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'propdeps'
-    apply from: "${rootProject.rootDir}/gradle/checkstyle.gradle"
+    //apply from: "${rootProject.rootDir}/gradle/checkstyle.gradle"
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
