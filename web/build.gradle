@@ -1,0 +1,99 @@
+import org.ajoberstar.grgit.Grgit
+
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'org.ajoberstar.grgit'
+
+dependencies {
+    compile project(':infrastructure-database')
+//    ES is not used yet
+//    compile project(':infrastructure-elasticsearch')
+
+    compile 'org.springframework.boot:spring-boot-autoconfigure'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-logging'
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-undertow'
+
+//    compile 'org.zalando:problem-spring-web'
+    compile 'org.springframework.cloud:spring-cloud-starter'
+//    compile 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon'
+//    compile 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
+//    compile 'org.springframework.retry:spring-retry'
+    compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    compile 'org.springframework.cloud:spring-cloud-starter-config'
+//    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    compile 'org.springframework.security:spring-security-web'
+
+    compile 'io.jsonwebtoken:jjwt'
+    compile 'io.springfox:springfox-swagger2'
+    runtime 'io.springfox:springfox-swagger-ui'
+
+    compile 'io.dropwizard.metrics:metrics-core'
+    compile 'io.dropwizard.metrics:metrics-json'
+    compile 'io.dropwizard.metrics:metrics-jvm'
+    compile 'io.dropwizard.metrics:metrics-servlet'
+    compile 'io.dropwizard.metrics:metrics-servlets'
+    compile 'com.ryantenney.metrics:metrics-spring'
+    compile 'net.logstash.logback:logstash-logback-encoder'
+
+    testCompile 'org.springframework.boot:spring-boot-test'
+    testCompile 'org.springframework.security:spring-security-test'
+
+//    optional('org.springframework.boot:spring-boot-configuration-processor') {
+//        exclude group: 'com.vaadin.external.google', module: 'android-json'
+//    }
+}
+
+apply from: "${rootProject.rootDir}/gradle/maven-publish.gradle"
+if (project.hasProperty('prod')) {
+    apply from: "${rootProject.rootDir}/gradle/profile_prod.gradle"
+} else {
+    apply from: "${rootProject.rootDir}/gradle/profile_dev.gradle"
+}
+if (project.hasProperty('zipkin')) {
+    apply from: "${rootProject.rootDir}/gradle/zipkin.gradle"
+}
+
+defaultTasks 'bootRun'
+
+bootJar {
+    mainClassName = 'ch.admin.seco.jobs.services.jobadservice.Application'
+}
+
+springBoot {
+    buildInfo()
+}
+
+task stage(dependsOn: 'bootJar') {
+}
+
+task cleanResources(type: Delete) {
+    delete 'build/resources'
+}
+
+compileJava.dependsOn processResources
+processResources.dependsOn cleanResources, bootBuildInfo
+bootBuildInfo.mustRunAfter cleanResources
+
+def repo = Grgit.open(dir: rootDir)
+afterEvaluate {
+    bootJar {
+        manifest {
+            attributes(
+                    (java.util.jar.Attributes.Name.IMPLEMENTATION_TITLE.toString()): project.name,
+                    (java.util.jar.Attributes.Name.IMPLEMENTATION_VERSION.toString()): project.version,
+                    (java.util.jar.Attributes.Name.IMPLEMENTATION_VENDOR.toString()): 'mimacom ag',
+                    'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
+                    'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
+                    'Built-By': System.getProperty('user.name'),
+                    'Built-On': "${InetAddress.localHost.hostName}/${InetAddress.localHost.hostAddress}",
+                    'Spring-Version': org.springframework.core.SpringVersion.getVersion(),
+                    'Git-Commit': repo.head().getAbbreviatedId(8),
+                    'Git-Branch': repo.branch.getCurrent().getName()
+            )
+        }
+    }
+}

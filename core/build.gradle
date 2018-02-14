@@ -1,10 +1,8 @@
-group 'ch.admin.seco.jobs.services.jobadservice'
-version '1.0-SNAPSHOT'
-
-apply plugin: 'java'
-
-sourceCompatibility = 1.8
-
 dependencies {
-    compile group: 'com.fasterxml.uuid', name: 'java-uuid-generator', version: '3.1.4'
+    compile 'com.fasterxml.uuid:java-uuid-generator'
+    compile 'org.springframework.data:spring-data-commons'
+    compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api'
+
+    testCompile 'org.mockito:mockito-core'
+    testCompile 'org.assertj:assertj-core'
 }

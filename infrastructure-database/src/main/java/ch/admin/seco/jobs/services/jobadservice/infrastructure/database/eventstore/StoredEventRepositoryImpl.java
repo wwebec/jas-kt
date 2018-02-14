@@ -6,7 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventTy
 //class StoredEventRepositoryImpl extends QueryDslRepositorySupport implements StoredEventRepositoryCustom {
 class StoredEventRepositoryImpl implements StoredEventRepositoryCustom {
 
-    public StoredEventRepositoryImpl() {
+    StoredEventRepositoryImpl() {
     }
 
     @Override

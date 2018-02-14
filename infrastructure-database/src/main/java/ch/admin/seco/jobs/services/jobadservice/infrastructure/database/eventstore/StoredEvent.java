@@ -1,15 +1,21 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.database.eventstore;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventType;
-import com.google.common.base.Preconditions;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventType;
 
 @Entity
 class StoredEvent {
@@ -45,12 +51,12 @@ class StoredEvent {
     private String payload;
 
     StoredEvent(DomainEvent domainEvent, String payload) {
-        Preconditions.checkNotNull(domainEvent);
+        Condition.notNull(domainEvent);
         this.id = domainEvent.getId().getValue();
         this.aggregateId = domainEvent.getAggregateId();
-        this.userId = Preconditions.checkNotNull(domainEvent.getUserExternalId());
-        this.userDisplayName = Preconditions.checkNotNull(domainEvent.getUserDisplayName());
-        this.userEmail = Preconditions.checkNotNull(domainEvent.getUserEmail());
+        this.userId = Condition.notNull(domainEvent.getUserExternalId());
+        this.userDisplayName = Condition.notNull(domainEvent.getUserDisplayName());
+        this.userEmail = Condition.notNull(domainEvent.getUserEmail());
         this.domainEventType = domainEvent.getDomainEventType();
         this.registrationTime = domainEvent.getRegistrationTime();
         this.aggregateType = domainEvent.getAggregateType();
@@ -102,15 +108,15 @@ class StoredEvent {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof StoredEvent)) return false;
-        StoredEvent that = (StoredEvent) o;
-        return Objects.equals(id, that.id);
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (!(o instanceof StoredEvent)) { return false; }
+        StoredEvent that = (StoredEvent) o;
+        return Objects.equals(id, that.id);
     }
 }
