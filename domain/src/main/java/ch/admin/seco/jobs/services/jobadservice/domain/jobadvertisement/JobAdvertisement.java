@@ -70,7 +70,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
             @AttributeOverride(name = "emailAddress", column = @Column(name = "APPLY_CHANNEL_EMAIL_ADDRESS")),
             @AttributeOverride(name = "phoneNumber", column = @Column(name = "APPLY_CHANNEL_PHONE_NUMBER")),
-            @AttributeOverride(name = "onlineUrl", column = @Column(name = "APPLY_CHANNEL_ONLINE_URL")),
+            @AttributeOverride(name = "applicationUrl", column = @Column(name = "APPLY_CHANNEL_APPLICATION_URL")),
             @AttributeOverride(name = "additionalInfo", column = @Column(name = "APPLY_CHANNEL_ADDITIONAL_INFO"))
     })
     @Valid

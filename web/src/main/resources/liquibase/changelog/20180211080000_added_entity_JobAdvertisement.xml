@@ -74,7 +74,7 @@
             <column name="APPLY_CHANNEL_MAIL_ADDRESS" type="varchar(255)"/>
             <column name="APPLY_CHANNEL_EMAIL_ADDRESS" type="varchar(255)"/>
             <column name="APPLY_CHANNEL_PHONE_NUMBER" type="varchar(20)"/>
-            <column name="APPLY_CHANNEL_ONLINE_URL" type="varchar(1024)"/>
+            <column name="APPLY_CHANNEL_APPLICATION_URL" type="varchar(1024)"/>
             <column name="APPLY_CHANNEL_ADDITIONAL_INFO" type="varchar(255)"/>
             <column name="COMPANY_NAME" type="varchar(255)"/>
             <column name="COMPANY_STREET" type="varchar(50)"/>
