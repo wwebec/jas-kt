@@ -5,7 +5,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 public class MockedAvamService extends AvamService {
 
     public MockedAvamService(String endPointUrl, String username, String password) {
-        super(endPointUrl, username, password);
+        super(eventStore, endPointUrl, username, password);
     }
 
     @Override

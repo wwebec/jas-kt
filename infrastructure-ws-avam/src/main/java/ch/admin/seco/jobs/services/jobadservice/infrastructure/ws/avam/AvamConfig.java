@@ -36,7 +36,7 @@ public class AvamConfig {
         @Bean
         public AvamService avamService() {
             return new AvamService(
-                    avamProperties.getEndPointUrl(),
+                    eventStore, avamProperties.getEndPointUrl(),
                     avamProperties.getUsername(),
                     avamProperties.getPassword()
             );

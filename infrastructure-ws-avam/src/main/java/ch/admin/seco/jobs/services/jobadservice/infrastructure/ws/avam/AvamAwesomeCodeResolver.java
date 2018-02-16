@@ -12,6 +12,11 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExpe
  */
 public class AvamAwesomeCodeResolver {
 
+    public static final MappingBuilder<String, AvamAction> ACTIONS = new MappingBuilder<String, AvamAction>()
+            .put("0", AvamAction.ANMELDUNG)
+            .put("2", AvamAction.ABMELDUNG)
+            .toImmutable();
+
     public static final MappingBuilder<String, String> DRIVING_LICENSE_LEVELS = new MappingBuilder<String, String>()
             .put("01", "A")
             .put("02", "A1")

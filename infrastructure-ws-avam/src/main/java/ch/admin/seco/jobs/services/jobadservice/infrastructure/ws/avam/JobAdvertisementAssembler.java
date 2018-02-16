@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam;
 
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventData;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl.TOsteEgov;
 
@@ -11,25 +13,35 @@ public class JobAdvertisementAssembler {
 
     private static final DateTimeFormatter AVAM_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
+    private final EventStore eventStore;
+
+    public JobAdvertisementAssembler(EventStore eventStore) {
+        this.eventStore = eventStore;
+    }
+
     /**
      * FIXME:
-     * setAnmeldeDatum from event
-     * setAbmeldeDatum from event
      * setAbmeldeGrundCode from event
      * setBq1AvamBeruf resolve by occupation.getProfessionId()
      * setBq2AvamBeruf resolve by occupation.getProfessionId()
      * setBq3AvamBeruf resolve by occupation.getProfessionId()
      *
      * @param jobAdvertisement object from the domain
-     * @param actionCode
+     * @param action
      * @return the object for the ws
      */
-    static TOsteEgov toOsteEgov(JobAdvertisement jobAdvertisement, String actionCode) {
+    public TOsteEgov toOsteEgov(JobAdvertisement jobAdvertisement, AvamAction action) {
         TOsteEgov tOsteEgov = new TOsteEgov();
-        tOsteEgov.setDetailangabenCode(actionCode);
+        tOsteEgov.setDetailangabenCode(AvamAwesomeCodeResolver.ACTIONS.getLeft(action));
         tOsteEgov.setArbeitsamtBereich(jobAdvertisement.getJobCenterCode());
         tOsteEgov.setStellennummerEgov(jobAdvertisement.getId().getValue());
         tOsteEgov.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
+
+        fillRegistrationDate(tOsteEgov, jobAdvertisement);
+        if (AvamAction.ABMELDUNG.equals(action)) {
+            fillCancellationDate(tOsteEgov, jobAdvertisement);
+        }
+        tOsteEgov.setGueltigkeit(formatLocalDate(jobAdvertisement.getPublicationEndDate()));
 
         tOsteEgov.setBezeichnung(jobAdvertisement.getTitle());
         tOsteEgov.setBeschreibung(jobAdvertisement.getDescription());
@@ -49,15 +61,23 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setBq1AusbildungCode(jobAdvertisement.getEducationCode());
         fillLangaugeSkills(tOsteEgov, jobAdvertisement.getLanguageSkills());
 
-        tOsteEgov.setAnmeldeDatum(null); // FIXME from event
-        tOsteEgov.setAbmeldeDatum(null); // FIXME from event
-        tOsteEgov.setAbmeldeGrundCode(null); // FIXME from event
-        tOsteEgov.setGueltigkeit(formatLocalDate(jobAdvertisement.getPublicationEndDate()));
         return tOsteEgov;
     }
 
-    private static void fillEmployment(TOsteEgov tOsteEgov, JobAdvertisement jobAdvertisement) {
+    private void fillRegistrationDate(TOsteEgov tOsteEgov, JobAdvertisement jobAdvertisement) {
+        EventData event = eventStore.findLatestByType(jobAdvertisement.getId().getValue(), JobAdvertisement.class.getSimpleName(), JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
+        tOsteEgov.setAnmeldeDatum(formatLocalDate(event.getRegistrationTime().toLocalDate()));
+    }
+
+    private void fillCancellationDate(TOsteEgov tOsteEgov, JobAdvertisement jobAdvertisement) {
+        EventData event = eventStore.findLatestByType(jobAdvertisement.getId().getValue(), JobAdvertisement.class.getSimpleName(), JobAdvertisementEvents.JOB_ADVERTISEMENT_CANCELLED.getDomainEventType());
+        tOsteEgov.setAbmeldeDatum(formatLocalDate(event.getRegistrationTime().toLocalDate()));
+        tOsteEgov.setAbmeldeGrundCode(null); // FIXME from event
+    }
+
+    private void fillEmployment(TOsteEgov tOsteEgov, JobAdvertisement jobAdvertisement) {
         boolean immediately = safeBoolean(jobAdvertisement.getImmediately());
+        tOsteEgov.setAbSofort(immediately);
         if (!immediately) {
             tOsteEgov.setStellenantritt(formatLocalDate(jobAdvertisement.getEmploymentStartDate()));
         }
@@ -70,7 +90,7 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setPensumBis((short) jobAdvertisement.getWorkloadPercentageMax());
     }
 
-    private static void fillApplyChannel(TOsteEgov tOsteEgov, ApplyChannel applyChannel) {
+    private void fillApplyChannel(TOsteEgov tOsteEgov, ApplyChannel applyChannel) {
         if (applyChannel == null) {
             return;
         }
@@ -83,7 +103,7 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setBewerAngaben(applyChannel.getAdditionalInfo());
     }
 
-    private static void fillCompany(TOsteEgov tOsteEgov, Company company) {
+    private void fillCompany(TOsteEgov tOsteEgov, Company company) {
         if (company == null) {
             return;
         }
@@ -98,7 +118,7 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setUntLand(company.getCountryCode());
     }
 
-    private static void fillContact(TOsteEgov tOsteEgov, Contact contact) {
+    private void fillContact(TOsteEgov tOsteEgov, Contact contact) {
         if (contact == null) {
             return;
         }
@@ -109,7 +129,7 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setKpEmail(contact.getEmail());
     }
 
-    private static void fillLocalities(TOsteEgov tOsteEgov, List<Locality> localities) {
+    private void fillLocalities(TOsteEgov tOsteEgov, List<Locality> localities) {
         if (localities == null) {
             return;
         }
@@ -123,7 +143,7 @@ public class JobAdvertisementAssembler {
         }
     }
 
-    private static void fillOccupation(TOsteEgov tOsteEgov, List<Occupation> occupations) {
+    private void fillOccupation(TOsteEgov tOsteEgov, List<Occupation> occupations) {
         if (occupations == null) {
             return;
         }
@@ -144,7 +164,7 @@ public class JobAdvertisementAssembler {
         }
     }
 
-    private static void fillLangaugeSkills(TOsteEgov tOsteEgov, List<LanguageSkill> languageSkills) {
+    private void fillLangaugeSkills(TOsteEgov tOsteEgov, List<LanguageSkill> languageSkills) {
         if (languageSkills == null) {
             return;
         }
