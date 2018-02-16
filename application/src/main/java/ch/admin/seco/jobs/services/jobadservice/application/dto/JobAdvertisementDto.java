@@ -1,16 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.application.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 public class JobAdvertisementDto {
 
     private String id;
     private String stellennummerAvam;
-    private String stellennummerEgov;
     private String fingerprint;
     private String sourceSystem;
     private String sourceEntryId;
@@ -36,20 +34,19 @@ public class JobAdvertisementDto {
     private ApplyChannelDto applyChannel;
     private CompanyDto company;
     private ContactDto contact;
-    private Set<LocalityDto> localities;
-    private Set<OccupationDto> occupations;
+    private List<LocalityDto> localities;
+    private List<OccupationDto> occupations;
     private String educationCode;
-    private Set<LanguageSkillDto> languageSkills;
-    private Set<String> professionCodes;
+    private List<LanguageSkillDto> languageSkills;
+    private List<String> professionCodes;
 
     protected JobAdvertisementDto() {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, Set<OccupationDto> occupations, String educationCode, Set<LanguageSkillDto> languageSkills, Set<String> professionCodes) {
+    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
         this.id = id;
         this.stellennummerAvam = stellennummerAvam;
-        this.stellennummerEgov = stellennummerEgov;
         this.fingerprint = fingerprint;
         this.sourceSystem = sourceSystem;
         this.sourceEntryId = sourceEntryId;
@@ -96,14 +93,6 @@ public class JobAdvertisementDto {
 
     public void setStellennummerAvam(String stellennummerAvam) {
         this.stellennummerAvam = stellennummerAvam;
-    }
-
-    public String getStellennummerEgov() {
-        return stellennummerEgov;
-    }
-
-    public void setStellennummerEgov(String stellennummerEgov) {
-        this.stellennummerEgov = stellennummerEgov;
     }
 
     public String getFingerprint() {
@@ -306,19 +295,19 @@ public class JobAdvertisementDto {
         this.contact = contact;
     }
 
-    public Set<LocalityDto> getLocalities() {
+    public List<LocalityDto> getLocalities() {
         return localities;
     }
 
-    public void setLocalities(Set<LocalityDto> localities) {
+    public void setLocalities(List<LocalityDto> localities) {
         this.localities = localities;
     }
 
-    public Set<OccupationDto> getOccupations() {
+    public List<OccupationDto> getOccupations() {
         return occupations;
     }
 
-    public void setOccupations(Set<OccupationDto> occupations) {
+    public void setOccupations(List<OccupationDto> occupations) {
         this.occupations = occupations;
     }
 
@@ -330,19 +319,19 @@ public class JobAdvertisementDto {
         this.educationCode = educationCode;
     }
 
-    public Set<LanguageSkillDto> getLanguageSkills() {
+    public List<LanguageSkillDto> getLanguageSkills() {
         return languageSkills;
     }
 
-    public void setLanguageSkills(Set<LanguageSkillDto> languageSkills) {
+    public void setLanguageSkills(List<LanguageSkillDto> languageSkills) {
         this.languageSkills = languageSkills;
     }
 
-    public Set<String> getProfessionCodes() {
+    public List<String> getProfessionCodes() {
         return professionCodes;
     }
 
-    public void setProfessionCodes(Set<String> professionCodes) {
+    public void setProfessionCodes(List<String> professionCodes) {
         this.professionCodes = professionCodes;
     }
 
@@ -350,7 +339,6 @@ public class JobAdvertisementDto {
         JobAdvertisementDto jobAdvertisementDto = new JobAdvertisementDto();
         jobAdvertisementDto.setId(jobAdvertisement.getId().getValue());
         jobAdvertisementDto.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
-        jobAdvertisementDto.setStellennummerEgov(jobAdvertisement.getStellennummerEgov());
         jobAdvertisementDto.setFingerprint(jobAdvertisement.getFingerprint());
         jobAdvertisementDto.setSourceSystem(jobAdvertisement.getSourceSystem());
         jobAdvertisementDto.setSourceEntryId(jobAdvertisement.getSourceEntryId());

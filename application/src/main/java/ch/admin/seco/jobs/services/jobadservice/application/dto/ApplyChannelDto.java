@@ -7,18 +7,18 @@ public class ApplyChannelDto {
     private String mailAddress;
     private String emailAddress;
     private String phoneNumber;
-    private String applicationUrl;
+    private String formUrl;
     private String additionalInfo;
 
     protected ApplyChannelDto() {
         // For reflection libs
     }
 
-    public ApplyChannelDto(String mailAddress, String emailAddress, String phoneNumber, String applicationUrl, String additionalInfo) {
+    public ApplyChannelDto(String mailAddress, String emailAddress, String phoneNumber, String formUrl, String additionalInfo) {
         this.mailAddress = mailAddress;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
-        this.applicationUrl = applicationUrl;
+        this.formUrl = formUrl;
         this.additionalInfo = additionalInfo;
     }
 
@@ -46,12 +46,12 @@ public class ApplyChannelDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getApplicationUrl() {
-        return applicationUrl;
+    public String getFormUrl() {
+        return formUrl;
     }
 
-    public void setApplicationUrl(String applicationUrl) {
-        this.applicationUrl = applicationUrl;
+    public void setFormUrl(String formUrl) {
+        this.formUrl = formUrl;
     }
 
     public String getAdditionalInfo() {
@@ -67,7 +67,7 @@ public class ApplyChannelDto {
         applyChannelDto.setMailAddress(applyChannel.getMailAddress());
         applyChannelDto.setEmailAddress(applyChannel.getEmailAddress());
         applyChannelDto.setPhoneNumber(applyChannel.getPhoneNumber());
-        applyChannelDto.setApplicationUrl(applyChannel.getApplicationUrl());
+        applyChannelDto.setFormUrl(applyChannel.getFormUrl());
         applyChannelDto.setAdditionalInfo(applyChannel.getAdditionalInfo());
         return applyChannelDto;
     }

@@ -1,0 +1,57 @@
+configurations {
+    jaxb
+}
+
+apply plugin: 'java'
+
+// tag::wsdl[]
+task genJaxb {
+    ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
+    ext.classesDir = "${buildDir}/classes/jaxb"
+    ext.schemaDir = "${projectDir}/src/main/resources/schema"
+
+    outputs.dir classesDir
+
+    doLast() {
+        project.ant {
+            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJCTask",
+                    classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
+
+            xjc(destdir: sourcesDir, package: "ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl") {
+                schema(dir: schemaDir, includes: "*.wsdl")
+                arg(value: "-wsdl")
+                produces(dir: sourcesDir, includes: "**/*.java")
+            }
+
+            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+                    debugLevel: "lines,vars,source",
+                    classpath: configurations.jaxb.asPath) {
+                src(path: sourcesDir)
+                include(name: "**/*.java")
+                include(name: "*.java")
+            }
+
+            copy(todir: classesDir) {
+                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                    exclude(name: "**/*.java")
+                }
+            }
+        }
+    }
+}
+// end::wsdl[]
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile(files(genJaxb.classesDir).builtBy(genJaxb))
+
+    jaxb "com.sun.xml.bind:jaxb-xjc:2.1.7"
+}
+
+compileJava {
+    dependsOn genJaxb
+}

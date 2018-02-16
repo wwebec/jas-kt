@@ -14,18 +14,18 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
     private String mailAddress;
     private String emailAddress;
     private String phoneNumber;
-    private String applicationUrl;
+    private String formUrl;
     private String additionalInfo;
 
     protected ApplyChannel() {
         // For reflection libs
     }
 
-    public ApplyChannel(String mailAddress, String emailAddress, String phoneNumber, String applicationUrl, String additionalInfo) {
+    public ApplyChannel(String mailAddress, String emailAddress, String phoneNumber, String formUrl, String additionalInfo) {
         this.mailAddress = mailAddress;
         this.emailAddress = emailAddress;
         this.phoneNumber = phoneNumber;
-        this.applicationUrl = applicationUrl;
+        this.formUrl = formUrl;
         this.additionalInfo = additionalInfo;
     }
 
@@ -46,8 +46,8 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         return phoneNumber;
     }
 
-    public String getApplicationUrl() {
-        return applicationUrl;
+    public String getFormUrl() {
+        return formUrl;
     }
 
     public String getAdditionalInfo() {
@@ -62,13 +62,13 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         return Objects.equals(mailAddress, that.mailAddress) &&
                 Objects.equals(emailAddress, that.emailAddress) &&
                 Objects.equals(phoneNumber, that.phoneNumber) &&
-                Objects.equals(applicationUrl, that.applicationUrl) &&
+                Objects.equals(formUrl, that.formUrl) &&
                 Objects.equals(additionalInfo, that.additionalInfo);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(mailAddress, emailAddress, phoneNumber, applicationUrl, additionalInfo);
+        return Objects.hash(mailAddress, emailAddress, phoneNumber, formUrl, additionalInfo);
     }
 
 }

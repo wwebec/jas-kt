@@ -3,7 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.dto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class OccupationDto {
@@ -43,7 +43,7 @@ public class OccupationDto {
         return occupationDto;
     }
 
-    public static Set<OccupationDto> toDto(Set<Occupation> occupations) {
-        return occupations.stream().map(OccupationDto::toDto).collect(Collectors.toSet());
+    public static List<OccupationDto> toDto(List<Occupation> occupations) {
+        return occupations.stream().map(OccupationDto::toDto).collect(Collectors.toList());
     }
 }

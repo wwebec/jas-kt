@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl.TOsteEgov;
 
 public class AvamService {
 
@@ -19,7 +20,7 @@ public class AvamService {
     }
 
     protected void send(JobAdvertisement jobAdvertisement, String actionCode) {
-
+        TOsteEgov tOsteEgov = JobAdvertisementAssembler.toOsteEgov(jobAdvertisement, actionCode);
     }
 
 }

@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +45,7 @@ public class JobAdvertisementApplicationService {
                     applyChannelDto.getMailAddress(),
                     applyChannelDto.getEmailAddress(),
                     applyChannelDto.getPhoneNumber(),
-                    applyChannelDto.getApplicationUrl(),
+                    applyChannelDto.getFormUrl(),
                     applyChannelDto.getAdditionalInfo()
             ));
         }
@@ -91,12 +88,12 @@ public class JobAdvertisementApplicationService {
                     localityDto.getCantonCode(),
                     localityDto.getCountryCode(),
                     localityDto.getLocation()
-            )).collect(Collectors.toSet()));
+            )).collect(Collectors.toList()));
         }
         OccupationDto occupationDto = createJobAdvertisementDto.getOccupation();
         if (occupationDto != null) {
             // TODO update professionCodes
-            Set<Occupation> occupations = new HashSet<>();
+            List<Occupation> occupations = new ArrayList<>();
             occupations.add(new Occupation(
                     new ProfessionId(occupationDto.getProfessionId()),
                     occupationDto.getWorkExperience()
@@ -109,7 +106,7 @@ public class JobAdvertisementApplicationService {
                     languageSkillDto.getLanguageIsoCode(),
                     LanguageLevel.valueOf(languageSkillDto.getSpokenLevel()),
                     LanguageLevel.valueOf(languageSkillDto.getWrittenLevel())
-            )).collect(Collectors.toSet()));
+            )).collect(Collectors.toList()));
         }
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED, newJobAdvertisement));

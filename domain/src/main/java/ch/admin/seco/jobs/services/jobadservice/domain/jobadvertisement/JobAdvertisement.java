@@ -6,7 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
 import javax.persistence.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertisementId> {
@@ -17,8 +17,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private JobAdvertisementId id;
 
     private String stellennummerAvam;
-
-    private String stellennummerEgov; // FIXME Ist eigentlich id
 
     private String fingerprint;
 
@@ -70,7 +68,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
             @AttributeOverride(name = "emailAddress", column = @Column(name = "APPLY_CHANNEL_EMAIL_ADDRESS")),
             @AttributeOverride(name = "phoneNumber", column = @Column(name = "APPLY_CHANNEL_PHONE_NUMBER")),
-            @AttributeOverride(name = "applicationUrl", column = @Column(name = "APPLY_CHANNEL_APPLICATION_URL")),
+            @AttributeOverride(name = "applicationUrl", column = @Column(name = "APPLY_CHANNEL_FORM_URL")),
             @AttributeOverride(name = "additionalInfo", column = @Column(name = "APPLY_CHANNEL_ADDITIONAL_INFO"))
     })
     @Valid
@@ -108,23 +106,23 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_LOCALITY", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
-    private Set<Locality> localities;
+    private List<Locality> localities;
 
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
-    private Set<Occupation> occupations;
+    private List<Occupation> occupations;
 
     private String educationCode;
 
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGES_KILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
-    private Set<LanguageSkill> languageSkills;
+    private List<LanguageSkill> languageSkills;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "JOB_ADVERTISEMENT_PROFESSION_CODES", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
-    private Set<String> professionCodes;
+    private List<String> professionCodes;
 
     protected JobAdvertisement() {
         // For reflection libs
@@ -137,10 +135,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String stellennummerEgov, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Set<Locality> localities, Set<Occupation> occupations, String educationCode, Set<LanguageSkill> languageSkills, Set<String> professionCodes) {
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
         this(id, status, title, description);
         this.stellennummerAvam = stellennummerAvam;
-        this.stellennummerEgov = stellennummerEgov;
         this.fingerprint = fingerprint;
         this.sourceSystem = sourceSystem;
         this.sourceEntryId = sourceEntryId;
@@ -181,10 +178,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public String getStellennummerAvam() {
         return stellennummerAvam;
-    }
-
-    public String getStellennummerEgov() {
-        return stellennummerEgov;
     }
 
     public String getFingerprint() {
@@ -287,11 +280,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return contact;
     }
 
-    public Set<Locality> getLocalities() {
+    public List<Locality> getLocalities() {
         return localities;
     }
 
-    public Set<Occupation> getOccupations() {
+    public List<Occupation> getOccupations() {
         return occupations;
     }
 
@@ -299,11 +292,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return educationCode;
     }
 
-    public Set<LanguageSkill> getLanguageSkills() {
+    public List<LanguageSkill> getLanguageSkills() {
         return languageSkills;
     }
 
-    public Set<String> getProfessionCodes() {
+    public List<String> getProfessionCodes() {
         return professionCodes;
     }
 
@@ -329,16 +322,16 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.contact = contact;
     }
 
-    public void updateLocalities(Set<Locality> localities) {
+    public void updateLocalities(List<Locality> localities) {
         this.localities = localities;
     }
 
-    public void updateRequirements(Set<Occupation> occupations, String educationId) {
+    public void updateRequirements(List<Occupation> occupations, String educationId) {
         this.occupations = occupations;
         this.educationCode = educationId;
     }
 
-    public void updateLanguageSkills(Set<LanguageSkill> languageSkills) {
+    public void updateLanguageSkills(List<LanguageSkill> languageSkills) {
         this.languageSkills = languageSkills;
     }
 }

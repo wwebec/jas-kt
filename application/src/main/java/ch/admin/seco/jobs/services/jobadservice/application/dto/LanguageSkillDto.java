@@ -2,7 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.dto;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class LanguageSkillDto {
@@ -53,7 +53,7 @@ public class LanguageSkillDto {
         return languageSkillDto;
     }
 
-    public static Set<LanguageSkillDto> toDto(Set<LanguageSkill> languageSkills) {
-        return languageSkills.stream().map(LanguageSkillDto::toDto).collect(Collectors.toSet());
+    public static List<LanguageSkillDto> toDto(List<LanguageSkill> languageSkills) {
+        return languageSkills.stream().map(LanguageSkillDto::toDto).collect(Collectors.toList());
     }
 }
