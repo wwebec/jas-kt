@@ -1,8 +1,9 @@
-package ch.admin.seco.jobs.services.jobadservice.application;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.application.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ public class JobAdvertisementApplicationService {
         JobAdvertisement jobAdvertisement = new JobAdvertisement(
                 new JobAdvertisementId(),
                 JobAdvertisementStatus.CREATED,
+                TimeMachine.now().toLocalDate(),
                 createJobAdvertisementDto.getTitle(),
                 createJobAdvertisementDto.getDescription()
         );

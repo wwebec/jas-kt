@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.dto;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;

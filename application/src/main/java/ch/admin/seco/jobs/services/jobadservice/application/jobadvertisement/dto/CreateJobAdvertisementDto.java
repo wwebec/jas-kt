@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.dto;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;

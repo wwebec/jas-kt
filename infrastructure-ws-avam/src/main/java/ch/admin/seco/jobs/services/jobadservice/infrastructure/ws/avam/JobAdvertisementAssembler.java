@@ -1,7 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventData;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
+import ch.admin.seco.jobs.services.jobadservice.application.profession.ProfessionApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl.TOsteEgov;
 
@@ -13,15 +12,14 @@ public class JobAdvertisementAssembler {
 
     private static final DateTimeFormatter AVAM_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    private final EventStore eventStore;
+    private final ProfessionApplicationService professionApplicationService;
 
-    public JobAdvertisementAssembler(EventStore eventStore) {
-        this.eventStore = eventStore;
+    public JobAdvertisementAssembler(ProfessionApplicationService professionApplicationService) {
+        this.professionApplicationService = professionApplicationService;
     }
 
     /**
      * FIXME:
-     * setAbmeldeGrundCode from event
      * setBq1AvamBeruf resolve by occupation.getProfessionId()
      * setBq2AvamBeruf resolve by occupation.getProfessionId()
      * setBq3AvamBeruf resolve by occupation.getProfessionId()
@@ -37,9 +35,10 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setStellennummerEgov(jobAdvertisement.getId().getValue());
         tOsteEgov.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
 
-        fillRegistrationDate(tOsteEgov, jobAdvertisement);
+        tOsteEgov.setAnmeldeDatum(formatLocalDate(jobAdvertisement.getRegistrationDate()));
         if (AvamAction.ABMELDUNG.equals(action)) {
-            fillCancellationDate(tOsteEgov, jobAdvertisement);
+            tOsteEgov.setAbmeldeDatum(formatLocalDate(jobAdvertisement.getCancellationDate()));
+            tOsteEgov.setAbmeldeGrundCode(jobAdvertisement.getCancellationCode());
         }
         tOsteEgov.setGueltigkeit(formatLocalDate(jobAdvertisement.getPublicationEndDate()));
 
@@ -62,17 +61,6 @@ public class JobAdvertisementAssembler {
         fillLangaugeSkills(tOsteEgov, jobAdvertisement.getLanguageSkills());
 
         return tOsteEgov;
-    }
-
-    private void fillRegistrationDate(TOsteEgov tOsteEgov, JobAdvertisement jobAdvertisement) {
-        EventData event = eventStore.findLatestByType(jobAdvertisement.getId().getValue(), JobAdvertisement.class.getSimpleName(), JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
-        tOsteEgov.setAnmeldeDatum(formatLocalDate(event.getRegistrationTime().toLocalDate()));
-    }
-
-    private void fillCancellationDate(TOsteEgov tOsteEgov, JobAdvertisement jobAdvertisement) {
-        EventData event = eventStore.findLatestByType(jobAdvertisement.getId().getValue(), JobAdvertisement.class.getSimpleName(), JobAdvertisementEvents.JOB_ADVERTISEMENT_CANCELLED.getDomainEventType());
-        tOsteEgov.setAbmeldeDatum(formatLocalDate(event.getRegistrationTime().toLocalDate()));
-        tOsteEgov.setAbmeldeGrundCode(null); // FIXME from event
     }
 
     private void fillEmployment(TOsteEgov tOsteEgov, JobAdvertisement jobAdvertisement) {
@@ -149,17 +137,17 @@ public class JobAdvertisementAssembler {
         }
         if (occupations.size() > 0) {
             Occupation occupation = occupations.get(0);
-            tOsteEgov.setBq1AvamBeruf(null); // FIXME resolve by occupation.getProfessionId()
+            tOsteEgov.setBq1AvamBeruf(professionApplicationService.findAvamCode(occupation.getProfessionId()));
             tOsteEgov.setBq1ErfahrungCode(AvamAwesomeCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
         }
         if (occupations.size() > 1) {
             Occupation occupation = occupations.get(1);
-            tOsteEgov.setBq1AvamBeruf(null); // FIXME resolve by occupation.getProfessionId()
+            tOsteEgov.setBq1AvamBeruf(professionApplicationService.findAvamCode(occupation.getProfessionId()));
             tOsteEgov.setBq1ErfahrungCode(AvamAwesomeCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
         }
         if (occupations.size() > 2) {
             Occupation occupation = occupations.get(2);
-            tOsteEgov.setBq1AvamBeruf(null); // FIXME resolve by occupation.getProfessionId()
+            tOsteEgov.setBq1AvamBeruf(professionApplicationService.findAvamCode(occupation.getProfessionId()));
             tOsteEgov.setBq1ErfahrungCode(AvamAwesomeCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
         }
     }

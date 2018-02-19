@@ -52,6 +52,12 @@
             <column name="STATUS" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
+            <column name="REGISTRATION_DATE" type="date"/>
+            <column name="REJECTION_DATE" type="date"/>
+            <column name="REJECTION_CODE" type="varchar(10)"/>
+            <column name="REJECTION_REASON" type="varchar(800)"/>
+            <column name="CANCELLATION_DATE" type="date"/>
+            <column name="CANCELLATION_CODE" type="varchar(10)"/>
             <column name="PUBLICATION_START_DATE" type="date"/>
             <column name="PUBLICATION_END_DATE" type="date"/>
             <column name="TITLE" type="varchar(255)">

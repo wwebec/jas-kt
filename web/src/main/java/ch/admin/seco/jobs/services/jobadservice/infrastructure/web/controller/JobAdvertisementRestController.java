@@ -1,8 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import ch.admin.seco.jobs.services.jobadservice.application.JobAdvertisementApplicationService;
-import ch.admin.seco.jobs.services.jobadservice.application.dto.CreateJobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.dto.JobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventData;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;

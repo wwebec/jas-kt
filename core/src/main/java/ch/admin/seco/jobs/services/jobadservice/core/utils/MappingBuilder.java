@@ -28,6 +28,10 @@ public class MappingBuilder<L, R> {
         return new MappingBuilder<>(Collections.unmodifiableMap(mapLeft), Collections.unmodifiableMap(mapRight));
     }
 
+    public int size() {
+        return mapLeft.size();
+    }
+
     public R getRight(L left) {
         return mapLeft.get(left);
     }

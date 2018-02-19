@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.dto;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 
@@ -14,6 +14,12 @@ public class JobAdvertisementDto {
     private String sourceEntryId;
     private String externalUrl;
     private String status;
+    private LocalDate registrationDate;
+    private LocalDate rejectionDate;
+    private String rejectionCode;
+    private String rejectionReason;
+    private LocalDate cancellationDate;
+    private String cancellationCode;
     private LocalDate publicationStartDate;
     private LocalDate publicationEndDate;
     private String title;
@@ -44,7 +50,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
+    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
         this.id = id;
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
@@ -52,6 +58,12 @@ public class JobAdvertisementDto {
         this.sourceEntryId = sourceEntryId;
         this.externalUrl = externalUrl;
         this.status = status;
+        this.registrationDate = registrationDate;
+        this.rejectionDate = rejectionDate;
+        this.rejectionCode = rejectionCode;
+        this.rejectionReason = rejectionReason;
+        this.cancellationDate = cancellationDate;
+        this.cancellationCode = cancellationCode;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
         this.title = title;
@@ -133,6 +145,54 @@ public class JobAdvertisementDto {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public LocalDate getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(LocalDate registrationDate) {
+        this.registrationDate = registrationDate;
+    }
+
+    public LocalDate getRejectionDate() {
+        return rejectionDate;
+    }
+
+    public void setRejectionDate(LocalDate rejectionDate) {
+        this.rejectionDate = rejectionDate;
+    }
+
+    public String getRejectionCode() {
+        return rejectionCode;
+    }
+
+    public void setRejectionCode(String rejectionCode) {
+        this.rejectionCode = rejectionCode;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public void setRejectionReason(String rejectionReason) {
+        this.rejectionReason = rejectionReason;
+    }
+
+    public LocalDate getCancellationDate() {
+        return cancellationDate;
+    }
+
+    public void setCancellationDate(LocalDate cancellationDate) {
+        this.cancellationDate = cancellationDate;
+    }
+
+    public String getCancellationCode() {
+        return cancellationCode;
+    }
+
+    public void setCancellationCode(String cancellationCode) {
+        this.cancellationCode = cancellationCode;
     }
 
     public LocalDate getPublicationStartDate() {
@@ -344,6 +404,12 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setSourceEntryId(jobAdvertisement.getSourceEntryId());
         jobAdvertisementDto.setExternalUrl(jobAdvertisement.getExternalUrl());
         jobAdvertisementDto.setStatus(jobAdvertisement.getStatus().toString());
+        jobAdvertisementDto.setRegistrationDate(jobAdvertisement.getRegistrationDate());
+        jobAdvertisementDto.setRejectionDate(jobAdvertisement.getRejectionDate());
+        jobAdvertisementDto.setRejectionCode(jobAdvertisement.getRejectionCode());
+        jobAdvertisementDto.setRejectionReason(jobAdvertisement.getRejectionReason());
+        jobAdvertisementDto.setCancellationDate(jobAdvertisement.getCancellationDate());
+        jobAdvertisementDto.setCancellationCode(jobAdvertisement.getCancellationCode());
         jobAdvertisementDto.setPublicationStartDate(jobAdvertisement.getPublicationStartDate());
         jobAdvertisementDto.setPublicationEndDate(jobAdvertisement.getPublicationEndDate());
         jobAdvertisementDto.setTitle(jobAdvertisement.getTitle());

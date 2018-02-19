@@ -29,6 +29,18 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Enumerated(EnumType.STRING)
     private JobAdvertisementStatus status;
 
+    private LocalDate registrationDate;
+
+    private LocalDate rejectionDate;
+
+    private String rejectionCode;
+
+    private String rejectionReason;
+
+    private LocalDate cancellationDate;
+
+    private String cancellationCode;
+
     private LocalDate publicationStartDate;
 
     private LocalDate publicationEndDate;
@@ -128,20 +140,26 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         // For reflection libs
     }
 
-    public JobAdvertisement(JobAdvertisementId id, JobAdvertisementStatus status, String title, String description) {
+    public JobAdvertisement(JobAdvertisementId id, JobAdvertisementStatus status, LocalDate registrationDate, String title, String description) {
         this.id = Condition.notNull(id);
         this.status = Condition.notNull(status);
+        this.registrationDate = Condition.notNull(registrationDate);
         this.title = Condition.notBlank(title);
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
-        this(id, status, title, description);
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
+        this(id, status, registrationDate, title, description);
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
         this.sourceSystem = sourceSystem;
         this.sourceEntryId = sourceEntryId;
         this.externalUrl = externalUrl;
+        this.rejectionDate = rejectionDate;
+        this.rejectionCode = rejectionCode;
+        this.rejectionReason = rejectionReason;
+        this.cancellationDate = cancellationDate;
+        this.cancellationCode = cancellationCode;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
         this.employmentStartDate = employmentStartDate;
@@ -198,6 +216,30 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public JobAdvertisementStatus getStatus() {
         return status;
+    }
+
+    public LocalDate getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public LocalDate getRejectionDate() {
+        return rejectionDate;
+    }
+
+    public String getRejectionCode() {
+        return rejectionCode;
+    }
+
+    public String getRejectionReason() {
+        return rejectionReason;
+    }
+
+    public LocalDate getCancellationDate() {
+        return cancellationDate;
+    }
+
+    public String getCancellationCode() {
+        return cancellationCode;
     }
 
     public LocalDate getPublicationStartDate() {
