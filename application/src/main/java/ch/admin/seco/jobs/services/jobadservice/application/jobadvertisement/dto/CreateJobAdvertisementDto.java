@@ -6,6 +6,8 @@ import java.util.Set;
 
 public class CreateJobAdvertisementDto {
 
+    private boolean eures;
+
     @NotNull
     private String title;
 
@@ -50,7 +52,8 @@ public class CreateJobAdvertisementDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementDto(String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, OccupationDto occupation, String educationCode, Set<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, OccupationDto occupation, String educationCode, Set<LanguageSkillDto> languageSkills) {
+        this.eures = eures;
         this.title = title;
         this.description = description;
         this.employmentStartDate = employmentStartDate;
@@ -68,6 +71,14 @@ public class CreateJobAdvertisementDto {
         this.occupation = occupation;
         this.educationCode = educationCode;
         this.languageSkills = languageSkills;
+    }
+
+    public boolean isEures() {
+        return eures;
+    }
+
+    public void setEures(boolean eures) {
+        this.eures = eures;
     }
 
     public String getTitle() {

@@ -45,6 +45,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private LocalDate publicationEndDate;
 
+    private boolean eures;
+
+    private boolean euresAnonymous;
+
     private String title;
 
     private String description;
@@ -148,7 +152,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
         this(id, status, registrationDate, title, description);
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
@@ -162,6 +166,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.cancellationCode = cancellationCode;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
+        this.eures = eures;
+        this.euresAnonymous = euresAnonymous;
         this.employmentStartDate = employmentStartDate;
         this.employmentEndDate = employmentEndDate;
         this.durationInDays = durationInDays;
@@ -248,6 +254,22 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public LocalDate getPublicationEndDate() {
         return publicationEndDate;
+    }
+
+    public boolean isEures() {
+        return eures;
+    }
+
+    public void setEures(boolean eures) {
+        this.eures = eures;
+    }
+
+    public boolean isEuresAnonymous() {
+        return euresAnonymous;
+    }
+
+    public void setEuresAnonymous(boolean euresAnonym) {
+        this.euresAnonymous = euresAnonym;
     }
 
     public String getTitle() {

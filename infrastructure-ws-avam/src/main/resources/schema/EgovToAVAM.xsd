@@ -57,7 +57,7 @@
 			<xs:element name="bq3QualifikationCode" nillable="true" type="xs:string"/>
 			<xs:element name="bq3VerwandteBerufe" nillable="true" type="xs:boolean"/>
 			<xs:element name="detailangabenCode" nillable="true" type="xs:string"/>
-			<xs:element name="euresAnonym" nillable="true" type="xs:boolean"/>
+			<xs:element name="euresAnonymous" nillable="true" type="xs:boolean"/>
 			<xs:element name="eures" nillable="true" type="xs:boolean"/>
 			<xs:element name="geschlechtCode" nillable="true" type="xs:string"/>
 			<xs:element name="gleicheOste" nillable="true" type="xs:string"/>

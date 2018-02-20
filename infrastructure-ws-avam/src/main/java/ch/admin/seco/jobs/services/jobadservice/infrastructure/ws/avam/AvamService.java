@@ -10,17 +10,15 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 
 public class AvamService {
 
-    public static final String AVAM_RESPONSE_CODE_OK = "NK_AVAM: OK";
-    public static final String AVAM_RESPONSE_CODE_ERROR = "NK_AVAM: ERROR";
+    static final String AVAM_RESPONSE_OK = "NK_AVAM: OK";
+    private static final String AVAM_RESPONSE_ERROR = "NK_AVAM: ERROR";
 
-    private final ProfessionApplicationService professionApplicationService;
     private final WebServiceTemplate webserviceTemplate;
     private final String username;
     private final String password;
     private final JobAdvertisementAssembler assembler;
 
     public AvamService(ProfessionApplicationService professionApplicationService, WebServiceTemplate webserviceTemplate, String username, String password) {
-        this.professionApplicationService = professionApplicationService;
         this.webserviceTemplate = webserviceTemplate;
         this.username = username;
         this.password = password;
@@ -45,20 +43,22 @@ public class AvamService {
         handleResponse(response);
     }
 
-    protected WSCredentials getCredentials() {
+    WSCredentials getCredentials() {
         WSCredentials credentials = new WSCredentials();
         credentials.setUsername(username);
         credentials.setPassword(password);
         return credentials;
     }
 
-    protected void handleResponse(DeliverOsteResponse response) {
+    void handleResponse(DeliverOsteResponse response) {
         String returnCode = response.getDeliverOsteReturn();
         switch (returnCode) {
-            case AVAM_RESPONSE_CODE_ERROR:
-                return;
-            case AVAM_RESPONSE_CODE_OK:
-                return;
+            case AVAM_RESPONSE_ERROR:
+                // TODO Handle error
+                break;
+            case AVAM_RESPONSE_OK:
+                // TODO Handle success (e.g. publish event)
+                break;
         }
     }
 

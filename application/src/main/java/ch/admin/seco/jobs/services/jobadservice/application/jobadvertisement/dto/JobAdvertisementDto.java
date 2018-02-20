@@ -22,6 +22,8 @@ public class JobAdvertisementDto {
     private String cancellationCode;
     private LocalDate publicationStartDate;
     private LocalDate publicationEndDate;
+    private boolean eures;
+    private boolean euresAnonymous;
     private String title;
     private String description;
     private LocalDate employmentStartDate;
@@ -50,7 +52,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
+    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
         this.id = id;
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
@@ -66,6 +68,8 @@ public class JobAdvertisementDto {
         this.cancellationCode = cancellationCode;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
+        this.eures = eures;
+        this.euresAnonymous = euresAnonymous;
         this.title = title;
         this.description = description;
         this.employmentStartDate = employmentStartDate;
@@ -209,6 +213,22 @@ public class JobAdvertisementDto {
 
     public void setPublicationEndDate(LocalDate publicationEndDate) {
         this.publicationEndDate = publicationEndDate;
+    }
+
+    public boolean isEures() {
+        return eures;
+    }
+
+    public void setEures(boolean eures) {
+        this.eures = eures;
+    }
+
+    public boolean isEuresAnonymous() {
+        return euresAnonymous;
+    }
+
+    public void setEuresAnonymous(boolean euresAnonymous) {
+        this.euresAnonymous = euresAnonymous;
     }
 
     public String getTitle() {
@@ -412,6 +432,8 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setCancellationCode(jobAdvertisement.getCancellationCode());
         jobAdvertisementDto.setPublicationStartDate(jobAdvertisement.getPublicationStartDate());
         jobAdvertisementDto.setPublicationEndDate(jobAdvertisement.getPublicationEndDate());
+        jobAdvertisementDto.setEures(jobAdvertisement.isEures());
+        jobAdvertisementDto.setEuresAnonymous(jobAdvertisement.isEuresAnonymous());
         jobAdvertisementDto.setTitle(jobAdvertisement.getTitle());
         jobAdvertisementDto.setDescription(jobAdvertisement.getDescription());
         jobAdvertisementDto.setEmploymentStartDate(jobAdvertisement.getEmploymentStartDate());

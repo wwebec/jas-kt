@@ -42,6 +42,9 @@ public class JobAdvertisementAssembler {
         }
         tOsteEgov.setGueltigkeit(formatLocalDate(jobAdvertisement.getPublicationEndDate()));
 
+        tOsteEgov.setEures(jobAdvertisement.isEures());
+        tOsteEgov.setEuresAnonym(jobAdvertisement.isEuresAnonymous());
+
         tOsteEgov.setBezeichnung(jobAdvertisement.getTitle());
         tOsteEgov.setBeschreibung(jobAdvertisement.getDescription());
 
