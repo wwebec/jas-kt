@@ -27,10 +27,10 @@ public class JobAdvertisementApplicationService {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
     }
 
-    public JobAdvertisementId createJobAdvertisement(CreateJobAdvertisementDto createJobAdvertisementDto) {
+    public JobAdvertisementId createJobAdvertisement(CreateJobAdvertisementDto createJobAdvertisementDto, SourceSystem sourceSystem) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement(
                 new JobAdvertisementId(),
-                createJobAdvertisementDto.getSourceSystem(),
+                sourceSystem,
                 JobAdvertisementStatus.CREATED,
                 TimeMachine.now().toLocalDate(),
                 createJobAdvertisementDto.getTitle(),

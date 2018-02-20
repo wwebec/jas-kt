@@ -1,7 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Set;
@@ -9,8 +7,6 @@ import java.util.Set;
 public class CreateJobAdvertisementDto {
 
     private boolean eures;
-
-    private SourceSystem sourceSystem;
 
     @NotNull
     private String title;
@@ -56,9 +52,8 @@ public class CreateJobAdvertisementDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementDto(boolean eures, SourceSystem sourceSystem, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, OccupationDto occupation, String educationCode, Set<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, OccupationDto occupation, String educationCode, Set<LanguageSkillDto> languageSkills) {
         this.eures = eures;
-        this.sourceSystem = sourceSystem;
         this.title = title;
         this.description = description;
         this.employmentStartDate = employmentStartDate;
@@ -84,14 +79,6 @@ public class CreateJobAdvertisementDto {
 
     public void setEures(boolean eures) {
         this.eures = eures;
-    }
-
-    public SourceSystem getSourceSystem() {
-        return sourceSystem;
-    }
-
-    public void setSourceSystem(SourceSystem sourceSystem) {
-        this.sourceSystem = sourceSystem;
     }
 
     public String getTitle() {
