@@ -20,7 +20,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String fingerprint;
 
-    private String sourceSystem;
+    private SourceSystem sourceSystem;
 
     private String sourceEntryId;
 
@@ -144,19 +144,19 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         // For reflection libs
     }
 
-    public JobAdvertisement(JobAdvertisementId id, JobAdvertisementStatus status, LocalDate registrationDate, String title, String description) {
+    public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status, LocalDate registrationDate, String title, String description) {
         this.id = Condition.notNull(id);
+        this.sourceSystem = Condition.notNull(sourceSystem);
         this.status = Condition.notNull(status);
         this.registrationDate = Condition.notNull(registrationDate);
         this.title = Condition.notBlank(title);
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
-        this(id, status, registrationDate, title, description);
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
+        this(id, sourceSystem, status, registrationDate, title, description);
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
-        this.sourceSystem = sourceSystem;
         this.sourceEntryId = sourceEntryId;
         this.externalUrl = externalUrl;
         this.rejectionDate = rejectionDate;
@@ -208,7 +208,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return fingerprint;
     }
 
-    public String getSourceSystem() {
+    public SourceSystem getSourceSystem() {
         return sourceSystem;
     }
 

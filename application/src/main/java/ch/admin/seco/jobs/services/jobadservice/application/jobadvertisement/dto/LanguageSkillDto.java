@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 
 import java.util.List;
@@ -8,14 +9,14 @@ import java.util.stream.Collectors;
 public class LanguageSkillDto {
 
     private String languageIsoCode;
-    private String spokenLevel;
-    private String writtenLevel;
+    private LanguageLevel spokenLevel;
+    private LanguageLevel writtenLevel;
 
     protected LanguageSkillDto() {
         // For reflection libs
     }
 
-    public LanguageSkillDto(String languageIsoCode, String spokenLevel, String writtenLevel) {
+    public LanguageSkillDto(String languageIsoCode, LanguageLevel spokenLevel, LanguageLevel writtenLevel) {
         this.languageIsoCode = languageIsoCode;
         this.spokenLevel = spokenLevel;
         this.writtenLevel = writtenLevel;
@@ -29,27 +30,27 @@ public class LanguageSkillDto {
         this.languageIsoCode = languageIsoCode;
     }
 
-    public String getSpokenLevel() {
+    public LanguageLevel getSpokenLevel() {
         return spokenLevel;
     }
 
-    public void setSpokenLevel(String spokenLevel) {
+    public void setSpokenLevel(LanguageLevel spokenLevel) {
         this.spokenLevel = spokenLevel;
     }
 
-    public String getWrittenLevel() {
+    public LanguageLevel getWrittenLevel() {
         return writtenLevel;
     }
 
-    public void setWrittenLevel(String writtenLevel) {
+    public void setWrittenLevel(LanguageLevel writtenLevel) {
         this.writtenLevel = writtenLevel;
     }
 
     public static LanguageSkillDto toDto(LanguageSkill languageSkill) {
         LanguageSkillDto languageSkillDto = new LanguageSkillDto();
         languageSkillDto.setLanguageIsoCode(languageSkill.getLanguageIsoCode());
-        languageSkillDto.setSpokenLevel(languageSkill.getSpokenLevel().toString());
-        languageSkillDto.setWrittenLevel(languageSkill.getWrittenLevel().toString());
+        languageSkillDto.setSpokenLevel(languageSkill.getSpokenLevel());
+        languageSkillDto.setWrittenLevel(languageSkill.getWrittenLevel());
         return languageSkillDto;
     }
 

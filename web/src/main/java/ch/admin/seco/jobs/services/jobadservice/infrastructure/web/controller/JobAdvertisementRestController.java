@@ -8,6 +8,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventData;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class JobAdvertisementRestController {
 
     @PostMapping()
     public JobAdvertisementDto createJobAdvertisement(@RequestBody CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
+        createJobAdvertisementDto.setSourceSystem(SourceSystem.JOBROOM);
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createJobAdvertisement(createJobAdvertisementDto);
         return jobAdvertisementApplicationService.findById(jobAdvertisementId);
     }

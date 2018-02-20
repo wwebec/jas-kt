@@ -1,6 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -10,10 +12,10 @@ public class JobAdvertisementDto {
     private String id;
     private String stellennummerAvam;
     private String fingerprint;
-    private String sourceSystem;
+    private SourceSystem sourceSystem;
     private String sourceEntryId;
     private String externalUrl;
-    private String status;
+    private JobAdvertisementStatus status;
     private LocalDate registrationDate;
     private LocalDate rejectionDate;
     private String rejectionCode;
@@ -52,7 +54,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, String sourceSystem, String sourceEntryId, String externalUrl, String status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
+    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
         this.id = id;
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
@@ -119,11 +121,11 @@ public class JobAdvertisementDto {
         this.fingerprint = fingerprint;
     }
 
-    public String getSourceSystem() {
+    public SourceSystem getSourceSystem() {
         return sourceSystem;
     }
 
-    public void setSourceSystem(String sourceSystem) {
+    public void setSourceSystem(SourceSystem sourceSystem) {
         this.sourceSystem = sourceSystem;
     }
 
@@ -143,11 +145,11 @@ public class JobAdvertisementDto {
         this.externalUrl = externalUrl;
     }
 
-    public String getStatus() {
+    public JobAdvertisementStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(JobAdvertisementStatus status) {
         this.status = status;
     }
 
@@ -423,7 +425,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setSourceSystem(jobAdvertisement.getSourceSystem());
         jobAdvertisementDto.setSourceEntryId(jobAdvertisement.getSourceEntryId());
         jobAdvertisementDto.setExternalUrl(jobAdvertisement.getExternalUrl());
-        jobAdvertisementDto.setStatus(jobAdvertisement.getStatus().toString());
+        jobAdvertisementDto.setStatus(jobAdvertisement.getStatus());
         jobAdvertisementDto.setRegistrationDate(jobAdvertisement.getRegistrationDate());
         jobAdvertisementDto.setRejectionDate(jobAdvertisement.getRejectionDate());
         jobAdvertisementDto.setRejectionCode(jobAdvertisement.getRejectionCode());

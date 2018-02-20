@@ -30,6 +30,7 @@ public class JobAdvertisementApplicationService {
     public JobAdvertisementId createJobAdvertisement(CreateJobAdvertisementDto createJobAdvertisementDto) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement(
                 new JobAdvertisementId(),
+                createJobAdvertisementDto.getSourceSystem(),
                 JobAdvertisementStatus.CREATED,
                 TimeMachine.now().toLocalDate(),
                 createJobAdvertisementDto.getTitle(),
@@ -114,8 +115,8 @@ public class JobAdvertisementApplicationService {
         if (languageSkillDtos != null) {
             jobAdvertisement.updateLanguageSkills(languageSkillDtos.stream().map(languageSkillDto -> new LanguageSkill(
                     languageSkillDto.getLanguageIsoCode(),
-                    LanguageLevel.valueOf(languageSkillDto.getSpokenLevel()),
-                    LanguageLevel.valueOf(languageSkillDto.getWrittenLevel())
+                    languageSkillDto.getSpokenLevel(),
+                    languageSkillDto.getWrittenLevel()
             )).collect(Collectors.toList()));
         }
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
