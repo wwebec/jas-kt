@@ -22,6 +22,7 @@ public class JobAdvertisementDto {
     private String rejectionReason;
     private LocalDate cancellationDate;
     private String cancellationCode;
+    private boolean reportingObligation;
     private LocalDate publicationStartDate;
     private LocalDate publicationEndDate;
     private boolean eures;
@@ -35,10 +36,6 @@ public class JobAdvertisementDto {
     private Boolean permanent;
     private int workloadPercentageMin;
     private int workloadPercentageMax;
-    private Integer numberOfJobs; // TODO check if used anywhere outside JobRoom
-    private Boolean accessibly; // TODO Add this in JobRoom (Improvement-Issue)
-    private Boolean jobSharing; // TODO check if used anywhere outside JobRoom
-    private Boolean hasPersonalVehicle; // TODO check if used anywhere outside JobRoom
     private String jobCenterCode;
     private String drivingLicenseLevel;
     private ApplyChannelDto applyChannel;
@@ -54,7 +51,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
+    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
         this.id = id;
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
@@ -68,6 +65,7 @@ public class JobAdvertisementDto {
         this.rejectionReason = rejectionReason;
         this.cancellationDate = cancellationDate;
         this.cancellationCode = cancellationCode;
+        this.reportingObligation = reportingObligation;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
         this.eures = eures;
@@ -81,10 +79,6 @@ public class JobAdvertisementDto {
         this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
         this.workloadPercentageMax = workloadPercentageMax;
-        this.numberOfJobs = numberOfJobs;
-        this.accessibly = accessibly;
-        this.jobSharing = jobSharing;
-        this.hasPersonalVehicle = hasPersonalVehicle;
         this.jobCenterCode = jobCenterCode;
         this.drivingLicenseLevel = drivingLicenseLevel;
         this.applyChannel = applyChannel;
@@ -201,6 +195,14 @@ public class JobAdvertisementDto {
         this.cancellationCode = cancellationCode;
     }
 
+    public boolean isReportingObligation() {
+        return reportingObligation;
+    }
+
+    public void setReportingObligation(boolean reportingObligation) {
+        this.reportingObligation = reportingObligation;
+    }
+
     public LocalDate getPublicationStartDate() {
         return publicationStartDate;
     }
@@ -305,38 +307,6 @@ public class JobAdvertisementDto {
         this.workloadPercentageMax = workloadPercentageMax;
     }
 
-    public Integer getNumberOfJobs() {
-        return numberOfJobs;
-    }
-
-    public void setNumberOfJobs(Integer numberOfJobs) {
-        this.numberOfJobs = numberOfJobs;
-    }
-
-    public Boolean getAccessibly() {
-        return accessibly;
-    }
-
-    public void setAccessibly(Boolean accessibly) {
-        this.accessibly = accessibly;
-    }
-
-    public Boolean getJobSharing() {
-        return jobSharing;
-    }
-
-    public void setJobSharing(Boolean jobSharing) {
-        this.jobSharing = jobSharing;
-    }
-
-    public Boolean getHasPersonalVehicle() {
-        return hasPersonalVehicle;
-    }
-
-    public void setHasPersonalVehicle(Boolean hasPersonalVehicle) {
-        this.hasPersonalVehicle = hasPersonalVehicle;
-    }
-
     public String getJobCenterCode() {
         return jobCenterCode;
     }
@@ -426,7 +396,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setSourceEntryId(jobAdvertisement.getSourceEntryId());
         jobAdvertisementDto.setExternalUrl(jobAdvertisement.getExternalUrl());
         jobAdvertisementDto.setStatus(jobAdvertisement.getStatus());
-        jobAdvertisementDto.setRegistrationDate(jobAdvertisement.getRegistrationDate());
+        jobAdvertisementDto.setRegistrationDate(jobAdvertisement.getApprovalDate());
         jobAdvertisementDto.setRejectionDate(jobAdvertisement.getRejectionDate());
         jobAdvertisementDto.setRejectionCode(jobAdvertisement.getRejectionCode());
         jobAdvertisementDto.setRejectionReason(jobAdvertisement.getRejectionReason());
@@ -445,10 +415,6 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setPermanent(jobAdvertisement.getPermanent());
         jobAdvertisementDto.setWorkloadPercentageMin(jobAdvertisement.getWorkloadPercentageMin());
         jobAdvertisementDto.setWorkloadPercentageMax(jobAdvertisement.getWorkloadPercentageMax());
-        jobAdvertisementDto.setNumberOfJobs(jobAdvertisement.getNumberOfJobs());
-        jobAdvertisementDto.setAccessibly(jobAdvertisement.getAccessibly());
-        jobAdvertisementDto.setJobSharing(jobAdvertisement.getJobSharing());
-        jobAdvertisementDto.setHasPersonalVehicle(jobAdvertisement.getHasPersonalVehicle());
         jobAdvertisementDto.setJobCenterCode(jobAdvertisement.getJobCenterCode());
         jobAdvertisementDto.setDrivingLicenseLevel(jobAdvertisement.getDrivingLicenseLevel());
         jobAdvertisementDto.setApplyChannel(ApplyChannelDto.toDto(jobAdvertisement.getApplyChannel()));

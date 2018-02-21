@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 public class CreateJobAdvertisementDto {
@@ -39,20 +40,20 @@ public class CreateJobAdvertisementDto {
     private ContactDto contact;
 
     @NotNull
-    private Set<LocalityDto> localities;
+    private List<LocalityDto> localities;
 
     @NotNull
     private OccupationDto occupation;
 
     private String educationCode;
 
-    private Set<LanguageSkillDto> languageSkills;
+    private List<LanguageSkillDto> languageSkills;
 
     protected CreateJobAdvertisementDto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, Set<LocalityDto> localities, OccupationDto occupation, String educationCode, Set<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, OccupationDto occupation, String educationCode, List<LanguageSkillDto> languageSkills) {
         this.eures = eures;
         this.title = title;
         this.description = description;
@@ -185,11 +186,11 @@ public class CreateJobAdvertisementDto {
         this.contact = contact;
     }
 
-    public Set<LocalityDto> getLocalities() {
+    public List<LocalityDto> getLocalities() {
         return localities;
     }
 
-    public void setLocalities(Set<LocalityDto> localities) {
+    public void setLocalities(List<LocalityDto> localities) {
         this.localities = localities;
     }
 
@@ -209,11 +210,11 @@ public class CreateJobAdvertisementDto {
         this.educationCode = educationCode;
     }
 
-    public Set<LanguageSkillDto> getLanguageSkills() {
+    public List<LanguageSkillDto> getLanguageSkills() {
         return languageSkills;
     }
 
-    public void setLanguageSkills(Set<LanguageSkillDto> languageSkills) {
+    public void setLanguageSkills(List<LanguageSkillDto> languageSkills) {
         this.languageSkills = languageSkills;
     }
 

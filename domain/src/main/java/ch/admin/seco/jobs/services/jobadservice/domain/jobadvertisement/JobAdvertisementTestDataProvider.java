@@ -23,6 +23,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     private JobAdvertisement createJob01() {
         return new JobAdvertisement(
                 JOB_ADVERTISEMENT_ID_01,
+                SourceSystem.JOBROOM,
                 JobAdvertisementStatus.CREATED,
                 "Job number 1",
                 "This is the job number 1 with the minimum of data"

@@ -8,27 +8,36 @@ import java.util.Set;
 public enum JobAdvertisementStatus {
 
     CREATED,
-    AVAM,
+    INSPECTING,
     APPROVED,
-    REFINED,
+    PUBLISHED_RESTRICTED,
+    PUBLISHED_PUBLIC,
     REJECTED,
-    PUBLISHED,
-    CANCELLED;
+    CANCELLED,
+    ARCHIVED;
 
     static {
-        CREATED.allowedDestinationStates = new JobAdvertisementStatus[]{AVAM, APPROVED};
-        AVAM.allowedDestinationStates = new JobAdvertisementStatus[]{APPROVED,REJECTED};
-        // TODO And so on ... tbd
-        PUBLISHED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED};
+        CREATED.allowedDestinationStates = new JobAdvertisementStatus[]{INSPECTING, PUBLISHED_PUBLIC};
+        INSPECTING.allowedDestinationStates = new JobAdvertisementStatus[]{APPROVED, REJECTED};
+        APPROVED.allowedDestinationStates = new JobAdvertisementStatus[]{PUBLISHED_RESTRICTED, PUBLISHED_PUBLIC};
+        PUBLISHED_RESTRICTED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, PUBLISHED_PUBLIC};
+        PUBLISHED_PUBLIC.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, ARCHIVED};
+        REJECTED.allowedDestinationStates = new JobAdvertisementStatus[]{};
+        CANCELLED.allowedDestinationStates = new JobAdvertisementStatus[]{};
+        ARCHIVED.allowedDestinationStates = new JobAdvertisementStatus[]{};
     }
 
     private JobAdvertisementStatus[] allowedDestinationStates;
 
-    public JobAdvertisementStatus validateTransitionTo(JobAdvertisementStatus destination){
+    public JobAdvertisementStatus validateTransitionTo(JobAdvertisementStatus destination) {
         if (!Arrays.asList(allowedDestinationStates).contains(destination)) {
             throw new IllegalJobAdvertisementStatusTransitionException(this, destination);
         }
         return destination;
+    }
+
+    public boolean isInAnyStates(JobAdvertisementStatus ... status) {
+        return (status != null) && Arrays.asList(status).contains(this);
     }
 
     public static boolean isEqualOrForwardDestination(JobAdvertisementStatus source, JobAdvertisementStatus destination) {

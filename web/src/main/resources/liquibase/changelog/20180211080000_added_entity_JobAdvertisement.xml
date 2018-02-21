@@ -52,14 +52,17 @@
             <column name="STATUS" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
-            <column name="REGISTRATION_DATE" type="date"/>
+            <column name="APPROVAL_DATE" type="date"/>
             <column name="REJECTION_DATE" type="date"/>
             <column name="REJECTION_CODE" type="varchar(10)"/>
             <column name="REJECTION_REASON" type="varchar(800)"/>
             <column name="CANCELLATION_DATE" type="date"/>
             <column name="CANCELLATION_CODE" type="varchar(10)"/>
+            <column name="REPORTING_OBLIGATION" type="boolean"/>
             <column name="PUBLICATION_START_DATE" type="date"/>
             <column name="PUBLICATION_END_DATE" type="date"/>
+            <column name="EURES" type="boolean"/>
+            <column name="EURES_ANONYMOUS" type="boolean"/>
             <column name="TITLE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
@@ -71,10 +74,6 @@
             <column name="PERMANENT" type="boolean"/>
             <column name="WORKLOAD_PERCENTAGE_MIN" type="integer"/>
             <column name="WORKLOAD_PERCENTAGE_MAX" type="integer"/>
-            <column name="NUMBER_OF_JOBS" type="integer"/>
-            <column name="ACCESSIBLY" type="boolean"/>
-            <column name="JOB_SHARING" type="boolean"/>
-            <column name="HAS_PERSONAL_VEHICLE" type="boolean"/>
             <column name="JOB_CENTER_CODE" type="varchar(5)"/>
             <column name="DRIVING_LICENSE_LEVEL" type="varchar(3)"/>
             <column name="APPLY_CHANNEL_MAIL_ADDRESS" type="varchar(255)"/>
@@ -129,11 +128,9 @@
             <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
                 <constraints nullable="false"/>
             </column>
-            <column name="LANGUAGE_CODE" type="varchar(5)"/>
+            <column name="LANGUAGE_ISO_CODE" type="varchar(5)"/>
             <column name="SPOKEN_LEVEL" type="varchar(64)"/>
             <column name="WRITTEN_LEVEL" type="varchar(64)"/>
-            <column name="MOTHER_TONGUE" type="boolean"/>
-            <column name="LANGUAGE_STAY_REQUIRED" type="boolean"/>
         </createTable>
 
         <createTable tableName="JOB_ADVERTISEMENT_PROFESSION_CODES">
@@ -141,6 +138,20 @@
                 <constraints nullable="false"/>
             </column>
             <column name="PROFESSION_CODES" type="varchar(16)"/>
+        </createTable>
+
+        <createTable tableName="PROFESSION">
+            <column name="ID" type="varchar(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="PROFESSION_CODES">
+            <column name="PROFESSION_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(64)"/>
+            <column name="code" type="varchar(16)"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

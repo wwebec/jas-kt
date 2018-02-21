@@ -2,11 +2,16 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.*;
 
 @Entity
 public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertisementId> {
@@ -20,6 +25,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String fingerprint;
 
+    @Enumerated(EnumType.STRING)
     private SourceSystem sourceSystem;
 
     private String sourceEntryId;
@@ -29,7 +35,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Enumerated(EnumType.STRING)
     private JobAdvertisementStatus status;
 
-    private LocalDate registrationDate;
+    private LocalDate approvalDate;
 
     private LocalDate rejectionDate;
 
@@ -40,6 +46,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private LocalDate cancellationDate;
 
     private String cancellationCode;
+
+    private boolean reportingObligation;
 
     private LocalDate publicationStartDate;
 
@@ -67,14 +75,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private int workloadPercentageMax;
 
-    private Integer numberOfJobs; // TODO check if used anywhere outside JobRoom
-
-    private Boolean accessibly; // TODO Add this in JobRoom (Improvement-Issue)
-
-    private Boolean jobSharing; // TODO check if used anywhere outside JobRoom
-
-    private Boolean hasPersonalVehicle; // TODO check if used anywhere outside JobRoom
-
     private String jobCenterCode;
 
     private String drivingLicenseLevel;
@@ -84,7 +84,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
             @AttributeOverride(name = "emailAddress", column = @Column(name = "APPLY_CHANNEL_EMAIL_ADDRESS")),
             @AttributeOverride(name = "phoneNumber", column = @Column(name = "APPLY_CHANNEL_PHONE_NUMBER")),
-            @AttributeOverride(name = "applicationUrl", column = @Column(name = "APPLY_CHANNEL_FORM_URL")),
+            @AttributeOverride(name = "formUrl", column = @Column(name = "APPLY_CHANNEL_FORM_URL")),
             @AttributeOverride(name = "additionalInfo", column = @Column(name = "APPLY_CHANNEL_ADDITIONAL_INFO"))
     })
     @Valid
@@ -144,26 +144,27 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         // For reflection libs
     }
 
-    public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status, LocalDate registrationDate, String title, String description) {
+    public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status, String title, String description) {
         this.id = Condition.notNull(id);
         this.sourceSystem = Condition.notNull(sourceSystem);
         this.status = Condition.notNull(status);
-        this.registrationDate = Condition.notNull(registrationDate);
         this.title = Condition.notBlank(title);
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Integer numberOfJobs, Boolean accessibly, Boolean jobSharing, Boolean hasPersonalVehicle, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
-        this(id, sourceSystem, status, registrationDate, title, description);
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
+        this(id, sourceSystem, status, title, description);
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
         this.sourceEntryId = sourceEntryId;
         this.externalUrl = externalUrl;
+        this.approvalDate = approvalDate;
         this.rejectionDate = rejectionDate;
         this.rejectionCode = rejectionCode;
         this.rejectionReason = rejectionReason;
         this.cancellationDate = cancellationDate;
         this.cancellationCode = cancellationCode;
+        this.reportingObligation = reportingObligation;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
         this.eures = eures;
@@ -175,10 +176,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
         this.workloadPercentageMax = workloadPercentageMax;
-        this.numberOfJobs = numberOfJobs;
-        this.accessibly = accessibly;
-        this.jobSharing = jobSharing;
-        this.hasPersonalVehicle = hasPersonalVehicle;
         this.jobCenterCode = jobCenterCode;
         this.drivingLicenseLevel = drivingLicenseLevel;
         this.applyChannel = applyChannel;
@@ -224,8 +221,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return status;
     }
 
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
+    public LocalDate getApprovalDate() {
+        return approvalDate;
     }
 
     public LocalDate getRejectionDate() {
@@ -308,22 +305,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return workloadPercentageMax;
     }
 
-    public Integer getNumberOfJobs() {
-        return numberOfJobs;
-    }
-
-    public Boolean getAccessibly() {
-        return accessibly;
-    }
-
-    public Boolean getJobSharing() {
-        return jobSharing;
-    }
-
-    public Boolean getHasPersonalVehicle() {
-        return hasPersonalVehicle;
-    }
-
     public String getJobCenterCode() {
         return jobCenterCode;
     }
@@ -364,38 +345,180 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return professionCodes;
     }
 
-    public void updateEmployment(LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax) {
-        this.employmentStartDate = employmentStartDate;
-        this.employmentEndDate = employmentEndDate;
-        this.durationInDays = durationInDays;
-        this.immediately = immediately;
-        this.permanent = permanent;
-        this.workloadPercentageMin = workloadPercentageMin;
-        this.workloadPercentageMax = workloadPercentageMax;
+    public void init(JobAdvertisementUpdater updater) {
+        checkIfEndStatus();
+        applyUpdates(updater);
     }
 
-    public void updateApplyChannel(ApplyChannel applyChannel) {
-        this.applyChannel = applyChannel;
+    public void update(JobAdvertisementUpdater updater) {
+        checkIfEndStatus();
+        if (applyUpdates(updater)) {
+            DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED, this));
+        }
     }
 
-    public void updateCompany(Company company) {
-        this.company = company;
+    public void inspect() {
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING, this));
     }
 
-    public void updateContact(Contact contact) {
-        this.contact = contact;
+    public void approve(String stellennummerAvam, LocalDate date, boolean reportingObligation) {
+        this.stellennummerAvam = Condition.notBlank(stellennummerAvam);
+        this.approvalDate = Condition.notNull(date);
+        this.reportingObligation = reportingObligation;
+        this.status = status.validateTransitionTo(JobAdvertisementStatus.APPROVED);
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED, this));
     }
 
-    public void updateLocalities(List<Locality> localities) {
-        this.localities = localities;
+    public void reject(String stellennummerAvam, LocalDate date, String code, String reason) {
+        this.stellennummerAvam = Condition.notBlank(stellennummerAvam);
+        this.rejectionDate = Condition.notNull(date);
+        this.rejectionCode = Condition.notBlank(code);
+        this.rejectionReason = reason;
+        this.status = status.validateTransitionTo(JobAdvertisementStatus.REJECTED);
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_REJECTED, this));
     }
 
-    public void updateRequirements(List<Occupation> occupations, String educationId) {
-        this.occupations = occupations;
-        this.educationCode = educationId;
+    public void cancel(LocalDate date, String code) {
+        this.cancellationDate = Condition.notNull(date);
+        this.cancellationCode = Condition.notBlank(code);
+        this.status = status.validateTransitionTo(JobAdvertisementStatus.CANCELLED);
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_CANCELLED, this));
     }
 
-    public void updateLanguageSkills(List<LanguageSkill> languageSkills) {
-        this.languageSkills = languageSkills;
+    public void publishRestricted() {
+        this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_RESTRICTED);
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISHED_RESTRICTED, this));
+    }
+
+    public void publishPublic() {
+        this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISHED_PUBLIC, this));
+    }
+
+    public void archive() {
+        this.status = status.validateTransitionTo(JobAdvertisementStatus.ARCHIVED);
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_ARCHIVED, this));
+    }
+
+    private void checkIfEndStatus() {
+        if (this.status.isInAnyStates(JobAdvertisementStatus.REJECTED, JobAdvertisementStatus.CANCELLED, JobAdvertisementStatus.ARCHIVED)) {
+            throw new IllegalStateException(String.format("JobAdvertisement must not be in a end status like: %s", this.status));
+        }
+    }
+
+    private boolean applyUpdates(JobAdvertisementUpdater updater) {
+        boolean hasChangedAnything = false;
+
+        if (updater.hasAnyChangesIn(SECTION_FINGERPRINT) && hasChanged(this.fingerprint, updater.getFingerprint())) {
+            this.fingerprint = updater.getFingerprint();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_SOURCE_ENTRY_ID) && hasChanged(this.sourceEntryId, updater.getSourceEntryId())) {
+            this.sourceEntryId = updater.getSourceEntryId();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_EXTERNAL_URL) && hasChanged(this.externalUrl, updater.getExternalUrl())) {
+            this.externalUrl = updater.getExternalUrl();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_REPORTING_OBLIGATION) && hasChanged(this.reportingObligation, updater.isReportingObligation())) {
+            this.reportingObligation = updater.isReportingObligation();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_PUBLICATION_DATES) && (
+                hasChanged(this.publicationStartDate, updater.getPublicationStartDate()) ||
+                        hasChanged(this.publicationEndDate, updater.getPublicationEndDate()))) {
+            this.publicationStartDate = updater.getPublicationStartDate();
+            this.publicationEndDate = updater.getPublicationEndDate();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_EURES) && (
+                hasChanged(this.eures, updater.isEures()) ||
+                        hasChanged(this.euresAnonymous, updater.isEuresAnonymous()))) {
+            this.eures = updater.isEures();
+            this.euresAnonymous = updater.isEuresAnonymous();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && (
+                hasChanged(this.employmentStartDate, updater.getEmploymentStartDate()) ||
+                        hasChanged(this.employmentEndDate, updater.getEmploymentEndDate()) ||
+                        hasChanged(this.durationInDays, updater.getDurationInDays()) ||
+                        hasChanged(this.immediately, updater.getImmediately()) ||
+                        hasChanged(this.permanent, updater.getPermanent()) ||
+                        hasChanged(this.workloadPercentageMin, updater.getWorkloadPercentageMin()) ||
+                        hasChanged(this.workloadPercentageMax, updater.getWorkloadPercentageMax())
+        )) {
+            this.employmentStartDate = updater.getEmploymentStartDate();
+            this.employmentEndDate = updater.getEmploymentEndDate();
+            this.durationInDays = updater.getDurationInDays();
+            this.immediately = updater.getImmediately();
+            this.permanent = updater.getPermanent();
+            this.workloadPercentageMin = updater.getWorkloadPercentageMin();
+            this.workloadPercentageMax = updater.getWorkloadPercentageMax();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_JOB_CENTER_CODE) && hasChanged(this.jobCenterCode, updater.getJobCenterCode())) {
+            this.jobCenterCode = updater.getJobCenterCode();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_DRIVING_LICENSE_LEVEL) && hasChanged(this.drivingLicenseLevel, updater.getDrivingLicenseLevel())) {
+            this.drivingLicenseLevel = updater.getDrivingLicenseLevel();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_APPLY_CHANNEL) && hasChanged(this.applyChannel, updater.getApplyChannel())) {
+            this.applyChannel = updater.getApplyChannel();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_COMPANY) && hasChanged(this.company, updater.getCompany())) {
+            this.company = updater.getCompany();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_CONTACT) && hasChanged(this.contact, updater.getContact())) {
+            this.contact = updater.getContact();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_LOCALITIES) && hasChangedContent(this.localities, updater.getLocalities())) {
+            this.localities = updater.getLocalities();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_OCCUPATIONS) && hasChangedContent(this.occupations, updater.getOccupations())) {
+            this.occupations = updater.getOccupations();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_EDUCATION_CODE) && hasChanged(this.educationCode, updater.getEducationCode())) {
+            this.educationCode = updater.getEducationCode();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(this.languageSkills, updater.getLanguageSkills())) {
+            this.languageSkills = updater.getLanguageSkills();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_PROFESSION_CODES) && hasChangedContent(this.professionCodes, updater.getProfessionCodes())) {
+            this.professionCodes = updater.getProfessionCodes();
+            hasChangedAnything = true;
+        }
+
+        if (hasChangedAnything) {
+            // FIXME Auditor
+            //applyUpdater(updater.getAuditUser());
+        }
+
+        return hasChangedAnything;
     }
 }

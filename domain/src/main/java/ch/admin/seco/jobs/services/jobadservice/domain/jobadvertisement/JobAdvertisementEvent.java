@@ -13,12 +13,12 @@ public class JobAdvertisementEvent extends DomainEvent {
         additionalAttributes.put("jobAdvertisementId", jobAdvertisementId.getValue());
     }
 
-    public JobAdvertisementId getJobAdvertisementId() {
-        return jobAdvertisementId;
-    }
-
     @Override
     public String getAggregateId() {
         return this.jobAdvertisementId.getValue();
+    }
+
+    public JobAdvertisementId getJobAdvertisementId() {
+        return jobAdvertisementId;
     }
 }

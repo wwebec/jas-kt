@@ -35,7 +35,7 @@ public class JobAdvertisementRestController {
 
     @PostMapping()
     public JobAdvertisementDto createJobAdvertisement(@RequestBody CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
-        JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createJobAdvertisement(createJobAdvertisementDto, SourceSystem.JOBROOM);
+        JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromWebForm(createJobAdvertisementDto);
         return jobAdvertisementApplicationService.findById(jobAdvertisementId);
     }
 

@@ -35,7 +35,7 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setStellennummerEgov(jobAdvertisement.getId().getValue());
         tOsteEgov.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
 
-        tOsteEgov.setAnmeldeDatum(formatLocalDate(jobAdvertisement.getRegistrationDate()));
+        tOsteEgov.setAnmeldeDatum(formatLocalDate(jobAdvertisement.getApprovalDate()));
         if (AvamAction.ABMELDUNG.equals(action)) {
             tOsteEgov.setAbmeldeDatum(formatLocalDate(jobAdvertisement.getCancellationDate()));
             tOsteEgov.setAbmeldeGrundCode(jobAdvertisement.getCancellationCode());
@@ -49,11 +49,7 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setBeschreibung(jobAdvertisement.getDescription());
 
         fillEmployment(tOsteEgov, jobAdvertisement);
-        tOsteEgov.setGleicheOste(safeToString(jobAdvertisement.getNumberOfJobs()));
-        tOsteEgov.setJobSharing(safeBoolean(jobAdvertisement.getJobSharing()));
-        tOsteEgov.setPrivFahrzeug(safeBoolean(jobAdvertisement.getHasPersonalVehicle()));
         tOsteEgov.setKategorieCode(AvamAwesomeCodeResolver.DRIVING_LICENSE_LEVELS.getLeft(jobAdvertisement.getDrivingLicenseLevel()));
-        tOsteEgov.setBehindert(safeBoolean(jobAdvertisement.getAccessibly()));
 
         fillApplyChannel(tOsteEgov, jobAdvertisement.getApplyChannel());
         fillCompany(tOsteEgov, jobAdvertisement.getCompany());

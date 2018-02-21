@@ -3,11 +3,16 @@ package ch.admin.seco.jobs.services.jobadservice.domain.profession;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Embeddable
+@Access(AccessType.FIELD)
 public class ProfessionCode implements ValueObject<ProfessionCode> {
 
+    @Enumerated(EnumType.STRING)
     private ProfessionCodeType type;
+
     private String code;
 
     protected ProfessionCode() {

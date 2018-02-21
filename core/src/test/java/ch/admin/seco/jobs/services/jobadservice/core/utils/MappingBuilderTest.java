@@ -17,7 +17,7 @@ public class MappingBuilderTest {
     static final Integer RIGHT_4 = 4;
 
     @Test
-    public void put() {
+    public void testPut() {
         MappingBuilder<String, Integer> map = new MappingBuilder<String, Integer>()
                 .put(LEFT_1, RIGHT_1)
                 .put(LEFT_2, RIGHT_2)
@@ -26,7 +26,7 @@ public class MappingBuilderTest {
     }
 
     @Test
-    public void toImmutable() {
+    public void testToImmutable() {
         MappingBuilder<String, Integer> map = new MappingBuilder<String, Integer>()
                 .put(LEFT_1, RIGHT_1)
                 .put(LEFT_2, RIGHT_2)
@@ -36,7 +36,7 @@ public class MappingBuilderTest {
     }
 
     @Test
-    public void getRight() {
+    public void testGetRight() {
         MappingBuilder<String, Integer> map = new MappingBuilder<String, Integer>()
                 .put(LEFT_1, RIGHT_1)
                 .put(LEFT_2, RIGHT_2)
@@ -47,7 +47,7 @@ public class MappingBuilderTest {
     }
 
     @Test
-    public void getLeft() {
+    public void testGetLeft() {
         MappingBuilder<String, Integer> map = new MappingBuilder<String, Integer>()
                 .put(LEFT_1, RIGHT_1)
                 .put(LEFT_2, RIGHT_2)
