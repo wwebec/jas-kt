@@ -86,7 +86,7 @@
             <column name="COMPANY_HOUSE_NUMBER" type="varchar(10)"/>
             <column name="COMPANY_ZIP_CODE" type="varchar(10)"/>
             <column name="COMPANY_CITY" type="varchar(50)"/>
-            <column name="COMPANY_COUNTRY_CODE" type="varchar(2)"/>
+            <column name="COMPANY_COUNTRY_ISO_CODE" type="varchar(2)"/>
             <column name="COMPANY_POST_OFFICE_BOX_NUMBER" type="varchar(10)"/>
             <column name="COMPANY_POST_OFFICE_BOX_ZIP_CODE" type="varchar(10)"/>
             <column name="COMPANY_POST_OFFICE_BOX_CITY" type="varchar(50)"/>
@@ -111,7 +111,7 @@
             <column name="COMMUNAL_CODE" type="varchar(4)"/>
             <column name="REGION_CODE" type="varchar(4)"/>
             <column name="CANTON_CODE" type="varchar(2)"/>
-            <column name="COUNTRY_CODE" type="varchar(12)"/>
+            <column name="COUNTRY_ISO_CODE" type="varchar(2)"/>
             <column name="LOCATION_LONGITUDE" type="double"/>
             <column name="LOCATION_LATITUDE" type="double"/>
         </createTable>

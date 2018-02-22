@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -110,7 +109,7 @@ public class JobAdvertisementApplicationService {
                     companyDto.getHouseNumber(),
                     companyDto.getZipCode(),
                     companyDto.getCity(),
-                    companyDto.getCountryCode(),
+                    companyDto.getCountryIsoCode(),
                     companyDto.getPostOfficeBoxNumber(),
                     companyDto.getPostOfficeBoxZipCode(),
                     companyDto.getPostOfficeBoxCity(),
@@ -146,7 +145,7 @@ public class JobAdvertisementApplicationService {
                             localityDto.getCommunalCode(),
                             localityDto.getRegionCode(),
                             localityDto.getCantonCode(),
-                            localityDto.getCountryCode(),
+                            localityDto.getCountryIsoCode(),
                             localityDto.getLocation()
                     ))
                     .collect(Collectors.toList());

@@ -16,21 +16,21 @@ public class LocalityDto {
     private String communalCode;
     private String regionCode;
     private String cantonCode;
-    private String countryCode;
+    private String countryIsoCode;
     private GeoPoint location;
 
     protected LocalityDto() {
         // For reflection libs
     }
 
-    public LocalityDto(String remarks, String city, String zipCode, String communalCode, String regionCode, String cantonCode, String countryCode, GeoPoint location) {
+    public LocalityDto(String remarks, String city, String zipCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint location) {
         this.remarks = remarks;
         this.city = city;
         this.zipCode = zipCode;
         this.communalCode = communalCode;
         this.regionCode = regionCode;
         this.cantonCode = cantonCode;
-        this.countryCode = countryCode;
+        this.countryIsoCode = countryIsoCode;
         this.location = location;
     }
 
@@ -82,12 +82,12 @@ public class LocalityDto {
         this.cantonCode = cantonCode;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public String getCountryIsoCode() {
+        return countryIsoCode;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+    public void setCountryIsoCode(String countryIsoCode) {
+        this.countryIsoCode = countryIsoCode;
     }
 
     public GeoPoint getLocation() {
@@ -106,7 +106,7 @@ public class LocalityDto {
         localityDto.setCommunalCode(locality.getCommunalCode());
         localityDto.setRegionCode(locality.getRegionCode());
         localityDto.setCantonCode(locality.getCantonCode());
-        localityDto.setCountryCode(locality.getCountryCode());
+        localityDto.setCountryIsoCode(locality.getCountryIsoCode());
         localityDto.setLocation(locality.getLocation());
         return localityDto;
     }

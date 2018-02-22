@@ -102,7 +102,7 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setUntPostfach(company.getPostOfficeBoxNumber());
         tOsteEgov.setUntPostfachPlz(company.getPostOfficeBoxZipCode());
         tOsteEgov.setUntPostfachOrt(company.getPostOfficeBoxCity());
-        tOsteEgov.setUntLand(company.getCountryCode());
+        tOsteEgov.setUntLand(company.getCountryIsoCode());
     }
 
     private void fillContact(TOsteEgov tOsteEgov, Contact contact) {
@@ -126,7 +126,7 @@ public class JobAdvertisementAssembler {
             tOsteEgov.setArbeitsOrtOrt(locality.getCity());
             tOsteEgov.setArbeitsOrtPlz(locality.getZipCode());
             tOsteEgov.setArbeitsOrtGemeinde(locality.getCommunalCode());
-            tOsteEgov.setArbeitsOrtLand(locality.getCountryCode());
+            tOsteEgov.setArbeitsOrtLand(locality.getCountryIsoCode());
         }
     }
 

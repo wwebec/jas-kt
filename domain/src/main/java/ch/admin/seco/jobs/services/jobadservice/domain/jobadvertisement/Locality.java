@@ -22,7 +22,7 @@ public class Locality implements ValueObject<Locality> {
 
     private String cantonCode;
 
-    private String countryCode;
+    private String countryIsoCode;
 
     @Embedded
     @AttributeOverrides({
@@ -36,14 +36,14 @@ public class Locality implements ValueObject<Locality> {
         // For reflection libs
     }
 
-    public Locality(String remarks, String city, String zipCode, String communalCode, String regionCode, String cantonCode, String countryCode, GeoPoint location) {
+    public Locality(String remarks, String city, String zipCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint location) {
         this.remarks = remarks;
         this.city = city;
         this.zipCode = zipCode;
         this.communalCode = communalCode;
         this.regionCode = regionCode;
         this.cantonCode = cantonCode;
-        this.countryCode = countryCode;
+        this.countryIsoCode = countryIsoCode;
         this.location = location;
     }
 
@@ -71,8 +71,8 @@ public class Locality implements ValueObject<Locality> {
         return cantonCode;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public String getCountryIsoCode() {
+        return countryIsoCode;
     }
 
     public GeoPoint getLocation() {
@@ -95,13 +95,13 @@ public class Locality implements ValueObject<Locality> {
                 Objects.equals(communalCode, locality.communalCode) &&
                 Objects.equals(regionCode, locality.regionCode) &&
                 Objects.equals(cantonCode, locality.cantonCode) &&
-                Objects.equals(countryCode, locality.countryCode) &&
+                Objects.equals(countryIsoCode, locality.countryIsoCode) &&
                 Objects.equals(location, locality.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(remarks, city, zipCode, communalCode, regionCode, cantonCode, countryCode, location);
+        return Objects.hash(remarks, city, zipCode, communalCode, regionCode, cantonCode, countryIsoCode, location);
     }
 
 }

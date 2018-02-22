@@ -14,7 +14,7 @@ public class CompanyDto {
     @NotNull
     private String zipCode;
     private String city;
-    private String countryCode;
+    private String countryIsoCode;
     private String postOfficeBoxNumber;
     private String postOfficeBoxZipCode;
     private String postOfficeBoxCity;
@@ -26,13 +26,13 @@ public class CompanyDto {
         // For reflection libs
     }
 
-    public CompanyDto(String name, String street, String houseNumber, String zipCode, String city, String countryCode, String postOfficeBoxNumber, String postOfficeBoxZipCode, String postOfficeBoxCity, String phone, String email, String website) {
+    public CompanyDto(String name, String street, String houseNumber, String zipCode, String city, String countryIsoCode, String postOfficeBoxNumber, String postOfficeBoxZipCode, String postOfficeBoxCity, String phone, String email, String website) {
         this.name = name;
         this.street = street;
         this.houseNumber = houseNumber;
         this.zipCode = zipCode;
         this.city = city;
-        this.countryCode = countryCode;
+        this.countryIsoCode = countryIsoCode;
         this.postOfficeBoxNumber = postOfficeBoxNumber;
         this.postOfficeBoxZipCode = postOfficeBoxZipCode;
         this.postOfficeBoxCity = postOfficeBoxCity;
@@ -81,12 +81,12 @@ public class CompanyDto {
         this.city = city;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public String getCountryIsoCode() {
+        return countryIsoCode;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+    public void setCountryIsoCode(String countryIsoCode) {
+        this.countryIsoCode = countryIsoCode;
     }
 
     public String getPostOfficeBoxNumber() {
@@ -144,7 +144,7 @@ public class CompanyDto {
         companyDto.setHouseNumber(company.getHouseNumber());
         companyDto.setZipCode(company.getZipCode());
         companyDto.setCity(company.getCity());
-        companyDto.setCountryCode(company.getCountryCode());
+        companyDto.setCountryIsoCode(company.getCountryIsoCode());
         companyDto.setPostOfficeBoxNumber(company.getPostOfficeBoxNumber());
         companyDto.setPostOfficeBoxZipCode(company.getPostOfficeBoxZipCode());
         companyDto.setPostOfficeBoxCity(company.getPostOfficeBoxCity());

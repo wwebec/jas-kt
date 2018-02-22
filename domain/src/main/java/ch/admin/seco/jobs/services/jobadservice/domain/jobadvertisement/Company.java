@@ -16,7 +16,7 @@ public class Company implements ValueObject<Company> {
     private String houseNumber;
     private String zipCode;
     private String city;
-    private String countryCode;
+    private String countryIsoCode;
     private String postOfficeBoxNumber;
     private String postOfficeBoxZipCode;
     private String postOfficeBoxCity;
@@ -28,13 +28,13 @@ public class Company implements ValueObject<Company> {
         // For reflection libs
     }
 
-    public Company(String name, String street, String houseNumber, String zipCode, String city, String countryCode, String postOfficeBoxNumber, String postOfficeBoxZipCode, String postOfficeBoxCity, String phone, String email, String website) {
+    public Company(String name, String street, String houseNumber, String zipCode, String city, String countryIsoCode, String postOfficeBoxNumber, String postOfficeBoxZipCode, String postOfficeBoxCity, String phone, String email, String website) {
         this.name = name;
         this.street = street;
         this.houseNumber = houseNumber;
         this.zipCode = zipCode;
         this.city = city;
-        this.countryCode = countryCode;
+        this.countryIsoCode = countryIsoCode;
         this.postOfficeBoxNumber = postOfficeBoxNumber;
         this.postOfficeBoxZipCode = postOfficeBoxZipCode;
         this.postOfficeBoxCity = postOfficeBoxCity;
@@ -63,8 +63,8 @@ public class Company implements ValueObject<Company> {
         return city;
     }
 
-    public String getCountryCode() {
-        return countryCode;
+    public String getCountryIsoCode() {
+        return countryIsoCode;
     }
 
     public String getPostOfficeBoxNumber() {
@@ -106,7 +106,7 @@ public class Company implements ValueObject<Company> {
                 Objects.equals(houseNumber, company.houseNumber) &&
                 Objects.equals(zipCode, company.zipCode) &&
                 Objects.equals(city, company.city) &&
-                Objects.equals(countryCode, company.countryCode) &&
+                Objects.equals(countryIsoCode, company.countryIsoCode) &&
                 Objects.equals(postOfficeBoxNumber, company.postOfficeBoxNumber) &&
                 Objects.equals(postOfficeBoxZipCode, company.postOfficeBoxZipCode) &&
                 Objects.equals(postOfficeBoxCity, company.postOfficeBoxCity) &&
@@ -117,6 +117,6 @@ public class Company implements ValueObject<Company> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, street, houseNumber, zipCode, city, countryCode, postOfficeBoxNumber, postOfficeBoxZipCode, postOfficeBoxCity, phone, email, website);
+        return Objects.hash(name, street, houseNumber, zipCode, city, countryIsoCode, postOfficeBoxNumber, postOfficeBoxZipCode, postOfficeBoxCity, phone, email, website);
     }
 }

@@ -97,7 +97,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "houseNumber", column = @Column(name = "COMPANY_HOUSE_NUMBER")),
             @AttributeOverride(name = "zipCode", column = @Column(name = "COMPANY_ZIP_CODE")),
             @AttributeOverride(name = "city", column = @Column(name = "COMPANY_CITY")),
-            @AttributeOverride(name = "countryCode", column = @Column(name = "COMPANY_COUNTRY_CODE")),
+            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "COMPANY_COUNTRY_ISO_CODE")),
             @AttributeOverride(name = "postOfficeBoxNumber", column = @Column(name = "COMPANY_POST_OFFICE_BOX_NUMBER")),
             @AttributeOverride(name = "postOfficeBoxZipCode", column = @Column(name = "COMPANY_POST_OFFICE_BOX_ZIP_CODE")),
             @AttributeOverride(name = "postOfficeBoxCity", column = @Column(name = "COMPANY_POST_OFFICE_BOX_CITY")),
