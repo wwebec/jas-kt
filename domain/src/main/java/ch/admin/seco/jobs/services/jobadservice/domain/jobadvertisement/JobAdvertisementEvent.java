@@ -21,4 +21,5 @@ public class JobAdvertisementEvent extends DomainEvent {
     public JobAdvertisementId getJobAdvertisementId() {
         return jobAdvertisementId;
     }
+
 }

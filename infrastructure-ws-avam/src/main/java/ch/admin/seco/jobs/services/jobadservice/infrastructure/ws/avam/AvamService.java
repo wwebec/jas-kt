@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam;
 
+import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.profession.ProfessionApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl.DeliverOste;
@@ -8,29 +9,31 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl.TOst
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl.WSCredentials;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-public class AvamService {
+public class AvamService implements RavRegistrationService {
 
     static final String AVAM_RESPONSE_OK = "NK_AVAM: OK";
     private static final String AVAM_RESPONSE_ERROR = "NK_AVAM: ERROR";
 
+    private final JobAdvertisementAssembler assembler;
     private final WebServiceTemplate webserviceTemplate;
     private final String username;
     private final String password;
-    private final JobAdvertisementAssembler assembler;
 
     public AvamService(ProfessionApplicationService professionApplicationService, WebServiceTemplate webserviceTemplate, String username, String password) {
+        this.assembler = new JobAdvertisementAssembler(professionApplicationService);
         this.webserviceTemplate = webserviceTemplate;
         this.username = username;
         this.password = password;
-        this.assembler = new JobAdvertisementAssembler(professionApplicationService);
     }
 
-    public void sendAnmeldung(JobAdvertisement jobAdvertisement) {
+    @Override
+    public void registrate(JobAdvertisement jobAdvertisement) {
         TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, AvamAction.ANMELDUNG);
         send(tOsteEgov);
     }
 
-    public void sendAbmeldung(JobAdvertisement jobAdvertisement) {
+    @Override
+    public void deregister(JobAdvertisement jobAdvertisement) {
         TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, AvamAction.ABMELDUNG);
         send(tOsteEgov);
     }

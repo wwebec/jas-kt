@@ -43,6 +43,7 @@ public class JobAdvertisementFactory {
     }
 
     public JobAdvertisement createFromAvam(String title, String description, JobAdvertisementUpdater updater) {
+        // TODO Tbd which data are passed to create the JobAdvertisement Object
         JobAdvertisement jobAdvertisement = new JobAdvertisement(
                 new JobAdvertisementId(),
                 SourceSystem.RAV,
@@ -57,6 +58,7 @@ public class JobAdvertisementFactory {
     }
 
     public JobAdvertisement createFromExtern(String title, String description, JobAdvertisementUpdater updater) {
+        // TODO Tbd which data are passed to create the JobAdvertisement Object
         JobAdvertisement jobAdvertisement = new JobAdvertisement(
                 new JobAdvertisementId(),
                 SourceSystem.EXTERN,

@@ -1,6 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionId;
@@ -21,14 +23,22 @@ public class JobAdvertisementApplicationService {
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
 
+    private final RavRegistrationService ravRegistrationservice;
+
     @Autowired
-    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory) {
+    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, RavRegistrationService ravRegistrationservice) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
+        this.ravRegistrationservice = ravRegistrationservice;
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementDto createJobAdvertisementDto) {
+        boolean reportingObligation = checkReportingObligation(
+                createJobAdvertisementDto.getLocalities(),
+                Collections.singletonList(createJobAdvertisementDto.getOccupation())
+        );
         final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+                .setReportingObligation(reportingObligation)
                 // FIXME eval eures if anonymous or not
                 .setEures(createJobAdvertisementDto.isEures(), true)
                 .setEmployment(
@@ -67,6 +77,13 @@ public class JobAdvertisementApplicationService {
         return JobAdvertisementDto.toDto(jobAdvertisement);
     }
 
+    public void inspect(JobAdvertisementId jobAdvertisementId) {
+        Condition.notNull(jobAdvertisementId, "JobAdvertisement should not be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        jobAdvertisement.inspect();
+        ravRegistrationservice.registrate(jobAdvertisement);
+    }
+
     public void approve(ApprovalDto approvalDto) {
 
     }
@@ -86,6 +103,11 @@ public class JobAdvertisementApplicationService {
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
+    }
+
+    private boolean checkReportingObligation(List<LocalityDto> localityDtos, List<OccupationDto> occupationDtos) {
+        // TODO Implement the check
+        return false;
     }
 
     private ApplyChannel toApplyChannel(ApplyChannelDto applyChannelDto) {

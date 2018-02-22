@@ -52,6 +52,7 @@
             <column name="STATUS" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
+            <column name="RAV_REGISTRATION_DATE" type="date"/>
             <column name="APPROVAL_DATE" type="date"/>
             <column name="REJECTION_DATE" type="date"/>
             <column name="REJECTION_CODE" type="varchar(10)"/>

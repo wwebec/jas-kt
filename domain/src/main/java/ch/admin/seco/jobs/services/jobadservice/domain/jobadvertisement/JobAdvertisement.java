@@ -3,6 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -34,6 +35,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     @Enumerated(EnumType.STRING)
     private JobAdvertisementStatus status;
+
+    private LocalDate ravRegistrationDate;
 
     private LocalDate approvalDate;
 
@@ -152,12 +155,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
         this(id, sourceSystem, status, title, description);
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
         this.sourceEntryId = sourceEntryId;
         this.externalUrl = externalUrl;
+        this.ravRegistrationDate = ravRegistrationDate;
         this.approvalDate = approvalDate;
         this.rejectionDate = rejectionDate;
         this.rejectionCode = rejectionCode;
@@ -221,6 +225,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return status;
     }
 
+    public LocalDate getRavRegistrationDate() {
+        return ravRegistrationDate;
+    }
+
     public LocalDate getApprovalDate() {
         return approvalDate;
     }
@@ -245,6 +253,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return cancellationCode;
     }
 
+    public boolean isReportingObligation() {
+        return reportingObligation;
+    }
+
     public LocalDate getPublicationStartDate() {
         return publicationStartDate;
     }
@@ -257,16 +269,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return eures;
     }
 
-    public void setEures(boolean eures) {
-        this.eures = eures;
-    }
-
     public boolean isEuresAnonymous() {
         return euresAnonymous;
-    }
-
-    public void setEuresAnonymous(boolean euresAnonym) {
-        this.euresAnonymous = euresAnonym;
     }
 
     public String getTitle() {
@@ -358,6 +362,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void inspect() {
+        this.ravRegistrationDate = TimeMachine.now().toLocalDate();
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING, this));
     }
 

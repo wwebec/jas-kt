@@ -16,7 +16,8 @@ public class JobAdvertisementDto {
     private String sourceEntryId;
     private String externalUrl;
     private JobAdvertisementStatus status;
-    private LocalDate registrationDate;
+    private LocalDate ravRegistrationDate;
+    private LocalDate approvalDate;
     private LocalDate rejectionDate;
     private String rejectionCode;
     private String rejectionReason;
@@ -51,7 +52,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate registrationDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
+    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
         this.id = id;
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
@@ -59,7 +60,8 @@ public class JobAdvertisementDto {
         this.sourceEntryId = sourceEntryId;
         this.externalUrl = externalUrl;
         this.status = status;
-        this.registrationDate = registrationDate;
+        this.ravRegistrationDate = ravRegistrationDate;
+        this.approvalDate = approvalDate;
         this.rejectionDate = rejectionDate;
         this.rejectionCode = rejectionCode;
         this.rejectionReason = rejectionReason;
@@ -147,12 +149,20 @@ public class JobAdvertisementDto {
         this.status = status;
     }
 
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
+    public LocalDate getRavRegistrationDate() {
+        return ravRegistrationDate;
     }
 
-    public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
+    public void setRavRegistrationDate(LocalDate ravRegistrationDate) {
+        this.ravRegistrationDate = ravRegistrationDate;
+    }
+
+    public LocalDate getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(LocalDate approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
     public LocalDate getRejectionDate() {
@@ -396,12 +406,14 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setSourceEntryId(jobAdvertisement.getSourceEntryId());
         jobAdvertisementDto.setExternalUrl(jobAdvertisement.getExternalUrl());
         jobAdvertisementDto.setStatus(jobAdvertisement.getStatus());
-        jobAdvertisementDto.setRegistrationDate(jobAdvertisement.getApprovalDate());
+        jobAdvertisementDto.setRavRegistrationDate(jobAdvertisement.getRavRegistrationDate());
+        jobAdvertisementDto.setApprovalDate(jobAdvertisement.getApprovalDate());
         jobAdvertisementDto.setRejectionDate(jobAdvertisement.getRejectionDate());
         jobAdvertisementDto.setRejectionCode(jobAdvertisement.getRejectionCode());
         jobAdvertisementDto.setRejectionReason(jobAdvertisement.getRejectionReason());
         jobAdvertisementDto.setCancellationDate(jobAdvertisement.getCancellationDate());
         jobAdvertisementDto.setCancellationCode(jobAdvertisement.getCancellationCode());
+        jobAdvertisementDto.setReportingObligation(jobAdvertisement.isReportingObligation());
         jobAdvertisementDto.setPublicationStartDate(jobAdvertisement.getPublicationStartDate());
         jobAdvertisementDto.setPublicationEndDate(jobAdvertisement.getPublicationEndDate());
         jobAdvertisementDto.setEures(jobAdvertisement.isEures());
