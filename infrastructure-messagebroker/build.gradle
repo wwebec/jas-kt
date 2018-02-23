@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':infrastructure')
+    optional 'org.springframework.boot:spring-boot-configuration-processor'
+}

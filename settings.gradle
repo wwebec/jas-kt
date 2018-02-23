@@ -5,6 +5,7 @@ include ':application'
 include ':infrastructure'
 include ':infrastructure-database'
 include ':infrastructure-elasticsearch'
+include ':infrastructure-messagebroker'
 include ':infrastructure-ws-avam'
 include ':web'
 
