@@ -9,25 +9,25 @@ import java.util.Set;
 
 public class JobAdvertisementUpdater {
 
-    public static final String SECTION_FINGERPRINT = "SECTION_FINGERPRINT";
-    public static final String SECTION_SOURCE_ENTRY_ID = "SECTION_SOURCE_ENTRY_ID";
-    public static final String SECTION_EXTERNAL_URL = "SECTION_EXTERNAL_URL";
-    public static final String SECTION_REPORTING_OBLIGATION = "SECTION_REPORTING_OBLIGATION";
-    public static final String SECTION_PUBLICATION_DATES = "SECTION_PUBLICATION_DATES";
-    public static final String SECTION_EURES = "SECTION_EURES";
-    public static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
-    public static final String SECTION_JOB_CENTER_CODE = "SECTION_JOB_CENTER_CODE";
-    public static final String SECTION_DRIVING_LICENSE_LEVEL = "SECTION_DRIVING_LICENSE_LEVEL";
-    public static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
-    public static final String SECTION_COMPANY = "SECTION_COMPANY";
-    public static final String SECTION_CONTACT = "SECTION_CONTACT";
-    public static final String SECTION_LOCALITIES = "SECTION_LOCALITIES";
-    public static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
-    public static final String SECTION_EDUCATION_CODE = "SECTION_EDUCATION_CODE";
-    public static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
-    public static final String SECTION_PROFESSION_CODES = "SECTION_PROFESSION_CODES";
+    static final String SECTION_FINGERPRINT = "SECTION_FINGERPRINT";
+    static final String SECTION_SOURCE_ENTRY_ID = "SECTION_SOURCE_ENTRY_ID";
+    static final String SECTION_EXTERNAL_URL = "SECTION_EXTERNAL_URL";
+    static final String SECTION_REPORTING_OBLIGATION = "SECTION_REPORTING_OBLIGATION";
+    static final String SECTION_PUBLICATION_DATES = "SECTION_PUBLICATION_DATES";
+    static final String SECTION_EURES = "SECTION_EURES";
+    static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
+    static final String SECTION_JOB_CENTER_CODE = "SECTION_JOB_CENTER_CODE";
+    static final String SECTION_DRIVING_LICENSE_LEVEL = "SECTION_DRIVING_LICENSE_LEVEL";
+    static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
+    static final String SECTION_COMPANY = "SECTION_COMPANY";
+    static final String SECTION_CONTACT = "SECTION_CONTACT";
+    static final String SECTION_LOCALITIES = "SECTION_LOCALITIES";
+    static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
+    static final String SECTION_EDUCATION_CODE = "SECTION_EDUCATION_CODE";
+    static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
+    static final String SECTION_PROFESSION_CODES = "SECTION_PROFESSION_CODES";
 
-    private Set<String> changedSections = new HashSet<>();
+    private Set<String> changedSections;
 
     private AuditUser auditUser;
 

@@ -363,6 +363,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public void inspect() {
         this.ravRegistrationDate = TimeMachine.now().toLocalDate();
+        this.status = status.validateTransitionTo(JobAdvertisementStatus.INSPECTING);
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING, this));
     }
 
@@ -390,14 +391,19 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_CANCELLED, this));
     }
 
+    public void refining() {
+        this.status = status.validateTransitionTo(JobAdvertisementStatus.REFINING);
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_REFINING, this));
+    }
+
     public void publishRestricted() {
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_RESTRICTED);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISHED_RESTRICTED, this));
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_RESTRICTED, this));
     }
 
     public void publishPublic() {
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISHED_PUBLIC, this));
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC, this));
     }
 
     public void archive() {

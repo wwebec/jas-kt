@@ -68,7 +68,7 @@ public class JobAdvertisementFactory {
         );
         jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISHED_PUBLIC, newJobAdvertisement));
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC, newJobAdvertisement));
         return newJobAdvertisement;
     }
 }

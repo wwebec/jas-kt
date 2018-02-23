@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
+
 @Service
 @Transactional(rollbackFor = {Exception.class})
 public class JobAdvertisementApplicationService {
@@ -23,13 +25,13 @@ public class JobAdvertisementApplicationService {
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
 
-    private final RavRegistrationService ravRegistrationservice;
+    private final RavRegistrationService ravRegistrationService;
 
     @Autowired
-    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, RavRegistrationService ravRegistrationservice) {
+    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, RavRegistrationService ravRegistrationService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
-        this.ravRegistrationservice = ravRegistrationservice;
+        this.ravRegistrationService = ravRegistrationService;
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementDto createJobAdvertisementDto) {
@@ -80,24 +82,51 @@ public class JobAdvertisementApplicationService {
     public void inspect(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisement should not be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        ravRegistrationService.registrate(jobAdvertisement);
         jobAdvertisement.inspect();
-        ravRegistrationservice.registrate(jobAdvertisement);
     }
 
     public void approve(ApprovalDto approvalDto) {
-
+        Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisement should not be null");
+        JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(approvalDto.getJobAdvertisementId());
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation());
     }
 
     public void reject(RejectionDto rejectionDto) {
+        Condition.notNull(rejectionDto.getJobAdvertisementId(), "JobAdvertisement should not be null");
+        JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(rejectionDto.getJobAdvertisementId());
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
+    }
 
+    public void refining(JobAdvertisementId jobAdvertisementId) {
+        Condition.notNull(jobAdvertisementId, "JobAdvertisement should not be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        jobAdvertisement.refining();
+    }
+
+    public void publish(JobAdvertisementId jobAdvertisementId) {
+        Condition.notNull(jobAdvertisementId, "JobAdvertisement should not be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        if (jobAdvertisement.isReportingObligation() && REFINING.equals(jobAdvertisement.getStatus())) {
+            jobAdvertisement.publishRestricted();
+        } else {
+            jobAdvertisement.publishPublic();
+        }
     }
 
     public void cancel(CancellationDto cancellationDto) {
-
+        Condition.notNull(cancellationDto.getJobAdvertisementId(), "JobAdvertisement should not be null");
+        JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(cancellationDto.getJobAdvertisementId());
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
     }
 
     public void archive(JobAdvertisementId jobAdvertisementId) {
-
+        Condition.notNull(jobAdvertisementId, "JobAdvertisement should not be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        jobAdvertisement.archive();
     }
 
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
@@ -200,5 +229,4 @@ public class JobAdvertisementApplicationService {
         }
         return null;
     }
-
 }

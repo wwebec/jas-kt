@@ -10,19 +10,21 @@ public enum JobAdvertisementStatus {
     CREATED,
     INSPECTING,
     APPROVED,
+    REJECTED,
+    REFINING,
     PUBLISHED_RESTRICTED,
     PUBLISHED_PUBLIC,
-    REJECTED,
     CANCELLED,
     ARCHIVED;
 
     static {
-        CREATED.allowedDestinationStates = new JobAdvertisementStatus[]{INSPECTING, PUBLISHED_PUBLIC};
-        INSPECTING.allowedDestinationStates = new JobAdvertisementStatus[]{APPROVED, REJECTED};
-        APPROVED.allowedDestinationStates = new JobAdvertisementStatus[]{PUBLISHED_RESTRICTED, PUBLISHED_PUBLIC};
+        CREATED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, INSPECTING, PUBLISHED_PUBLIC};
+        INSPECTING.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, APPROVED, REJECTED};
+        APPROVED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, REFINING};
+        REJECTED.allowedDestinationStates = new JobAdvertisementStatus[]{};
+        REFINING.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, PUBLISHED_RESTRICTED, PUBLISHED_PUBLIC};
         PUBLISHED_RESTRICTED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, PUBLISHED_PUBLIC};
         PUBLISHED_PUBLIC.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, ARCHIVED};
-        REJECTED.allowedDestinationStates = new JobAdvertisementStatus[]{};
         CANCELLED.allowedDestinationStates = new JobAdvertisementStatus[]{};
         ARCHIVED.allowedDestinationStates = new JobAdvertisementStatus[]{};
     }

@@ -1,20 +1,31 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class RejectionDto {
 
+    @NotNull
     private String jobAdvertisementId;
+
+    @NotNull
+    private String stellennummerAvam;
+
+    @NotNull
     private LocalDate date;
+
+    @NotNull
     private String code;
+
     private String reason;
 
     protected RejectionDto() {
         // For reflection libs
     }
 
-    public RejectionDto(String jobAdvertisementId, LocalDate date, String code, String reason) {
+    public RejectionDto(String jobAdvertisementId, String stellennummerAvam, LocalDate date, String code, String reason) {
         this.jobAdvertisementId = jobAdvertisementId;
+        this.stellennummerAvam = stellennummerAvam;
         this.date = date;
         this.code = code;
         this.reason = reason;
@@ -26,6 +37,14 @@ public class RejectionDto {
 
     public void setJobAdvertisementId(String jobAdvertisementId) {
         this.jobAdvertisementId = jobAdvertisementId;
+    }
+
+    public String getStellennummerAvam() {
+        return stellennummerAvam;
+    }
+
+    public void setStellennummerAvam(String stellennummerAvam) {
+        this.stellennummerAvam = stellennummerAvam;
     }
 
     public LocalDate getDate() {
