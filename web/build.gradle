@@ -6,6 +6,9 @@ apply plugin: 'org.ajoberstar.grgit'
 
 dependencies {
     compile project(':infrastructure-database')
+    compile project(':infrastructure-elasticsearch')
+    compile project(':infrastructure-messagebroker')
+    compile project(':infrastructure-service-reference')
     compile project(':infrastructure-ws-avam')
 //    ES is not used yet
 //    compile project(':infrastructure-elasticsearch')

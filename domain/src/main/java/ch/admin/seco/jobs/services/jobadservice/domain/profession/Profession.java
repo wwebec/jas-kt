@@ -21,7 +21,8 @@ public class Profession implements Aggregate<Profession, ProfessionId> {
     @Valid
     private List<ProfessionCode> codes;
 
-    public Profession() {
+    protected Profession() {
+        // For reflection libs
     }
 
     public Profession(ProfessionId id) {

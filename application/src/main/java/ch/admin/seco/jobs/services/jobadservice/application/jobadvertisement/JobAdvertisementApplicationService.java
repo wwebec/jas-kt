@@ -1,10 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.application.LocalityService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.profession.ProfessionApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,13 +29,22 @@ public class JobAdvertisementApplicationService {
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
 
+    private final ProfessionApplicationService professionApplicationService;
+
     private final RavRegistrationService ravRegistrationService;
 
+    private final ReportingObligationService reportingObligationService;
+
+    private final LocalityService localityService;
+
     @Autowired
-    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, RavRegistrationService ravRegistrationService) {
+    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, ProfessionApplicationService professionApplicationService, RavRegistrationService ravRegistrationService, ReportingObligationService reportingObligationService, LocalityService localityService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
+        this.professionApplicationService = professionApplicationService;
         this.ravRegistrationService = ravRegistrationService;
+        this.reportingObligationService = reportingObligationService;
+        this.localityService = localityService;
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementDto createJobAdvertisementDto) {
@@ -80,34 +93,34 @@ public class JobAdvertisementApplicationService {
     }
 
     public void inspect(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisement should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         ravRegistrationService.registrate(jobAdvertisement);
         jobAdvertisement.inspect();
     }
 
     public void approve(ApprovalDto approvalDto) {
-        Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisement should not be null");
+        Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(approvalDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation());
     }
 
     public void reject(RejectionDto rejectionDto) {
-        Condition.notNull(rejectionDto.getJobAdvertisementId(), "JobAdvertisement should not be null");
+        Condition.notNull(rejectionDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(rejectionDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
     }
 
     public void refining(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisement should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.refining();
     }
 
     public void publish(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisement should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         if (jobAdvertisement.isReportingObligation() && REFINING.equals(jobAdvertisement.getStatus())) {
             jobAdvertisement.publishRestricted();
@@ -117,14 +130,14 @@ public class JobAdvertisementApplicationService {
     }
 
     public void cancel(CancellationDto cancellationDto) {
-        Condition.notNull(cancellationDto.getJobAdvertisementId(), "JobAdvertisement should not be null");
+        Condition.notNull(cancellationDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(cancellationDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
     }
 
     public void archive(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisement should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.archive();
     }
@@ -135,8 +148,11 @@ public class JobAdvertisementApplicationService {
     }
 
     private boolean checkReportingObligation(List<LocalityDto> localityDtos, List<OccupationDto> occupationDtos) {
-        // TODO Implement the check
-        return false;
+        // FIXME Pseudo code to real implementation
+        String cantonCode = localityDtos.get(0).getCantonCode();
+        ProfessionId professionId = new ProfessionId(occupationDtos.get(0).getProfessionId());
+        String avamProfessionCode = professionApplicationService.findAvamCode(professionId);
+        return reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamProfessionCode, cantonCode);
     }
 
     private ApplyChannel toApplyChannel(ApplyChannelDto applyChannelDto) {
@@ -187,9 +203,9 @@ public class JobAdvertisementApplicationService {
 
     private List<Locality> toLocalities(List<LocalityDto> localityDtos) {
         if (localityDtos != null) {
-            // TODO Resolve codes for ch localities
             return localityDtos.stream()
-                    .map(localityDto -> new Locality(
+                    .map(localityDto -> localityService.enrichCodes(
+                            new Locality(
                             localityDto.getRemarks(),
                             localityDto.getCity(),
                             localityDto.getZipCode(),
@@ -198,6 +214,7 @@ public class JobAdvertisementApplicationService {
                             localityDto.getCantonCode(),
                             localityDto.getCountryIsoCode(),
                             localityDto.getLocation()
+                    )
                     ))
                     .collect(Collectors.toList());
         }
