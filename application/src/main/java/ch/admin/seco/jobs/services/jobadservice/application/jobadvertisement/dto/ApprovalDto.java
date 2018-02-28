@@ -16,15 +16,18 @@ public class ApprovalDto {
 
     private boolean reportingObligation;
 
+    private LocalDate reportingObligationEndDate;
+
     protected ApprovalDto() {
         // For reflection libs
     }
 
-    public ApprovalDto(String jobAdvertisementId, String stellennummerAvam, LocalDate date, boolean reportingObligation) {
+    public ApprovalDto(String jobAdvertisementId, String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
         this.jobAdvertisementId = jobAdvertisementId;
         this.stellennummerAvam = stellennummerAvam;
         this.date = date;
         this.reportingObligation = reportingObligation;
+        this.reportingObligationEndDate = reportingObligationEndDate;
     }
 
     public String getJobAdvertisementId() {
@@ -57,5 +60,13 @@ public class ApprovalDto {
 
     public void setReportingObligation(boolean reportingObligation) {
         this.reportingObligation = reportingObligation;
+    }
+
+    public LocalDate getReportingObligationEndDate() {
+        return reportingObligationEndDate;
+    }
+
+    public void setReportingObligationEndDate(LocalDate reportingObligationEndDate) {
+        this.reportingObligationEndDate = reportingObligationEndDate;
     }
 }

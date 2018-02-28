@@ -100,10 +100,11 @@ public class JobAdvertisementApplicationService {
     }
 
     public void approve(ApprovalDto approvalDto) {
+        // TODO tbd where/when the data updates has to be done (over ApprovalDto --> JobAdUpdater?)
         Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(approvalDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
-        jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation());
+        jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
     }
 
     public void reject(RejectionDto rejectionDto) {
@@ -170,20 +171,20 @@ public class JobAdvertisementApplicationService {
 
     private Company toCompany(CompanyDto companyDto) {
         if (companyDto != null) {
-            return new Company(
-                    companyDto.getName(),
-                    companyDto.getStreet(),
-                    companyDto.getHouseNumber(),
-                    companyDto.getZipCode(),
-                    companyDto.getCity(),
-                    companyDto.getCountryIsoCode(),
-                    companyDto.getPostOfficeBoxNumber(),
-                    companyDto.getPostOfficeBoxZipCode(),
-                    companyDto.getPostOfficeBoxCity(),
-                    companyDto.getPhone(),
-                    companyDto.getEmail(),
-                    companyDto.getWebsite()
-            );
+            return new Company.Builder()
+                    .setName(companyDto.getName())
+                    .setStreet(companyDto.getStreet())
+                    .setHouseNumber(companyDto.getHouseNumber())
+                    .setZipCode(companyDto.getZipCode())
+                    .setCity(companyDto.getCity())
+                    .setCountryIsoCode(companyDto.getCountryIsoCode())
+                    .setPostOfficeBoxNumber(companyDto.getPostOfficeBoxNumber())
+                    .setPostOfficeBoxZipCode(companyDto.getPostOfficeBoxZipCode())
+                    .setPostOfficeBoxCity(companyDto.getPostOfficeBoxCity())
+                    .setPhone(companyDto.getPhone())
+                    .setEmail(companyDto.getEmail())
+                    .setWebsite(companyDto.getWebsite())
+                    .build();
         }
         return null;
     }
@@ -206,15 +207,15 @@ public class JobAdvertisementApplicationService {
             return localityDtos.stream()
                     .map(localityDto -> localityService.enrichCodes(
                             new Locality(
-                            localityDto.getRemarks(),
-                            localityDto.getCity(),
-                            localityDto.getZipCode(),
-                            localityDto.getCommunalCode(),
-                            localityDto.getRegionCode(),
-                            localityDto.getCantonCode(),
-                            localityDto.getCountryIsoCode(),
-                            localityDto.getLocation()
-                    )
+                                    localityDto.getRemarks(),
+                                    localityDto.getCity(),
+                                    localityDto.getZipCode(),
+                                    localityDto.getCommunalCode(),
+                                    localityDto.getRegionCode(),
+                                    localityDto.getCantonCode(),
+                                    localityDto.getCountryIsoCode(),
+                                    localityDto.getLocation()
+                            )
                     ))
                     .collect(Collectors.toList());
         }

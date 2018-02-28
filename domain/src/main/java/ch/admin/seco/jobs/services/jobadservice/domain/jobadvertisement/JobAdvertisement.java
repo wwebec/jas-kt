@@ -376,15 +376,22 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void inspect() {
+        // TODO check if can be inspected
+        Condition.notBlank(this.stellennummerEgov, "StellennummerEgov can't be null");
+
         this.ravRegistrationDate = TimeMachine.now().toLocalDate();
         this.status = status.validateTransitionTo(JobAdvertisementStatus.INSPECTING);
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING, this));
     }
 
-    public void approve(String stellennummerAvam, LocalDate date, boolean reportingObligation) {
+    public void approve(String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
+        // TODO tbd where/when the data updates has to be done (over ApprovalDto --> JobAdUpdater?)
+        Condition.isTrue(reportingObligation && (reportingObligationEndDate != null), "Reporting obligation end date is missing");
+
         this.stellennummerAvam = Condition.notBlank(stellennummerAvam);
         this.approvalDate = Condition.notNull(date);
         this.reportingObligation = reportingObligation;
+        this.reportingObligationEndDate = reportingObligationEndDate;
         this.status = status.validateTransitionTo(JobAdvertisementStatus.APPROVED);
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED, this));
     }

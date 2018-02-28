@@ -5,4 +5,9 @@ dependencies {
     compile 'org.springframework:spring-tx'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile 'javax.validation:validation-api'
+
+    testCompile files(this.project(':core').sourceSets.test.output)
+    testCompile 'org.mockito:mockito-core'
+    testCompile 'org.assertj:assertj-core'
+    testCompile 'junit:junit'
 }

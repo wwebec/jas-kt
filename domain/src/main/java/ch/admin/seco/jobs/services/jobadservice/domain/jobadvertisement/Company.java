@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 import javax.persistence.Access;
@@ -28,19 +29,19 @@ public class Company implements ValueObject<Company> {
         // For reflection libs
     }
 
-    public Company(String name, String street, String houseNumber, String zipCode, String city, String countryIsoCode, String postOfficeBoxNumber, String postOfficeBoxZipCode, String postOfficeBoxCity, String phone, String email, String website) {
-        this.name = name;
-        this.street = street;
-        this.houseNumber = houseNumber;
-        this.zipCode = zipCode;
-        this.city = city;
-        this.countryIsoCode = countryIsoCode;
-        this.postOfficeBoxNumber = postOfficeBoxNumber;
-        this.postOfficeBoxZipCode = postOfficeBoxZipCode;
-        this.postOfficeBoxCity = postOfficeBoxCity;
-        this.phone = phone;
-        this.email = email;
-        this.website = website;
+    private Company(Builder builder) {
+        this.name = Condition.notBlank(builder.name);
+        this.street = builder.street;
+        this.houseNumber = builder.houseNumber;
+        this.zipCode = Condition.notBlank(builder.zipCode);
+        this.city = Condition.notBlank(builder.city);
+        this.countryIsoCode = Condition.notBlank(builder.countryIsoCode);
+        this.postOfficeBoxNumber = builder.postOfficeBoxNumber;
+        this.postOfficeBoxZipCode = builder.postOfficeBoxZipCode;
+        this.postOfficeBoxCity = builder.postOfficeBoxCity;
+        this.phone = builder.phone;
+        this.email = builder.email;
+        this.website = builder.website;
     }
 
     public String getName() {
@@ -118,5 +119,92 @@ public class Company implements ValueObject<Company> {
     @Override
     public int hashCode() {
         return Objects.hash(name, street, houseNumber, zipCode, city, countryIsoCode, postOfficeBoxNumber, postOfficeBoxZipCode, postOfficeBoxCity, phone, email, website);
+    }
+
+    public static class Builder<T> {
+        private T parentBuilder;
+        private String name;
+        private String street;
+        private String houseNumber;
+        private String zipCode;
+        private String city;
+        private String countryIsoCode;
+        private String postOfficeBoxNumber;
+        private String postOfficeBoxZipCode;
+        private String postOfficeBoxCity;
+        private String phone;
+        private String email;
+        private String website;
+
+        public Builder(T parentBuilder) {
+            this.parentBuilder = parentBuilder;
+        }
+
+        public Builder() {
+        }
+
+        public Company build() {
+            return new Company(this);
+        }
+
+        public Builder<T> setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder<T> setStreet(String street) {
+            this.street = street;
+            return this;
+        }
+
+        public Builder<T> setHouseNumber(String houseNumber) {
+            this.houseNumber = houseNumber;
+            return this;
+        }
+
+        public Builder<T> setZipCode(String zipCode) {
+            this.zipCode = zipCode;
+            return this;
+        }
+
+        public Builder<T> setCity(String city) {
+            this.city = city;
+            return this;
+        }
+
+        public Builder<T> setCountryIsoCode(String countryIsoCode) {
+            this.countryIsoCode = countryIsoCode;
+            return this;
+        }
+
+        public Builder<T> setPostOfficeBoxNumber(String postOfficeBoxNumber) {
+            this.postOfficeBoxNumber = postOfficeBoxNumber;
+            return this;
+        }
+
+        public Builder<T> setPostOfficeBoxZipCode(String postOfficeBoxZipCode) {
+            this.postOfficeBoxZipCode = postOfficeBoxZipCode;
+            return this;
+        }
+
+        public Builder<T> setPostOfficeBoxCity(String postOfficeBoxCity) {
+            this.postOfficeBoxCity = postOfficeBoxCity;
+            return this;
+        }
+
+        public Builder<T> setPhone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public Builder<T> setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder<T> setWebsite(String website) {
+            this.website = website;
+            return this;
+        }
     }
 }
