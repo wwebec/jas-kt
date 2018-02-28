@@ -47,36 +47,36 @@ public class JobAdvertisementApplicationService {
         this.localityService = localityService;
     }
 
-    public JobAdvertisementId createFromWebForm(CreateJobAdvertisementDto createJobAdvertisementDto) {
+    public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebformDto createJobAdvertisementWebformDto) {
         boolean reportingObligation = checkReportingObligation(
-                createJobAdvertisementDto.getLocalities(),
-                Collections.singletonList(createJobAdvertisementDto.getOccupation())
+                createJobAdvertisementWebformDto.getLocalities(),
+                Collections.singletonList(createJobAdvertisementWebformDto.getOccupation())
         );
         final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
                 .setReportingObligation(reportingObligation)
                 // FIXME eval eures if anonymous or not
-                .setEures(createJobAdvertisementDto.isEures(), true)
+                .setEures(createJobAdvertisementWebformDto.isEures(), true)
                 .setEmployment(
-                        createJobAdvertisementDto.getEmploymentStartDate(),
-                        createJobAdvertisementDto.getEmploymentEndDate(),
-                        createJobAdvertisementDto.getDurationInDays(),
-                        createJobAdvertisementDto.getImmediately(),
-                        createJobAdvertisementDto.getPermanent(),
-                        createJobAdvertisementDto.getWorkloadPercentageMin(),
-                        createJobAdvertisementDto.getWorkloadPercentageMax()
+                        createJobAdvertisementWebformDto.getEmploymentStartDate(),
+                        createJobAdvertisementWebformDto.getEmploymentEndDate(),
+                        createJobAdvertisementWebformDto.getDurationInDays(),
+                        createJobAdvertisementWebformDto.getImmediately(),
+                        createJobAdvertisementWebformDto.getPermanent(),
+                        createJobAdvertisementWebformDto.getWorkloadPercentageMin(),
+                        createJobAdvertisementWebformDto.getWorkloadPercentageMax()
                 )
-                .setApplyChannel(toApplyChannel(createJobAdvertisementDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementDto.getCompany()))
-                .setContact(toContact(createJobAdvertisementDto.getContact()))
-                .setLocalities(toLocalities(createJobAdvertisementDto.getLocalities()))
-                .setOccupations(toOccupations(Collections.singletonList(createJobAdvertisementDto.getOccupation())))
-                .setEducationCode(createJobAdvertisementDto.getEducationCode())
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementDto.getLanguageSkills()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementWebformDto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementWebformDto.getCompany()))
+                .setContact(toContact(createJobAdvertisementWebformDto.getContact()))
+                .setLocalities(toLocalities(createJobAdvertisementWebformDto.getLocalities()))
+                .setOccupations(toOccupations(Collections.singletonList(createJobAdvertisementWebformDto.getOccupation())))
+                .setEducationCode(createJobAdvertisementWebformDto.getEducationCode())
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementWebformDto.getLanguageSkills()))
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(
-                createJobAdvertisementDto.getTitle(),
-                createJobAdvertisementDto.getDescription(),
+                createJobAdvertisementWebformDto.getTitle(),
+                createJobAdvertisementWebformDto.getDescription(),
                 updater
         );
         return jobAdvertisement.getId();

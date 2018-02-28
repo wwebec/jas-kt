@@ -22,6 +22,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Valid
     private JobAdvertisementId id;
 
+    private String stellennummerEgov;
+
     private String stellennummerAvam;
 
     private String fingerprint;
@@ -51,6 +53,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private String cancellationCode;
 
     private boolean reportingObligation;
+
+    private LocalDate reportingObligationEndDate;
 
     private LocalDate publicationStartDate;
 
@@ -155,8 +159,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
         this(id, sourceSystem, status, title, description);
+        this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
         this.sourceEntryId = sourceEntryId;
@@ -169,6 +174,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.cancellationDate = cancellationDate;
         this.cancellationCode = cancellationCode;
         this.reportingObligation = reportingObligation;
+        this.reportingObligationEndDate = reportingObligationEndDate;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
         this.eures = eures;
@@ -199,6 +205,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public JobAdvertisementId getId() {
         return id;
+    }
+
+    public String getStellennummerEgov() {
+        return stellennummerEgov;
     }
 
     public String getStellennummerAvam() {
@@ -255,6 +265,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public boolean isReportingObligation() {
         return reportingObligation;
+    }
+
+    public LocalDate getReportingObligationEndDate() {
+        return reportingObligationEndDate;
     }
 
     public LocalDate getPublicationStartDate() {

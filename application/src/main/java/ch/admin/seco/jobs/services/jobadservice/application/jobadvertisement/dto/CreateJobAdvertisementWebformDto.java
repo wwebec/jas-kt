@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
-public class CreateJobAdvertisementDto {
+public class CreateJobAdvertisementWebformDto {
 
     private boolean eures;
 
@@ -49,11 +49,11 @@ public class CreateJobAdvertisementDto {
 
     private List<LanguageSkillDto> languageSkills;
 
-    protected CreateJobAdvertisementDto() {
+    protected CreateJobAdvertisementWebformDto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, OccupationDto occupation, String educationCode, List<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementWebformDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, OccupationDto occupation, String educationCode, List<LanguageSkillDto> languageSkills) {
         this.eures = eures;
         this.title = title;
         this.description = description;

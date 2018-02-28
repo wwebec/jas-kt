@@ -43,8 +43,8 @@
             <column name="ID" type="varchar(36)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="STELLENNUMMER_AVAM" type="varchar(12)"/>
-            <column name="STELLENNUMMER_EGOV" type="varchar(12)"/>
+            <column name="STELLENNUMMER_EGOV" type="varchar(11)"/>
+            <column name="STELLENNUMMER_AVAM" type="varchar(11)"/>
             <column name="FINGERPRINT" type="varchar(100)"/>
             <column name="SOURCE_SYSTEM" type="varchar(12)"/>
             <column name="SOURCE_ENTRY_ID" type="varchar(255)"/>
@@ -60,6 +60,7 @@
             <column name="CANCELLATION_DATE" type="date"/>
             <column name="CANCELLATION_CODE" type="varchar(10)"/>
             <column name="REPORTING_OBLIGATION" type="boolean"/>
+            <column name="REPORTING_OBLIGATION_END_DATE" type="date"/>
             <column name="PUBLICATION_START_DATE" type="date"/>
             <column name="PUBLICATION_END_DATE" type="date"/>
             <column name="EURES" type="boolean"/>

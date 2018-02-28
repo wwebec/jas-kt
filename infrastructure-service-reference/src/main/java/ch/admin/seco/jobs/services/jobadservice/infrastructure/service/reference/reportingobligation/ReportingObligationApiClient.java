@@ -1,6 +1,5 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.reportingobligation;
 
-import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 import feign.hystrix.FallbackFactory;
 import org.springframework.cloud.netflix.feign.FeignClient;
@@ -10,11 +9,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient(name = "reporting-obligations", fallback = ReportingObligationApiClientFactory.class, decode404 = true)
-public interface ReportingObligationApiClient extends ReportingObligationService {
+public interface ReportingObligationApiClient {
 
-    @Override
     @GetMapping(value = "/api/reporting-obligations/{type}/{code}/exist", consumes = "application/json")
-    boolean hasReportingObligation(@PathVariable("type") ProfessionCodeType professionCodeType, @PathVariable("code") String professionCode, @RequestParam String cantonCode);
+    boolean hasReportingObligation(
+            @PathVariable("type") ProfessionCodeType professionCodeType,
+            @PathVariable("code") String professionCode,
+            @RequestParam("cantonCode") String cantonCode
+    );
 
 }
 

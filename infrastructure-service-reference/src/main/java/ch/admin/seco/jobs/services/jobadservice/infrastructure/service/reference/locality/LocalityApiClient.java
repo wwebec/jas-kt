@@ -15,10 +15,10 @@ import java.util.UUID;
 public interface LocalityApiClient {
 
     @GetMapping("/api/localities/{id}")
-    LocalityResource getLocality(@PathVariable UUID id);
+    LocalityResource getLocality(@PathVariable("id") UUID id);
 
     @GetMapping(value = "/api/localities")
-    List<LocalityResource> findLocalitiesByZipCode(@RequestParam String zipCode);
+    List<LocalityResource> findLocalitiesByZipCode(@RequestParam("zipCode") String zipCode);
 
 }
 
