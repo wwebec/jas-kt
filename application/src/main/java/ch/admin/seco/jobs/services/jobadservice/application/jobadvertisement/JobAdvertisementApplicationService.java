@@ -95,8 +95,9 @@ public class JobAdvertisementApplicationService {
     public void inspect(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
-        ravRegistrationService.registrate(jobAdvertisement);
         jobAdvertisement.inspect();
+        // FIXME Registration should be called by JOB_ADVERTISEMENT_INSPECTING
+        ravRegistrationService.registrate(jobAdvertisement);
     }
 
     public void approve(ApprovalDto approvalDto) {

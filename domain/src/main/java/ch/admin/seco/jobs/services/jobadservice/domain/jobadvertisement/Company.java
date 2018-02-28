@@ -147,6 +147,10 @@ public class Company implements ValueObject<Company> {
             return new Company(this);
         }
 
+        public T end() {
+            return Condition.notNull(parentBuilder, "No parentBuilder has been set");
+        }
+
         public Builder<T> setName(String name) {
             this.name = name;
             return this;
