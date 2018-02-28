@@ -96,8 +96,8 @@ public class JobAdvertisementApplicationService {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.inspect();
-        // FIXME Registration should be called by JOB_ADVERTISEMENT_INSPECTING
-        ravRegistrationService.registrate(jobAdvertisement);
+        // FIXME Registration should be called by JOB_ADVERTISEMENT_INSPECTING (Create event listener in package messagebroker)
+        //ravRegistrationService.registrate(jobAdvertisement);
     }
 
     public void approve(ApprovalDto approvalDto) {

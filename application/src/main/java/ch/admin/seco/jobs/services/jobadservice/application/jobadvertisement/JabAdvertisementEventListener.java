@@ -23,7 +23,7 @@ public class JabAdvertisementEventListener {
     }
 
     @EventListener
-    void sendToInspection(JobAdvertisementEvent jobAdvertisementEvent) {
+    void onCreated(JobAdvertisementEvent jobAdvertisementEvent) {
         if (!JOB_ADVERTISEMENT_CREATED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
         }

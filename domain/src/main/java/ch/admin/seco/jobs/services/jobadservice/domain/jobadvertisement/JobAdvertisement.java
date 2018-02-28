@@ -376,8 +376,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void inspect() {
-        // TODO check if can be inspected
-        Condition.notBlank(this.stellennummerEgov, "StellennummerEgov can't be null");
+        // TODO check if can be inspected (e.g. stellennummerEgov is not missing)
+        //Condition.notBlank(this.stellennummerEgov, "StellennummerEgov can't be null");
 
         this.ravRegistrationDate = TimeMachine.now().toLocalDate();
         this.status = status.validateTransitionTo(JobAdvertisementStatus.INSPECTING);
