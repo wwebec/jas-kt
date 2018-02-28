@@ -35,7 +35,7 @@ public class JabAdvertisementEventListener {
     }
 
     @EventListener
-    void publish(JobAdvertisementEvent jobAdvertisementEvent) {
+    void onRefined(JobAdvertisementEvent jobAdvertisementEvent) {
         if (!JOB_ADVERTISEMENT_REFINED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
         }
@@ -43,7 +43,7 @@ public class JabAdvertisementEventListener {
     }
 
     @EventListener
-    void blackoutExpiring(JobAdvertisementEvent jobAdvertisementEvent) {
+    void onBlackoutExpired(JobAdvertisementEvent jobAdvertisementEvent) {
         if (!JOB_ADVERTISEMENT_BLACKOUT_EXPIRED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
         }
@@ -51,7 +51,7 @@ public class JabAdvertisementEventListener {
     }
 
     @EventListener
-    void publishExpiring(JobAdvertisementEvent jobAdvertisementEvent) {
+    void onPublishExpired(JobAdvertisementEvent jobAdvertisementEvent) {
         if (!JOB_ADVERTISEMENT_PUBLISH_EXPIRED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
         }
