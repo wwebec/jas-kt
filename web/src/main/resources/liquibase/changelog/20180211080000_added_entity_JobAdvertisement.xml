@@ -126,7 +126,7 @@
             <column name="WORK_EXPERIENCE" type="varchar(64)"/>
         </createTable>
 
-        <createTable tableName="JOB_ADVERTISEMENT_LANGUAGES_KILL">
+        <createTable tableName="JOB_ADVERTISEMENT_LANGUAGE_SKILL">
             <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
                 <constraints nullable="false"/>
             </column>

@@ -12,7 +12,7 @@ public class JobAdvertisementTest {
     private DomainEventMockUtils domainEventMockUtils;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
     }
 
@@ -76,7 +76,7 @@ public class JobAdvertisementTest {
         assertThat(jobAdvertisementEvent.getJobAdvertisementId()).isEqualTo(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
     }
 
-    //@Test
+    @Test
     public void testInspect() {
         //Prepare
         JobAdvertisement jobAdvertisement = new JobAdvertisement(

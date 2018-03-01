@@ -47,36 +47,36 @@ public class JobAdvertisementApplicationService {
         this.localityService = localityService;
     }
 
-    public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebformDto createJobAdvertisementWebformDto) {
+    public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto) {
         boolean reportingObligation = checkReportingObligation(
-                createJobAdvertisementWebformDto.getLocalities(),
-                Collections.singletonList(createJobAdvertisementWebformDto.getOccupation())
+                createJobAdvertisementWebFormDto.getLocalities(),
+                Collections.singletonList(createJobAdvertisementWebFormDto.getOccupation())
         );
         final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
                 .setReportingObligation(reportingObligation)
                 // FIXME eval eures if anonymous or not
-                .setEures(createJobAdvertisementWebformDto.isEures(), true)
+                .setEures(createJobAdvertisementWebFormDto.isEures(), true)
                 .setEmployment(
-                        createJobAdvertisementWebformDto.getEmploymentStartDate(),
-                        createJobAdvertisementWebformDto.getEmploymentEndDate(),
-                        createJobAdvertisementWebformDto.getDurationInDays(),
-                        createJobAdvertisementWebformDto.getImmediately(),
-                        createJobAdvertisementWebformDto.getPermanent(),
-                        createJobAdvertisementWebformDto.getWorkloadPercentageMin(),
-                        createJobAdvertisementWebformDto.getWorkloadPercentageMax()
+                        createJobAdvertisementWebFormDto.getEmploymentStartDate(),
+                        createJobAdvertisementWebFormDto.getEmploymentEndDate(),
+                        createJobAdvertisementWebFormDto.getDurationInDays(),
+                        createJobAdvertisementWebFormDto.getImmediately(),
+                        createJobAdvertisementWebFormDto.getPermanent(),
+                        createJobAdvertisementWebFormDto.getWorkloadPercentageMin(),
+                        createJobAdvertisementWebFormDto.getWorkloadPercentageMax()
                 )
-                .setApplyChannel(toApplyChannel(createJobAdvertisementWebformDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementWebformDto.getCompany()))
-                .setContact(toContact(createJobAdvertisementWebformDto.getContact()))
-                .setLocalities(toLocalities(createJobAdvertisementWebformDto.getLocalities()))
-                .setOccupations(toOccupations(Collections.singletonList(createJobAdvertisementWebformDto.getOccupation())))
-                .setEducationCode(createJobAdvertisementWebformDto.getEducationCode())
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementWebformDto.getLanguageSkills()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
+                .setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
+                .setLocalities(toLocalities(createJobAdvertisementWebFormDto.getLocalities()))
+                .setOccupations(toOccupations(Collections.singletonList(createJobAdvertisementWebFormDto.getOccupation())))
+                .setEducationCode(createJobAdvertisementWebFormDto.getEducationCode())
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(
-                createJobAdvertisementWebformDto.getTitle(),
-                createJobAdvertisementWebformDto.getDescription(),
+                createJobAdvertisementWebFormDto.getTitle(),
+                createJobAdvertisementWebFormDto.getDescription(),
                 updater
         );
         return jobAdvertisement.getId();

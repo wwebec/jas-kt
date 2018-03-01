@@ -139,7 +139,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private String educationCode;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGES_KILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<LanguageSkill> languageSkills;
 
