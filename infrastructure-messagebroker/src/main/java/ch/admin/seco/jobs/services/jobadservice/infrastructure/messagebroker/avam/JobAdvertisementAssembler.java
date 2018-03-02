@@ -2,7 +2,6 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.wsdl.TOsteEgov;
 
 import java.time.LocalDate;
@@ -134,21 +133,22 @@ public class JobAdvertisementAssembler {
         }
         if (occupations.size() > 0) {
             Occupation occupation = occupations.get(0);
-            Profession profession = professionService.findById(occupation.getProfessionId());
-            tOsteEgov.setBq1AvamBeruf(profession.getId().getValue());
+            tOsteEgov.setBq1AvamBeruf(occupation.getProfessionId().getValue());
             tOsteEgov.setBq1ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
+            tOsteEgov.setBq1AusbildungCode(occupation.getEducationCode());
         }
-        // Ignore the others
         /*
         if (occupations.size() > 1) {
             Occupation occupation = occupations.get(1);
-            tOsteEgov.setBq2AvamBeruf(professionService.findAvamCode(occupation.getProfessionId()));
+            tOsteEgov.setBq2AvamBeruf(occupation.getProfessionId().getValue());
             tOsteEgov.setBq2ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
+            tOsteEgov.setBq2AusbildungCode(occupation.getEducationCode());
         }
         if (occupations.size() > 2) {
             Occupation occupation = occupations.get(2);
-            tOsteEgov.setBq3AvamBeruf(professionService.findAvamCode(occupation.getProfessionId()));
+            tOsteEgov.setBq3AvamBeruf(occupation.getProfessionId().getValue());
             tOsteEgov.setBq3ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
+            tOsteEgov.setBq3AusbildungCode(occupation.getEducationCode());
         }
         */
     }

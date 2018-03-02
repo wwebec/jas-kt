@@ -17,13 +17,16 @@ public class Occupation implements ValueObject<Occupation> {
     @Enumerated(EnumType.STRING)
     private WorkExperience workExperience;
 
+    private String educationCode;
+
     protected Occupation() {
         // For reflection libs
     }
 
-    public Occupation(ProfessionId professionId, WorkExperience workExperience) {
+    public Occupation(ProfessionId professionId, WorkExperience workExperience, String educationCode) {
         this.professionId = professionId;
         this.workExperience = workExperience;
+        this.educationCode = educationCode;
     }
 
     public ProfessionId getProfessionId() {
@@ -32,6 +35,10 @@ public class Occupation implements ValueObject<Occupation> {
 
     public WorkExperience getWorkExperience() {
         return workExperience;
+    }
+
+    public String getEducationCode() {
+        return educationCode;
     }
 
     @Override
@@ -45,12 +52,13 @@ public class Occupation implements ValueObject<Occupation> {
         if (o == null || getClass() != o.getClass()) return false;
         Occupation that = (Occupation) o;
         return Objects.equals(professionId, that.professionId) &&
-                workExperience == that.workExperience;
+                workExperience == that.workExperience &&
+                Objects.equals(educationCode, that.educationCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(professionId, workExperience);
+        return Objects.hash(professionId, workExperience, educationCode);
     }
 
 }

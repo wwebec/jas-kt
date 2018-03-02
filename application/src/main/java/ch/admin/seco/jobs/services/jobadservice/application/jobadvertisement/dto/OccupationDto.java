@@ -10,14 +10,16 @@ public class OccupationDto {
 
     private String avamCode;
     private WorkExperience workExperience;
+    private String educationCode;
 
     protected OccupationDto() {
         // For reflection libs
     }
 
-    public OccupationDto(String avamCode, WorkExperience workExperience) {
+    public OccupationDto(String avamCode, WorkExperience workExperience, String educationCode) {
         this.avamCode = avamCode;
         this.workExperience = workExperience;
+        this.educationCode = educationCode;
     }
 
     public String getAvamCode() {
@@ -36,10 +38,19 @@ public class OccupationDto {
         this.workExperience = workExperience;
     }
 
+    public String getEducationCode() {
+        return educationCode;
+    }
+
+    public void setEducationCode(String educationCode) {
+        this.educationCode = educationCode;
+    }
+
     public static OccupationDto toDto(Occupation occupation) {
         OccupationDto occupationDto = new OccupationDto();
         occupationDto.setAvamCode(occupation.getProfessionId().getValue());
         occupationDto.setWorkExperience(occupation.getWorkExperience());
+        occupationDto.setEducationCode(occupation.getEducationCode());
         return occupationDto;
     }
 
