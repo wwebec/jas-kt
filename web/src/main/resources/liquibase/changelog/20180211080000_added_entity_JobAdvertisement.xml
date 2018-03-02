@@ -109,7 +109,6 @@
             <column name="LOCALITY_COUNTRY_ISO_CODE" type="varchar(2)"/>
             <column name="LOCALITY_LOCATION_LONGITUDE" type="double"/>
             <column name="LOCALITY_LOCATION_LATITUDE" type="double"/>
-            <column name="EDUCATION_CODE" type="varchar(8)"/>
         </createTable>
 
         <createTable tableName="JOB_ADVERTISEMENT_OCCUPATION">
@@ -118,6 +117,7 @@
             </column>
             <column name="PROFESSION_ID" type="varchar(36)"/>
             <column name="WORK_EXPERIENCE" type="varchar(64)"/>
+            <column name="EDUCATION_CODE" type="varchar(8)"/>
         </createTable>
 
         <createTable tableName="JOB_ADVERTISEMENT_LANGUAGE_SKILL">
