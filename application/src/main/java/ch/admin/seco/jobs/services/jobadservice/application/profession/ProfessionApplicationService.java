@@ -1,11 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.application.profession;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCode;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionId;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ProfessionApplicationService {
@@ -26,6 +30,10 @@ public class ProfessionApplicationService {
                         .orElse(null)
                 )
                 .orElse(null);
+    }
+
+    public Optional<Profession> getProfessionCode(ProfessionId professionId) {
+        return professionRepository.findById(professionId);
     }
 
 }

@@ -1,18 +1,46 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_APPLY_CHANNEL;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_COMPANY;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_CONTACT;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_DRIVING_LICENSE_LEVEL;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EDUCATION_CODE;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EMPLOYMENT;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EURES;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EXTERNAL_URL;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_FINGERPRINT;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_JOB_CENTER_CODE;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LANGUAGE_SKILLS;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LOCALITIES;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_OCCUPATIONS;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PROFESSION_CODES;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLICATION_DATES;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_REPORTING_OBLIGATION;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_SOURCE_ENTRY_ID;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.validation.Valid;
+
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-
-import javax.persistence.*;
-import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.List;
-
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.*;
 
 @Entity
 public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertisementId> {
@@ -88,40 +116,40 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
-            @AttributeOverride(name = "emailAddress", column = @Column(name = "APPLY_CHANNEL_EMAIL_ADDRESS")),
-            @AttributeOverride(name = "phoneNumber", column = @Column(name = "APPLY_CHANNEL_PHONE_NUMBER")),
-            @AttributeOverride(name = "formUrl", column = @Column(name = "APPLY_CHANNEL_FORM_URL")),
-            @AttributeOverride(name = "additionalInfo", column = @Column(name = "APPLY_CHANNEL_ADDITIONAL_INFO"))
+        @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
+        @AttributeOverride(name = "emailAddress", column = @Column(name = "APPLY_CHANNEL_EMAIL_ADDRESS")),
+        @AttributeOverride(name = "phoneNumber", column = @Column(name = "APPLY_CHANNEL_PHONE_NUMBER")),
+        @AttributeOverride(name = "formUrl", column = @Column(name = "APPLY_CHANNEL_FORM_URL")),
+        @AttributeOverride(name = "additionalInfo", column = @Column(name = "APPLY_CHANNEL_ADDITIONAL_INFO"))
     })
     @Valid
     private ApplyChannel applyChannel;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "name", column = @Column(name = "COMPANY_NAME")),
-            @AttributeOverride(name = "street", column = @Column(name = "COMPANY_STREET")),
-            @AttributeOverride(name = "houseNumber", column = @Column(name = "COMPANY_HOUSE_NUMBER")),
-            @AttributeOverride(name = "zipCode", column = @Column(name = "COMPANY_ZIP_CODE")),
-            @AttributeOverride(name = "city", column = @Column(name = "COMPANY_CITY")),
-            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "COMPANY_COUNTRY_ISO_CODE")),
-            @AttributeOverride(name = "postOfficeBoxNumber", column = @Column(name = "COMPANY_POST_OFFICE_BOX_NUMBER")),
-            @AttributeOverride(name = "postOfficeBoxZipCode", column = @Column(name = "COMPANY_POST_OFFICE_BOX_ZIP_CODE")),
-            @AttributeOverride(name = "postOfficeBoxCity", column = @Column(name = "COMPANY_POST_OFFICE_BOX_CITY")),
-            @AttributeOverride(name = "phone", column = @Column(name = "COMPANY_PHONE")),
-            @AttributeOverride(name = "email", column = @Column(name = "COMPANY_EMAIL")),
-            @AttributeOverride(name = "website", column = @Column(name = "COMPANY_WEBSITE"))
+        @AttributeOverride(name = "name", column = @Column(name = "COMPANY_NAME")),
+        @AttributeOverride(name = "street", column = @Column(name = "COMPANY_STREET")),
+        @AttributeOverride(name = "houseNumber", column = @Column(name = "COMPANY_HOUSE_NUMBER")),
+        @AttributeOverride(name = "zipCode", column = @Column(name = "COMPANY_ZIP_CODE")),
+        @AttributeOverride(name = "city", column = @Column(name = "COMPANY_CITY")),
+        @AttributeOverride(name = "countryIsoCode", column = @Column(name = "COMPANY_COUNTRY_ISO_CODE")),
+        @AttributeOverride(name = "postOfficeBoxNumber", column = @Column(name = "COMPANY_POST_OFFICE_BOX_NUMBER")),
+        @AttributeOverride(name = "postOfficeBoxZipCode", column = @Column(name = "COMPANY_POST_OFFICE_BOX_ZIP_CODE")),
+        @AttributeOverride(name = "postOfficeBoxCity", column = @Column(name = "COMPANY_POST_OFFICE_BOX_CITY")),
+        @AttributeOverride(name = "phone", column = @Column(name = "COMPANY_PHONE")),
+        @AttributeOverride(name = "email", column = @Column(name = "COMPANY_EMAIL")),
+        @AttributeOverride(name = "website", column = @Column(name = "COMPANY_WEBSITE"))
     })
     @Valid
     private Company company;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "salutation", column = @Column(name = "CONTACT_SALUTATION")),
-            @AttributeOverride(name = "firstName", column = @Column(name = "CONTACT_FIRST_NAME")),
-            @AttributeOverride(name = "lastName", column = @Column(name = "CONTACT_LAST_NAME")),
-            @AttributeOverride(name = "phone", column = @Column(name = "CONTACT_PHONE")),
-            @AttributeOverride(name = "email", column = @Column(name = "CONTACT_EMAIL"))
+        @AttributeOverride(name = "salutation", column = @Column(name = "CONTACT_SALUTATION")),
+        @AttributeOverride(name = "firstName", column = @Column(name = "CONTACT_FIRST_NAME")),
+        @AttributeOverride(name = "lastName", column = @Column(name = "CONTACT_LAST_NAME")),
+        @AttributeOverride(name = "phone", column = @Column(name = "CONTACT_PHONE")),
+        @AttributeOverride(name = "email", column = @Column(name = "CONTACT_EMAIL"))
     })
     @Valid
     private Contact contact;
@@ -462,29 +490,29 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         if (updater.hasAnyChangesIn(SECTION_PUBLICATION_DATES) && (
-                hasChanged(this.publicationStartDate, updater.getPublicationStartDate()) ||
-                        hasChanged(this.publicationEndDate, updater.getPublicationEndDate()))) {
+            hasChanged(this.publicationStartDate, updater.getPublicationStartDate()) ||
+                hasChanged(this.publicationEndDate, updater.getPublicationEndDate()))) {
             this.publicationStartDate = updater.getPublicationStartDate();
             this.publicationEndDate = updater.getPublicationEndDate();
             hasChangedAnything = true;
         }
 
         if (updater.hasAnyChangesIn(SECTION_EURES) && (
-                hasChanged(this.eures, updater.isEures()) ||
-                        hasChanged(this.euresAnonymous, updater.isEuresAnonymous()))) {
+            hasChanged(this.eures, updater.isEures()) ||
+                hasChanged(this.euresAnonymous, updater.isEuresAnonymous()))) {
             this.eures = updater.isEures();
             this.euresAnonymous = updater.isEuresAnonymous();
             hasChangedAnything = true;
         }
 
         if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && (
-                hasChanged(this.employmentStartDate, updater.getEmploymentStartDate()) ||
-                        hasChanged(this.employmentEndDate, updater.getEmploymentEndDate()) ||
-                        hasChanged(this.durationInDays, updater.getDurationInDays()) ||
-                        hasChanged(this.immediately, updater.getImmediately()) ||
-                        hasChanged(this.permanent, updater.getPermanent()) ||
-                        hasChanged(this.workloadPercentageMin, updater.getWorkloadPercentageMin()) ||
-                        hasChanged(this.workloadPercentageMax, updater.getWorkloadPercentageMax())
+            hasChanged(this.employmentStartDate, updater.getEmploymentStartDate()) ||
+                hasChanged(this.employmentEndDate, updater.getEmploymentEndDate()) ||
+                hasChanged(this.durationInDays, updater.getDurationInDays()) ||
+                hasChanged(this.immediately, updater.getImmediately()) ||
+                hasChanged(this.permanent, updater.getPermanent()) ||
+                hasChanged(this.workloadPercentageMin, updater.getWorkloadPercentageMin()) ||
+                hasChanged(this.workloadPercentageMax, updater.getWorkloadPercentageMax())
         )) {
             this.employmentStartDate = updater.getEmploymentStartDate();
             this.employmentEndDate = updater.getEmploymentEndDate();

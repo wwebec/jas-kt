@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCode;
 
 import java.time.LocalDate;
 import java.util.HashSet;

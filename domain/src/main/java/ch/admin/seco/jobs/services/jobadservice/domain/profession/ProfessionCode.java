@@ -15,12 +15,15 @@ public class ProfessionCode implements ValueObject<ProfessionCode> {
 
     private String code;
 
+    private String label;
+
     protected ProfessionCode() {
     }
 
-    public ProfessionCode(ProfessionCodeType type, String code) {
+    public ProfessionCode(ProfessionCodeType type, String code, String label) {
         this.type = Condition.notNull(type);
         this.code = Condition.notBlank(code);
+        this.label = label;
     }
 
     public ProfessionCodeType getType() {
@@ -29,6 +32,10 @@ public class ProfessionCode implements ValueObject<ProfessionCode> {
 
     public String getCode() {
         return code;
+    }
+
+    public String getLabel() {
+        return label;
     }
 
     public String getTranslationKey() {
