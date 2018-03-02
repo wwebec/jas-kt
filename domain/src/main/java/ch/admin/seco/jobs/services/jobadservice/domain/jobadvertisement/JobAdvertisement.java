@@ -541,11 +541,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_EDUCATION_CODE) && hasChanged(this.educationCode, updater.getEducationCode())) {
-            this.educationCode = updater.getEducationCode();
-            hasChangedAnything = true;
-        }
-
         if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(this.languageSkills, updater.getLanguageSkills())) {
             this.languageSkills = updater.getLanguageSkills();
             hasChangedAnything = true;

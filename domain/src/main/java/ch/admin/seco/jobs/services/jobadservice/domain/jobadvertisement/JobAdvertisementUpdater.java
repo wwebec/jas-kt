@@ -23,7 +23,6 @@ public class JobAdvertisementUpdater {
     static final String SECTION_CONTACT = "SECTION_CONTACT";
     static final String SECTION_LOCALITY = "SECTION_LOCALITY";
     static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
-    static final String SECTION_EDUCATION_CODE = "SECTION_EDUCATION_CODE";
     static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
     static final String SECTION_PROFESSION_CODES = "SECTION_PROFESSION_CODES";
 
@@ -75,8 +74,6 @@ public class JobAdvertisementUpdater {
 
     private List<Occupation> occupations;
 
-    private String educationCode;
-
     private List<LanguageSkill> languageSkills;
 
     private List<String> professionCodes;
@@ -106,7 +103,6 @@ public class JobAdvertisementUpdater {
         this.contact = builder.contact;
         this.locality = builder.locality;
         this.occupations = builder.occupations;
-        this.educationCode = builder.educationCode;
         this.languageSkills = builder.languageSkills;
         this.professionCodes = builder.professionCodes;
     }
@@ -207,10 +203,6 @@ public class JobAdvertisementUpdater {
         return occupations;
     }
 
-    public String getEducationCode() {
-        return educationCode;
-    }
-
     public List<LanguageSkill> getLanguageSkills() {
         return languageSkills;
     }
@@ -245,7 +237,6 @@ public class JobAdvertisementUpdater {
         private Contact contact;
         private Locality locality;
         private List<Occupation> occupations;
-        private String educationCode;
         private List<LanguageSkill> languageSkills;
         private List<String> professionCodes;
 
@@ -346,12 +337,6 @@ public class JobAdvertisementUpdater {
         public Builder setOccupations(List<Occupation> occupations) {
             this.changedSections.add(SECTION_OCCUPATIONS);
             this.occupations = occupations;
-            return this;
-        }
-
-        public Builder setEducationCode(String educationCode) {
-            this.changedSections.add(SECTION_EDUCATION_CODE);
-            this.educationCode = educationCode;
             return this;
         }
 

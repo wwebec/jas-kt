@@ -58,9 +58,8 @@ public class JobAdvertisementApplicationServiceTest {
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
                 new CompanyDto("name", "stree", "houseNumber", "zipCode", "city", "CH", null, null, null, "phone", "email", "website"),
                 new ContactDto("MR", "firstName", "lastName", "phone", "email"),
-                Collections.singletonList(new LocalityDto("remarks", "ctiy", "zipCode", null, null, "BE", "CH", null)),
-                new OccupationDto("prefessionId", WorkExperience.MORE_THAN_1_YEAR),
-                null,
+                new LocalityDto("remarks", "ctiy", "zipCode", null, null, "BE", "CH", null),
+                new OccupationDto("prefessionId", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
         );
 

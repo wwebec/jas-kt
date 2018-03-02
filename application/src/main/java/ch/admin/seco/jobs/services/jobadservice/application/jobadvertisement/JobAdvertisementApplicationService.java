@@ -55,6 +55,8 @@ public class JobAdvertisementApplicationService {
         );
 
         final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+                .setLocality(locality)
+                .setOccupations(Collections.singletonList(occupation))
                 .setReportingObligation(reportingObligation)
                 // FIXME eval eures if anonymous or not (User/Security)
                 .setEures(createJobAdvertisementWebFormDto.isEures(), true)
@@ -70,9 +72,6 @@ public class JobAdvertisementApplicationService {
                 .setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
                 .setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
-                .setLocality(locality)
-                .setOccupations(Collections.singletonList(occupation))
-                .setEducationCode(createJobAdvertisementWebFormDto.getEducationCode())
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
                 .build();
 
@@ -224,7 +223,8 @@ public class JobAdvertisementApplicationService {
             // TODO update professionCodes
             return new Occupation(
                     new ProfessionId(occupationDto.getAvamCode()),
-                    occupationDto.getWorkExperience()
+                    occupationDto.getWorkExperience(),
+                    occupationDto.getEducationCode()
             );
         }
         return null;

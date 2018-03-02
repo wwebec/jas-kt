@@ -44,15 +44,13 @@ public class CreateJobAdvertisementWebFormDto {
     @NotNull
     private OccupationDto occupation;
 
-    private String educationCode;
-
     private List<LanguageSkillDto> languageSkills;
 
     protected CreateJobAdvertisementWebFormDto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementWebFormDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, OccupationDto occupation, String educationCode, List<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementWebFormDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, OccupationDto occupation, List<LanguageSkillDto> languageSkills) {
         this.eures = eures;
         this.title = title;
         this.description = description;
@@ -69,7 +67,6 @@ public class CreateJobAdvertisementWebFormDto {
         this.contact = contact;
         this.locality = locality;
         this.occupation = occupation;
-        this.educationCode = educationCode;
         this.languageSkills = languageSkills;
     }
 
@@ -199,14 +196,6 @@ public class CreateJobAdvertisementWebFormDto {
 
     public void setOccupation(OccupationDto occupation) {
         this.occupation = occupation;
-    }
-
-    public String getEducationCode() {
-        return educationCode;
-    }
-
-    public void setEducationCode(String educationCode) {
-        this.educationCode = educationCode;
     }
 
     public List<LanguageSkillDto> getLanguageSkills() {
