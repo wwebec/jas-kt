@@ -25,10 +25,6 @@ public class Locality implements ValueObject<Locality> {
     private String countryIsoCode;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "longitude", column = @Column(name = "LOCATION_LONGITUDE")),
-            @AttributeOverride(name = "latitude", column = @Column(name = "LOCATION_LATITUDE"))
-    })
     @Valid
     private GeoPoint location;
 

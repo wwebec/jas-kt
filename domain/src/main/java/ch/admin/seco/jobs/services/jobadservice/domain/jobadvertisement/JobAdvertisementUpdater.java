@@ -21,7 +21,7 @@ public class JobAdvertisementUpdater {
     static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
     static final String SECTION_COMPANY = "SECTION_COMPANY";
     static final String SECTION_CONTACT = "SECTION_CONTACT";
-    static final String SECTION_LOCALITIES = "SECTION_LOCALITIES";
+    static final String SECTION_LOCALITY = "SECTION_LOCALITY";
     static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
     static final String SECTION_EDUCATION_CODE = "SECTION_EDUCATION_CODE";
     static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
@@ -71,7 +71,7 @@ public class JobAdvertisementUpdater {
 
     private Contact contact;
 
-    private List<Locality> localities;
+    private Locality locality;
 
     private List<Occupation> occupations;
 
@@ -104,7 +104,7 @@ public class JobAdvertisementUpdater {
         this.applyChannel = builder.applyChannel;
         this.company = builder.company;
         this.contact = builder.contact;
-        this.localities = builder.localities;
+        this.locality = builder.locality;
         this.occupations = builder.occupations;
         this.educationCode = builder.educationCode;
         this.languageSkills = builder.languageSkills;
@@ -199,8 +199,8 @@ public class JobAdvertisementUpdater {
         return contact;
     }
 
-    public List<Locality> getLocalities() {
-        return localities;
+    public Locality getLocality() {
+        return locality;
     }
 
     public List<Occupation> getOccupations() {
@@ -243,7 +243,7 @@ public class JobAdvertisementUpdater {
         private ApplyChannel applyChannel;
         private Company company;
         private Contact contact;
-        private List<Locality> localities;
+        private Locality locality;
         private List<Occupation> occupations;
         private String educationCode;
         private List<LanguageSkill> languageSkills;
@@ -337,9 +337,9 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setLocalities(List<Locality> localities) {
-            this.changedSections.add(SECTION_LOCALITIES);
-            this.localities = localities;
+        public Builder setLocality(Locality locality) {
+            this.changedSections.add(SECTION_LOCALITY);
+            this.locality = locality;
             return this;
         }
 

@@ -1,8 +1,9 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import ch.admin.seco.jobs.services.jobadservice.application.profession.ProfessionApplicationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl.TOsteEgov;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.wsdl.TOsteEgov;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -12,17 +13,17 @@ public class JobAdvertisementAssembler {
 
     private static final DateTimeFormatter AVAM_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    private final ProfessionApplicationService professionApplicationService;
+    private final ProfessionService professionService;
 
-    public JobAdvertisementAssembler(ProfessionApplicationService professionApplicationService) {
-        this.professionApplicationService = professionApplicationService;
+    public JobAdvertisementAssembler(ProfessionService professionService) {
+        this.professionService = professionService;
     }
 
     /**
      * FIXME:
-     * setBq1AvamBeruf resolve by occupation.getProfessionId()
-     * setBq2AvamBeruf resolve by occupation.getProfessionId()
-     * setBq3AvamBeruf resolve by occupation.getProfessionId()
+     * setBq1AvamBeruf resolve by occupation.getAvamCode()
+     * setBq2AvamBeruf resolve by occupation.getAvamCode()
+     * setBq3AvamBeruf resolve by occupation.getAvamCode()
      *
      * @param jobAdvertisement object from the domain
      * @param action
@@ -30,7 +31,7 @@ public class JobAdvertisementAssembler {
      */
     public TOsteEgov toOsteEgov(JobAdvertisement jobAdvertisement, AvamAction action) {
         TOsteEgov tOsteEgov = new TOsteEgov();
-        tOsteEgov.setDetailangabenCode(AvamAwesomeCodeResolver.ACTIONS.getLeft(action));
+        tOsteEgov.setDetailangabenCode(AvamCodeResolver.ACTIONS.getLeft(action));
         tOsteEgov.setArbeitsamtBereich(jobAdvertisement.getJobCenterCode());
         tOsteEgov.setStellennummerEgov(jobAdvertisement.getId().getValue());
         tOsteEgov.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
@@ -49,12 +50,12 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setBeschreibung(jobAdvertisement.getDescription());
 
         fillEmployment(tOsteEgov, jobAdvertisement);
-        tOsteEgov.setKategorieCode(AvamAwesomeCodeResolver.DRIVING_LICENSE_LEVELS.getLeft(jobAdvertisement.getDrivingLicenseLevel()));
+        tOsteEgov.setKategorieCode(AvamCodeResolver.DRIVING_LICENSE_LEVELS.getLeft(jobAdvertisement.getDrivingLicenseLevel()));
 
         fillApplyChannel(tOsteEgov, jobAdvertisement.getApplyChannel());
         fillCompany(tOsteEgov, jobAdvertisement.getCompany());
         fillContact(tOsteEgov, jobAdvertisement.getContact());
-        fillLocalities(tOsteEgov, jobAdvertisement.getLocalities());
+        fillLocality(tOsteEgov, jobAdvertisement.getLocality());
         fillOccupation(tOsteEgov, jobAdvertisement.getOccupations());
         tOsteEgov.setBq1AusbildungCode(jobAdvertisement.getEducationCode());
         fillLangaugeSkills(tOsteEgov, jobAdvertisement.getLanguageSkills());
@@ -109,25 +110,22 @@ public class JobAdvertisementAssembler {
         if (contact == null) {
             return;
         }
-        tOsteEgov.setKpAnredeCode(AvamAwesomeCodeResolver.SALUTATIONS.getLeft(contact.getSalutation()));
+        tOsteEgov.setKpAnredeCode(AvamCodeResolver.SALUTATIONS.getLeft(contact.getSalutation()));
         tOsteEgov.setKpVorname(contact.getFirstName());
         tOsteEgov.setKpName(contact.getLastName());
         tOsteEgov.setKpTelefonNr(contact.getPhone());
         tOsteEgov.setKpEmail(contact.getEmail());
     }
 
-    private void fillLocalities(TOsteEgov tOsteEgov, List<Locality> localities) {
-        if (localities == null) {
+    private void fillLocality(TOsteEgov tOsteEgov, Locality locality) {
+        if (locality == null) {
             return;
         }
-        if (localities.size() > 0) {
-            Locality locality = localities.get(0);
-            tOsteEgov.setArbeitsOrtText(locality.getRemarks());
-            tOsteEgov.setArbeitsOrtOrt(locality.getCity());
-            tOsteEgov.setArbeitsOrtPlz(locality.getZipCode());
-            tOsteEgov.setArbeitsOrtGemeinde(locality.getCommunalCode());
-            tOsteEgov.setArbeitsOrtLand(locality.getCountryIsoCode());
-        }
+        tOsteEgov.setArbeitsOrtText(locality.getRemarks());
+        tOsteEgov.setArbeitsOrtOrt(locality.getCity());
+        tOsteEgov.setArbeitsOrtPlz(locality.getZipCode());
+        tOsteEgov.setArbeitsOrtGemeinde(locality.getCommunalCode());
+        tOsteEgov.setArbeitsOrtLand(locality.getCountryIsoCode());
     }
 
     private void fillOccupation(TOsteEgov tOsteEgov, List<Occupation> occupations) {
@@ -136,19 +134,23 @@ public class JobAdvertisementAssembler {
         }
         if (occupations.size() > 0) {
             Occupation occupation = occupations.get(0);
-            tOsteEgov.setBq1AvamBeruf(professionApplicationService.findAvamCode(occupation.getProfessionId()));
-            tOsteEgov.setBq1ErfahrungCode(AvamAwesomeCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
+            Profession profession = professionService.findById(occupation.getProfessionId());
+            tOsteEgov.setBq1AvamBeruf(profession.getId().getValue());
+            tOsteEgov.setBq1ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
         }
+        // Ignore the others
+        /*
         if (occupations.size() > 1) {
             Occupation occupation = occupations.get(1);
-            tOsteEgov.setBq1AvamBeruf(professionApplicationService.findAvamCode(occupation.getProfessionId()));
-            tOsteEgov.setBq1ErfahrungCode(AvamAwesomeCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
+            tOsteEgov.setBq2AvamBeruf(professionService.findAvamCode(occupation.getProfessionId()));
+            tOsteEgov.setBq2ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
         }
         if (occupations.size() > 2) {
             Occupation occupation = occupations.get(2);
-            tOsteEgov.setBq1AvamBeruf(professionApplicationService.findAvamCode(occupation.getProfessionId()));
-            tOsteEgov.setBq1ErfahrungCode(AvamAwesomeCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
+            tOsteEgov.setBq3AvamBeruf(professionService.findAvamCode(occupation.getProfessionId()));
+            tOsteEgov.setBq3ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
         }
+        */
     }
 
     private void fillLangaugeSkills(TOsteEgov tOsteEgov, List<LanguageSkill> languageSkills) {
@@ -157,33 +159,33 @@ public class JobAdvertisementAssembler {
         }
         if (languageSkills.size() > 0) {
             LanguageSkill languageSkill = languageSkills.get(0);
-            tOsteEgov.setSk1SpracheCode(AvamAwesomeCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
-            tOsteEgov.setSk1MuendlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
-            tOsteEgov.setSk1SchriftlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
+            tOsteEgov.setSk1SpracheCode(AvamCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
+            tOsteEgov.setSk1MuendlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
+            tOsteEgov.setSk1SchriftlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
         }
         if (languageSkills.size() > 1) {
             LanguageSkill languageSkill = languageSkills.get(1);
-            tOsteEgov.setSk2SpracheCode(AvamAwesomeCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
-            tOsteEgov.setSk2MuendlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
-            tOsteEgov.setSk2SchriftlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
+            tOsteEgov.setSk2SpracheCode(AvamCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
+            tOsteEgov.setSk2MuendlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
+            tOsteEgov.setSk2SchriftlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
         }
         if (languageSkills.size() > 2) {
             LanguageSkill languageSkill = languageSkills.get(2);
-            tOsteEgov.setSk3SpracheCode(AvamAwesomeCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
-            tOsteEgov.setSk3MuendlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
-            tOsteEgov.setSk3SchriftlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
+            tOsteEgov.setSk3SpracheCode(AvamCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
+            tOsteEgov.setSk3MuendlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
+            tOsteEgov.setSk3SchriftlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
         }
         if (languageSkills.size() > 3) {
             LanguageSkill languageSkill = languageSkills.get(3);
-            tOsteEgov.setSk4SpracheCode(AvamAwesomeCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
-            tOsteEgov.setSk4MuendlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
-            tOsteEgov.setSk4SchriftlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
+            tOsteEgov.setSk4SpracheCode(AvamCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
+            tOsteEgov.setSk4MuendlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
+            tOsteEgov.setSk4SchriftlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
         }
         if (languageSkills.size() > 4) {
             LanguageSkill languageSkill = languageSkills.get(4);
-            tOsteEgov.setSk5SpracheCode(AvamAwesomeCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
-            tOsteEgov.setSk5MuendlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
-            tOsteEgov.setSk5SchriftlichCode(AvamAwesomeCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
+            tOsteEgov.setSk5SpracheCode(AvamCodeResolver.LANGUAGES.getLeft(languageSkill.getLanguageIsoCode()));
+            tOsteEgov.setSk5MuendlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
+            tOsteEgov.setSk5SchriftlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
         }
     }
 

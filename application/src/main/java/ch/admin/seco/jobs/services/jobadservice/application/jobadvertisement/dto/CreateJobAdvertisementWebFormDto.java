@@ -3,7 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 public class CreateJobAdvertisementWebFormDto {
 
@@ -40,7 +39,7 @@ public class CreateJobAdvertisementWebFormDto {
     private ContactDto contact;
 
     @NotNull
-    private List<LocalityDto> localities;
+    private LocalityDto locality;
 
     @NotNull
     private OccupationDto occupation;
@@ -53,7 +52,7 @@ public class CreateJobAdvertisementWebFormDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementWebFormDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, List<LocalityDto> localities, OccupationDto occupation, String educationCode, List<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementWebFormDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, OccupationDto occupation, String educationCode, List<LanguageSkillDto> languageSkills) {
         this.eures = eures;
         this.title = title;
         this.description = description;
@@ -68,7 +67,7 @@ public class CreateJobAdvertisementWebFormDto {
         this.applyChannel = applyChannel;
         this.company = company;
         this.contact = contact;
-        this.localities = localities;
+        this.locality = locality;
         this.occupation = occupation;
         this.educationCode = educationCode;
         this.languageSkills = languageSkills;
@@ -186,12 +185,12 @@ public class CreateJobAdvertisementWebFormDto {
         this.contact = contact;
     }
 
-    public List<LocalityDto> getLocalities() {
-        return localities;
+    public LocalityDto getLocality() {
+        return locality;
     }
 
-    public void setLocalities(List<LocalityDto> localities) {
-        this.localities = localities;
+    public void setLocality(LocalityDto locality) {
+        this.locality = locality;
     }
 
     public OccupationDto getOccupation() {

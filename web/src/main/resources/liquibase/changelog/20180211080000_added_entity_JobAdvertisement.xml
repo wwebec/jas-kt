@@ -100,22 +100,16 @@
             <column name="CONTACT_LAST_NAME" type="varchar(50)"/>
             <column name="CONTACT_PHONE" type="varchar(20)"/>
             <column name="CONTACT_EMAIL" type="varchar(50)"/>
+            <column name="LOCALITY_REMARKS" type="varchar(255)"/>
+            <column name="LOCALITY_CITY" type="varchar(50)"/>
+            <column name="LOCALITY_ZIP_CODE" type="varchar(10)"/>
+            <column name="LOCALITY_COMMUNAL_CODE" type="varchar(4)"/>
+            <column name="LOCALITY_REGION_CODE" type="varchar(4)"/>
+            <column name="LOCALITY_CANTON_CODE" type="varchar(2)"/>
+            <column name="LOCALITY_COUNTRY_ISO_CODE" type="varchar(2)"/>
+            <column name="LOCALITY_LOCATION_LONGITUDE" type="double"/>
+            <column name="LOCALITY_LOCATION_LATITUDE" type="double"/>
             <column name="EDUCATION_CODE" type="varchar(8)"/>
-        </createTable>
-
-        <createTable tableName="JOB_ADVERTISEMENT_LOCALITY">
-            <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="REMARKS" type="varchar(255)"/>
-            <column name="CITY" type="varchar(50)"/>
-            <column name="ZIP_CODE" type="varchar(10)"/>
-            <column name="COMMUNAL_CODE" type="varchar(4)"/>
-            <column name="REGION_CODE" type="varchar(4)"/>
-            <column name="CANTON_CODE" type="varchar(2)"/>
-            <column name="COUNTRY_ISO_CODE" type="varchar(2)"/>
-            <column name="LOCATION_LONGITUDE" type="double"/>
-            <column name="LOCATION_LATITUDE" type="double"/>
         </createTable>
 
         <createTable tableName="JOB_ADVERTISEMENT_OCCUPATION">

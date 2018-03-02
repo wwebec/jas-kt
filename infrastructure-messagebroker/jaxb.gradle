@@ -19,7 +19,7 @@ task genJaxb {
             mkdir(dir: sourcesDir)
             mkdir(dir: classesDir)
 
-            xjc(destdir: sourcesDir, package: "ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl") {
+            xjc(destdir: sourcesDir, package: "ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.wsdl") {
                 schema(dir: schemaDir, includes: "*.wsdl")
                 arg(value: "-wsdl")
                 produces(dir: sourcesDir, includes: "**/*.java")

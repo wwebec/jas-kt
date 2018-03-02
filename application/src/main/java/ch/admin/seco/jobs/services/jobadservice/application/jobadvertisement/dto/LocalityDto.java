@@ -110,8 +110,4 @@ public class LocalityDto {
         localityDto.setLocation(locality.getLocation());
         return localityDto;
     }
-
-    public static List<LocalityDto> toDto(List<Locality> localities) {
-        return localities.stream().map(LocalityDto::toDto).collect(Collectors.toList());
-    }
 }

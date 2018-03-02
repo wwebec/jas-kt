@@ -4,7 +4,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.LocalityService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.profession.ProfessionApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
@@ -29,8 +28,6 @@ public class JobAdvertisementApplicationService {
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
 
-    private final ProfessionApplicationService professionApplicationService;
-
     private final RavRegistrationService ravRegistrationService;
 
     private final ReportingObligationService reportingObligationService;
@@ -38,23 +35,28 @@ public class JobAdvertisementApplicationService {
     private final LocalityService localityService;
 
     @Autowired
-    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, ProfessionApplicationService professionApplicationService, RavRegistrationService ravRegistrationService, ReportingObligationService reportingObligationService, LocalityService localityService) {
+    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, RavRegistrationService ravRegistrationService, ReportingObligationService reportingObligationService, LocalityService localityService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
-        this.professionApplicationService = professionApplicationService;
         this.ravRegistrationService = ravRegistrationService;
         this.reportingObligationService = reportingObligationService;
         this.localityService = localityService;
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto) {
+        Locality locality = toLocality(createJobAdvertisementWebFormDto.getLocality());
+        locality = localityService.enrichCodes(locality);
+
+        Occupation occupation = toOccupation(createJobAdvertisementWebFormDto.getOccupation());
+
         boolean reportingObligation = checkReportingObligation(
-                createJobAdvertisementWebFormDto.getLocalities(),
-                Collections.singletonList(createJobAdvertisementWebFormDto.getOccupation())
+                occupation,
+                locality
         );
+
         final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
                 .setReportingObligation(reportingObligation)
-                // FIXME eval eures if anonymous or not
+                // FIXME eval eures if anonymous or not (User/Security)
                 .setEures(createJobAdvertisementWebFormDto.isEures(), true)
                 .setEmployment(
                         createJobAdvertisementWebFormDto.getEmploymentStartDate(),
@@ -68,8 +70,8 @@ public class JobAdvertisementApplicationService {
                 .setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
                 .setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
-                .setLocalities(toLocalities(createJobAdvertisementWebFormDto.getLocalities()))
-                .setOccupations(toOccupations(Collections.singletonList(createJobAdvertisementWebFormDto.getOccupation())))
+                .setLocality(locality)
+                .setOccupations(Collections.singletonList(occupation))
                 .setEducationCode(createJobAdvertisementWebFormDto.getEducationCode())
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
                 .build();
@@ -149,12 +151,10 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
     }
 
-    private boolean checkReportingObligation(List<LocalityDto> localityDtos, List<OccupationDto> occupationDtos) {
-        // FIXME Pseudo code to real implementation
-        String cantonCode = localityDtos.get(0).getCantonCode();
-        ProfessionId professionId = new ProfessionId(occupationDtos.get(0).getProfessionId());
-        String avamProfessionCode = professionApplicationService.findAvamCode(professionId);
-        return reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamProfessionCode, cantonCode);
+    private boolean checkReportingObligation(Occupation occupation, Locality locality) {
+        String avamCode = occupation.getProfessionId().getValue();
+        String cantonCode = locality.getCantonCode();
+        return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamCode, cantonCode);
     }
 
     private ApplyChannel toApplyChannel(ApplyChannelDto applyChannelDto) {
@@ -203,35 +203,29 @@ public class JobAdvertisementApplicationService {
         return null;
     }
 
-    private List<Locality> toLocalities(List<LocalityDto> localityDtos) {
-        if (localityDtos != null) {
-            return localityDtos.stream()
-                    .map(localityDto -> localityService.enrichCodes(
-                            new Locality(
-                                    localityDto.getRemarks(),
-                                    localityDto.getCity(),
-                                    localityDto.getZipCode(),
-                                    localityDto.getCommunalCode(),
-                                    localityDto.getRegionCode(),
-                                    localityDto.getCantonCode(),
-                                    localityDto.getCountryIsoCode(),
-                                    localityDto.getLocation()
-                            )
-                    ))
-                    .collect(Collectors.toList());
+    private Locality toLocality(LocalityDto localityDto) {
+        if (localityDto != null) {
+            return new Locality(
+                    localityDto.getRemarks(),
+                    localityDto.getCity(),
+                    localityDto.getZipCode(),
+                    localityDto.getCommunalCode(),
+                    localityDto.getRegionCode(),
+                    localityDto.getCantonCode(),
+                    localityDto.getCountryIsoCode(),
+                    localityDto.getLocation()
+            );
         }
         return null;
     }
 
-    private List<Occupation> toOccupations(List<OccupationDto> occupationDtos) {
-        if (occupationDtos != null) {
+    private Occupation toOccupation(OccupationDto occupationDto) {
+        if (occupationDto != null) {
             // TODO update professionCodes
-            return occupationDtos.stream()
-                    .map(occupationDto -> new Occupation(
-                            new ProfessionId(occupationDto.getProfessionId()),
-                            occupationDto.getWorkExperience()
-                    ))
-                    .collect(Collectors.toList());
+            return new Occupation(
+                    new ProfessionId(occupationDto.getAvamCode()),
+                    occupationDto.getWorkExperience()
+            );
         }
         return null;
     }
