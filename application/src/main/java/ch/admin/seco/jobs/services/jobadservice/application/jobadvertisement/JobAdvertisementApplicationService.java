@@ -160,7 +160,10 @@ public class JobAdvertisementApplicationService {
         if (profession != null) {
             return new Occupation(
                     occupation.getAvamCode(),
-                    occupation.getProfessionCodes(),
+                    profession.getSbn3Code(),
+                    profession.getSbn5Code(),
+                    profession.getBfsCode(),
+                    profession.getLabel(),
                     occupation.getWorkExperience(),
                     occupation.getEducationCode()
             );

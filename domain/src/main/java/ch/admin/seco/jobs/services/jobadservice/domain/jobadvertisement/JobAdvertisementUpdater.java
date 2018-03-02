@@ -24,7 +24,6 @@ public class JobAdvertisementUpdater {
     static final String SECTION_LOCALITY = "SECTION_LOCALITY";
     static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
     static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
-    static final String SECTION_PROFESSION_CODES = "SECTION_PROFESSION_CODES";
 
     private Set<String> changedSections;
 
@@ -76,8 +75,6 @@ public class JobAdvertisementUpdater {
 
     private List<LanguageSkill> languageSkills;
 
-    private List<String> professionCodes;
-
     public JobAdvertisementUpdater(Builder builder) {
         this.changedSections = builder.changedSections;
         this.auditUser = builder.auditUser;
@@ -104,7 +101,6 @@ public class JobAdvertisementUpdater {
         this.locality = builder.locality;
         this.occupations = builder.occupations;
         this.languageSkills = builder.languageSkills;
-        this.professionCodes = builder.professionCodes;
     }
 
     public boolean hasAnyChangesIn(String section) {
@@ -207,10 +203,6 @@ public class JobAdvertisementUpdater {
         return languageSkills;
     }
 
-    public List<String> getProfessionCodes() {
-        return professionCodes;
-    }
-
     public static class Builder {
 
         private Set<String> changedSections = new HashSet<>();
@@ -238,7 +230,6 @@ public class JobAdvertisementUpdater {
         private Locality locality;
         private List<Occupation> occupations;
         private List<LanguageSkill> languageSkills;
-        private List<String> professionCodes;
 
         public Builder(AuditUser auditUser) {
             this.auditUser = auditUser;
@@ -343,12 +334,6 @@ public class JobAdvertisementUpdater {
         public Builder setLanguageSkills(List<LanguageSkill> languageSkills) {
             this.changedSections.add(SECTION_LANGUAGE_SKILLS);
             this.languageSkills = languageSkills;
-            return this;
-        }
-
-        public Builder setProfessionCodes(List<String> professionCodes) {
-            this.changedSections.add(SECTION_PROFESSION_CODES);
-            this.professionCodes = professionCodes;
             return this;
         }
     }

@@ -115,7 +115,13 @@
             <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PROFESSION_ID" type="varchar(36)"/>
+            <column name="AVAM_CODE" type="varchar(16)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SBN3_CODE" type="varchar(16)"/>
+            <column name="SBN5_CODE" type="varchar(16)"/>
+            <column name="BFS_CODE" type="varchar(16)"/>
+            <column name="LABEL" type="varchar(255)"/>
             <column name="WORK_EXPERIENCE" type="varchar(64)"/>
             <column name="EDUCATION_CODE" type="varchar(8)"/>
         </createTable>
@@ -127,27 +133,6 @@
             <column name="LANGUAGE_ISO_CODE" type="varchar(5)"/>
             <column name="SPOKEN_LEVEL" type="varchar(64)"/>
             <column name="WRITTEN_LEVEL" type="varchar(64)"/>
-        </createTable>
-
-        <createTable tableName="JOB_ADVERTISEMENT_PROFESSION_CODES">
-            <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="PROFESSION_CODES" type="varchar(16)"/>
-        </createTable>
-
-        <createTable tableName="PROFESSION">
-            <column name="ID" type="varchar(36)">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-        </createTable>
-
-        <createTable tableName="PROFESSION_CODES">
-            <column name="PROFESSION_ID" type="varchar(36)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="type" type="varchar(64)"/>
-            <column name="code" type="varchar(16)"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

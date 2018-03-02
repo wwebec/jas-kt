@@ -1,12 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCode;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Embeddable
@@ -15,9 +12,15 @@ public class Occupation implements ValueObject<Occupation> {
 
     private String avamCode;
 
-    @Valid
-    @ElementCollection(fetch = FetchType.EAGER)
-    private List<ProfessionCode> professionCodes;
+    @Column(name = "SBN3_CODE")
+    private String sbn3Code;
+
+    @Column(name = "SBN5_CODE")
+    private String sbn5Code;
+
+    private String bfsCode;
+
+    private String label;
 
     @Enumerated(EnumType.STRING)
     private WorkExperience workExperience;
@@ -28,23 +31,42 @@ public class Occupation implements ValueObject<Occupation> {
         // For reflection libs
     }
 
-    public Occupation(String avamCode, WorkExperience workExperience, String educationCode) {
-        this(avamCode, new ArrayList<>(), workExperience, educationCode);
+    public Occupation(String avamCode) {
+        this.avamCode = Condition.notBlank(avamCode);
     }
 
-    public Occupation(String avamCode, List<ProfessionCode> professionCodes, WorkExperience workExperience, String educationCode) {
-        this.avamCode = avamCode;
+    public Occupation(String avamCode, WorkExperience workExperience, String educationCode) {
+        this(avamCode);
         this.workExperience = workExperience;
         this.educationCode = educationCode;
-        this.professionCodes = professionCodes;
+    }
+
+    public Occupation(String avamCode, String sbn3Code, String sbn5Code, String bfsCode, String label, WorkExperience workExperience, String educationCode) {
+        this(avamCode, workExperience, educationCode);
+        this.sbn3Code = sbn3Code;
+        this.sbn5Code = sbn5Code;
+        this.bfsCode = bfsCode;
+        this.label = label;
     }
 
     public String getAvamCode() {
         return avamCode;
     }
 
-    public List<ProfessionCode> getProfessionCodes() {
-        return professionCodes;
+    public String getSbn3Code() {
+        return sbn3Code;
+    }
+
+    public String getSbn5Code() {
+        return sbn5Code;
+    }
+
+    public String getBfsCode() {
+        return bfsCode;
+    }
+
+    public String getLabel() {
+        return label;
     }
 
     public WorkExperience getWorkExperience() {
@@ -66,13 +88,16 @@ public class Occupation implements ValueObject<Occupation> {
         if (o == null || getClass() != o.getClass()) return false;
         Occupation that = (Occupation) o;
         return Objects.equals(avamCode, that.avamCode) &&
+                Objects.equals(sbn3Code, that.sbn3Code) &&
+                Objects.equals(sbn5Code, that.sbn5Code) &&
+                Objects.equals(bfsCode, that.bfsCode) &&
+                Objects.equals(label, that.label) &&
                 workExperience == that.workExperience &&
                 Objects.equals(educationCode, that.educationCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(avamCode, workExperience, educationCode);
+        return Objects.hash(avamCode, sbn3Code, sbn5Code, bfsCode, label, workExperience, educationCode);
     }
-
 }

@@ -44,15 +44,13 @@ public class JobAdvertisementDto {
     private ContactDto contact;
     private LocalityDto locality;
     private List<OccupationDto> occupations;
-    private String educationCode;
     private List<LanguageSkillDto> languageSkills;
-    private List<String> professionCodes;
 
     protected JobAdvertisementDto() {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, List<OccupationDto> occupations, String educationCode, List<LanguageSkillDto> languageSkills, List<String> professionCodes) {
+    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
         this.id = id;
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
@@ -88,9 +86,7 @@ public class JobAdvertisementDto {
         this.contact = contact;
         this.locality = locality;
         this.occupations = occupations;
-        this.educationCode = educationCode;
         this.languageSkills = languageSkills;
-        this.professionCodes = professionCodes;
     }
 
     public String getId() {
@@ -373,28 +369,12 @@ public class JobAdvertisementDto {
         this.occupations = occupations;
     }
 
-    public String getEducationCode() {
-        return educationCode;
-    }
-
-    public void setEducationCode(String educationCode) {
-        this.educationCode = educationCode;
-    }
-
     public List<LanguageSkillDto> getLanguageSkills() {
         return languageSkills;
     }
 
     public void setLanguageSkills(List<LanguageSkillDto> languageSkills) {
         this.languageSkills = languageSkills;
-    }
-
-    public List<String> getProfessionCodes() {
-        return professionCodes;
-    }
-
-    public void setProfessionCodes(List<String> professionCodes) {
-        this.professionCodes = professionCodes;
     }
 
     public static JobAdvertisementDto toDto(JobAdvertisement jobAdvertisement) {
@@ -434,9 +414,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setContact(ContactDto.toDto(jobAdvertisement.getContact()));
         jobAdvertisementDto.setLocality(LocalityDto.toDto(jobAdvertisement.getLocality()));
         jobAdvertisementDto.setOccupations(OccupationDto.toDto(jobAdvertisement.getOccupations()));
-        jobAdvertisementDto.setEducationCode(jobAdvertisement.getEducationCode());
         jobAdvertisementDto.setLanguageSkills(LanguageSkillDto.toDto(jobAdvertisement.getLanguageSkills()));
-        jobAdvertisementDto.setProfessionCodes(jobAdvertisement.getProfessionCodes());
         return jobAdvertisementDto;
     }
 }

@@ -18,14 +18,6 @@ public class JobAdvertisementAssembler {
         this.professionService = professionService;
     }
 
-    /**
-     * FIXME:
-     * setBq1AvamBeruf resolve by occupation.getAvamCode()
-     *
-     * @param jobAdvertisement object from the domain
-     * @param action
-     * @return the object for the ws
-     */
     public TOsteEgov toOsteEgov(JobAdvertisement jobAdvertisement, AvamAction action) {
         TOsteEgov tOsteEgov = new TOsteEgov();
         tOsteEgov.setDetailangabenCode(AvamCodeResolver.ACTIONS.getLeft(action));
@@ -54,7 +46,6 @@ public class JobAdvertisementAssembler {
         fillContact(tOsteEgov, jobAdvertisement.getContact());
         fillLocality(tOsteEgov, jobAdvertisement.getLocality());
         fillOccupation(tOsteEgov, jobAdvertisement.getOccupations());
-        tOsteEgov.setBq1AusbildungCode(jobAdvertisement.getEducationCode());
         fillLangaugeSkills(tOsteEgov, jobAdvertisement.getLanguageSkills());
 
         return tOsteEgov;
@@ -131,21 +122,20 @@ public class JobAdvertisementAssembler {
         }
         if (occupations.size() > 0) {
             Occupation occupation = occupations.get(0);
-            // FIXME give back the label
-            tOsteEgov.setBq1AvamBeruf(occupation.getAvamCode());
+            tOsteEgov.setBq1AvamBeruf(occupation.getLabel());
             tOsteEgov.setBq1ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq1AusbildungCode(occupation.getEducationCode());
         }
         /*
         if (occupations.size() > 1) {
             Occupation occupation = occupations.get(1);
-            tOsteEgov.setBq2AvamBeruf(occupation.getProfessionId().getValue());
+            tOsteEgov.setBq2AvamBeruf(occupation.getLabel());
             tOsteEgov.setBq2ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq2AusbildungCode(occupation.getEducationCode());
         }
         if (occupations.size() > 2) {
             Occupation occupation = occupations.get(2);
-            tOsteEgov.setBq3AvamBeruf(occupation.getProfessionId().getValue());
+            tOsteEgov.setBq3AvamBeruf(occupation.getLabel());
             tOsteEgov.setBq3ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq3AusbildungCode(occupation.getEducationCode());
         }

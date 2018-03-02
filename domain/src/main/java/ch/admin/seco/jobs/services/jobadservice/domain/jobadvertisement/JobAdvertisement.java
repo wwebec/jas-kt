@@ -146,16 +146,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Valid
     private List<Occupation> occupations;
 
-    private String educationCode;
-
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<LanguageSkill> languageSkills;
-
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "JOB_ADVERTISEMENT_PROFESSION_CODES", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
-    private List<String> professionCodes;
 
     protected JobAdvertisement() {
         // For reflection libs
@@ -169,7 +163,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Locality locality, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Locality locality, List<Occupation> occupations, List<LanguageSkill> languageSkills) {
         this(id, sourceSystem, status, title, description);
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
@@ -203,9 +197,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.contact = contact;
         this.locality = locality;
         this.occupations = occupations;
-        this.educationCode = educationCode;
         this.languageSkills = languageSkills;
-        this.professionCodes = professionCodes;
     }
 
     @Override
@@ -361,16 +353,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return occupations;
     }
 
-    public String getEducationCode() {
-        return educationCode;
-    }
-
     public List<LanguageSkill> getLanguageSkills() {
         return languageSkills;
-    }
-
-    public List<String> getProfessionCodes() {
-        return professionCodes;
     }
 
     public void init(JobAdvertisementUpdater updater) {
@@ -543,11 +527,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
         if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(this.languageSkills, updater.getLanguageSkills())) {
             this.languageSkills = updater.getLanguageSkills();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_PROFESSION_CODES) && hasChangedContent(this.professionCodes, updater.getProfessionCodes())) {
-            this.professionCodes = updater.getProfessionCodes();
             hasChangedAnything = true;
         }
 
