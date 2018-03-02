@@ -48,7 +48,7 @@ public class OccupationDto {
 
     public static OccupationDto toDto(Occupation occupation) {
         OccupationDto occupationDto = new OccupationDto();
-        occupationDto.setAvamCode(occupation.getProfessionId().getValue());
+        occupationDto.setAvamCode(occupation.getAvamCode());
         occupationDto.setWorkExperience(occupation.getWorkExperience());
         occupationDto.setEducationCode(occupation.getEducationCode());
         return occupationDto;

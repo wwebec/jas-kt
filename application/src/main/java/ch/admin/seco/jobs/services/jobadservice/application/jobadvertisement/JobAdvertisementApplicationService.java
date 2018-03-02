@@ -1,14 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.application.LocalityService;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,13 +35,16 @@ public class JobAdvertisementApplicationService {
 
     private final LocalityService localityService;
 
+    private final ProfessionService professionSerivce;
+
     @Autowired
-    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, RavRegistrationService ravRegistrationService, ReportingObligationService reportingObligationService, LocalityService localityService) {
+    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, RavRegistrationService ravRegistrationService, ReportingObligationService reportingObligationService, LocalityService localityService, ProfessionService professionSerivce) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.ravRegistrationService = ravRegistrationService;
         this.reportingObligationService = reportingObligationService;
         this.localityService = localityService;
+        this.professionSerivce = professionSerivce;
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto) {
@@ -48,6 +52,7 @@ public class JobAdvertisementApplicationService {
         locality = localityService.enrichCodes(locality);
 
         Occupation occupation = toOccupation(createJobAdvertisementWebFormDto.getOccupation());
+        occupation = enrichOccupationWithProfessionCodes(occupation);
 
         boolean reportingObligation = checkReportingObligation(
                 occupation,
@@ -150,8 +155,21 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
     }
 
+    private Occupation enrichOccupationWithProfessionCodes(Occupation occupation) {
+        Profession profession = professionSerivce.findByAvamCode(occupation.getAvamCode());
+        if (profession != null) {
+            return new Occupation(
+                    occupation.getAvamCode(),
+                    occupation.getProfessionCodes(),
+                    occupation.getWorkExperience(),
+                    occupation.getEducationCode()
+            );
+        }
+        return occupation;
+    }
+
     private boolean checkReportingObligation(Occupation occupation, Locality locality) {
-        String avamCode = occupation.getProfessionId().getValue();
+        String avamCode = occupation.getAvamCode();
         String cantonCode = locality.getCantonCode();
         return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamCode, cantonCode);
     }
@@ -222,7 +240,7 @@ public class JobAdvertisementApplicationService {
         if (occupationDto != null) {
             // TODO update professionCodes
             return new Occupation(
-                    new ProfessionId(occupationDto.getAvamCode()),
+                    occupationDto.getAvamCode(),
                     occupationDto.getWorkExperience(),
                     occupationDto.getEducationCode()
             );

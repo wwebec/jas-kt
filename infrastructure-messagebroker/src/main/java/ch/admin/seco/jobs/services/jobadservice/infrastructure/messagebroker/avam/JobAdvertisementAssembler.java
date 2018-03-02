@@ -132,7 +132,7 @@ public class JobAdvertisementAssembler {
         if (occupations.size() > 0) {
             Occupation occupation = occupations.get(0);
             // FIXME give back the label
-            tOsteEgov.setBq1AvamBeruf(occupation.getProfessionId().getValue());
+            tOsteEgov.setBq1AvamBeruf(occupation.getAvamCode());
             tOsteEgov.setBq1ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq1AusbildungCode(occupation.getEducationCode());
         }
