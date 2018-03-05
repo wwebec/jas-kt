@@ -45,19 +45,7 @@ public class JobAdvertisementUpdater {
 
     private boolean euresAnonymous;
 
-    private LocalDate employmentStartDate;
-
-    private LocalDate employmentEndDate;
-
-    private Integer durationInDays;
-
-    private Boolean immediately;
-
-    private Boolean permanent;
-
-    private int workloadPercentageMin;
-
-    private int workloadPercentageMax;
+    private Employment employment;
 
     private String jobCenterCode;
 
@@ -86,13 +74,7 @@ public class JobAdvertisementUpdater {
         this.publicationEndDate = builder.publicationEndDate;
         this.eures = builder.eures;
         this.euresAnonymous = builder.euresAnonymous;
-        this.employmentStartDate = builder.employmentStartDate;
-        this.employmentEndDate = builder.employmentEndDate;
-        this.durationInDays = builder.durationInDays;
-        this.immediately = builder.immediately;
-        this.permanent = builder.permanent;
-        this.workloadPercentageMin = builder.workloadPercentageMin;
-        this.workloadPercentageMax = builder.workloadPercentageMax;
+        this.employment = builder.employment;
         this.jobCenterCode = builder.jobCenterCode;
         this.drivingLicenseLevel = builder.drivingLicenseLevel;
         this.applyChannel = builder.applyChannel;
@@ -143,32 +125,8 @@ public class JobAdvertisementUpdater {
         return euresAnonymous;
     }
 
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
-    }
-
-    public LocalDate getEmploymentEndDate() {
-        return employmentEndDate;
-    }
-
-    public Integer getDurationInDays() {
-        return durationInDays;
-    }
-
-    public Boolean getImmediately() {
-        return immediately;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public int getWorkloadPercentageMin() {
-        return workloadPercentageMin;
-    }
-
-    public int getWorkloadPercentageMax() {
-        return workloadPercentageMax;
+    public Employment getEmployment() {
+        return employment;
     }
 
     public String getJobCenterCode() {
@@ -215,13 +173,7 @@ public class JobAdvertisementUpdater {
         private LocalDate publicationEndDate;
         private boolean eures;
         private boolean euresAnonymous;
-        private LocalDate employmentStartDate;
-        private LocalDate employmentEndDate;
-        private Integer durationInDays;
-        private Boolean immediately;
-        private Boolean permanent;
-        private int workloadPercentageMin;
-        private int workloadPercentageMax;
+        private Employment employment;
         private String jobCenterCode;
         private String drivingLicenseLevel;
         private ApplyChannel applyChannel;
@@ -277,15 +229,9 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setEmployment(LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax) {
+        public Builder setEmployment(Employment employment) {
             this.changedSections.add(SECTION_EMPLOYMENT);
-            this.employmentStartDate = employmentStartDate;
-            this.employmentEndDate = employmentEndDate;
-            this.durationInDays = durationInDays;
-            this.immediately = immediately;
-            this.permanent = permanent;
-            this.workloadPercentageMin = workloadPercentageMin;
-            this.workloadPercentageMax = workloadPercentageMax;
+            this.employment = employment;
             return this;
         }
 

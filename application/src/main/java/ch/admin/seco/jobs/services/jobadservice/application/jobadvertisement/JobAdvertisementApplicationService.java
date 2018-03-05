@@ -65,15 +65,7 @@ public class JobAdvertisementApplicationService {
                 .setReportingObligation(reportingObligation)
                 // FIXME eval eures if anonymous or not (User/Security)
                 .setEures(createJobAdvertisementWebFormDto.isEures(), true)
-                .setEmployment(
-                        createJobAdvertisementWebFormDto.getEmploymentStartDate(),
-                        createJobAdvertisementWebFormDto.getEmploymentEndDate(),
-                        createJobAdvertisementWebFormDto.getDurationInDays(),
-                        createJobAdvertisementWebFormDto.getImmediately(),
-                        createJobAdvertisementWebFormDto.getPermanent(),
-                        createJobAdvertisementWebFormDto.getWorkloadPercentageMin(),
-                        createJobAdvertisementWebFormDto.getWorkloadPercentageMax()
-                )
+                .setEmployment(toEmployment(createJobAdvertisementWebFormDto.getEmployment()))
                 .setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
                 .setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
@@ -177,6 +169,21 @@ public class JobAdvertisementApplicationService {
         return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamCode, cantonCode);
     }
 
+    private Employment toEmployment(EmploymentDto employmentDto) {
+        if (employmentDto != null) {
+            return new Employment(
+                    employmentDto.getStartDate(),
+                    employmentDto.getEndDate(),
+                    employmentDto.getDurationInDays(),
+                    employmentDto.getImmediately(),
+                    employmentDto.getPermanent(),
+                    employmentDto.getWorkloadPercentageMin(),
+                    employmentDto.getWorkloadPercentageMax()
+            );
+        }
+        return null;
+    }
+
     private ApplyChannel toApplyChannel(ApplyChannelDto applyChannelDto) {
         if (applyChannelDto != null) {
             return new ApplyChannel(
@@ -241,7 +248,6 @@ public class JobAdvertisementApplicationService {
 
     private Occupation toOccupation(OccupationDto occupationDto) {
         if (occupationDto != null) {
-            // TODO update professionCodes
             return new Occupation(
                     occupationDto.getAvamCode(),
                     occupationDto.getWorkExperience(),

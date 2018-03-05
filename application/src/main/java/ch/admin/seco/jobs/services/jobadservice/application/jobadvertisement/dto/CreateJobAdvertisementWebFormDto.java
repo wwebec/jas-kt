@@ -1,7 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.List;
 
 public class CreateJobAdvertisementWebFormDto {
@@ -14,19 +13,8 @@ public class CreateJobAdvertisementWebFormDto {
     @NotNull
     private String description;
 
-    private LocalDate employmentStartDate;
-
-    private LocalDate employmentEndDate;
-
-    private Integer durationInDays;
-
-    private Boolean immediately;
-
-    private Boolean permanent;
-
-    private int workloadPercentageMin;
-
-    private int workloadPercentageMax;
+    @NotNull
+    private EmploymentDto employment;
 
     private String drivingLicenseLevel;
 
@@ -50,17 +38,11 @@ public class CreateJobAdvertisementWebFormDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementWebFormDto(boolean eures, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, OccupationDto occupation, List<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementWebFormDto(boolean eures, String title, String description, EmploymentDto employment, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, OccupationDto occupation, List<LanguageSkillDto> languageSkills) {
         this.eures = eures;
         this.title = title;
         this.description = description;
-        this.employmentStartDate = employmentStartDate;
-        this.employmentEndDate = employmentEndDate;
-        this.durationInDays = durationInDays;
-        this.immediately = immediately;
-        this.permanent = permanent;
-        this.workloadPercentageMin = workloadPercentageMin;
-        this.workloadPercentageMax = workloadPercentageMax;
+        this.employment = employment;
         this.drivingLicenseLevel = drivingLicenseLevel;
         this.applyChannel = applyChannel;
         this.company = company;
@@ -94,60 +76,12 @@ public class CreateJobAdvertisementWebFormDto {
         this.description = description;
     }
 
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
+    public EmploymentDto getEmployment() {
+        return employment;
     }
 
-    public void setEmploymentStartDate(LocalDate employmentStartDate) {
-        this.employmentStartDate = employmentStartDate;
-    }
-
-    public LocalDate getEmploymentEndDate() {
-        return employmentEndDate;
-    }
-
-    public void setEmploymentEndDate(LocalDate employmentEndDate) {
-        this.employmentEndDate = employmentEndDate;
-    }
-
-    public Integer getDurationInDays() {
-        return durationInDays;
-    }
-
-    public void setDurationInDays(Integer durationInDays) {
-        this.durationInDays = durationInDays;
-    }
-
-    public Boolean getImmediately() {
-        return immediately;
-    }
-
-    public void setImmediately(Boolean immediately) {
-        this.immediately = immediately;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public void setPermanent(Boolean permanent) {
-        this.permanent = permanent;
-    }
-
-    public int getWorkloadPercentageMin() {
-        return workloadPercentageMin;
-    }
-
-    public void setWorkloadPercentageMin(int workloadPercentageMin) {
-        this.workloadPercentageMin = workloadPercentageMin;
-    }
-
-    public int getWorkloadPercentageMax() {
-        return workloadPercentageMax;
-    }
-
-    public void setWorkloadPercentageMax(int workloadPercentageMax) {
-        this.workloadPercentageMax = workloadPercentageMax;
+    public void setEmployment(EmploymentDto employment) {
+        this.employment = employment;
     }
 
     public String getDrivingLicenseLevel() {

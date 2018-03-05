@@ -68,19 +68,18 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String description;
 
-    private LocalDate employmentStartDate;
-
-    private LocalDate employmentEndDate;
-
-    private Integer durationInDays;
-
-    private Boolean immediately;
-
-    private Boolean permanent;
-
-    private int workloadPercentageMin;
-
-    private int workloadPercentageMax;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "startDate", column = @Column(name = "EMPLOYMENT_START_DATE")),
+            @AttributeOverride(name = "endDate", column = @Column(name = "EMPLOYMENT_END_DATE")),
+            @AttributeOverride(name = "durationInDays", column = @Column(name = "EMPLOYMENT_DURATION_IN_DAYS")),
+            @AttributeOverride(name = "immediately", column = @Column(name = "EMPLOYMENT_IMMEDIATELY")),
+            @AttributeOverride(name = "permanent", column = @Column(name = "EMPLOYMENT_PERMANENT")),
+            @AttributeOverride(name = "workloadPercentageMin", column = @Column(name = "EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN")),
+            @AttributeOverride(name = "workloadPercentageMax", column = @Column(name = "EMPLOYMENT_WORKLOAD_PERCENTAGE_MAX"))
+    })
+    @Valid
+    private Employment employment;
 
     private String jobCenterCode;
 
@@ -163,7 +162,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.description = Condition.notBlank(description);
     }
 
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Locality locality, List<Occupation> occupations, List<LanguageSkill> languageSkills) {
+    public JobAdvertisement(JobAdvertisementId id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, Employment employment, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Locality locality, List<Occupation> occupations, List<LanguageSkill> languageSkills) {
         this(id, sourceSystem, status, title, description);
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
@@ -183,13 +182,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.publicationEndDate = publicationEndDate;
         this.eures = eures;
         this.euresAnonymous = euresAnonymous;
-        this.employmentStartDate = employmentStartDate;
-        this.employmentEndDate = employmentEndDate;
-        this.durationInDays = durationInDays;
-        this.immediately = immediately;
-        this.permanent = permanent;
-        this.workloadPercentageMin = workloadPercentageMin;
-        this.workloadPercentageMax = workloadPercentageMax;
+        this.employment = employment;
         this.jobCenterCode = jobCenterCode;
         this.drivingLicenseLevel = drivingLicenseLevel;
         this.applyChannel = applyChannel;
@@ -297,32 +290,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return description;
     }
 
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
-    }
-
-    public LocalDate getEmploymentEndDate() {
-        return employmentEndDate;
-    }
-
-    public Integer getDurationInDays() {
-        return durationInDays;
-    }
-
-    public Boolean getImmediately() {
-        return immediately;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public int getWorkloadPercentageMin() {
-        return workloadPercentageMin;
-    }
-
-    public int getWorkloadPercentageMax() {
-        return workloadPercentageMax;
+    public Employment getEmployment() {
+        return employment;
     }
 
     public String getJobCenterCode() {
@@ -471,22 +440,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && (
-                hasChanged(this.employmentStartDate, updater.getEmploymentStartDate()) ||
-                        hasChanged(this.employmentEndDate, updater.getEmploymentEndDate()) ||
-                        hasChanged(this.durationInDays, updater.getDurationInDays()) ||
-                        hasChanged(this.immediately, updater.getImmediately()) ||
-                        hasChanged(this.permanent, updater.getPermanent()) ||
-                        hasChanged(this.workloadPercentageMin, updater.getWorkloadPercentageMin()) ||
-                        hasChanged(this.workloadPercentageMax, updater.getWorkloadPercentageMax())
-        )) {
-            this.employmentStartDate = updater.getEmploymentStartDate();
-            this.employmentEndDate = updater.getEmploymentEndDate();
-            this.durationInDays = updater.getDurationInDays();
-            this.immediately = updater.getImmediately();
-            this.permanent = updater.getPermanent();
-            this.workloadPercentageMin = updater.getWorkloadPercentageMin();
-            this.workloadPercentageMax = updater.getWorkloadPercentageMax();
+        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && hasChanged(this.employment, updater.getEmployment())) {
+            this.employment = updater.getEmployment();
             hasChangedAnything = true;
         }
 
