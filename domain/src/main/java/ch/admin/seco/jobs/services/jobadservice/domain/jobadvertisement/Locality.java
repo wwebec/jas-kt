@@ -100,4 +100,17 @@ public class Locality implements ValueObject<Locality> {
         return Objects.hash(remarks, city, zipCode, communalCode, regionCode, cantonCode, countryIsoCode, location);
     }
 
+    @Override
+    public String toString() {
+        return "Locality{" +
+                "remarks='" + remarks + '\'' +
+                ", city='" + city + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", communalCode='" + communalCode + '\'' +
+                ", regionCode='" + regionCode + '\'' +
+                ", cantonCode='" + cantonCode + '\'' +
+                ", countryIsoCode='" + countryIsoCode + '\'' +
+                ", location=" + location +
+                '}';
+    }
 }

@@ -59,4 +59,12 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
         return Objects.hash(languageIsoCode, spokenLevel, writtenLevel);
     }
 
+    @Override
+    public String toString() {
+        return "LanguageSkill{" +
+                "languageIsoCode='" + languageIsoCode + '\'' +
+                ", spokenLevel=" + spokenLevel +
+                ", writtenLevel=" + writtenLevel +
+                '}';
+    }
 }

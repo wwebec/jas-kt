@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.core.domain.events;
 
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateId;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 
 import java.time.LocalDateTime;
@@ -10,7 +11,7 @@ import java.util.Map;
 import java.util.Objects;
 
 
-public abstract class DomainEvent {
+public abstract class DomainEvent<T> {
 
     private final DomainEventId id;
 
@@ -35,7 +36,7 @@ public abstract class DomainEvent {
         this.registrationTime = TimeMachine.now();
     }
 
-    public abstract String getAggregateId();
+    public abstract AggregateId<T> getAggregateId();
 
     public LocalDateTime getRegistrationTime() {
         return registrationTime;

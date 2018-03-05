@@ -7,7 +7,8 @@ dependencies {
     compile 'javax.validation:validation-api'
 
     testCompile files(this.project(':core').sourceSets.test.output)
-    testCompile 'org.mockito:mockito-core'
-    testCompile 'org.assertj:assertj-core'
-    testCompile 'junit:junit'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    testCompile 'org.hibernate.validator:hibernate-validator'
+    testCompile 'com.h2database:h2'
 }

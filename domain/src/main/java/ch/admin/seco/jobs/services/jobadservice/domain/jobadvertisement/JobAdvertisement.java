@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
 import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
@@ -154,43 +155,44 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         // For reflection libs
     }
 
+    private JobAdvertisement(Builder builder) {
+        this(builder.id, builder.sourceSystem, builder.status, builder.title, builder.description);
+
+        this.stellennummerEgov = builder.stellennummerEgov;
+        this.occupations = builder.occupations;
+        this.eures = builder.eures;
+        this.locality = builder.locality;
+        this.publicationStartDate = builder.publicationStartDate;
+        this.rejectionCode = builder.rejectionCode;
+        this.approvalDate = builder.approvalDate;
+        this.reportingObligationEndDate = builder.reportingObligationEndDate;
+        this.jobCenterCode = builder.jobCenterCode;
+        this.company = builder.company;
+        this.employment = builder.employment;
+        this.sourceEntryId = builder.sourceEntryId;
+        this.rejectionDate = builder.rejectionDate;
+        this.contact = builder.contact;
+        this.reportingObligation = builder.reportingObligation;
+        this.stellennummerAvam = builder.stellennummerAvam;
+        this.publicationEndDate = builder.publicationEndDate;
+        this.ravRegistrationDate = builder.ravRegistrationDate;
+        this.euresAnonymous = builder.euresAnonymous;
+        this.fingerprint = builder.fingerprint;
+        this.cancellationCode = builder.cancellationCode;
+        this.applyChannel = builder.applyChannel;
+        this.languageSkills = builder.languageSkills;
+        this.drivingLicenseLevel = builder.drivingLicenseLevel;
+        this.cancellationDate = builder.cancellationDate;
+        this.externalUrl = builder.externalUrl;
+        this.rejectionReason = builder.rejectionReason;
+    }
+
     public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status, String title, String description) {
         this.id = Condition.notNull(id);
         this.sourceSystem = Condition.notNull(sourceSystem);
         this.status = Condition.notNull(status);
         this.title = Condition.notBlank(title);
         this.description = Condition.notBlank(description);
-    }
-
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, Employment employment, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, Locality locality, List<Occupation> occupations, List<LanguageSkill> languageSkills) {
-        this(id, sourceSystem, status, title, description);
-        this.stellennummerEgov = stellennummerEgov;
-        this.stellennummerAvam = stellennummerAvam;
-        this.fingerprint = fingerprint;
-        this.sourceEntryId = sourceEntryId;
-        this.externalUrl = externalUrl;
-        this.ravRegistrationDate = ravRegistrationDate;
-        this.approvalDate = approvalDate;
-        this.rejectionDate = rejectionDate;
-        this.rejectionCode = rejectionCode;
-        this.rejectionReason = rejectionReason;
-        this.cancellationDate = cancellationDate;
-        this.cancellationCode = cancellationCode;
-        this.reportingObligation = reportingObligation;
-        this.reportingObligationEndDate = reportingObligationEndDate;
-        this.publicationStartDate = publicationStartDate;
-        this.publicationEndDate = publicationEndDate;
-        this.eures = eures;
-        this.euresAnonymous = euresAnonymous;
-        this.employment = employment;
-        this.jobCenterCode = jobCenterCode;
-        this.drivingLicenseLevel = drivingLicenseLevel;
-        this.applyChannel = applyChannel;
-        this.company = company;
-        this.contact = contact;
-        this.locality = locality;
-        this.occupations = occupations;
-        this.languageSkills = languageSkills;
     }
 
     @Override
@@ -359,6 +361,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED, this));
     }
 
+    public void expireBlackout() {
+        Condition.isTrue(this.reportingObligationEndDate.isBefore(TimeMachine.now().toLocalDate()), "Must not be published before setReportingObligationEndDate.");
+        Condition.isTrue(JobAdvertisementStatus.PUBLISHED_RESTRICTED.equals(status), "Must be in PUBLISHED_RESTRICTED state.");
+
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_BLACKOUT_EXPIRED, this));
+    }
+
     public void reject(String stellennummerAvam, LocalDate date, String code, String reason) {
         this.stellennummerAvam = Condition.notBlank(stellennummerAvam);
         this.rejectionDate = Condition.notNull(date);
@@ -381,6 +390,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void publishRestricted() {
+        Condition.notNull(reportingObligationEndDate, "Reporting obligation end date is missing");
+
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_RESTRICTED);
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_RESTRICTED, this));
     }
@@ -491,5 +502,263 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         return hasChangedAnything;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        JobAdvertisement that = (JobAdvertisement) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "JobAdvertisement{" +
+                "id=" + id +
+                ", stellennummerEgov='" + stellennummerEgov + '\'' +
+                ", stellennummerAvam='" + stellennummerAvam + '\'' +
+                ", fingerprint='" + fingerprint + '\'' +
+                ", sourceSystem=" + sourceSystem +
+                ", sourceEntryId='" + sourceEntryId + '\'' +
+                ", externalUrl='" + externalUrl + '\'' +
+                ", status=" + status +
+                ", ravRegistrationDate=" + ravRegistrationDate +
+                ", approvalDate=" + approvalDate +
+                ", rejectionDate=" + rejectionDate +
+                ", rejectionCode='" + rejectionCode + '\'' +
+                ", rejectionReason='" + rejectionReason + '\'' +
+                ", cancellationDate=" + cancellationDate +
+                ", cancellationCode='" + cancellationCode + '\'' +
+                ", reportingObligation=" + reportingObligation +
+                ", reportingObligationEndDate=" + reportingObligationEndDate +
+                ", publicationStartDate=" + publicationStartDate +
+                ", publicationEndDate=" + publicationEndDate +
+                ", eures=" + eures +
+                ", euresAnonymous=" + euresAnonymous +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", employment=" + employment +
+                ", jobCenterCode='" + jobCenterCode + '\'' +
+                ", drivingLicenseLevel='" + drivingLicenseLevel + '\'' +
+                ", applyChannel=" + applyChannel +
+                ", company=" + company +
+                ", contact=" + contact +
+                ", locality=" + locality +
+                ", occupations=" + occupations +
+                ", languageSkills=" + languageSkills +
+                '}';
+    }
+
+    public static final class Builder {
+        private JobAdvertisementId id;
+        private String stellennummerEgov;
+        private String stellennummerAvam;
+        private String fingerprint;
+        private SourceSystem sourceSystem;
+        private String sourceEntryId;
+        private String externalUrl;
+        private JobAdvertisementStatus status;
+        private LocalDate ravRegistrationDate;
+        private LocalDate approvalDate;
+        private LocalDate rejectionDate;
+        private String rejectionCode;
+        private String rejectionReason;
+        private LocalDate cancellationDate;
+        private String cancellationCode;
+        private boolean reportingObligation;
+        private LocalDate reportingObligationEndDate;
+        private LocalDate publicationStartDate;
+        private LocalDate publicationEndDate;
+        private boolean eures;
+        private boolean euresAnonymous;
+        private String title;
+        private String description;
+        private Employment employment;
+        private String jobCenterCode;
+        private String drivingLicenseLevel;
+        private ApplyChannel applyChannel;
+        private Company company;
+        private Contact contact;
+        private Locality locality;
+        private List<Occupation> occupations;
+        private List<LanguageSkill> languageSkills;
+
+        public Builder() {
+        }
+
+        public Builder setId(JobAdvertisementId id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setStellennummerEgov(String stellennummerEgov) {
+            this.stellennummerEgov = stellennummerEgov;
+            return this;
+        }
+
+        public Builder setStellennummerAvam(String stellennummerAvam) {
+            this.stellennummerAvam = stellennummerAvam;
+            return this;
+        }
+
+        public Builder setFingerprint(String fingerprint) {
+            this.fingerprint = fingerprint;
+            return this;
+        }
+
+        public Builder setSourceSystem(SourceSystem sourceSystem) {
+            this.sourceSystem = sourceSystem;
+            return this;
+        }
+
+        public Builder setSourceEntryId(String sourceEntryId) {
+            this.sourceEntryId = sourceEntryId;
+            return this;
+        }
+
+        public Builder setExternalUrl(String externalUrl) {
+            this.externalUrl = externalUrl;
+            return this;
+        }
+
+        public Builder setStatus(JobAdvertisementStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder setRavRegistrationDate(LocalDate ravRegistrationDate) {
+            this.ravRegistrationDate = ravRegistrationDate;
+            return this;
+        }
+
+        public Builder approvalDate(LocalDate approvalDate) {
+            this.approvalDate = approvalDate;
+            return this;
+        }
+
+        public Builder setRejectionDate(LocalDate rejectionDate) {
+            this.rejectionDate = rejectionDate;
+            return this;
+        }
+
+        public Builder setRejectionCode(String rejectionCode) {
+            this.rejectionCode = rejectionCode;
+            return this;
+        }
+
+        public Builder setRejectionReason(String rejectionReason) {
+            this.rejectionReason = rejectionReason;
+            return this;
+        }
+
+        public Builder setCancellationDate(LocalDate cancellationDate) {
+            this.cancellationDate = cancellationDate;
+            return this;
+        }
+
+        public Builder setCancellationCode(String cancellationCode) {
+            this.cancellationCode = cancellationCode;
+            return this;
+        }
+
+        public Builder setReportingObligation(boolean reportingObligation) {
+            this.reportingObligation = reportingObligation;
+            return this;
+        }
+
+        public Builder setReportingObligationEndDate(LocalDate reportingObligationEndDate) {
+            this.reportingObligationEndDate = reportingObligationEndDate;
+            return this;
+        }
+
+        public Builder setPublicationStartDate(LocalDate publicationStartDate) {
+            this.publicationStartDate = publicationStartDate;
+            return this;
+        }
+
+        public Builder setPublicationEndDate(LocalDate publicationEndDate) {
+            this.publicationEndDate = publicationEndDate;
+            return this;
+        }
+
+        public Builder setEures(boolean eures) {
+            this.eures = eures;
+            return this;
+        }
+
+        public Builder setEuresAnonymous(boolean euresAnonymous) {
+            this.euresAnonymous = euresAnonymous;
+            return this;
+        }
+
+        public Builder setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setEmployment(Employment employment) {
+            this.employment = employment;
+            return this;
+        }
+
+        public Builder setJobCenterCode(String jobCenterCode) {
+            this.jobCenterCode = jobCenterCode;
+            return this;
+        }
+
+        public Builder setDrivingLicenseLevel(String drivingLicenseLevel) {
+            this.drivingLicenseLevel = drivingLicenseLevel;
+            return this;
+        }
+
+        public Builder setApplyChannel(ApplyChannel applyChannel) {
+            this.applyChannel = applyChannel;
+            return this;
+        }
+
+        public Builder setCompany(Company company) {
+            this.company = company;
+            return this;
+        }
+
+        public Builder setContact(Contact contact) {
+            this.contact = contact;
+            return this;
+        }
+
+        public Builder setLocality(Locality locality) {
+            this.locality = locality;
+            return this;
+        }
+
+        public Builder setOccupations(List<Occupation> occupations) {
+            this.occupations = occupations;
+            return this;
+        }
+
+        public Builder setLanguageSkills(List<LanguageSkill> languageSkills) {
+            this.languageSkills = languageSkills;
+            return this;
+        }
+
+        public JobAdvertisement build() {
+            return new JobAdvertisement(this);
+        }
     }
 }

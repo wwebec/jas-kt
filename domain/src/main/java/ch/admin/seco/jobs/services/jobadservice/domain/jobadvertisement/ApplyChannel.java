@@ -71,4 +71,14 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         return Objects.hash(mailAddress, emailAddress, phoneNumber, formUrl, additionalInfo);
     }
 
+    @Override
+    public String toString() {
+        return "ApplyChannel{" +
+                "mailAddress='" + mailAddress + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", formUrl='" + formUrl + '\'' +
+                ", additionalInfo='" + additionalInfo + '\'' +
+                '}';
+    }
 }
