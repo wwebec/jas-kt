@@ -34,9 +34,9 @@ public class JobAdvertisementApiRestController {
 		return jobAdvertisementApplicationService.findById(jobAdvertisementId);
 	}
 
-    @PostMapping(path = "/{id}/cancel")
-    public ResponseEntity<?> cancelFromApi(@PathVariable Integer id) {
+	@PostMapping(path = "/{id}/cancel")
+	public ResponseEntity<?> cancelFromApi(@PathVariable Integer id) {
 		// TODO: implement
-	    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 }
