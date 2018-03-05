@@ -40,7 +40,12 @@ public class JobAdvertisementApplicationService {
     private final ProfessionService professionSerivce;
 
     @Autowired
-    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, RavRegistrationService ravRegistrationService, ReportingObligationService reportingObligationService, LocalityService localityService, ProfessionService professionSerivce) {
+    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
+                                              JobAdvertisementFactory jobAdvertisementFactory,
+                                              RavRegistrationService ravRegistrationService,
+                                              ReportingObligationService reportingObligationService,
+                                              LocalityService localityService,
+                                              ProfessionService professionSerivce) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.ravRegistrationService = ravRegistrationService;
@@ -126,6 +131,14 @@ public class JobAdvertisementApplicationService {
         this.jobAdvertisementRepository
                 .findAllWhereBlackoutNeedToExpire(TimeMachine.now().toLocalDate())
                 .forEach(JobAdvertisement::expireBlackout);
+
+    }
+
+    @Scheduled(cron = "${jobAdvertisement.checkPublicationExpiration.cron}")
+    public void checkPublicationExpiration() {
+        this.jobAdvertisementRepository
+                .findAllWherePublicationNeedToExpire(TimeMachine.now().toLocalDate())
+                .forEach(JobAdvertisement::expirePublication);
 
     }
 

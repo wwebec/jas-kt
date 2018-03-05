@@ -368,6 +368,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_BLACKOUT_EXPIRED, this));
     }
 
+    public void expirePublication() {
+        Condition.isTrue(this.publicationEndDate.isBefore(TimeMachine.now().toLocalDate()), "Must not be archived before publicationEndDate.");
+        Condition.isTrue(JobAdvertisementStatus.PUBLISHED_PUBLIC.equals(status), "Must be in PUBLISHED_PUBLIC state.");
+
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_EXPIRED, this));
+    }
+
     public void reject(String stellennummerAvam, LocalDate date, String code, String reason) {
         this.stellennummerAvam = Condition.notBlank(stellennummerAvam);
         this.rejectionDate = Condition.notNull(date);
@@ -397,6 +404,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void publishPublic() {
+        Condition.notNull(publicationEndDate, "Publication end date is missing");
+
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC, this));
     }
