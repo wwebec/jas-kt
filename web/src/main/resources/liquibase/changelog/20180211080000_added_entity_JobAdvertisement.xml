@@ -71,11 +71,11 @@
             <column name="DESCRIPTION" type="longvarchar"/>
             <column name="EMPLOYMENT_START_DATE" type="date"/>
             <column name="EMPLOYMENT_END_DATE" type="date"/>
-            <column name="DURATION_IN_DAYS" type="integer"/>
-            <column name="IMMEDIATELY" type="boolean"/>
-            <column name="PERMANENT" type="boolean"/>
-            <column name="WORKLOAD_PERCENTAGE_MIN" type="integer"/>
-            <column name="WORKLOAD_PERCENTAGE_MAX" type="integer"/>
+            <column name="EMPLOYMENT_DURATION_IN_DAYS" type="integer"/>
+            <column name="EMPLOYMENT_IMMEDIATELY" type="boolean"/>
+            <column name="EMPLOYMENT_PERMANENT" type="boolean"/>
+            <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN" type="integer"/>
+            <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MAX" type="integer"/>
             <column name="JOB_CENTER_CODE" type="varchar(5)"/>
             <column name="DRIVING_LICENSE_LEVEL" type="varchar(3)"/>
             <column name="APPLY_CHANNEL_MAIL_ADDRESS" type="varchar(255)"/>
