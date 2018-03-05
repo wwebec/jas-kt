@@ -1,12 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.ProfileRegistry;
-import ch.admin.seco.jobs.services.jobadservice.application.profession.ProfessionApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 @Configuration
 @EnableConfigurationProperties(AvamJmsProperties.class)
@@ -16,16 +17,16 @@ public class AvamJmsConfig {
     @Profile(ProfileRegistry.AVAM_MOCK)
     static class AvamMockedConfig {
 
-        private final ProfessionApplicationService professionApplicationService;
+        private final ProfessionService professionService;
 
         @Autowired
-        AvamMockedConfig(ProfessionApplicationService professionApplicationService) {
-            this.professionApplicationService = professionApplicationService;
+        AvamMockedConfig(ProfessionService professionService) {
+            this.professionService = professionService;
         }
 
         @Bean
         public AvamJmsService avamService() {
-            return new MockedAvamJmsService(professionApplicationService);
+            return new MockedAvamJmsService(professionService);
         }
 
     }
@@ -34,20 +35,24 @@ public class AvamJmsConfig {
     @Profile('!' + ProfileRegistry.AVAM_MOCK)
     static class AvamDefaultConfig {
 
-        private final AvamJmsProperties avamJmsProperties;
-        private final ProfessionApplicationService professionApplicationService;
+        private final ProfessionService professionService;
 
         @Autowired
-        public AvamDefaultConfig(AvamJmsProperties avamJmsProperties, ProfessionApplicationService professionApplicationService) {
-            this.avamJmsProperties = avamJmsProperties;
-            this.professionApplicationService = professionApplicationService;
+        public AvamDefaultConfig(ProfessionService professionService) {
+            this.professionService = professionService;
         }
 
         @Bean
         public AvamJmsService avamService() throws Exception {
-            return new AvamJmsService(professionApplicationService);
+            return new AvamJmsService(professionService);
+        }
+
+        private Jaxb2Marshaller marshaller() throws Exception {
+            Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+            marshaller.setPackagesToScan("ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.wsdl.*");
+            marshaller.afterPropertiesSet();
+            return marshaller;
         }
 
     }
-
 }

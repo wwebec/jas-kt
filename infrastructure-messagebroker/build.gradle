@@ -1,4 +1,9 @@
+apply from: 'jaxb.gradle'
+
 dependencies {
     compile project(':infrastructure')
+    compile 'org.springframework.ws:spring-ws-core'
     optional 'org.springframework.boot:spring-boot-configuration-processor'
 }
+
+compileJava.dependsOn(processResources)

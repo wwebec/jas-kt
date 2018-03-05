@@ -1,25 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.profession;
 
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
 
-import javax.persistence.*;
-import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+public class Profession {
 
-@Entity
-public class Profession implements Aggregate<Profession, ProfessionId> {
-
-    @EmbeddedId
-    @AttributeOverride(name = "value", column = @Column(name = "ID"))
-    @Valid
     private ProfessionId id;
-
-    @ElementCollection
-    @CollectionTable(name = "PROFESSION_CODES", joinColumns = @JoinColumn(name = "PROFESSION_ID"))
-    @Valid
-    private List<ProfessionCode> codes;
+    private String avamCode;
+    private String sbn3Code;
+    private String sbn5Code;
+    private String bfsCode;
+    private String label;
 
     protected Profession() {
         // For reflection libs
@@ -27,25 +17,38 @@ public class Profession implements Aggregate<Profession, ProfessionId> {
 
     public Profession(ProfessionId id) {
         this.id = Condition.notNull(id);
-        this.codes = new ArrayList<>();
     }
 
-    public Profession(ProfessionId id, List<ProfessionCode> codes) {
+    public Profession(ProfessionId id, String avamCode, String sbn3Code, String sbn5Code, String bfsCode, String label) {
         this(id);
-        this.codes = Condition.notNull(codes);
-    }
-
-    @Override
-    public boolean sameAggregateAs(Profession other) {
-        return (other != null) && id.sameValueObjectAs(other.id);
+        this.avamCode = avamCode;
+        this.sbn3Code = sbn3Code;
+        this.sbn5Code = sbn5Code;
+        this.bfsCode = bfsCode;
+        this.label = label;
     }
 
     public ProfessionId getId() {
         return id;
     }
 
-    public List<ProfessionCode> getCodes() {
-        return codes;
+    public String getAvamCode() {
+        return avamCode;
     }
 
+    public String getSbn3Code() {
+        return sbn3Code;
+    }
+
+    public String getSbn5Code() {
+        return sbn5Code;
+    }
+
+    public String getBfsCode() {
+        return bfsCode;
+    }
+
+    public String getLabel() {
+        return label;
+    }
 }

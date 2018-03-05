@@ -1,11 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import ch.admin.seco.jobs.services.jobadservice.application.profession.ProfessionApplicationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 
 public class MockedAvamJmsService extends AvamJmsService {
 
-    public MockedAvamJmsService(ProfessionApplicationService professionApplicationService) {
-        super(professionApplicationService);
+    public MockedAvamJmsService(ProfessionService professionService) {
+        super(professionService);
     }
 
 }

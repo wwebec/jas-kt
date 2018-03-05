@@ -8,24 +8,26 @@ import java.util.stream.Collectors;
 
 public class OccupationDto {
 
-    private String professionId;
+    private String avamCode;
     private WorkExperience workExperience;
+    private String educationCode;
 
     protected OccupationDto() {
         // For reflection libs
     }
 
-    public OccupationDto(String professionId, WorkExperience workExperience) {
-        this.professionId = professionId;
+    public OccupationDto(String avamCode, WorkExperience workExperience, String educationCode) {
+        this.avamCode = avamCode;
         this.workExperience = workExperience;
+        this.educationCode = educationCode;
     }
 
-    public String getProfessionId() {
-        return professionId;
+    public String getAvamCode() {
+        return avamCode;
     }
 
-    public void setProfessionId(String professionId) {
-        this.professionId = professionId;
+    public void setAvamCode(String avamCode) {
+        this.avamCode = avamCode;
     }
 
     public WorkExperience getWorkExperience() {
@@ -36,10 +38,19 @@ public class OccupationDto {
         this.workExperience = workExperience;
     }
 
+    public String getEducationCode() {
+        return educationCode;
+    }
+
+    public void setEducationCode(String educationCode) {
+        this.educationCode = educationCode;
+    }
+
     public static OccupationDto toDto(Occupation occupation) {
         OccupationDto occupationDto = new OccupationDto();
-        occupationDto.setProfessionId(occupation.getProfessionId().getValue());
+        occupationDto.setAvamCode(occupation.getAvamCode());
         occupationDto.setWorkExperience(occupation.getWorkExperience());
+        occupationDto.setEducationCode(occupation.getEducationCode());
         return occupationDto;
     }
 

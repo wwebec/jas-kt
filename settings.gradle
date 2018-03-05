@@ -7,6 +7,5 @@ include ':infrastructure-database'
 include ':infrastructure-elasticsearch'
 include ':infrastructure-messagebroker'
 include ':infrastructure-service-reference'
-include ':infrastructure-ws-avam'
 include ':web'
 
