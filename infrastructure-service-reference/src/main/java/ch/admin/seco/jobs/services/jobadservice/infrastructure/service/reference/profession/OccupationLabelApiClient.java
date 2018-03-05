@@ -1,12 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.profession;
 
-import feign.hystrix.FallbackFactory;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "localities", fallback = OccupationLabelApiClientFactory.class, decode404 = true)
+@FeignClient(name = "localities", fallback = OccupationLabelApiClientFallback.class, decode404 = true)
 public interface OccupationLabelApiClient {
 
     @GetMapping("/occupations/label/mapping/{type}/{code}")
@@ -15,15 +14,11 @@ public interface OccupationLabelApiClient {
 }
 
 @Component
-class OccupationLabelApiClientFactory implements FallbackFactory<OccupationLabelApiClient> {
+class OccupationLabelApiClientFallback implements OccupationLabelApiClient {
 
     @Override
-    public OccupationLabelApiClient create(Throwable cause) {
-        return new OccupationLabelApiClient() {
-            @Override
-            public OccupationLabelMappingResource getOccupationMapping(@PathVariable("type") String type, @PathVariable("code") String code) {
-                return null;
-            }
-        };
+    public OccupationLabelMappingResource getOccupationMapping(@PathVariable("type") String type, @PathVariable("code") String code) {
+        return null;
     }
+
 }

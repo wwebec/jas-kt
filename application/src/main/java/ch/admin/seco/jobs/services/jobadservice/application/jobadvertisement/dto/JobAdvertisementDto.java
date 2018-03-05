@@ -10,6 +10,7 @@ import java.util.List;
 public class JobAdvertisementDto {
 
     private String id;
+    private String stellennummerEgov;
     private String stellennummerAvam;
     private String fingerprint;
     private SourceSystem sourceSystem;
@@ -24,6 +25,7 @@ public class JobAdvertisementDto {
     private LocalDate cancellationDate;
     private String cancellationCode;
     private boolean reportingObligation;
+    private LocalDate reportingObligationEndDate;
     private LocalDate publicationStartDate;
     private LocalDate publicationEndDate;
     private boolean eures;
@@ -50,8 +52,9 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
+    public JobAdvertisementDto(String id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
         this.id = id;
+        this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
         this.sourceSystem = sourceSystem;
@@ -66,6 +69,7 @@ public class JobAdvertisementDto {
         this.cancellationDate = cancellationDate;
         this.cancellationCode = cancellationCode;
         this.reportingObligation = reportingObligation;
+        this.reportingObligationEndDate = reportingObligationEndDate;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
         this.eures = eures;
@@ -95,6 +99,14 @@ public class JobAdvertisementDto {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getStellennummerEgov() {
+        return stellennummerEgov;
+    }
+
+    public void setStellennummerEgov(String stellennummerEgov) {
+        this.stellennummerEgov = stellennummerEgov;
     }
 
     public String getStellennummerAvam() {
@@ -207,6 +219,14 @@ public class JobAdvertisementDto {
 
     public void setReportingObligation(boolean reportingObligation) {
         this.reportingObligation = reportingObligation;
+    }
+
+    public LocalDate getReportingObligationEndDate() {
+        return reportingObligationEndDate;
+    }
+
+    public void setReportingObligationEndDate(LocalDate reportingObligationEndDate) {
+        this.reportingObligationEndDate = reportingObligationEndDate;
     }
 
     public LocalDate getPublicationStartDate() {
@@ -380,6 +400,7 @@ public class JobAdvertisementDto {
     public static JobAdvertisementDto toDto(JobAdvertisement jobAdvertisement) {
         JobAdvertisementDto jobAdvertisementDto = new JobAdvertisementDto();
         jobAdvertisementDto.setId(jobAdvertisement.getId().getValue());
+        jobAdvertisementDto.setStellennummerEgov(jobAdvertisement.getStellennummerEgov());
         jobAdvertisementDto.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
         jobAdvertisementDto.setFingerprint(jobAdvertisement.getFingerprint());
         jobAdvertisementDto.setSourceSystem(jobAdvertisement.getSourceSystem());
@@ -394,6 +415,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setCancellationDate(jobAdvertisement.getCancellationDate());
         jobAdvertisementDto.setCancellationCode(jobAdvertisement.getCancellationCode());
         jobAdvertisementDto.setReportingObligation(jobAdvertisement.isReportingObligation());
+        jobAdvertisementDto.setReportingObligationEndDate(jobAdvertisement.getReportingObligationEndDate());
         jobAdvertisementDto.setPublicationStartDate(jobAdvertisement.getPublicationStartDate());
         jobAdvertisementDto.setPublicationEndDate(jobAdvertisement.getPublicationEndDate());
         jobAdvertisementDto.setEures(jobAdvertisement.isEures());

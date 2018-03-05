@@ -30,8 +30,9 @@ public class JabAdvertisementEventListener {
         final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementEvent.getJobAdvertisementId());
         if (jobAdvertisement.isReportingObligation() || jobAdvertisement.getSourceSystem().equals(SourceSystem.JOBROOM)) {
             jobAdvertisementApplicationService.inspect(jobAdvertisement.getId());
+        } else {
+            jobAdvertisementApplicationService.refining(jobAdvertisement.getId());
         }
-        jobAdvertisementApplicationService.refining(jobAdvertisement.getId());
     }
 
     @EventListener
