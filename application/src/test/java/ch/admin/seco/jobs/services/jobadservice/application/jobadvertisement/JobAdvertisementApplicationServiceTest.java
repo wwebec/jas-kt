@@ -1,5 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.application.LocalityService;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
+import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
@@ -10,12 +14,15 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -23,6 +30,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JobAdvertisementApplicationServiceTest {
 
     private DomainEventMockUtils domainEventMockUtils;
+
+    @MockBean
+    private RavRegistrationService ravRegistrationService;
+
+    @MockBean
+    private ReportingObligationService reportingObligationService;
+
+    @MockBean
+    private LocalityService localityService;
+
+    @MockBean
+    private ProfessionService professionService;
 
     @Autowired
     private JobAdvertisementRepository jobAdvertisementRepository;
@@ -33,6 +52,8 @@ public class JobAdvertisementApplicationServiceTest {
     @Before
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
+
+        when(localityService.enrichCodes(any())).thenReturn(new Locality("remarks", "ctiy", "zipCode", null, null, "BE", "CH", null));
     }
 
     @After
@@ -59,7 +80,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new CompanyDto("name", "stree", "houseNumber", "zipCode", "city", "CH", null, null, null, "phone", "email", "website"),
                 new ContactDto("MR", "firstName", "lastName", "phone", "email"),
                 new LocalityDto("remarks", "ctiy", "zipCode", null, null, "BE", "CH", null),
-                new OccupationDto("prefessionId", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
+                new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
         );
 
