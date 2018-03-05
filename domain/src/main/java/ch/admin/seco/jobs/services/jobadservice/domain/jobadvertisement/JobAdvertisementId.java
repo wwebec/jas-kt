@@ -7,7 +7,6 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.IdGenerator;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
@@ -47,4 +46,10 @@ public class JobAdvertisementId implements AggregateId<JobAdvertisementId> {
         return Objects.hash(value);
     }
 
+    @Override
+    public String toString() {
+        return "JobAdvertisementId{" +
+                "value='" + value + '\'' +
+                '}';
+    }
 }

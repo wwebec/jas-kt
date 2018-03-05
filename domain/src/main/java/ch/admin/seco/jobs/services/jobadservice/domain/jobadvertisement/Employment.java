@@ -85,4 +85,17 @@ public class Employment implements ValueObject<Employment> {
     public int hashCode() {
         return Objects.hash(startDate, endDate, durationInDays, immediately, permanent, workloadPercentageMin, workloadPercentageMax);
     }
+
+    @Override
+    public String toString() {
+        return "Employment{" +
+                "startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", durationInDays=" + durationInDays +
+                ", immediately=" + immediately +
+                ", permanent=" + permanent +
+                ", workloadPercentageMin=" + workloadPercentageMin +
+                ", workloadPercentageMax=" + workloadPercentageMax +
+                '}';
+    }
 }

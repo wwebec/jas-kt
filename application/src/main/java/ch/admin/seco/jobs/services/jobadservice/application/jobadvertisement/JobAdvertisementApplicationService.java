@@ -10,10 +10,12 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LocationDto;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,7 +54,12 @@ public class JobAdvertisementApplicationService {
     private final ProfessionService professionSerivce;
 
     @Autowired
-    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository, JobAdvertisementFactory jobAdvertisementFactory, RavRegistrationService ravRegistrationService, ReportingObligationService reportingObligationService, LocalityService localityService, ProfessionService professionSerivce) {
+    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
+                                              JobAdvertisementFactory jobAdvertisementFactory,
+                                              RavRegistrationService ravRegistrationService,
+                                              ReportingObligationService reportingObligationService,
+                                              LocalityService localityService,
+                                              ProfessionService professionSerivce) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.ravRegistrationService = ravRegistrationService;
@@ -131,6 +138,22 @@ public class JobAdvertisementApplicationService {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.refining();
+    }
+
+    @Scheduled(cron = "${jobAdvertisement.checkBlackoutPolicyExpiration.cron}")
+    public void checkBlackoutPolicyExpiration() {
+        this.jobAdvertisementRepository
+                .findAllWhereBlackoutNeedToExpire(TimeMachine.now().toLocalDate())
+                .forEach(JobAdvertisement::expireBlackout);
+
+    }
+
+    @Scheduled(cron = "${jobAdvertisement.checkPublicationExpiration.cron}")
+    public void checkPublicationExpiration() {
+        this.jobAdvertisementRepository
+                .findAllWherePublicationNeedToExpire(TimeMachine.now().toLocalDate())
+                .forEach(JobAdvertisement::expirePublication);
+
     }
 
     public void publish(JobAdvertisementId jobAdvertisementId) {

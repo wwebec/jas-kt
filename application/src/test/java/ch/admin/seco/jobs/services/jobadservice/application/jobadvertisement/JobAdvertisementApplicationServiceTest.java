@@ -9,6 +9,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.JobDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.PostboxDto;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import org.junit.After;
@@ -22,12 +23,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 
+import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -52,7 +55,7 @@ public class JobAdvertisementApplicationServiceTest {
     private JobAdvertisementRepository jobAdvertisementRepository;
 
     @Autowired
-    private JobAdvertisementApplicationService jobAdvertisementApplicationService;
+    private JobAdvertisementApplicationService sut; //System Under Test
 
     @Before
     public void setUp() {
@@ -84,7 +87,7 @@ public class JobAdvertisementApplicationServiceTest {
         );
 
         //Execute
-        JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromWebForm(createJobAdvertisementWebFormDto);
+        JobAdvertisementId jobAdvertisementId = sut.createFromWebForm(createJobAdvertisementWebFormDto);
 
         //Validate
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
@@ -117,7 +120,7 @@ public class JobAdvertisementApplicationServiceTest {
         );
 
         //Execute
-        JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(jobAdvertisementApiDto);
+        JobAdvertisementId jobAdvertisementId = sut.createFromApi(jobAdvertisementApiDto);
 
         //Validate
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
@@ -126,6 +129,63 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.API);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
+    }
+
+    @Test
+    public void checkBlackoutPolicyExpiration() {
+        // given
+        jobAdvertisementRepository.save(createJobWithStatusAndReportingObligationEndDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
+        jobAdvertisementRepository.save(createJobWithStatusAndReportingObligationEndDate(JOB_ADVERTISEMENT_ID_02, JobAdvertisementStatus.CANCELLED, null));
+        jobAdvertisementRepository.save(createJobWithStatusAndReportingObligationEndDate(JOB_ADVERTISEMENT_ID_03, JobAdvertisementStatus.PUBLISHED_RESTRICTED, now().toLocalDate().plusDays(1)));
+        jobAdvertisementRepository.save(createJobWithStatusAndReportingObligationEndDate(JOB_ADVERTISEMENT_ID_04, JobAdvertisementStatus.PUBLISHED_RESTRICTED, now().toLocalDate().minusDays(1)));
+        jobAdvertisementRepository.save(createJobWithStatusAndReportingObligationEndDate(JOB_ADVERTISEMENT_ID_05, JobAdvertisementStatus.PUBLISHED_RESTRICTED, now().toLocalDate()));
+
+        // when
+        this.sut.checkBlackoutPolicyExpiration();
+
+        // then
+        DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_BLACKOUT_EXPIRED.getDomainEventType());
+        assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_04);
+    }
+
+    @Test
+    public void checkPublicationExpiration() {
+        // given
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_02, JobAdvertisementStatus.CANCELLED, null));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_03, JobAdvertisementStatus.PUBLISHED_PUBLIC, now().toLocalDate().plusDays(1)));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_04, JobAdvertisementStatus.PUBLISHED_PUBLIC, now().toLocalDate().minusDays(1)));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_05, JobAdvertisementStatus.PUBLISHED_PUBLIC, now().toLocalDate()));
+
+        // when
+        this.sut.checkPublicationExpiration();
+
+        // then
+        DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_EXPIRED.getDomainEventType());
+        assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_04);
+    }
+
+
+    private JobAdvertisement createJobWithStatusAndReportingObligationEndDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate reportingObligationEndDate) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
+                .setStatus(status)
+                .setReportingObligationEndDate(reportingObligationEndDate)
+                .build();
+    }
+
+    private JobAdvertisement createJobWithStatusAndPublicationEndDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate publicationEndDate) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
+                .setStatus(status)
+                .setPublicationEndDate(publicationEndDate)
+                .build();
     }
 
 }

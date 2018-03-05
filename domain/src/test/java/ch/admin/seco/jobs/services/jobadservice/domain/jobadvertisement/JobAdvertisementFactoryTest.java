@@ -42,7 +42,7 @@ public class JobAdvertisementFactoryTest {
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.JOBROOM);
 
         JobAdvertisementEvent jobAdvertisementEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
-        assertThat(jobAdvertisementEvent.getJobAdvertisementId()).isEqualTo(jobAdvertisement.getId());
+        assertThat(jobAdvertisementEvent.getAggregateId()).isEqualTo(jobAdvertisement.getId());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class JobAdvertisementFactoryTest {
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.API);
 
         JobAdvertisementEvent jobAdvertisementEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
-        assertThat(jobAdvertisementEvent.getJobAdvertisementId()).isEqualTo(jobAdvertisement.getId());
+        assertThat(jobAdvertisementEvent.getAggregateId()).isEqualTo(jobAdvertisement.getId());
     }
 
     static abstract class TestJobAdvertisementRepository implements JobAdvertisementRepository {

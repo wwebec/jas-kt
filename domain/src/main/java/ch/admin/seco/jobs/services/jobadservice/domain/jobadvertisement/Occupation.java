@@ -100,4 +100,17 @@ public class Occupation implements ValueObject<Occupation> {
     public int hashCode() {
         return Objects.hash(avamCode, sbn3Code, sbn5Code, bfsCode, label, workExperience, educationCode);
     }
+
+    @Override
+    public String toString() {
+        return "Occupation{" +
+                "avamCode='" + avamCode + '\'' +
+                ", sbn3Code='" + sbn3Code + '\'' +
+                ", sbn5Code='" + sbn5Code + '\'' +
+                ", bfsCode='" + bfsCode + '\'' +
+                ", label='" + label + '\'' +
+                ", workExperience=" + workExperience +
+                ", educationCode='" + educationCode + '\'' +
+                '}';
+    }
 }

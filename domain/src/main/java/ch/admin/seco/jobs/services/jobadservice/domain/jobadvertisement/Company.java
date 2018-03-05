@@ -121,6 +121,24 @@ public class Company implements ValueObject<Company> {
         return Objects.hash(name, street, houseNumber, zipCode, city, countryIsoCode, postOfficeBoxNumber, postOfficeBoxZipCode, postOfficeBoxCity, phone, email, website);
     }
 
+    @Override
+    public String toString() {
+        return "Company{" +
+                "name='" + name + '\'' +
+                ", street='" + street + '\'' +
+                ", houseNumber='" + houseNumber + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", city='" + city + '\'' +
+                ", countryIsoCode='" + countryIsoCode + '\'' +
+                ", postOfficeBoxNumber='" + postOfficeBoxNumber + '\'' +
+                ", postOfficeBoxZipCode='" + postOfficeBoxZipCode + '\'' +
+                ", postOfficeBoxCity='" + postOfficeBoxCity + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", website='" + website + '\'' +
+                '}';
+    }
+
     public static class Builder<T> {
         private T parentBuilder;
         private String name;

@@ -31,7 +31,7 @@ public class JobAdvertisementAuditAttributeEnricher implements AuditAttributeEnr
     @Override
     public Map<String, Object> enrichAttributes(DomainEvent domainEvent) {
         JobAdvertisementEvent jobAdvertisementEvent = (JobAdvertisementEvent)domainEvent;
-        final JobAdvertisementId jobAdvertisementId = jobAdvertisementEvent.getJobAdvertisementId();
+        final JobAdvertisementId jobAdvertisementId = jobAdvertisementEvent.getAggregateId();
         final Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
         if(!jobAdvertisement.isPresent()) {
             LOGGER.info("JobAdvertisement with id {} was not found and can't be enrich Attributes with further information", jobAdvertisementId.getValue());

@@ -73,4 +73,15 @@ public class Contact implements ValueObject<Contact> {
     public int hashCode() {
         return Objects.hash(salutation, firstName, lastName, phone, email);
     }
+
+    @Override
+    public String toString() {
+        return "Contact{" +
+                "salutation=" + salutation +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                '}';
+    }
 }
