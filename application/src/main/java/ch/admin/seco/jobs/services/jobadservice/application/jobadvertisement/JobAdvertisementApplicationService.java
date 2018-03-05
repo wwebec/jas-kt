@@ -5,6 +5,9 @@ import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CreateJobAdvertisementApiDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.JobDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LocationDto;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
@@ -16,14 +19,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
 
+import com.google.common.collect.ImmutableMap;
+
 @Service
 @Transactional(rollbackFor = {Exception.class})
 public class JobAdvertisementApplicationService {
+
+    private final static Map<ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LanguageSkillDto.LanguageLevel, LanguageLevel> API_LANGUAGE_SKILL_MAPPING = ImmutableMap
+            .<ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LanguageSkillDto.LanguageLevel, LanguageLevel>builder()
+            .put(ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LanguageSkillDto.LanguageLevel.no_knowledge, LanguageLevel.NONE)
+            .put(ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LanguageSkillDto.LanguageLevel.basic_knowledge, LanguageLevel.BASIC)
+            .put(ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LanguageSkillDto.LanguageLevel.good, LanguageLevel.INTERMEDIATE)
+            .put(ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LanguageSkillDto.LanguageLevel.very_good, LanguageLevel.PROFICIENT)
+            .build();
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
 
@@ -142,6 +156,37 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.archive();
     }
 
+    public JobAdvertisementId createFromApi(CreateJobAdvertisementApiDto createJobAdvertisementApiDto) {
+        Locality locality = toLocality(createJobAdvertisementApiDto.getJob().getLocation());
+        locality = localityService.enrichCodes(locality);
+
+        Occupation occupation = toOccupation(createJobAdvertisementApiDto.getOccupation());
+        occupation = enrichOccupationWithProfessionCodes(occupation);
+
+        boolean reportingObligation = checkReportingObligation(
+                occupation,
+                locality
+        );
+
+        final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+                .setLocality(locality)
+                .setOccupations(Collections.singletonList(occupation))
+                .setReportingObligation(reportingObligation)
+                .setEmployment(toEmployment(createJobAdvertisementApiDto.getJob()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementApiDto))
+                .setCompany(toCompany(createJobAdvertisementApiDto.getCompany()))
+                .setContact(toContact(createJobAdvertisementApiDto.getContact()))
+                .setLanguageSkills(apiToLanguageSkills(createJobAdvertisementApiDto.getJob().getLanguageSkills()))
+                .build();
+
+        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(
+                createJobAdvertisementApiDto.getJob().getTitle(),
+                createJobAdvertisementApiDto.getJob().getDescription(),
+                updater
+        );
+        return jobAdvertisement.getId();
+    }
+
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
@@ -184,6 +229,18 @@ public class JobAdvertisementApplicationService {
         return null;
     }
 
+    private Employment toEmployment(JobDto job) {
+        return new Employment(
+                job.getStartDate(),
+                job.getEndDate(),
+                job.getDurationInDays(),
+                job.getStartsImmediately(),
+                job.getPermanent(),
+                job.getWorkingTimePercentageFrom(),
+                job.getWorkingTimePercentageTo()
+        );
+    }
+
     private ApplyChannel toApplyChannel(ApplyChannelDto applyChannelDto) {
         if (applyChannelDto != null) {
             return new ApplyChannel(
@@ -195,6 +252,27 @@ public class JobAdvertisementApplicationService {
             );
         }
         return null;
+    }
+
+    private ApplyChannel toApplyChannel(CreateJobAdvertisementApiDto createJobAdvertisementApiDto) {
+        String mailAddress = getMailAddressFromApi(createJobAdvertisementApiDto);
+        String emailAddress = createJobAdvertisementApiDto.getContact() != null
+                ? createJobAdvertisementApiDto.getContact().getEmail() : null;
+        String phoneNumber = createJobAdvertisementApiDto.getContact() != null
+                ? createJobAdvertisementApiDto.getContact().getPhoneNumber() : null;
+
+        return new ApplyChannel(
+                mailAddress,
+                emailAddress,
+                phoneNumber,
+                createJobAdvertisementApiDto.getApplicationUrl(),
+                null
+        );
+    }
+
+    private String getMailAddressFromApi(CreateJobAdvertisementApiDto createJobAdvertisementApiDto) {
+        ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CompanyDto company = createJobAdvertisementApiDto.getCompany();
+        return String.join(", ", company.getName(), company.getStreet(), company.getPostalCode(), company.getLocality());
     }
 
     private Company toCompany(CompanyDto companyDto) {
@@ -217,6 +295,26 @@ public class JobAdvertisementApplicationService {
         return null;
     }
 
+    private Company toCompany(ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CompanyDto companyDto) {
+        if (companyDto != null) {
+            return new Company.Builder()
+                    .setName(companyDto.getName())
+                    .setStreet(companyDto.getStreet())
+                    .setHouseNumber(companyDto.getHouseNumber())
+                    .setZipCode(companyDto.getPostalCode())
+                    .setCity(companyDto.getLocality())
+                    .setCountryIsoCode(companyDto.getCountryCode())
+                    .setPostOfficeBoxNumber(companyDto.getPostbox().getNumber())
+                    .setPostOfficeBoxZipCode(companyDto.getPostbox().getPostalCode())
+                    .setPostOfficeBoxCity(companyDto.getPostbox().getLocality())
+                    .setPhone(companyDto.getPhoneNumber())
+                    .setEmail(companyDto.getEmail())
+                    .setWebsite(companyDto.getWebsite())
+                    .build();
+        }
+        return null;
+    }
+
     private Contact toContact(ContactDto contactDto) {
         if (contactDto != null) {
             return new Contact(
@@ -230,6 +328,24 @@ public class JobAdvertisementApplicationService {
         return null;
     }
 
+	private Contact toContact(ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ContactDto contactDto) {
+		if (contactDto != null) {
+			return new Contact(
+					mapContactTitleToSalutation(contactDto.getTitle()),
+					contactDto.getFirstName(),
+					contactDto.getLastName(),
+					contactDto.getPhoneNumber(),
+					contactDto.getEmail()
+			);
+		}
+		return null;
+	}
+
+	private Salutation mapContactTitleToSalutation(ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ContactDto.Title title) {
+		return ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ContactDto.Title.mister == title
+				? Salutation.MR : Salutation.MS;
+	}
+
     private Locality toLocality(LocalityDto localityDto) {
         if (localityDto != null) {
             return new Locality(
@@ -242,6 +358,18 @@ public class JobAdvertisementApplicationService {
                     localityDto.getCountryIsoCode(),
                     localityDto.getLocation()
             );
+        }
+        return null;
+    }
+
+    private Locality toLocality(LocationDto localityDto) {
+        if (localityDto != null) {
+	        return new Locality(
+			        localityDto.getAdditionalDetails(),
+			        localityDto.getLocality(),
+			        localityDto.getPostalCode(),
+			        localityDto.getCountryCode()
+	        );
         }
         return null;
     }
@@ -268,5 +396,22 @@ public class JobAdvertisementApplicationService {
                     .collect(Collectors.toList());
         }
         return null;
+    }
+
+    private List<LanguageSkill> apiToLanguageSkills(List<ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LanguageSkillDto> languageSkillDtos) {
+        if (languageSkillDtos != null) {
+            return languageSkillDtos.stream()
+                    .map(languageSkillDto -> new LanguageSkill(
+                            languageSkillDto.getLanguage(),
+                            mapLanguageLevel(languageSkillDto.getSpokenLevel()),
+                            mapLanguageLevel(languageSkillDto.getWrittenLevel())
+                    ))
+                    .collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    private LanguageLevel mapLanguageLevel(ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LanguageSkillDto.LanguageLevel languageLevel) {
+        return API_LANGUAGE_SKILL_MAPPING.get(languageLevel);
     }
 }

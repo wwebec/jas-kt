@@ -32,6 +32,13 @@ public class Locality implements ValueObject<Locality> {
         // For reflection libs
     }
 
+    public Locality(String remarks, String city, String zipCode, String countryIsoCode) {
+        this.remarks = remarks;
+        this.city = city;
+        this.zipCode = zipCode;
+        this.countryIsoCode = countryIsoCode;
+    }
+
     public Locality(String remarks, String city, String zipCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint location) {
         this.remarks = remarks;
         this.city = city;
