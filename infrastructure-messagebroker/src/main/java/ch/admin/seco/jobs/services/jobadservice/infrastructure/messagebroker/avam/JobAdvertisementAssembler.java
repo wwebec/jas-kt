@@ -38,7 +38,7 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setBezeichnung(jobAdvertisement.getTitle());
         tOsteEgov.setBeschreibung(jobAdvertisement.getDescription());
 
-        fillEmployment(tOsteEgov, jobAdvertisement);
+        fillEmployment(tOsteEgov, jobAdvertisement.getEmployment());
         tOsteEgov.setKategorieCode(AvamCodeResolver.DRIVING_LICENSE_LEVELS.getLeft(jobAdvertisement.getDrivingLicenseLevel()));
 
         fillApplyChannel(tOsteEgov, jobAdvertisement.getApplyChannel());
@@ -51,19 +51,22 @@ public class JobAdvertisementAssembler {
         return tOsteEgov;
     }
 
-    private void fillEmployment(TOsteEgov tOsteEgov, JobAdvertisement jobAdvertisement) {
-        boolean immediately = safeBoolean(jobAdvertisement.getImmediately());
+    private void fillEmployment(TOsteEgov tOsteEgov, Employment employment) {
+        if (employment == null) {
+            return;
+        }
+        boolean immediately = safeBoolean(employment.getImmediately());
         tOsteEgov.setAbSofort(immediately);
         if (!immediately) {
-            tOsteEgov.setStellenantritt(formatLocalDate(jobAdvertisement.getEmploymentStartDate()));
+            tOsteEgov.setStellenantritt(formatLocalDate(employment.getStartDate()));
         }
-        boolean permanent = safeBoolean(jobAdvertisement.getPermanent());
+        boolean permanent = safeBoolean(employment.getPermanent());
         tOsteEgov.setUnbefristet(permanent);
         if (!permanent) {
-            tOsteEgov.setVertragsdauer(formatLocalDate(jobAdvertisement.getEmploymentEndDate()));
+            tOsteEgov.setVertragsdauer(formatLocalDate(employment.getEndDate()));
         }
-        tOsteEgov.setPensumVon((short) jobAdvertisement.getWorkloadPercentageMin());
-        tOsteEgov.setPensumBis((short) jobAdvertisement.getWorkloadPercentageMax());
+        tOsteEgov.setPensumVon((short) employment.getWorkloadPercentageMin());
+        tOsteEgov.setPensumBis((short) employment.getWorkloadPercentageMax());
     }
 
     private void fillApplyChannel(TOsteEgov tOsteEgov, ApplyChannel applyChannel) {

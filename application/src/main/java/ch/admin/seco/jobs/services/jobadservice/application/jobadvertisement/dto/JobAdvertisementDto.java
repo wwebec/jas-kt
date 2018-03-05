@@ -32,13 +32,7 @@ public class JobAdvertisementDto {
     private boolean euresAnonymous;
     private String title;
     private String description;
-    private LocalDate employmentStartDate;
-    private LocalDate employmentEndDate;
-    private Integer durationInDays;
-    private Boolean immediately;
-    private Boolean permanent;
-    private int workloadPercentageMin;
-    private int workloadPercentageMax;
+    private EmploymentDto employment;
     private String jobCenterCode;
     private String drivingLicenseLevel;
     private ApplyChannelDto applyChannel;
@@ -52,7 +46,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
+    public JobAdvertisementDto(String id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, EmploymentDto employment, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
         this.id = id;
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
@@ -76,13 +70,7 @@ public class JobAdvertisementDto {
         this.euresAnonymous = euresAnonymous;
         this.title = title;
         this.description = description;
-        this.employmentStartDate = employmentStartDate;
-        this.employmentEndDate = employmentEndDate;
-        this.durationInDays = durationInDays;
-        this.immediately = immediately;
-        this.permanent = permanent;
-        this.workloadPercentageMin = workloadPercentageMin;
-        this.workloadPercentageMax = workloadPercentageMax;
+        this.employment = employment;
         this.jobCenterCode = jobCenterCode;
         this.drivingLicenseLevel = drivingLicenseLevel;
         this.applyChannel = applyChannel;
@@ -277,60 +265,12 @@ public class JobAdvertisementDto {
         this.description = description;
     }
 
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
+    public EmploymentDto getEmployment() {
+        return employment;
     }
 
-    public void setEmploymentStartDate(LocalDate employmentStartDate) {
-        this.employmentStartDate = employmentStartDate;
-    }
-
-    public LocalDate getEmploymentEndDate() {
-        return employmentEndDate;
-    }
-
-    public void setEmploymentEndDate(LocalDate employmentEndDate) {
-        this.employmentEndDate = employmentEndDate;
-    }
-
-    public Integer getDurationInDays() {
-        return durationInDays;
-    }
-
-    public void setDurationInDays(Integer durationInDays) {
-        this.durationInDays = durationInDays;
-    }
-
-    public Boolean getImmediately() {
-        return immediately;
-    }
-
-    public void setImmediately(Boolean immediately) {
-        this.immediately = immediately;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public void setPermanent(Boolean permanent) {
-        this.permanent = permanent;
-    }
-
-    public int getWorkloadPercentageMin() {
-        return workloadPercentageMin;
-    }
-
-    public void setWorkloadPercentageMin(int workloadPercentageMin) {
-        this.workloadPercentageMin = workloadPercentageMin;
-    }
-
-    public int getWorkloadPercentageMax() {
-        return workloadPercentageMax;
-    }
-
-    public void setWorkloadPercentageMax(int workloadPercentageMax) {
-        this.workloadPercentageMax = workloadPercentageMax;
+    public void setEmployment(EmploymentDto employment) {
+        this.employment = employment;
     }
 
     public String getJobCenterCode() {
@@ -422,13 +362,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setEuresAnonymous(jobAdvertisement.isEuresAnonymous());
         jobAdvertisementDto.setTitle(jobAdvertisement.getTitle());
         jobAdvertisementDto.setDescription(jobAdvertisement.getDescription());
-        jobAdvertisementDto.setEmploymentStartDate(jobAdvertisement.getEmploymentStartDate());
-        jobAdvertisementDto.setEmploymentEndDate(jobAdvertisement.getEmploymentEndDate());
-        jobAdvertisementDto.setDurationInDays(jobAdvertisement.getDurationInDays());
-        jobAdvertisementDto.setImmediately(jobAdvertisement.getImmediately());
-        jobAdvertisementDto.setPermanent(jobAdvertisement.getPermanent());
-        jobAdvertisementDto.setWorkloadPercentageMin(jobAdvertisement.getWorkloadPercentageMin());
-        jobAdvertisementDto.setWorkloadPercentageMax(jobAdvertisement.getWorkloadPercentageMax());
+        jobAdvertisementDto.setEmployment(EmploymentDto.toDto(jobAdvertisement.getEmployment()));
         jobAdvertisementDto.setJobCenterCode(jobAdvertisement.getJobCenterCode());
         jobAdvertisementDto.setDrivingLicenseLevel(jobAdvertisement.getDrivingLicenseLevel());
         jobAdvertisementDto.setApplyChannel(ApplyChannelDto.toDto(jobAdvertisement.getApplyChannel()));
