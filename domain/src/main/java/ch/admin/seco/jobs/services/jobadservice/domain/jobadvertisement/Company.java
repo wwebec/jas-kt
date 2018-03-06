@@ -1,12 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import java.util.Objects;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-import java.util.Objects;
+
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -30,12 +31,12 @@ public class Company implements ValueObject<Company> {
     }
 
     private Company(Builder builder) {
-        this.name = Condition.notBlank(builder.name);
+        this.name = Condition.notBlank(builder.name, "The name of a company can't be null");
         this.street = builder.street;
         this.houseNumber = builder.houseNumber;
-        this.zipCode = Condition.notBlank(builder.zipCode);
-        this.city = Condition.notBlank(builder.city);
-        this.countryIsoCode = Condition.notBlank(builder.countryIsoCode);
+        this.zipCode = Condition.notBlank(builder.zipCode, "The ZIP code of a company can't be null");
+        this.city = Condition.notBlank(builder.city, "The city of a company can't be null");
+        this.countryIsoCode = Condition.notBlank(builder.countryIsoCode, "The country of a company can't be null");
         this.postOfficeBoxNumber = builder.postOfficeBoxNumber;
         this.postOfficeBoxZipCode = builder.postOfficeBoxZipCode;
         this.postOfficeBoxCity = builder.postOfficeBoxCity;
@@ -119,6 +120,24 @@ public class Company implements ValueObject<Company> {
     @Override
     public int hashCode() {
         return Objects.hash(name, street, houseNumber, zipCode, city, countryIsoCode, postOfficeBoxNumber, postOfficeBoxZipCode, postOfficeBoxCity, phone, email, website);
+    }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "name='" + name + '\'' +
+                ", street='" + street + '\'' +
+                ", houseNumber='" + houseNumber + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", city='" + city + '\'' +
+                ", countryIsoCode='" + countryIsoCode + '\'' +
+                ", postOfficeBoxNumber='" + postOfficeBoxNumber + '\'' +
+                ", postOfficeBoxZipCode='" + postOfficeBoxZipCode + '\'' +
+                ", postOfficeBoxCity='" + postOfficeBoxCity + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", website='" + website + '\'' +
+                '}';
     }
 
     public static class Builder<T> {

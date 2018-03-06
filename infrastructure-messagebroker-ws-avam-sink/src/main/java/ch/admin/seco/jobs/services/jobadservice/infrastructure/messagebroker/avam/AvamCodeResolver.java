@@ -10,7 +10,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExpe
  * Left: AVAM
  * Right: Application
  */
-public class AvamAwesomeCodeResolver {
+public class AvamCodeResolver {
 
     public static final MappingBuilder<String, AvamAction> ACTIONS = new MappingBuilder<String, AvamAction>()
             .put("0", AvamAction.ANMELDUNG)

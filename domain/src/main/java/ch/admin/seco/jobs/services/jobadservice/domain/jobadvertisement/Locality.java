@@ -1,10 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
-
-import javax.persistence.*;
-import javax.validation.Valid;
 import java.util.Objects;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.validation.Valid;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -25,10 +29,6 @@ public class Locality implements ValueObject<Locality> {
     private String countryIsoCode;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "longitude", column = @Column(name = "LOCATION_LONGITUDE")),
-            @AttributeOverride(name = "latitude", column = @Column(name = "LOCATION_LATITUDE"))
-    })
     @Valid
     private GeoPoint location;
 
@@ -104,4 +104,17 @@ public class Locality implements ValueObject<Locality> {
         return Objects.hash(remarks, city, zipCode, communalCode, regionCode, cantonCode, countryIsoCode, location);
     }
 
+    @Override
+    public String toString() {
+        return "Locality{" +
+                "remarks='" + remarks + '\'' +
+                ", city='" + city + '\'' +
+                ", zipCode='" + zipCode + '\'' +
+                ", communalCode='" + communalCode + '\'' +
+                ", regionCode='" + regionCode + '\'' +
+                ", cantonCode='" + cantonCode + '\'' +
+                ", countryIsoCode='" + countryIsoCode + '\'' +
+                ", location=" + location +
+                '}';
+    }
 }

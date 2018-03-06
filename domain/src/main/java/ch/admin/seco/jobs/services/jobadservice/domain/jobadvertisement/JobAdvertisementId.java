@@ -1,14 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateId;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.IdGenerator;
+import java.util.Objects;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-import java.io.Serializable;
-import java.util.Objects;
+
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateId;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.IdGenerator;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -47,4 +47,10 @@ public class JobAdvertisementId implements AggregateId<JobAdvertisementId> {
         return Objects.hash(value);
     }
 
+    @Override
+    public String toString() {
+        return "JobAdvertisementId{" +
+                "value='" + value + '\'' +
+                '}';
+    }
 }

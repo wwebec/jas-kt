@@ -1,12 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCode;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 
 public class JobAdvertisementUpdater {
 
@@ -22,11 +21,9 @@ public class JobAdvertisementUpdater {
     static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
     static final String SECTION_COMPANY = "SECTION_COMPANY";
     static final String SECTION_CONTACT = "SECTION_CONTACT";
-    static final String SECTION_LOCALITIES = "SECTION_LOCALITIES";
+    static final String SECTION_LOCALITY = "SECTION_LOCALITY";
     static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
-    static final String SECTION_EDUCATION_CODE = "SECTION_EDUCATION_CODE";
     static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
-    static final String SECTION_PROFESSION_CODES = "SECTION_PROFESSION_CODES";
 
     private Set<String> changedSections;
 
@@ -48,19 +45,7 @@ public class JobAdvertisementUpdater {
 
     private boolean euresAnonymous;
 
-    private LocalDate employmentStartDate;
-
-    private LocalDate employmentEndDate;
-
-    private Integer durationInDays;
-
-    private Boolean immediately;
-
-    private Boolean permanent;
-
-    private int workloadPercentageMin;
-
-    private int workloadPercentageMax;
+    private Employment employment;
 
     private String jobCenterCode;
 
@@ -72,15 +57,11 @@ public class JobAdvertisementUpdater {
 
     private Contact contact;
 
-    private List<Locality> localities;
+    private Locality locality;
 
     private List<Occupation> occupations;
 
-    private String educationCode;
-
     private List<LanguageSkill> languageSkills;
-
-    private List<String> professionCodes;
 
     public JobAdvertisementUpdater(Builder builder) {
         this.changedSections = builder.changedSections;
@@ -93,23 +74,15 @@ public class JobAdvertisementUpdater {
         this.publicationEndDate = builder.publicationEndDate;
         this.eures = builder.eures;
         this.euresAnonymous = builder.euresAnonymous;
-        this.employmentStartDate = builder.employmentStartDate;
-        this.employmentEndDate = builder.employmentEndDate;
-        this.durationInDays = builder.durationInDays;
-        this.immediately = builder.immediately;
-        this.permanent = builder.permanent;
-        this.workloadPercentageMin = builder.workloadPercentageMin;
-        this.workloadPercentageMax = builder.workloadPercentageMax;
+        this.employment = builder.employment;
         this.jobCenterCode = builder.jobCenterCode;
         this.drivingLicenseLevel = builder.drivingLicenseLevel;
         this.applyChannel = builder.applyChannel;
         this.company = builder.company;
         this.contact = builder.contact;
-        this.localities = builder.localities;
+        this.locality = builder.locality;
         this.occupations = builder.occupations;
-        this.educationCode = builder.educationCode;
         this.languageSkills = builder.languageSkills;
-        this.professionCodes = builder.professionCodes;
     }
 
     public boolean hasAnyChangesIn(String section) {
@@ -152,32 +125,8 @@ public class JobAdvertisementUpdater {
         return euresAnonymous;
     }
 
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
-    }
-
-    public LocalDate getEmploymentEndDate() {
-        return employmentEndDate;
-    }
-
-    public Integer getDurationInDays() {
-        return durationInDays;
-    }
-
-    public Boolean getImmediately() {
-        return immediately;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public int getWorkloadPercentageMin() {
-        return workloadPercentageMin;
-    }
-
-    public int getWorkloadPercentageMax() {
-        return workloadPercentageMax;
+    public Employment getEmployment() {
+        return employment;
     }
 
     public String getJobCenterCode() {
@@ -200,24 +149,16 @@ public class JobAdvertisementUpdater {
         return contact;
     }
 
-    public List<Locality> getLocalities() {
-        return localities;
+    public Locality getLocality() {
+        return locality;
     }
 
     public List<Occupation> getOccupations() {
         return occupations;
     }
 
-    public String getEducationCode() {
-        return educationCode;
-    }
-
     public List<LanguageSkill> getLanguageSkills() {
         return languageSkills;
-    }
-
-    public List<String> getProfessionCodes() {
-        return professionCodes;
     }
 
     public static class Builder {
@@ -232,23 +173,15 @@ public class JobAdvertisementUpdater {
         private LocalDate publicationEndDate;
         private boolean eures;
         private boolean euresAnonymous;
-        private LocalDate employmentStartDate;
-        private LocalDate employmentEndDate;
-        private Integer durationInDays;
-        private Boolean immediately;
-        private Boolean permanent;
-        private int workloadPercentageMin;
-        private int workloadPercentageMax;
+        private Employment employment;
         private String jobCenterCode;
         private String drivingLicenseLevel;
         private ApplyChannel applyChannel;
         private Company company;
         private Contact contact;
-        private List<Locality> localities;
+        private Locality locality;
         private List<Occupation> occupations;
-        private String educationCode;
         private List<LanguageSkill> languageSkills;
-        private List<String> professionCodes;
 
         public Builder(AuditUser auditUser) {
             this.auditUser = auditUser;
@@ -296,15 +229,9 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setEmployment(LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax) {
+        public Builder setEmployment(Employment employment) {
             this.changedSections.add(SECTION_EMPLOYMENT);
-            this.employmentStartDate = employmentStartDate;
-            this.employmentEndDate = employmentEndDate;
-            this.durationInDays = durationInDays;
-            this.immediately = immediately;
-            this.permanent = permanent;
-            this.workloadPercentageMin = workloadPercentageMin;
-            this.workloadPercentageMax = workloadPercentageMax;
+            this.employment = employment;
             return this;
         }
 
@@ -338,9 +265,9 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setLocalities(List<Locality> localities) {
-            this.changedSections.add(SECTION_LOCALITIES);
-            this.localities = localities;
+        public Builder setLocality(Locality locality) {
+            this.changedSections.add(SECTION_LOCALITY);
+            this.locality = locality;
             return this;
         }
 
@@ -350,21 +277,9 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setEducationCode(String educationCode) {
-            this.changedSections.add(SECTION_EDUCATION_CODE);
-            this.educationCode = educationCode;
-            return this;
-        }
-
         public Builder setLanguageSkills(List<LanguageSkill> languageSkills) {
             this.changedSections.add(SECTION_LANGUAGE_SKILLS);
             this.languageSkills = languageSkills;
-            return this;
-        }
-
-        public Builder setProfessionCodes(List<String> professionCodes) {
-            this.changedSections.add(SECTION_PROFESSION_CODES);
-            this.professionCodes = professionCodes;
             return this;
         }
     }

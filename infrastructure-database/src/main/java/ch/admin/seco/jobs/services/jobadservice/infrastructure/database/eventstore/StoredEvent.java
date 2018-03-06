@@ -62,7 +62,7 @@ class StoredEvent {
     StoredEvent(DomainEvent domainEvent, String payload) {
         Condition.notNull(domainEvent);
         this.id = domainEvent.getId().getValue();
-        this.aggregateId = domainEvent.getAggregateId();
+        this.aggregateId = domainEvent.getAggregateId().getValue();
         this.userId = Condition.notNull(domainEvent.getUserExternalId());
         this.userDisplayName = Condition.notNull(domainEvent.getUserDisplayName());
         this.userEmail = Condition.notNull(domainEvent.getUserEmail());
@@ -115,8 +115,12 @@ class StoredEvent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (!(o instanceof StoredEvent)) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof StoredEvent)) {
+            return false;
+        }
         StoredEvent that = (StoredEvent) o;
         return Objects.equals(id, that.id);
     }

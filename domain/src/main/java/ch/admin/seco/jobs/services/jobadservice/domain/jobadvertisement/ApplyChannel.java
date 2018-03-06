@@ -1,11 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import java.util.Objects;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-import java.util.Objects;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -71,4 +72,14 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         return Objects.hash(mailAddress, emailAddress, phoneNumber, formUrl, additionalInfo);
     }
 
+    @Override
+    public String toString() {
+        return "ApplyChannel{" +
+                "mailAddress='" + mailAddress + '\'' +
+                ", emailAddress='" + emailAddress + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", formUrl='" + formUrl + '\'' +
+                ", additionalInfo='" + additionalInfo + '\'' +
+                '}';
+    }
 }

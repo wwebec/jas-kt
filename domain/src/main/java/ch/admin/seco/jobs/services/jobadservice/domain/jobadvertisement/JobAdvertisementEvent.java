@@ -1,9 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventType;
 
-public class JobAdvertisementEvent extends DomainEvent {
+public class JobAdvertisementEvent extends DomainEvent<JobAdvertisementId> {
 
     private JobAdvertisementId jobAdvertisementId;
 
@@ -14,12 +13,7 @@ public class JobAdvertisementEvent extends DomainEvent {
     }
 
     @Override
-    public String getAggregateId() {
-        return this.jobAdvertisementId.getValue();
+    public JobAdvertisementId getAggregateId() {
+        return this.jobAdvertisementId;
     }
-
-    public JobAdvertisementId getJobAdvertisementId() {
-        return jobAdvertisementId;
-    }
-
 }

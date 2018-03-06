@@ -1,14 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
 
-import java.util.List;
-
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOste;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOsteResponse;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.TOsteEgov;
@@ -19,27 +16,27 @@ public class AvamWebService {
     static final String AVAM_RESPONSE_OK = "NK_AVAM: OK";
     static final String AVAM_RESPONSE_ERROR = "NK_AVAM: ERROR";
 
-    private final AvamJobAdvertisementAssembler assembler;
+    private final JobAdvertisementAssembler assembler;
     private final WebServiceTemplate webserviceTemplate;
     private final String username;
     private final String password;
 
     public AvamWebService(WebServiceTemplate webserviceTemplate, String username, String password) {
-        this.assembler = new AvamJobAdvertisementAssembler();
+        this.assembler = new JobAdvertisementAssembler();
         this.webserviceTemplate = webserviceTemplate;
         this.username = username;
         this.password = password;
     }
 
-    public void register(JobAdvertisement jobAdvertisement, List<Profession> professions) {
+    public void register(JobAdvertisement jobAdvertisement) {
         AvamAction action = AvamAction.ANMELDUNG;
-        TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, professions, action);
+        TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, action);
         send(jobAdvertisement.getId(), action, tOsteEgov);
     }
 
     public void deregister(JobAdvertisement jobAdvertisement) {
         AvamAction action = AvamAction.ABMELDUNG;
-        TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, null, action);
+        TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, action);
         send(jobAdvertisement.getId(), action, tOsteEgov);
     }
 

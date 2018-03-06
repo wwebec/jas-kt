@@ -1,18 +1,19 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 
 public class JobAdvertisementTest {
 
     private DomainEventMockUtils domainEventMockUtils;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
     }
 
@@ -73,10 +74,10 @@ public class JobAdvertisementTest {
         assertThat(company.getWebsite()).isEqualTo("website");
 
         JobAdvertisementEvent jobAdvertisementEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED.getDomainEventType());
-        assertThat(jobAdvertisementEvent.getJobAdvertisementId()).isEqualTo(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
+        assertThat(jobAdvertisementEvent.getAggregateId()).isEqualTo(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
     }
 
-    //@Test
+    @Test
     public void testInspect() {
         //Prepare
         JobAdvertisement jobAdvertisement = new JobAdvertisement(
@@ -94,7 +95,7 @@ public class JobAdvertisementTest {
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.INSPECTING);
 
         JobAdvertisementEvent jobAdvertisementEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING.getDomainEventType());
-        assertThat(jobAdvertisementEvent.getJobAdvertisementId()).isEqualTo(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
+        assertThat(jobAdvertisementEvent.getAggregateId()).isEqualTo(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
     }
 
     //@Test

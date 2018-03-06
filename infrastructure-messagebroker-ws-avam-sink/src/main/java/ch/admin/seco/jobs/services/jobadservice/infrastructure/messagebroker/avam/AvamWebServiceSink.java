@@ -19,7 +19,7 @@ public class AvamWebServiceSink {
 
     @StreamListener(target = Sink.INPUT, condition = "header[action]==register")
     public void sendToAvam(RegisterJobAdvertisementMessage registerJobAdvertisementMessage) {
-        avamWebService.register(registerJobAdvertisementMessage.getJobAdvertisement(), registerJobAdvertisementMessage.getProfessions());
+        avamWebService.register(registerJobAdvertisementMessage.getJobAdvertisement());
     }
 
     @StreamListener(target = Sink.INPUT, condition = "header[action]==deregister")

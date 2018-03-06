@@ -1,11 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
+import javax.validation.constraints.NotNull;
+
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;
-
-import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class LocalityDto {
 
@@ -109,9 +107,5 @@ public class LocalityDto {
         localityDto.setCountryIsoCode(locality.getCountryIsoCode());
         localityDto.setLocation(locality.getLocation());
         return localityDto;
-    }
-
-    public static List<LocalityDto> toDto(List<Locality> localities) {
-        return localities.stream().map(LocalityDto::toDto).collect(Collectors.toList());
     }
 }

@@ -6,22 +6,21 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.J
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_COMPANY;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_CONTACT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_DRIVING_LICENSE_LEVEL;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EDUCATION_CODE;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EMPLOYMENT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EURES;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EXTERNAL_URL;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_FINGERPRINT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_JOB_CENTER_CODE;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LANGUAGE_SKILLS;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LOCALITIES;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LOCALITY;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_OCCUPATIONS;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PROFESSION_CODES;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLICATION_DATES;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_REPORTING_OBLIGATION;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_SOURCE_ENTRY_ID;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -33,7 +32,6 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.validation.Valid;
 
@@ -96,19 +94,18 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String description;
 
-    private LocalDate employmentStartDate;
-
-    private LocalDate employmentEndDate;
-
-    private Integer durationInDays;
-
-    private Boolean immediately;
-
-    private Boolean permanent;
-
-    private int workloadPercentageMin;
-
-    private int workloadPercentageMax;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "startDate", column = @Column(name = "EMPLOYMENT_START_DATE")),
+            @AttributeOverride(name = "endDate", column = @Column(name = "EMPLOYMENT_END_DATE")),
+            @AttributeOverride(name = "durationInDays", column = @Column(name = "EMPLOYMENT_DURATION_IN_DAYS")),
+            @AttributeOverride(name = "immediately", column = @Column(name = "EMPLOYMENT_IMMEDIATELY")),
+            @AttributeOverride(name = "permanent", column = @Column(name = "EMPLOYMENT_PERMANENT")),
+            @AttributeOverride(name = "workloadPercentageMin", column = @Column(name = "EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN")),
+            @AttributeOverride(name = "workloadPercentageMax", column = @Column(name = "EMPLOYMENT_WORKLOAD_PERCENTAGE_MAX"))
+    })
+    @Valid
+    private Employment employment;
 
     private String jobCenterCode;
 
@@ -116,67 +113,103 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
-        @AttributeOverride(name = "emailAddress", column = @Column(name = "APPLY_CHANNEL_EMAIL_ADDRESS")),
-        @AttributeOverride(name = "phoneNumber", column = @Column(name = "APPLY_CHANNEL_PHONE_NUMBER")),
-        @AttributeOverride(name = "formUrl", column = @Column(name = "APPLY_CHANNEL_FORM_URL")),
-        @AttributeOverride(name = "additionalInfo", column = @Column(name = "APPLY_CHANNEL_ADDITIONAL_INFO"))
+            @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
+            @AttributeOverride(name = "emailAddress", column = @Column(name = "APPLY_CHANNEL_EMAIL_ADDRESS")),
+            @AttributeOverride(name = "phoneNumber", column = @Column(name = "APPLY_CHANNEL_PHONE_NUMBER")),
+            @AttributeOverride(name = "formUrl", column = @Column(name = "APPLY_CHANNEL_FORM_URL")),
+            @AttributeOverride(name = "additionalInfo", column = @Column(name = "APPLY_CHANNEL_ADDITIONAL_INFO"))
     })
     @Valid
     private ApplyChannel applyChannel;
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "name", column = @Column(name = "COMPANY_NAME")),
-        @AttributeOverride(name = "street", column = @Column(name = "COMPANY_STREET")),
-        @AttributeOverride(name = "houseNumber", column = @Column(name = "COMPANY_HOUSE_NUMBER")),
-        @AttributeOverride(name = "zipCode", column = @Column(name = "COMPANY_ZIP_CODE")),
-        @AttributeOverride(name = "city", column = @Column(name = "COMPANY_CITY")),
-        @AttributeOverride(name = "countryIsoCode", column = @Column(name = "COMPANY_COUNTRY_ISO_CODE")),
-        @AttributeOverride(name = "postOfficeBoxNumber", column = @Column(name = "COMPANY_POST_OFFICE_BOX_NUMBER")),
-        @AttributeOverride(name = "postOfficeBoxZipCode", column = @Column(name = "COMPANY_POST_OFFICE_BOX_ZIP_CODE")),
-        @AttributeOverride(name = "postOfficeBoxCity", column = @Column(name = "COMPANY_POST_OFFICE_BOX_CITY")),
-        @AttributeOverride(name = "phone", column = @Column(name = "COMPANY_PHONE")),
-        @AttributeOverride(name = "email", column = @Column(name = "COMPANY_EMAIL")),
-        @AttributeOverride(name = "website", column = @Column(name = "COMPANY_WEBSITE"))
+            @AttributeOverride(name = "name", column = @Column(name = "COMPANY_NAME")),
+            @AttributeOverride(name = "street", column = @Column(name = "COMPANY_STREET")),
+            @AttributeOverride(name = "houseNumber", column = @Column(name = "COMPANY_HOUSE_NUMBER")),
+            @AttributeOverride(name = "zipCode", column = @Column(name = "COMPANY_ZIP_CODE")),
+            @AttributeOverride(name = "city", column = @Column(name = "COMPANY_CITY")),
+            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "COMPANY_COUNTRY_ISO_CODE")),
+            @AttributeOverride(name = "postOfficeBoxNumber", column = @Column(name = "COMPANY_POST_OFFICE_BOX_NUMBER")),
+            @AttributeOverride(name = "postOfficeBoxZipCode", column = @Column(name = "COMPANY_POST_OFFICE_BOX_ZIP_CODE")),
+            @AttributeOverride(name = "postOfficeBoxCity", column = @Column(name = "COMPANY_POST_OFFICE_BOX_CITY")),
+            @AttributeOverride(name = "phone", column = @Column(name = "COMPANY_PHONE")),
+            @AttributeOverride(name = "email", column = @Column(name = "COMPANY_EMAIL")),
+            @AttributeOverride(name = "website", column = @Column(name = "COMPANY_WEBSITE"))
     })
     @Valid
     private Company company;
 
     @Embedded
     @AttributeOverrides({
-        @AttributeOverride(name = "salutation", column = @Column(name = "CONTACT_SALUTATION")),
-        @AttributeOverride(name = "firstName", column = @Column(name = "CONTACT_FIRST_NAME")),
-        @AttributeOverride(name = "lastName", column = @Column(name = "CONTACT_LAST_NAME")),
-        @AttributeOverride(name = "phone", column = @Column(name = "CONTACT_PHONE")),
-        @AttributeOverride(name = "email", column = @Column(name = "CONTACT_EMAIL"))
+            @AttributeOverride(name = "salutation", column = @Column(name = "CONTACT_SALUTATION")),
+            @AttributeOverride(name = "firstName", column = @Column(name = "CONTACT_FIRST_NAME")),
+            @AttributeOverride(name = "lastName", column = @Column(name = "CONTACT_LAST_NAME")),
+            @AttributeOverride(name = "phone", column = @Column(name = "CONTACT_PHONE")),
+            @AttributeOverride(name = "email", column = @Column(name = "CONTACT_EMAIL"))
     })
     @Valid
     private Contact contact;
 
-    @ElementCollection
-    @CollectionTable(name = "JOB_ADVERTISEMENT_LOCALITY", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "remarks", column = @Column(name = "LOCALITY_REMARKS")),
+            @AttributeOverride(name = "city", column = @Column(name = "LOCALITY_CITY")),
+            @AttributeOverride(name = "zipCode", column = @Column(name = "LOCALITY_ZIP_CODE")),
+            @AttributeOverride(name = "communalCode", column = @Column(name = "LOCALITY_COMMUNAL_CODE")),
+            @AttributeOverride(name = "regionCode", column = @Column(name = "LOCALITY_REGION_CODE")),
+            @AttributeOverride(name = "cantonCode", column = @Column(name = "LOCALITY_CANTON_CODE")),
+            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "LOCALITY_COUNTRY_ISO_CODE")),
+            @AttributeOverride(name = "location.longitude", column = @Column(name = "LOCALITY_LOCATION_LONGITUDE")),
+            @AttributeOverride(name = "location.latitude", column = @Column(name = "LOCALITY_LOCATION_LATITUDE"))
+    })
     @Valid
-    private List<Locality> localities;
+    private Locality locality;
 
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<Occupation> occupations;
 
-    private String educationCode;
-
     @ElementCollection
-    @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGES_KILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<LanguageSkill> languageSkills;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "JOB_ADVERTISEMENT_PROFESSION_CODES", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
-    private List<String> professionCodes;
-
     protected JobAdvertisement() {
         // For reflection libs
+    }
+
+    private JobAdvertisement(Builder builder) {
+        this(builder.id, builder.sourceSystem, builder.status, builder.title, builder.description);
+
+        this.stellennummerEgov = builder.stellennummerEgov;
+        this.occupations = builder.occupations;
+        this.eures = builder.eures;
+        this.locality = builder.locality;
+        this.publicationStartDate = builder.publicationStartDate;
+        this.rejectionCode = builder.rejectionCode;
+        this.approvalDate = builder.approvalDate;
+        this.reportingObligationEndDate = builder.reportingObligationEndDate;
+        this.jobCenterCode = builder.jobCenterCode;
+        this.company = builder.company;
+        this.employment = builder.employment;
+        this.sourceEntryId = builder.sourceEntryId;
+        this.rejectionDate = builder.rejectionDate;
+        this.contact = builder.contact;
+        this.reportingObligation = builder.reportingObligation;
+        this.stellennummerAvam = builder.stellennummerAvam;
+        this.publicationEndDate = builder.publicationEndDate;
+        this.ravRegistrationDate = builder.ravRegistrationDate;
+        this.euresAnonymous = builder.euresAnonymous;
+        this.fingerprint = builder.fingerprint;
+        this.cancellationCode = builder.cancellationCode;
+        this.applyChannel = builder.applyChannel;
+        this.languageSkills = builder.languageSkills;
+        this.drivingLicenseLevel = builder.drivingLicenseLevel;
+        this.cancellationDate = builder.cancellationDate;
+        this.externalUrl = builder.externalUrl;
+        this.rejectionReason = builder.rejectionReason;
     }
 
     public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status, String title, String description) {
@@ -185,45 +218,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.status = Condition.notNull(status);
         this.title = Condition.notBlank(title);
         this.description = Condition.notBlank(description);
-    }
-
-    public JobAdvertisement(JobAdvertisementId id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, String rejectionCode, LocalDate employmentStartDate, LocalDate employmentEndDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, String jobCenterCode, String drivingLicenseLevel, ApplyChannel applyChannel, Company company, Contact contact, List<Locality> localities, List<Occupation> occupations, String educationCode, List<LanguageSkill> languageSkills, List<String> professionCodes) {
-        this(id, sourceSystem, status, title, description);
-        this.stellennummerEgov = stellennummerEgov;
-        this.stellennummerAvam = stellennummerAvam;
-        this.fingerprint = fingerprint;
-        this.sourceEntryId = sourceEntryId;
-        this.externalUrl = externalUrl;
-        this.ravRegistrationDate = ravRegistrationDate;
-        this.approvalDate = approvalDate;
-        this.rejectionDate = rejectionDate;
-        this.rejectionCode = rejectionCode;
-        this.rejectionReason = rejectionReason;
-        this.cancellationDate = cancellationDate;
-        this.cancellationCode = cancellationCode;
-        this.reportingObligation = reportingObligation;
-        this.reportingObligationEndDate = reportingObligationEndDate;
-        this.publicationStartDate = publicationStartDate;
-        this.publicationEndDate = publicationEndDate;
-        this.eures = eures;
-        this.euresAnonymous = euresAnonymous;
-        this.employmentStartDate = employmentStartDate;
-        this.employmentEndDate = employmentEndDate;
-        this.durationInDays = durationInDays;
-        this.immediately = immediately;
-        this.permanent = permanent;
-        this.workloadPercentageMin = workloadPercentageMin;
-        this.workloadPercentageMax = workloadPercentageMax;
-        this.jobCenterCode = jobCenterCode;
-        this.drivingLicenseLevel = drivingLicenseLevel;
-        this.applyChannel = applyChannel;
-        this.company = company;
-        this.contact = contact;
-        this.localities = localities;
-        this.occupations = occupations;
-        this.educationCode = educationCode;
-        this.languageSkills = languageSkills;
-        this.professionCodes = professionCodes;
     }
 
     @Override
@@ -323,32 +317,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return description;
     }
 
-    public LocalDate getEmploymentStartDate() {
-        return employmentStartDate;
-    }
-
-    public LocalDate getEmploymentEndDate() {
-        return employmentEndDate;
-    }
-
-    public Integer getDurationInDays() {
-        return durationInDays;
-    }
-
-    public Boolean getImmediately() {
-        return immediately;
-    }
-
-    public Boolean getPermanent() {
-        return permanent;
-    }
-
-    public int getWorkloadPercentageMin() {
-        return workloadPercentageMin;
-    }
-
-    public int getWorkloadPercentageMax() {
-        return workloadPercentageMax;
+    public Employment getEmployment() {
+        return employment;
     }
 
     public String getJobCenterCode() {
@@ -371,24 +341,16 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return contact;
     }
 
-    public List<Locality> getLocalities() {
-        return localities;
+    public Locality getLocality() {
+        return locality;
     }
 
     public List<Occupation> getOccupations() {
         return occupations;
     }
 
-    public String getEducationCode() {
-        return educationCode;
-    }
-
     public List<LanguageSkill> getLanguageSkills() {
         return languageSkills;
-    }
-
-    public List<String> getProfessionCodes() {
-        return professionCodes;
     }
 
     public void init(JobAdvertisementUpdater updater) {
@@ -424,6 +386,20 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED, this));
     }
 
+    public void expireBlackout() {
+        Condition.isTrue(this.reportingObligationEndDate.isBefore(TimeMachine.now().toLocalDate()), "Must not be published before setReportingObligationEndDate.");
+        Condition.isTrue(JobAdvertisementStatus.PUBLISHED_RESTRICTED.equals(status), "Must be in PUBLISHED_RESTRICTED state.");
+
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_BLACKOUT_EXPIRED, this));
+    }
+
+    public void expirePublication() {
+        Condition.isTrue(this.publicationEndDate.isBefore(TimeMachine.now().toLocalDate()), "Must not be archived before publicationEndDate.");
+        Condition.isTrue(JobAdvertisementStatus.PUBLISHED_PUBLIC.equals(status), "Must be in PUBLISHED_PUBLIC state.");
+
+        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_EXPIRED, this));
+    }
+
     public void reject(String stellennummerAvam, LocalDate date, String code, String reason) {
         this.stellennummerAvam = Condition.notBlank(stellennummerAvam);
         this.rejectionDate = Condition.notNull(date);
@@ -446,11 +422,15 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void publishRestricted() {
+        Condition.notNull(reportingObligationEndDate, "Reporting obligation end date is missing");
+
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_RESTRICTED);
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_RESTRICTED, this));
     }
 
     public void publishPublic() {
+        Condition.notNull(publicationEndDate, "Publication end date is missing");
+
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
         DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC, this));
     }
@@ -464,6 +444,61 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         if (this.status.isInAnyStates(JobAdvertisementStatus.REJECTED, JobAdvertisementStatus.CANCELLED, JobAdvertisementStatus.ARCHIVED)) {
             throw new IllegalStateException(String.format("JobAdvertisement must not be in a end status like: %s", this.status));
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        JobAdvertisement that = (JobAdvertisement) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public String toString() {
+        return "JobAdvertisement{" +
+                "id=" + id +
+                ", stellennummerEgov='" + stellennummerEgov + '\'' +
+                ", stellennummerAvam='" + stellennummerAvam + '\'' +
+                ", fingerprint='" + fingerprint + '\'' +
+                ", sourceSystem=" + sourceSystem +
+                ", sourceEntryId='" + sourceEntryId + '\'' +
+                ", externalUrl='" + externalUrl + '\'' +
+                ", status=" + status +
+                ", ravRegistrationDate=" + ravRegistrationDate +
+                ", approvalDate=" + approvalDate +
+                ", rejectionDate=" + rejectionDate +
+                ", rejectionCode='" + rejectionCode + '\'' +
+                ", rejectionReason='" + rejectionReason + '\'' +
+                ", cancellationDate=" + cancellationDate +
+                ", cancellationCode='" + cancellationCode + '\'' +
+                ", reportingObligation=" + reportingObligation +
+                ", reportingObligationEndDate=" + reportingObligationEndDate +
+                ", publicationStartDate=" + publicationStartDate +
+                ", publicationEndDate=" + publicationEndDate +
+                ", eures=" + eures +
+                ", euresAnonymous=" + euresAnonymous +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", employment=" + employment +
+                ", jobCenterCode='" + jobCenterCode + '\'' +
+                ", drivingLicenseLevel='" + drivingLicenseLevel + '\'' +
+                ", applyChannel=" + applyChannel +
+                ", company=" + company +
+                ", contact=" + contact +
+                ", locality=" + locality +
+                ", occupations=" + occupations +
+                ", languageSkills=" + languageSkills +
+                '}';
     }
 
     private boolean applyUpdates(JobAdvertisementUpdater updater) {
@@ -490,37 +525,23 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         if (updater.hasAnyChangesIn(SECTION_PUBLICATION_DATES) && (
-            hasChanged(this.publicationStartDate, updater.getPublicationStartDate()) ||
-                hasChanged(this.publicationEndDate, updater.getPublicationEndDate()))) {
+                hasChanged(this.publicationStartDate, updater.getPublicationStartDate()) ||
+                        hasChanged(this.publicationEndDate, updater.getPublicationEndDate()))) {
             this.publicationStartDate = updater.getPublicationStartDate();
             this.publicationEndDate = updater.getPublicationEndDate();
             hasChangedAnything = true;
         }
 
         if (updater.hasAnyChangesIn(SECTION_EURES) && (
-            hasChanged(this.eures, updater.isEures()) ||
-                hasChanged(this.euresAnonymous, updater.isEuresAnonymous()))) {
+                hasChanged(this.eures, updater.isEures()) ||
+                        hasChanged(this.euresAnonymous, updater.isEuresAnonymous()))) {
             this.eures = updater.isEures();
             this.euresAnonymous = updater.isEuresAnonymous();
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && (
-            hasChanged(this.employmentStartDate, updater.getEmploymentStartDate()) ||
-                hasChanged(this.employmentEndDate, updater.getEmploymentEndDate()) ||
-                hasChanged(this.durationInDays, updater.getDurationInDays()) ||
-                hasChanged(this.immediately, updater.getImmediately()) ||
-                hasChanged(this.permanent, updater.getPermanent()) ||
-                hasChanged(this.workloadPercentageMin, updater.getWorkloadPercentageMin()) ||
-                hasChanged(this.workloadPercentageMax, updater.getWorkloadPercentageMax())
-        )) {
-            this.employmentStartDate = updater.getEmploymentStartDate();
-            this.employmentEndDate = updater.getEmploymentEndDate();
-            this.durationInDays = updater.getDurationInDays();
-            this.immediately = updater.getImmediately();
-            this.permanent = updater.getPermanent();
-            this.workloadPercentageMin = updater.getWorkloadPercentageMin();
-            this.workloadPercentageMax = updater.getWorkloadPercentageMax();
+        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && hasChanged(this.employment, updater.getEmployment())) {
+            this.employment = updater.getEmployment();
             hasChangedAnything = true;
         }
 
@@ -549,8 +570,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_LOCALITIES) && hasChangedContent(this.localities, updater.getLocalities())) {
-            this.localities = updater.getLocalities();
+        if (updater.hasAnyChangesIn(SECTION_LOCALITY) && hasChanged(this.locality, updater.getLocality())) {
+            this.locality = updater.getLocality();
             hasChangedAnything = true;
         }
 
@@ -559,18 +580,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_EDUCATION_CODE) && hasChanged(this.educationCode, updater.getEducationCode())) {
-            this.educationCode = updater.getEducationCode();
-            hasChangedAnything = true;
-        }
-
         if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(this.languageSkills, updater.getLanguageSkills())) {
             this.languageSkills = updater.getLanguageSkills();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_PROFESSION_CODES) && hasChangedContent(this.professionCodes, updater.getProfessionCodes())) {
-            this.professionCodes = updater.getProfessionCodes();
             hasChangedAnything = true;
         }
 
@@ -580,5 +591,207 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         return hasChangedAnything;
+    }
+
+    public static final class Builder {
+        private JobAdvertisementId id;
+        private String stellennummerEgov;
+        private String stellennummerAvam;
+        private String fingerprint;
+        private SourceSystem sourceSystem;
+        private String sourceEntryId;
+        private String externalUrl;
+        private JobAdvertisementStatus status;
+        private LocalDate ravRegistrationDate;
+        private LocalDate approvalDate;
+        private LocalDate rejectionDate;
+        private String rejectionCode;
+        private String rejectionReason;
+        private LocalDate cancellationDate;
+        private String cancellationCode;
+        private boolean reportingObligation;
+        private LocalDate reportingObligationEndDate;
+        private LocalDate publicationStartDate;
+        private LocalDate publicationEndDate;
+        private boolean eures;
+        private boolean euresAnonymous;
+        private String title;
+        private String description;
+        private Employment employment;
+        private String jobCenterCode;
+        private String drivingLicenseLevel;
+        private ApplyChannel applyChannel;
+        private Company company;
+        private Contact contact;
+        private Locality locality;
+        private List<Occupation> occupations;
+        private List<LanguageSkill> languageSkills;
+
+        public Builder() {
+        }
+
+        public Builder setId(JobAdvertisementId id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setStellennummerEgov(String stellennummerEgov) {
+            this.stellennummerEgov = stellennummerEgov;
+            return this;
+        }
+
+        public Builder setStellennummerAvam(String stellennummerAvam) {
+            this.stellennummerAvam = stellennummerAvam;
+            return this;
+        }
+
+        public Builder setFingerprint(String fingerprint) {
+            this.fingerprint = fingerprint;
+            return this;
+        }
+
+        public Builder setSourceSystem(SourceSystem sourceSystem) {
+            this.sourceSystem = sourceSystem;
+            return this;
+        }
+
+        public Builder setSourceEntryId(String sourceEntryId) {
+            this.sourceEntryId = sourceEntryId;
+            return this;
+        }
+
+        public Builder setExternalUrl(String externalUrl) {
+            this.externalUrl = externalUrl;
+            return this;
+        }
+
+        public Builder setStatus(JobAdvertisementStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder setRavRegistrationDate(LocalDate ravRegistrationDate) {
+            this.ravRegistrationDate = ravRegistrationDate;
+            return this;
+        }
+
+        public Builder approvalDate(LocalDate approvalDate) {
+            this.approvalDate = approvalDate;
+            return this;
+        }
+
+        public Builder setRejectionDate(LocalDate rejectionDate) {
+            this.rejectionDate = rejectionDate;
+            return this;
+        }
+
+        public Builder setRejectionCode(String rejectionCode) {
+            this.rejectionCode = rejectionCode;
+            return this;
+        }
+
+        public Builder setRejectionReason(String rejectionReason) {
+            this.rejectionReason = rejectionReason;
+            return this;
+        }
+
+        public Builder setCancellationDate(LocalDate cancellationDate) {
+            this.cancellationDate = cancellationDate;
+            return this;
+        }
+
+        public Builder setCancellationCode(String cancellationCode) {
+            this.cancellationCode = cancellationCode;
+            return this;
+        }
+
+        public Builder setReportingObligation(boolean reportingObligation) {
+            this.reportingObligation = reportingObligation;
+            return this;
+        }
+
+        public Builder setReportingObligationEndDate(LocalDate reportingObligationEndDate) {
+            this.reportingObligationEndDate = reportingObligationEndDate;
+            return this;
+        }
+
+        public Builder setPublicationStartDate(LocalDate publicationStartDate) {
+            this.publicationStartDate = publicationStartDate;
+            return this;
+        }
+
+        public Builder setPublicationEndDate(LocalDate publicationEndDate) {
+            this.publicationEndDate = publicationEndDate;
+            return this;
+        }
+
+        public Builder setEures(boolean eures) {
+            this.eures = eures;
+            return this;
+        }
+
+        public Builder setEuresAnonymous(boolean euresAnonymous) {
+            this.euresAnonymous = euresAnonymous;
+            return this;
+        }
+
+        public Builder setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setEmployment(Employment employment) {
+            this.employment = employment;
+            return this;
+        }
+
+        public Builder setJobCenterCode(String jobCenterCode) {
+            this.jobCenterCode = jobCenterCode;
+            return this;
+        }
+
+        public Builder setDrivingLicenseLevel(String drivingLicenseLevel) {
+            this.drivingLicenseLevel = drivingLicenseLevel;
+            return this;
+        }
+
+        public Builder setApplyChannel(ApplyChannel applyChannel) {
+            this.applyChannel = applyChannel;
+            return this;
+        }
+
+        public Builder setCompany(Company company) {
+            this.company = company;
+            return this;
+        }
+
+        public Builder setContact(Contact contact) {
+            this.contact = contact;
+            return this;
+        }
+
+        public Builder setLocality(Locality locality) {
+            this.locality = locality;
+            return this;
+        }
+
+        public Builder setOccupations(List<Occupation> occupations) {
+            this.occupations = occupations;
+            return this;
+        }
+
+        public Builder setLanguageSkills(List<LanguageSkill> languageSkills) {
+            this.languageSkills = languageSkills;
+            return this;
+        }
+
+        public JobAdvertisement build() {
+            return new JobAdvertisement(this);
+        }
     }
 }
