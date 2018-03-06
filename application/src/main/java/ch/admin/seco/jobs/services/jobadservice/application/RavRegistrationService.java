@@ -4,7 +4,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 
 public interface RavRegistrationService {
 
-    void registrate(JobAdvertisement jobAdvertisement);
+    void register(JobAdvertisement jobAdvertisement);
 
     void deregister(JobAdvertisement jobAdvertisement);
 

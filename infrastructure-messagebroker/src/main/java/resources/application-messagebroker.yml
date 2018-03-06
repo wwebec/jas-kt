@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    stream:
+      bindings:
+        input:
+          destination: jobroom.event
+          group: jobroom
+        output:
+          destination: jobroom.event
+          group: jobroom

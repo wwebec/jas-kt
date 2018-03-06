@@ -1,11 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-
-import java.time.LocalDate;
-import java.util.List;
 
 public class JobAdvertisementDto {
 
@@ -89,12 +89,45 @@ public class JobAdvertisementDto {
         this.id = id;
     }
 
-    public String getStellennummerEgov() {
-        return stellennummerEgov;
+    public static JobAdvertisementDto toDto(JobAdvertisement jobAdvertisement) {
+        JobAdvertisementDto jobAdvertisementDto = new JobAdvertisementDto();
+        jobAdvertisementDto.setId(jobAdvertisement.getId().getValue());
+        jobAdvertisementDto.setStellennummerEgov(jobAdvertisement.getStellennummerEgov());
+        jobAdvertisementDto.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
+        jobAdvertisementDto.setFingerprint(jobAdvertisement.getFingerprint());
+        jobAdvertisementDto.setSourceSystem(jobAdvertisement.getSourceSystem());
+        jobAdvertisementDto.setSourceEntryId(jobAdvertisement.getSourceEntryId());
+        jobAdvertisementDto.setExternalUrl(jobAdvertisement.getExternalUrl());
+        jobAdvertisementDto.setStatus(jobAdvertisement.getStatus());
+        jobAdvertisementDto.setRavRegistrationDate(jobAdvertisement.getRavRegistrationDate());
+        jobAdvertisementDto.setApprovalDate(jobAdvertisement.getApprovalDate());
+        jobAdvertisementDto.setRejectionDate(jobAdvertisement.getRejectionDate());
+        jobAdvertisementDto.setRejectionCode(jobAdvertisement.getRejectionCode());
+        jobAdvertisementDto.setRejectionReason(jobAdvertisement.getRejectionReason());
+        jobAdvertisementDto.setCancellationDate(jobAdvertisement.getCancellationDate());
+        jobAdvertisementDto.setCancellationCode(jobAdvertisement.getCancellationCode());
+        jobAdvertisementDto.setReportingObligation(jobAdvertisement.isReportingObligation());
+        jobAdvertisementDto.setReportingObligationEndDate(jobAdvertisement.getReportingObligationEndDate());
+        jobAdvertisementDto.setPublicationStartDate(jobAdvertisement.getPublicationStartDate());
+        jobAdvertisementDto.setPublicationEndDate(jobAdvertisement.getPublicationEndDate());
+        jobAdvertisementDto.setEures(jobAdvertisement.isEures());
+        jobAdvertisementDto.setEuresAnonymous(jobAdvertisement.isEuresAnonymous());
+        jobAdvertisementDto.setTitle(jobAdvertisement.getTitle());
+        jobAdvertisementDto.setDescription(jobAdvertisement.getDescription());
+        jobAdvertisementDto.setEmployment(EmploymentDto.toDto(jobAdvertisement.getEmployment()));
+        jobAdvertisementDto.setJobCenterCode(jobAdvertisement.getJobCenterCode());
+        jobAdvertisementDto.setDrivingLicenseLevel(jobAdvertisement.getDrivingLicenseLevel());
+        jobAdvertisementDto.setApplyChannel(ApplyChannelDto.toDto(jobAdvertisement.getApplyChannel()));
+        jobAdvertisementDto.setCompany(CompanyDto.toDto(jobAdvertisement.getCompany()));
+        jobAdvertisementDto.setContact(ContactDto.toDto(jobAdvertisement.getContact()));
+        jobAdvertisementDto.setLocality(LocalityDto.toDto(jobAdvertisement.getLocality()));
+        jobAdvertisementDto.setOccupations(OccupationDto.toDto(jobAdvertisement.getOccupations()));
+        jobAdvertisementDto.setLanguageSkills(LanguageSkillDto.toDto(jobAdvertisement.getLanguageSkills()));
+        return jobAdvertisementDto;
     }
 
-    public void setStellennummerEgov(String stellennummerEgov) {
-        this.stellennummerEgov = stellennummerEgov;
+    public String getStellennummerEgov() {
+        return stellennummerEgov;
     }
 
     public String getStellennummerAvam() {
@@ -209,12 +242,12 @@ public class JobAdvertisementDto {
         this.reportingObligation = reportingObligation;
     }
 
-    public LocalDate getReportingObligationEndDate() {
-        return reportingObligationEndDate;
+    public void setStellennummerEgov(String stellennummerEgov) {
+        this.stellennummerEgov = stellennummerEgov;
     }
 
-    public void setReportingObligationEndDate(LocalDate reportingObligationEndDate) {
-        this.reportingObligationEndDate = reportingObligationEndDate;
+    public LocalDate getReportingObligationEndDate() {
+        return reportingObligationEndDate;
     }
 
     public LocalDate getPublicationStartDate() {
@@ -265,12 +298,12 @@ public class JobAdvertisementDto {
         this.description = description;
     }
 
-    public EmploymentDto getEmployment() {
-        return employment;
+    public void setReportingObligationEndDate(LocalDate reportingObligationEndDate) {
+        this.reportingObligationEndDate = reportingObligationEndDate;
     }
 
-    public void setEmployment(EmploymentDto employment) {
-        this.employment = employment;
+    public EmploymentDto getEmployment() {
+        return employment;
     }
 
     public String getJobCenterCode() {
@@ -313,12 +346,12 @@ public class JobAdvertisementDto {
         this.contact = contact;
     }
 
-    public LocalityDto getLocality() {
-        return locality;
+    public void setEmployment(EmploymentDto employment) {
+        this.employment = employment;
     }
 
-    public void setLocality(LocalityDto locality) {
-        this.locality = locality;
+    public LocalityDto getLocality() {
+        return locality;
     }
 
     public List<OccupationDto> getOccupations() {
@@ -337,40 +370,7 @@ public class JobAdvertisementDto {
         this.languageSkills = languageSkills;
     }
 
-    public static JobAdvertisementDto toDto(JobAdvertisement jobAdvertisement) {
-        JobAdvertisementDto jobAdvertisementDto = new JobAdvertisementDto();
-        jobAdvertisementDto.setId(jobAdvertisement.getId().getValue());
-        jobAdvertisementDto.setStellennummerEgov(jobAdvertisement.getStellennummerEgov());
-        jobAdvertisementDto.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
-        jobAdvertisementDto.setFingerprint(jobAdvertisement.getFingerprint());
-        jobAdvertisementDto.setSourceSystem(jobAdvertisement.getSourceSystem());
-        jobAdvertisementDto.setSourceEntryId(jobAdvertisement.getSourceEntryId());
-        jobAdvertisementDto.setExternalUrl(jobAdvertisement.getExternalUrl());
-        jobAdvertisementDto.setStatus(jobAdvertisement.getStatus());
-        jobAdvertisementDto.setRavRegistrationDate(jobAdvertisement.getRavRegistrationDate());
-        jobAdvertisementDto.setApprovalDate(jobAdvertisement.getApprovalDate());
-        jobAdvertisementDto.setRejectionDate(jobAdvertisement.getRejectionDate());
-        jobAdvertisementDto.setRejectionCode(jobAdvertisement.getRejectionCode());
-        jobAdvertisementDto.setRejectionReason(jobAdvertisement.getRejectionReason());
-        jobAdvertisementDto.setCancellationDate(jobAdvertisement.getCancellationDate());
-        jobAdvertisementDto.setCancellationCode(jobAdvertisement.getCancellationCode());
-        jobAdvertisementDto.setReportingObligation(jobAdvertisement.isReportingObligation());
-        jobAdvertisementDto.setReportingObligationEndDate(jobAdvertisement.getReportingObligationEndDate());
-        jobAdvertisementDto.setPublicationStartDate(jobAdvertisement.getPublicationStartDate());
-        jobAdvertisementDto.setPublicationEndDate(jobAdvertisement.getPublicationEndDate());
-        jobAdvertisementDto.setEures(jobAdvertisement.isEures());
-        jobAdvertisementDto.setEuresAnonymous(jobAdvertisement.isEuresAnonymous());
-        jobAdvertisementDto.setTitle(jobAdvertisement.getTitle());
-        jobAdvertisementDto.setDescription(jobAdvertisement.getDescription());
-        jobAdvertisementDto.setEmployment(EmploymentDto.toDto(jobAdvertisement.getEmployment()));
-        jobAdvertisementDto.setJobCenterCode(jobAdvertisement.getJobCenterCode());
-        jobAdvertisementDto.setDrivingLicenseLevel(jobAdvertisement.getDrivingLicenseLevel());
-        jobAdvertisementDto.setApplyChannel(ApplyChannelDto.toDto(jobAdvertisement.getApplyChannel()));
-        jobAdvertisementDto.setCompany(CompanyDto.toDto(jobAdvertisement.getCompany()));
-        jobAdvertisementDto.setContact(ContactDto.toDto(jobAdvertisement.getContact()));
-        jobAdvertisementDto.setLocality(LocalityDto.toDto(jobAdvertisement.getLocality()));
-        jobAdvertisementDto.setOccupations(OccupationDto.toDto(jobAdvertisement.getOccupations()));
-        jobAdvertisementDto.setLanguageSkills(LanguageSkillDto.toDto(jobAdvertisement.getLanguageSkills()));
-        return jobAdvertisementDto;
+    public void setLocality(LocalityDto locality) {
+        this.locality = locality;
     }
 }

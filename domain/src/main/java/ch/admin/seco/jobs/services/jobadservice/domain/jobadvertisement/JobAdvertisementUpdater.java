@@ -1,11 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 
 public class JobAdvertisementUpdater {
 

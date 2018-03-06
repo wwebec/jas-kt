@@ -1,8 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
-
 import java.time.LocalDate;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
 
 public class EmploymentDto {
 
@@ -26,6 +26,18 @@ public class EmploymentDto {
         this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
         this.workloadPercentageMax = workloadPercentageMax;
+    }
+
+    public static EmploymentDto toDto(Employment employment) {
+        EmploymentDto employmentDto = new EmploymentDto();
+        employmentDto.setStartDate(employment.getStartDate());
+        employmentDto.setEndDate(employment.getEndDate());
+        employmentDto.setDurationInDays(employment.getDurationInDays());
+        employmentDto.setImmediately(employment.getImmediately());
+        employmentDto.setPermanent(employment.getPermanent());
+        employmentDto.setWorkloadPercentageMin(employment.getWorkloadPercentageMin());
+        employmentDto.setWorkloadPercentageMax(employment.getWorkloadPercentageMax());
+        return employmentDto;
     }
 
     public LocalDate getStartDate() {
@@ -82,17 +94,5 @@ public class EmploymentDto {
 
     public void setWorkloadPercentageMax(int workloadPercentageMax) {
         this.workloadPercentageMax = workloadPercentageMax;
-    }
-
-    public static EmploymentDto toDto(Employment employment) {
-        EmploymentDto employmentDto = new EmploymentDto();
-        employmentDto.setStartDate(employment.getStartDate());
-        employmentDto.setEndDate(employment.getEndDate());
-        employmentDto.setDurationInDays(employment.getDurationInDays());
-        employmentDto.setImmediately(employment.getImmediately());
-        employmentDto.setPermanent(employment.getPermanent());
-        employmentDto.setWorkloadPercentageMin(employment.getWorkloadPercentageMin());
-        employmentDto.setWorkloadPercentageMax(employment.getWorkloadPercentageMax());
-        return employmentDto;
     }
 }

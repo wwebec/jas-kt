@@ -1,11 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 
 public class JobAdvertisementTest {
 

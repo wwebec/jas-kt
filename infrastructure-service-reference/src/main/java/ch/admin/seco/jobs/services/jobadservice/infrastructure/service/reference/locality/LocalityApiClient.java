@@ -1,14 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.locality;
 
-import org.springframework.cloud.netflix.feign.FeignClient;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
 
 @FeignClient(name = "localities", fallback = LocalityApiClientFallback.class, decode404 = true)
 public interface LocalityApiClient {
@@ -33,5 +33,4 @@ class LocalityApiClientFallback implements LocalityApiClient {
     public List<LocalityResource> findLocalitiesByZipCode(String zipCode) {
         return Collections.emptyList();
     }
-
 }

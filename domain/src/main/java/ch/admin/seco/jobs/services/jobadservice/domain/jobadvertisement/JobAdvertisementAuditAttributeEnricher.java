@@ -1,15 +1,17 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditAttributeEnricher;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditAttributeEnricher;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
 
 @Component
 public class JobAdvertisementAuditAttributeEnricher implements AuditAttributeEnricher {

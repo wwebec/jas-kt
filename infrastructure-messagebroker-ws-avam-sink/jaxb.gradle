@@ -6,6 +6,7 @@ apply plugin: 'java'
 
 // tag::wsdl[]
 task genJaxb {
+    group = 'jaxb'
     ext.sourcesDir = "${buildDir}/generated-sources/jaxb"
     ext.classesDir = "${buildDir}/classes/jaxb"
     ext.schemaDir = "${projectDir}/src/main/resources/schema"
@@ -19,7 +20,7 @@ task genJaxb {
             mkdir(dir: sourcesDir)
             mkdir(dir: classesDir)
 
-            xjc(destdir: sourcesDir, package: "ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.wsdl") {
+            xjc(destdir: sourcesDir, package: "ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam") {
                 schema(dir: schemaDir, includes: "*.wsdl")
                 arg(value: "-wsdl")
                 produces(dir: sourcesDir, includes: "**/*.java")
