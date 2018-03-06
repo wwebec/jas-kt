@@ -212,7 +212,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.rejectionReason = builder.rejectionReason;
     }
 
-    public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status, String title, String description) {
+    public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status,
+                            String title, String description) {
         this.id = Condition.notNull(id);
         this.sourceSystem = Condition.notNull(sourceSystem);
         this.status = Condition.notNull(status);
