@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
-public class ContactDto {
+public class ContactApiDto {
 	private Title title;
 
 	private String firstName;
@@ -13,11 +13,11 @@ public class ContactDto {
 		madam
 	}
 
-	protected ContactDto() {
+	protected ContactApiDto() {
 		// For reflection libs
 	}
 
-	public ContactDto(Title title, String firstName, String lastName, String phoneNumber, String email) {
+	public ContactApiDto(Title title, String firstName, String lastName, String phoneNumber, String email) {
 		this.title = title;
 		this.firstName = firstName;
 		this.lastName = lastName;

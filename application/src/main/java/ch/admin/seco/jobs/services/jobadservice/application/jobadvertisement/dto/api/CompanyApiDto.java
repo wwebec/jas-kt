@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
-public class CompanyDto {
+public class CompanyApiDto {
 
 	private String name;
 	private String countryCode;
@@ -11,22 +11,22 @@ public class CompanyDto {
 	private String phoneNumber;
 	private String email;
 	private String website;
-	private PostboxDto postbox;
+	private PostboxApiDto postbox;
 
-	protected CompanyDto() {
-		this.postbox = new PostboxDto();
+	protected CompanyApiDto() {
+		this.postbox = new PostboxApiDto();
 	}
 
-	public CompanyDto(String name,
-			String countryCode,
-			String street,
-			String houseNumber,
-			String locality,
-			String postalCode,
-			String phoneNumber,
-			String email,
-			String website,
-			PostboxDto postbox) {
+	public CompanyApiDto(String name,
+						 String countryCode,
+						 String street,
+						 String houseNumber,
+						 String locality,
+						 String postalCode,
+						 String phoneNumber,
+						 String email,
+						 String website,
+						 PostboxApiDto postbox) {
 		this.name = name;
 		this.countryCode = countryCode;
 		this.street = street;
@@ -111,11 +111,11 @@ public class CompanyDto {
 		this.website = website;
 	}
 
-	public PostboxDto getPostbox() {
+	public PostboxApiDto getPostbox() {
 		return postbox;
 	}
 
-	public void setPostbox(PostboxDto postbox) {
+	public void setPostbox(PostboxApiDto postbox) {
 		this.postbox = postbox;
 	}
 }

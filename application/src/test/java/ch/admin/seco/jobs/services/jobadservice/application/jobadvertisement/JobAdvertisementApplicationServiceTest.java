@@ -5,10 +5,9 @@ import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CreateJobAdvertisementApiDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.JobDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.PostboxDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.*;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
@@ -107,14 +106,14 @@ public class JobAdvertisementApplicationServiceTest {
                 "ref",
                 "http://url",
                 "http://url",
-                new JobDto("title", "descriptioin", 10, 90, LocalDate.of(2018, 1, 1),
+                new JobApiDto("title", "descriptioin", 10, 90, LocalDate.of(2018, 1, 1),
                         LocalDate.of(2018, 12, 31), 30, true, true,
-                        new LocationDto("remarks", "ctiy", "zipCode", "BE", "details"), Collections.emptyList()),
-                new ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CompanyDto(
+                        new LocationApiDto("remarks", "ctiy", "zipCode", "BE", "details"), Collections.emptyList()),
+                new CompanyApiDto(
                         "name", "CH", "street", "12", "Bern", "2222", "number", "email", "website",
-                        new PostboxDto("sdf", "Bern", "code")),
-                new ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ContactDto(
-                        ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ContactDto.Title.mister,
+                        new PostboxApiDto("sdf", "Bern", "code")),
+                new ContactApiDto(
+                        ContactApiDto.Title.mister,
                         "first", "last", "number", "email"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")
         );

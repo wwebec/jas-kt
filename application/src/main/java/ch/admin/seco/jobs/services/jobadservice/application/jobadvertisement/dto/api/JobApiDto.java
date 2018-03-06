@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class JobDto {
+public class JobApiDto {
 
 	private String title;
 
@@ -25,25 +25,25 @@ public class JobDto {
 	private Boolean permanent;
 	@NotNull
 	@Valid
-	private LocationDto location;
+	private LocationApiDto location;
 	@Size(max = 5)
-	private List<LanguageSkillDto> languageSkills;
+	private List<LanguageSkillApiDto> languageSkills;
 
-	protected JobDto() {
+	protected JobApiDto() {
 		// For reflection libs
 	}
 
-	public JobDto(String title,
-			String description,
-			Integer workingTimePercentageFrom,
-			Integer workingTimePercentageTo,
-			LocalDate startDate,
-			LocalDate endDate,
-			Integer durationInDays,
-			Boolean startsImmediately,
-			Boolean permanent,
-			LocationDto location,
-			List<LanguageSkillDto> languageSkills) {
+	public JobApiDto(String title,
+                     String description,
+                     Integer workingTimePercentageFrom,
+                     Integer workingTimePercentageTo,
+                     LocalDate startDate,
+                     LocalDate endDate,
+                     Integer durationInDays,
+                     Boolean startsImmediately,
+                     Boolean permanent,
+                     LocationApiDto location,
+                     List<LanguageSkillApiDto> languageSkills) {
 		this.title = title;
 		this.description = description;
 		this.workingTimePercentageFrom = workingTimePercentageFrom;
@@ -121,19 +121,19 @@ public class JobDto {
 		this.permanent = permanent;
 	}
 
-	public LocationDto getLocation() {
+	public LocationApiDto getLocation() {
 		return location;
 	}
 
-	public void setLocation(LocationDto location) {
+	public void setLocation(LocationApiDto location) {
 		this.location = location;
 	}
 
-	public List<LanguageSkillDto> getLanguageSkills() {
+	public List<LanguageSkillApiDto> getLanguageSkills() {
 		return languageSkills;
 	}
 
-	public void setLanguageSkills(List<LanguageSkillDto> languageSkills) {
+	public void setLanguageSkills(List<LanguageSkillApiDto> languageSkills) {
 		this.languageSkills = languageSkills;
 	}
 

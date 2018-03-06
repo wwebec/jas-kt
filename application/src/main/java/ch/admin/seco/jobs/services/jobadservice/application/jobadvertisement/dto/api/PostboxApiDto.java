@@ -1,16 +1,16 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
-public class PostboxDto {
+public class PostboxApiDto {
 
 	private String number;
 	private String locality;
 	private String postalCode;
 
-	protected PostboxDto() {
+	protected PostboxApiDto() {
 		// For reflection libs
 	}
 
-	public PostboxDto(String number, String locality, String postalCode) {
+	public PostboxApiDto(String number, String locality, String postalCode) {
 		this.number = number;
 		this.locality = locality;
 		this.postalCode = postalCode;

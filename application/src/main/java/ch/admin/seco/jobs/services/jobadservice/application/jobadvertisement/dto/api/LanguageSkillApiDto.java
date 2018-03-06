@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
-public class LanguageSkillDto {
+public class LanguageSkillApiDto {
 
 	private String language;
 	private LanguageLevel spokenLevel;
@@ -13,11 +13,11 @@ public class LanguageSkillDto {
 		very_good
 	}
 
-	protected LanguageSkillDto() {
+	protected LanguageSkillApiDto() {
 		// For reflection libs
 	}
 
-	public LanguageSkillDto(String language, LanguageLevel spokenLevel, LanguageLevel writtenLevel) {
+	public LanguageSkillApiDto(String language, LanguageLevel spokenLevel, LanguageLevel writtenLevel) {
 		this.language = language;
 		this.spokenLevel = spokenLevel;
 		this.writtenLevel = writtenLevel;

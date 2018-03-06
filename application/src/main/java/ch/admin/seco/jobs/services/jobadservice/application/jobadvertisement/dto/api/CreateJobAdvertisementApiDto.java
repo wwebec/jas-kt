@@ -21,12 +21,12 @@ public class CreateJobAdvertisementApiDto {
 
 	@Valid
 	@NotNull
-	private JobDto job;
+	private JobApiDto job;
 
 	@NotNull
-	private CompanyDto company;
+	private CompanyApiDto company;
 
-	private ContactDto contact;
+	private ContactApiDto contact;
 
 	@NotNull
 	private OccupationDto occupation;
@@ -40,9 +40,9 @@ public class CreateJobAdvertisementApiDto {
 			String reference,
 			String url,
 			String applicationUrl,
-			JobDto job,
-			CompanyDto company,
-			ContactDto contact,
+			JobApiDto job,
+			CompanyApiDto company,
+			ContactApiDto contact,
 			OccupationDto occupation) {
 		this.publicationStartDate = publicationStartDate;
 		this.publicationEndDate = publicationEndDate;
@@ -103,27 +103,27 @@ public class CreateJobAdvertisementApiDto {
 		this.applicationUrl = applicationUrl;
 	}
 
-	public JobDto getJob() {
+	public JobApiDto getJob() {
 		return job;
 	}
 
-	public void setJob(JobDto job) {
+	public void setJob(JobApiDto job) {
 		this.job = job;
 	}
 
-	public CompanyDto getCompany() {
+	public CompanyApiDto getCompany() {
 		return company;
 	}
 
-	public void setCompany(CompanyDto company) {
+	public void setCompany(CompanyApiDto company) {
 		this.company = company;
 	}
 
-	public ContactDto getContact() {
+	public ContactApiDto getContact() {
 		return contact;
 	}
 
-	public void setContact(ContactDto contact) {
+	public void setContact(ContactApiDto contact) {
 		this.contact = contact;
 	}
 }

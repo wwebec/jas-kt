@@ -2,7 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import javax.validation.constraints.NotEmpty;
 
-public class LocationDto {
+public class LocationApiDto {
 
 	private String countryCode;
 	private String locality;
@@ -11,11 +11,11 @@ public class LocationDto {
 	private String cantonCode;
 	private String additionalDetails;
 
-	protected LocationDto() {
+	protected LocationApiDto() {
 		// For reflection libs
 	}
 
-	public LocationDto(String countryCode, String locality, String postalCode, String cantonCode, String additionalDetails) {
+	public LocationApiDto(String countryCode, String locality, String postalCode, String cantonCode, String additionalDetails) {
 		this.countryCode = countryCode;
 		this.locality = locality;
 		this.postalCode = postalCode;
