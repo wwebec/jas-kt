@@ -1,11 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.profession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionId;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class DefaultProfessionService implements ProfessionService {

@@ -1,10 +1,16 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import java.util.Objects;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
-
-import javax.persistence.*;
-import java.util.Objects;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -83,6 +89,11 @@ public class Occupation implements ValueObject<Occupation> {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(avamCode, sbn3Code, sbn5Code, bfsCode, label, workExperience, educationCode);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -94,11 +105,6 @@ public class Occupation implements ValueObject<Occupation> {
                 Objects.equals(label, that.label) &&
                 workExperience == that.workExperience &&
                 Objects.equals(educationCode, that.educationCode);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(avamCode, sbn3Code, sbn5Code, bfsCode, label, workExperience, educationCode);
     }
 
     @Override

@@ -1,3 +1,5 @@
 dependencies {
     compile project(':application')
+    compile 'org.springframework.cloud:spring-cloud-context'
+    compile 'net.logstash.logback:logstash-logback-encoder'
 }

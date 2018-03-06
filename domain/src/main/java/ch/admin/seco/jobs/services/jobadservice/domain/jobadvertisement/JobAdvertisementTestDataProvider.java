@@ -1,9 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.TestDataProvider;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.TestDataProvider;
 
 public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdvertisement> {
 

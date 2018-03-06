@@ -1,12 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import java.time.LocalDate;
+import java.util.Objects;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-import java.time.LocalDate;
-import java.util.Objects;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -68,9 +69,14 @@ public class Employment implements ValueObject<Employment> {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(startDate, endDate, durationInDays, immediately, permanent, workloadPercentageMin, workloadPercentageMax);
+    }
+
+    @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         Employment that = (Employment) o;
         return workloadPercentageMin == that.workloadPercentageMin &&
                 workloadPercentageMax == that.workloadPercentageMax &&
@@ -79,11 +85,6 @@ public class Employment implements ValueObject<Employment> {
                 Objects.equals(durationInDays, that.durationInDays) &&
                 Objects.equals(immediately, that.immediately) &&
                 Objects.equals(permanent, that.permanent);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(startDate, endDate, durationInDays, immediately, permanent, workloadPercentageMin, workloadPercentageMax);
     }
 
     @Override

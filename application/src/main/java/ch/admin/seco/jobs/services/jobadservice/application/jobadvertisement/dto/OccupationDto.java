@@ -1,10 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
-
 import java.util.List;
 import java.util.stream.Collectors;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
 public class OccupationDto {
 
@@ -22,12 +22,16 @@ public class OccupationDto {
         this.educationCode = educationCode;
     }
 
-    public String getAvamCode() {
-        return avamCode;
+    public static OccupationDto toDto(Occupation occupation) {
+        OccupationDto occupationDto = new OccupationDto();
+        occupationDto.setAvamCode(occupation.getAvamCode());
+        occupationDto.setWorkExperience(occupation.getWorkExperience());
+        occupationDto.setEducationCode(occupation.getEducationCode());
+        return occupationDto;
     }
 
-    public void setAvamCode(String avamCode) {
-        this.avamCode = avamCode;
+    public String getAvamCode() {
+        return avamCode;
     }
 
     public WorkExperience getWorkExperience() {
@@ -38,20 +42,16 @@ public class OccupationDto {
         this.workExperience = workExperience;
     }
 
+    public void setAvamCode(String avamCode) {
+        this.avamCode = avamCode;
+    }
+
     public String getEducationCode() {
         return educationCode;
     }
 
     public void setEducationCode(String educationCode) {
         this.educationCode = educationCode;
-    }
-
-    public static OccupationDto toDto(Occupation occupation) {
-        OccupationDto occupationDto = new OccupationDto();
-        occupationDto.setAvamCode(occupation.getAvamCode());
-        occupationDto.setWorkExperience(occupation.getWorkExperience());
-        occupationDto.setEducationCode(occupation.getEducationCode());
-        return occupationDto;
     }
 
     public static List<OccupationDto> toDto(List<Occupation> occupations) {

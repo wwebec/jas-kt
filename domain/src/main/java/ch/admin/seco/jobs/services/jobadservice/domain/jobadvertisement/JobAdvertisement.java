@@ -1,19 +1,44 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_APPLY_CHANNEL;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_COMPANY;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_CONTACT;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_DRIVING_LICENSE_LEVEL;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EMPLOYMENT;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EURES;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EXTERNAL_URL;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_FINGERPRINT;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_JOB_CENTER_CODE;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LANGUAGE_SKILLS;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LOCALITY;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_OCCUPATIONS;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLICATION_DATES;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_REPORTING_OBLIGATION;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_SOURCE_ENTRY_ID;
 
-import javax.persistence.*;
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.*;
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.validation.Valid;
+
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 
 @Entity
 public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertisementId> {
@@ -421,6 +446,61 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        JobAdvertisement that = (JobAdvertisement) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public String toString() {
+        return "JobAdvertisement{" +
+                "id=" + id +
+                ", stellennummerEgov='" + stellennummerEgov + '\'' +
+                ", stellennummerAvam='" + stellennummerAvam + '\'' +
+                ", fingerprint='" + fingerprint + '\'' +
+                ", sourceSystem=" + sourceSystem +
+                ", sourceEntryId='" + sourceEntryId + '\'' +
+                ", externalUrl='" + externalUrl + '\'' +
+                ", status=" + status +
+                ", ravRegistrationDate=" + ravRegistrationDate +
+                ", approvalDate=" + approvalDate +
+                ", rejectionDate=" + rejectionDate +
+                ", rejectionCode='" + rejectionCode + '\'' +
+                ", rejectionReason='" + rejectionReason + '\'' +
+                ", cancellationDate=" + cancellationDate +
+                ", cancellationCode='" + cancellationCode + '\'' +
+                ", reportingObligation=" + reportingObligation +
+                ", reportingObligationEndDate=" + reportingObligationEndDate +
+                ", publicationStartDate=" + publicationStartDate +
+                ", publicationEndDate=" + publicationEndDate +
+                ", eures=" + eures +
+                ", euresAnonymous=" + euresAnonymous +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", employment=" + employment +
+                ", jobCenterCode='" + jobCenterCode + '\'' +
+                ", drivingLicenseLevel='" + drivingLicenseLevel + '\'' +
+                ", applyChannel=" + applyChannel +
+                ", company=" + company +
+                ", contact=" + contact +
+                ", locality=" + locality +
+                ", occupations=" + occupations +
+                ", languageSkills=" + languageSkills +
+                '}';
+    }
+
     private boolean applyUpdates(JobAdvertisementUpdater updater) {
         boolean hasChangedAnything = false;
 
@@ -511,62 +591,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         return hasChangedAnything;
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        JobAdvertisement that = (JobAdvertisement) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "JobAdvertisement{" +
-                "id=" + id +
-                ", stellennummerEgov='" + stellennummerEgov + '\'' +
-                ", stellennummerAvam='" + stellennummerAvam + '\'' +
-                ", fingerprint='" + fingerprint + '\'' +
-                ", sourceSystem=" + sourceSystem +
-                ", sourceEntryId='" + sourceEntryId + '\'' +
-                ", externalUrl='" + externalUrl + '\'' +
-                ", status=" + status +
-                ", ravRegistrationDate=" + ravRegistrationDate +
-                ", approvalDate=" + approvalDate +
-                ", rejectionDate=" + rejectionDate +
-                ", rejectionCode='" + rejectionCode + '\'' +
-                ", rejectionReason='" + rejectionReason + '\'' +
-                ", cancellationDate=" + cancellationDate +
-                ", cancellationCode='" + cancellationCode + '\'' +
-                ", reportingObligation=" + reportingObligation +
-                ", reportingObligationEndDate=" + reportingObligationEndDate +
-                ", publicationStartDate=" + publicationStartDate +
-                ", publicationEndDate=" + publicationEndDate +
-                ", eures=" + eures +
-                ", euresAnonymous=" + euresAnonymous +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", employment=" + employment +
-                ", jobCenterCode='" + jobCenterCode + '\'' +
-                ", drivingLicenseLevel='" + drivingLicenseLevel + '\'' +
-                ", applyChannel=" + applyChannel +
-                ", company=" + company +
-                ", contact=" + contact +
-                ", locality=" + locality +
-                ", occupations=" + occupations +
-                ", languageSkills=" + languageSkills +
-                '}';
     }
 
     public static final class Builder {

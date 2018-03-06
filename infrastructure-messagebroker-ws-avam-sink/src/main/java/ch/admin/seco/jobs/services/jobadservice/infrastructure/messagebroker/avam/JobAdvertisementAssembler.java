@@ -1,21 +1,37 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.wsdl.TOsteEgov;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.TOsteEgov;
 
 public class JobAdvertisementAssembler {
 
     private static final DateTimeFormatter AVAM_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
-    private final ProfessionService professionService;
+    private static boolean safeBoolean(Boolean value) {
+        return (value != null) ? value : false;
+    }
 
-    public JobAdvertisementAssembler(ProfessionService professionService) {
-        this.professionService = professionService;
+    private static String safeToString(Object value) {
+        return (value != null) ? value.toString() : null;
+    }
+
+    private static boolean isNotNull(Object value) {
+        return (value != null);
+    }
+
+    public static String formatLocalDate(LocalDate localDate) {
+        return (localDate != null) ? localDate.format(AVAM_DATE_FORMATTER) : null;
     }
 
     public TOsteEgov toOsteEgov(JobAdvertisement jobAdvertisement, AvamAction action) {
@@ -180,21 +196,4 @@ public class JobAdvertisementAssembler {
             tOsteEgov.setSk5SchriftlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
         }
     }
-
-    private static boolean safeBoolean(Boolean value) {
-        return (value != null) ? value : false;
-    }
-
-    private static String safeToString(Object value) {
-        return (value != null) ? value.toString() : null;
-    }
-
-    private static boolean isNotNull(Object value) {
-        return (value != null);
-    }
-
-    public static String formatLocalDate(LocalDate localDate) {
-        return (localDate != null) ? localDate.format(AVAM_DATE_FORMATTER) : null;
-    }
-
 }
