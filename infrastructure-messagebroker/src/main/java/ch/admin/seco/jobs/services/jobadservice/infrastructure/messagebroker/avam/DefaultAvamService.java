@@ -2,18 +2,17 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
+import org.springframework.context.event.EventListener;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvent;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.DeregisterJobAdvertisementMessage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.RegisterJobAdvertisementMessage;
 
 public class DefaultAvamService implements RavRegistrationService {
+
 
     private final DomainEventPublisher domainEventPublisher;
 
@@ -27,17 +26,31 @@ public class DefaultAvamService implements RavRegistrationService {
     @Override
     public void register(JobAdvertisement jobAdvertisement) {
         output.send(MessageBuilder
-                .withPayload(new RegisterJobAdvertisementMessage(jobAdvertisement))
-                .setHeader("action", "register")
+                .withPayload(jobAdvertisement)
+                .setHeader("event", "JOB_ADVERTISEMENT_INSPECTING")
+                .setHeader("source", "job-ad-service")
+                .setHeader("target", "avam")
                 .build());
     }
 
     @Override
     public void deregister(JobAdvertisement jobAdvertisement) {
         output.send(MessageBuilder
-                .withPayload(new DeregisterJobAdvertisementMessage(jobAdvertisement))
-                .setHeader("action", "deregister")
+                .withPayload(jobAdvertisement)
+                .setHeader("event", "JOB_ADVERTISEMENT_CANCELLED")
+                .setHeader("source", "job-ad-service")
+                .setHeader("target", "avam")
                 .build());
+    }
+
+    @EventListener(condition = "#jobAdvertisementEvent.getDomainEventType().name()=='JOB_ADVERTISEMENT_INSPECTING'")
+    public void register(JobAdvertisementEvent jobAdvertisementEvent) {
+        // TODO extract JobAdvertisement and call register
+    }
+
+    @EventListener(condition = "#jobAdvertisementEvent.getDomainEventType().name()=='JOB_ADVERTISEMENT_CANCELLED'")
+    public void deregister(JobAdvertisementEvent jobAdvertisementEvent) {
+        // TODO extract JobAdvertisement and call register
     }
 
     @StreamListener(target = Processor.INPUT, condition = "headers['event']=='JOB_ADVERTISEMENT_APPROVED'")
@@ -49,5 +62,4 @@ public class DefaultAvamService implements RavRegistrationService {
     public void handleRejectedEvent(JobAdvertisementEvent jobAdvertisementEvent) {
         domainEventPublisher.publishEvent(jobAdvertisementEvent);
     }
-
 }

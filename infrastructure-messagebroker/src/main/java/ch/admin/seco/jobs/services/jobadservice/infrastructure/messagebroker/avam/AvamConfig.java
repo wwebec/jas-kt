@@ -1,15 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.ProfileRegistry;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.integration.channel.NullChannel;
 import org.springframework.messaging.MessageChannel;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 
 @Configuration
 public class AvamConfig {
@@ -18,18 +18,17 @@ public class AvamConfig {
     @Profile(ProfileRegistry.AVAM_MOCK)
     static class MockedAvamConfig {
 
-        private final DomainEventPublisher domainEventPublisher;
-
-        @Autowired
-        public MockedAvamConfig(DomainEventPublisher domainEventPublisher) {
-            this.domainEventPublisher = domainEventPublisher;
+        @Bean
+        public DefaultAvamService ravRegistrationService(DomainEventPublisher domainEventPublisher) {
+            return new DefaultAvamService(domainEventPublisher, outputChannel());
         }
 
         @Bean
-        public RavRegistrationService ravRegistrationService() {
-            return new MockedAvamService(domainEventPublisher);
+        MessageChannel outputChannel() {
+            return new NullChannel();
+            // use QueueChannel to catch messages
+            // or trigger a mocked response, which will be received by the StreamListener
         }
-
     }
 
     @Configuration
@@ -37,21 +36,9 @@ public class AvamConfig {
     @EnableBinding(Processor.class)
     static class DefaultAvamConfig {
 
-        private final DomainEventPublisher domainEventPublisher;
-
-        private final MessageChannel output;
-
-        @Autowired
-        public DefaultAvamConfig(DomainEventPublisher domainEventPublisher, MessageChannel output) {
-            this.domainEventPublisher = domainEventPublisher;
-            this.output = output;
-        }
-
         @Bean
-        public RavRegistrationService ravRegistrationService() {
+        public DefaultAvamService ravRegistrationService(DomainEventPublisher domainEventPublisher, MessageChannel output) {
             return new DefaultAvamService(domainEventPublisher, output);
         }
-
     }
-
 }
