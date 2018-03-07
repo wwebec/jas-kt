@@ -5,9 +5,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CreateJobAdvertisementApiDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.JobApiDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LocationApiDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
@@ -19,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
@@ -35,6 +33,8 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class JobAdvertisementApplicationServiceTest {
+
+    private static final String TEST_STELLEN_NUMMER_EGOV = "1000000";
 
     private DomainEventMockUtils domainEventMockUtils;
 
@@ -53,6 +53,9 @@ public class JobAdvertisementApplicationServiceTest {
     @Autowired
     private JobAdvertisementRepository jobAdvertisementRepository;
 
+    @MockBean
+    private DataFieldMaxValueIncrementer egovNumberGenerator;
+
     @Autowired
     private JobAdvertisementApplicationService sut; //System Under Test
 
@@ -61,6 +64,7 @@ public class JobAdvertisementApplicationServiceTest {
         domainEventMockUtils = new DomainEventMockUtils();
 
         when(localityService.enrichCodes(any())).thenReturn(new Locality("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null));
+        when(egovNumberGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
     }
 
     @After
@@ -93,6 +97,7 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement).isNotNull();
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.JOBROOM);
+        assertThat(jobAdvertisement.getStellennummerEgov()).isEqualTo(TEST_STELLEN_NUMMER_EGOV);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
     }
@@ -169,6 +174,7 @@ public class JobAdvertisementApplicationServiceTest {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
                 .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
+                .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStatus(status)
                 .setReportingObligationEndDate(reportingObligationEndDate)
                 .build();
@@ -180,6 +186,7 @@ public class JobAdvertisementApplicationServiceTest {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
                 .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
+                .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStatus(status)
                 .setPublicationEndDate(publicationEndDate)
                 .build();
