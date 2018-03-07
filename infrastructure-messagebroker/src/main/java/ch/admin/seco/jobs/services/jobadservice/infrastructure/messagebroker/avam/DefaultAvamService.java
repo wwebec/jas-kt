@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
@@ -13,17 +13,14 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.DeregisterJobAdvertisementMessage;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.RegisterJobAdvertisementMessage;
 
-public class AvamService implements RavRegistrationService {
+public class DefaultAvamService implements RavRegistrationService {
 
     private final DomainEventPublisher domainEventPublisher;
 
-    private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
-
     private final MessageChannel output;
 
-    public AvamService(DomainEventPublisher domainEventPublisher, JobAdvertisementApplicationService jobAdvertisementApplicationService, MessageChannel output) {
+    public DefaultAvamService(DomainEventPublisher domainEventPublisher, MessageChannel output) {
         this.domainEventPublisher = domainEventPublisher;
-        this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
         this.output = output;
     }
 

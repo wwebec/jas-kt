@@ -23,8 +23,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@RefreshScope
+//@Configuration
+//@RefreshScope
 public class LoggingConfiguration {
 
     private static final String LOGSTASH_APPENDER_NAME = "LOGSTASH";
