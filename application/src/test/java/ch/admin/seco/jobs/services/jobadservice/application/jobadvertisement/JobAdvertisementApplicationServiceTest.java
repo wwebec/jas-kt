@@ -108,6 +108,7 @@ public class JobAdvertisementApplicationServiceTest {
     public void createFromApi() {
         //Prepare
         CreateJobAdvertisementApiDto jobAdvertisementApiDto = new CreateJobAdvertisementApiDto(
+                false,
                 LocalDate.of(2018, 1, 1),
                 LocalDate.of(2018, 12, 31),
                 "ref",

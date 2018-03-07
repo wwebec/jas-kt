@@ -62,7 +62,8 @@ public class JobAdvertisementFactoryTest {
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(
                 "title",
                 "description",
-                new JobAdvertisementUpdater.Builder(null).build()
+                new JobAdvertisementUpdater.Builder(null).build(),
+                false
         );
 
         //Validate

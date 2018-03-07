@@ -26,6 +26,7 @@ public class JobAdvertisementFactory {
                 .setTitle(title)
                 .setDescription(description)
                 .setStellennummerEgov(this.stellennummerEgovGenerator.nextStringValue())
+                .setReportToRav(true)
                 .build();
 
         jobAdvertisement.init(updater);
@@ -34,7 +35,7 @@ public class JobAdvertisementFactory {
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement createFromApi(String title, String description, JobAdvertisementUpdater updater) {
+    public JobAdvertisement createFromApi(String title, String description, JobAdvertisementUpdater updater, boolean reportToRav) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setSourceSystem(SourceSystem.API)
@@ -42,6 +43,7 @@ public class JobAdvertisementFactory {
                 .setTitle(title)
                 .setDescription(description)
                 .setStellennummerEgov(this.stellennummerEgovGenerator.nextStringValue())
+                .setReportToRav(reportToRav)
                 .build();
 
         jobAdvertisement.init(updater);
@@ -58,6 +60,7 @@ public class JobAdvertisementFactory {
                 .setStatus(JobAdvertisementStatus.APPROVED)
                 .setTitle(title)
                 .setDescription(description)
+                .setReportToRav(true)
                 .build();
 
         jobAdvertisement.init(updater);
@@ -74,6 +77,7 @@ public class JobAdvertisementFactory {
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setTitle(title)
                 .setDescription(description)
+                .setReportToRav(false)
                 .build();
 
         jobAdvertisement.init(updater);

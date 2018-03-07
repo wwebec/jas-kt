@@ -128,7 +128,8 @@ public class JobAdvertisementApplicationService {
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(
                 createJobAdvertisementApiDto.getJob().getTitle(),
                 createJobAdvertisementApiDto.getJob().getDescription(),
-                updater
+                updater,
+                createJobAdvertisementApiDto.isReportToRav()
         );
         return jobAdvertisement.getId();
     }

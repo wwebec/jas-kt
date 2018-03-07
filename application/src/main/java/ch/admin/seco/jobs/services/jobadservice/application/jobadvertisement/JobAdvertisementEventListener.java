@@ -32,7 +32,7 @@ public class JobAdvertisementEventListener {
             return;
         }
         final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementEvent.getAggregateId());
-        if (jobAdvertisement.isReportingObligation() || jobAdvertisement.getSourceSystem().equals(SourceSystem.JOBROOM)) {
+        if (jobAdvertisement.isReportingObligation() || jobAdvertisement.isReportToRav() || jobAdvertisement.getSourceSystem().equals(SourceSystem.JOBROOM)) {
             jobAdvertisementApplicationService.inspect(jobAdvertisement.getId());
         } else {
             jobAdvertisementApplicationService.refining(jobAdvertisement.getId());

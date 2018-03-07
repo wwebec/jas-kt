@@ -11,14 +11,12 @@ import java.time.LocalDate;
 
 public class CreateJobAdvertisementApiDto {
 
-    // TODO Add RAV-flag
+    private boolean reportToRav;
 
     @NotNull
     private LocalDate publicationStartDate;
 
     private LocalDate publicationEndDate;
-
-    private boolean reportToAvam;
 
     private String reference;
 
@@ -42,7 +40,8 @@ public class CreateJobAdvertisementApiDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementApiDto(LocalDate publicationStartDate,
+    public CreateJobAdvertisementApiDto(boolean reportToRav,
+                                        LocalDate publicationStartDate,
                                         LocalDate publicationEndDate,
                                         String reference,
                                         String url,
@@ -51,6 +50,7 @@ public class CreateJobAdvertisementApiDto {
                                         CompanyDto company,
                                         ContactDto contact,
                                         OccupationDto occupation) {
+        this.reportToRav = reportToRav;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
         this.reference = reference;
@@ -62,12 +62,12 @@ public class CreateJobAdvertisementApiDto {
         this.occupation = occupation;
     }
 
-    public OccupationDto getOccupation() {
-        return occupation;
+    public boolean isReportToRav() {
+        return reportToRav;
     }
 
-    public void setOccupation(OccupationDto occupation) {
-        this.occupation = occupation;
+    public void setReportToRav(boolean reportToRav) {
+        this.reportToRav = reportToRav;
     }
 
     public LocalDate getPublicationStartDate() {
@@ -132,5 +132,13 @@ public class CreateJobAdvertisementApiDto {
 
     public void setContact(ContactDto contact) {
         this.contact = contact;
+    }
+
+    public OccupationDto getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(OccupationDto occupation) {
+        this.occupation = occupation;
     }
 }

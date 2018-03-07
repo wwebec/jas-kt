@@ -77,6 +77,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String cancellationCode;
 
+    private boolean reportToRav;
+
     private boolean reportingObligation;
 
     private LocalDate reportingObligationEndDate;
@@ -179,33 +181,33 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private JobAdvertisement(Builder builder) {
         this(builder.id, builder.sourceSystem, builder.status, builder.title, builder.description);
-
         this.stellennummerEgov = builder.stellennummerEgov;
-        this.occupations = builder.occupations;
-        this.eures = builder.eures;
-        this.location = builder.location;
-        this.publicationStartDate = builder.publicationStartDate;
-        this.rejectionCode = builder.rejectionCode;
-        this.approvalDate = builder.approvalDate;
-        this.reportingObligationEndDate = builder.reportingObligationEndDate;
-        this.jobCenterCode = builder.jobCenterCode;
-        this.company = builder.company;
-        this.employment = builder.employment;
-        this.sourceEntryId = builder.sourceEntryId;
-        this.rejectionDate = builder.rejectionDate;
-        this.contact = builder.contact;
-        this.reportingObligation = builder.reportingObligation;
         this.stellennummerAvam = builder.stellennummerAvam;
-        this.publicationEndDate = builder.publicationEndDate;
-        this.ravRegistrationDate = builder.ravRegistrationDate;
-        this.euresAnonymous = builder.euresAnonymous;
         this.fingerprint = builder.fingerprint;
-        this.cancellationCode = builder.cancellationCode;
-        this.applyChannel = builder.applyChannel;
-        this.languageSkills = builder.languageSkills;
-        this.cancellationDate = builder.cancellationDate;
+        this.sourceEntryId = builder.sourceEntryId;
         this.externalUrl = builder.externalUrl;
+        this.ravRegistrationDate = builder.ravRegistrationDate;
+        this.approvalDate = builder.approvalDate;
+        this.rejectionDate = builder.rejectionDate;
+        this.rejectionCode = builder.rejectionCode;
         this.rejectionReason = builder.rejectionReason;
+        this.cancellationDate = builder.cancellationDate;
+        this.cancellationCode = builder.cancellationCode;
+        this.reportToRav = builder.reportToRav;
+        this.reportingObligation = builder.reportingObligation;
+        this.reportingObligationEndDate = builder.reportingObligationEndDate;
+        this.publicationStartDate = builder.publicationStartDate;
+        this.publicationEndDate = builder.publicationEndDate;
+        this.eures = builder.eures;
+        this.euresAnonymous = builder.euresAnonymous;
+        this.employment = builder.employment;
+        this.jobCenterCode = builder.jobCenterCode;
+        this.applyChannel = builder.applyChannel;
+        this.company = builder.company;
+        this.contact = builder.contact;
+        this.location = builder.location;
+        this.occupations = builder.occupations;
+        this.languageSkills = builder.languageSkills;
     }
 
     public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status,
@@ -280,6 +282,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public String getCancellationCode() {
         return cancellationCode;
+    }
+
+    public boolean isReportToRav() {
+        return reportToRav;
     }
 
     public boolean isReportingObligation() {
@@ -596,6 +602,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private String rejectionReason;
         private LocalDate cancellationDate;
         private String cancellationCode;
+        private boolean reportToRav;
         private boolean reportingObligation;
         private LocalDate reportingObligationEndDate;
         private LocalDate publicationStartDate;
@@ -688,6 +695,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
         public Builder setCancellationCode(String cancellationCode) {
             this.cancellationCode = cancellationCode;
+            return this;
+        }
+
+        public Builder setReportToRav(boolean reportToRav) {
+            this.reportToRav = reportToRav;
             return this;
         }
 
