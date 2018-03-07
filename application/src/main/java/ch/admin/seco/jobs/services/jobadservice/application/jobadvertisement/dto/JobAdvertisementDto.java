@@ -7,6 +7,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 
+import javax.validation.constraints.NotEmpty;
+
 public class JobAdvertisementDto {
 
     private String id;
@@ -34,7 +36,6 @@ public class JobAdvertisementDto {
     private String description;
     private EmploymentDto employment;
     private String jobCenterCode;
-    private String drivingLicenseLevel;
     private ApplyChannelDto applyChannel;
     private CompanyDto company;
     private ContactDto contact;
@@ -46,7 +47,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, EmploymentDto employment, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocationDto location, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
+    public JobAdvertisementDto(String id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, EmploymentDto employment, String jobCenterCode, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocationDto location, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
         this.id = id;
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
@@ -72,7 +73,6 @@ public class JobAdvertisementDto {
         this.description = description;
         this.employment = employment;
         this.jobCenterCode = jobCenterCode;
-        this.drivingLicenseLevel = drivingLicenseLevel;
         this.applyChannel = applyChannel;
         this.company = company;
         this.contact = contact;
@@ -116,7 +116,6 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setDescription(jobAdvertisement.getDescription());
         jobAdvertisementDto.setEmployment(EmploymentDto.toDto(jobAdvertisement.getEmployment()));
         jobAdvertisementDto.setJobCenterCode(jobAdvertisement.getJobCenterCode());
-        jobAdvertisementDto.setDrivingLicenseLevel(jobAdvertisement.getDrivingLicenseLevel());
         jobAdvertisementDto.setApplyChannel(ApplyChannelDto.toDto(jobAdvertisement.getApplyChannel()));
         jobAdvertisementDto.setCompany(CompanyDto.toDto(jobAdvertisement.getCompany()));
         jobAdvertisementDto.setContact(ContactDto.toDto(jobAdvertisement.getContact()));
@@ -312,14 +311,6 @@ public class JobAdvertisementDto {
 
     public void setJobCenterCode(String jobCenterCode) {
         this.jobCenterCode = jobCenterCode;
-    }
-
-    public String getDrivingLicenseLevel() {
-        return drivingLicenseLevel;
-    }
-
-    public void setDrivingLicenseLevel(String drivingLicenseLevel) {
-        this.drivingLicenseLevel = drivingLicenseLevel;
     }
 
     public ApplyChannelDto getApplyChannel() {

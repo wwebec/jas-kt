@@ -6,8 +6,11 @@ import java.util.stream.Collectors;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
+import javax.validation.constraints.NotEmpty;
+
 public class OccupationDto {
 
+    @NotEmpty
     private String avamOccupationCode;
     private WorkExperience workExperience;
     private String educationCode;

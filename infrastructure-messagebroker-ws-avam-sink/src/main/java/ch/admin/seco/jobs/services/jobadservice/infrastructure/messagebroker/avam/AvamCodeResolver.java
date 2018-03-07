@@ -17,31 +17,6 @@ public class AvamCodeResolver {
             .put("2", AvamAction.ABMELDUNG)
             .toImmutable();
 
-    public static final MappingBuilder<String, String> DRIVING_LICENSE_LEVELS = new MappingBuilder<String, String>()
-            .put("01", "A")
-            .put("02", "A1")
-            .put("10", "B")
-            .put("11", "B1")
-            .put("12", "BE")
-            .put("20", "C")
-            .put("21", "C1")
-            .put("22", "C1E")
-            .put("23", "CE")
-            .put("30", "D")
-            .put("31", "D1")
-            .put("32", "D1E")
-            .put("33", "DE")
-            .put("40", "F")
-            .put("50", "G")
-            .put("70", "M")
-            .toImmutable();
-
-    public static final MappingBuilder<String, String> CURRENCIES = new MappingBuilder<String, String>()
-            .put("1", "CHF")
-            .put("2", "EUR")
-            .put("3", "USD")
-            .toImmutable();
-
     public static final MappingBuilder<String, String> LANGUAGES = new MappingBuilder<String, String>()
             .put("1", "de")
             .put("2", "fr")

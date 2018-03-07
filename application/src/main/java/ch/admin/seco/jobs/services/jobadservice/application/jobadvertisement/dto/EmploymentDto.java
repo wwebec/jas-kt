@@ -8,7 +8,6 @@ public class EmploymentDto {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    // TODO convert to boolean shortDuration
     private Integer durationInDays;
     private Boolean immediately;
     private Boolean permanent;

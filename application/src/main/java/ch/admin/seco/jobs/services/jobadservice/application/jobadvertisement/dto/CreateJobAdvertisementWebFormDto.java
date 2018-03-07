@@ -2,16 +2,17 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import java.util.List;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 public class CreateJobAdvertisementWebFormDto {
 
     private boolean eures;
 
-    @NotNull
+    @NotEmpty
     private String title;
 
-    @NotNull
+    @NotEmpty
     private String description;
 
     @NotNull

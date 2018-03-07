@@ -17,7 +17,6 @@ public class JobAdvertisementUpdater {
     static final String SECTION_EURES = "SECTION_EURES";
     static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
     static final String SECTION_JOB_CENTER_CODE = "SECTION_JOB_CENTER_CODE";
-    static final String SECTION_DRIVING_LICENSE_LEVEL = "SECTION_DRIVING_LICENSE_LEVEL";
     static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
     static final String SECTION_COMPANY = "SECTION_COMPANY";
     static final String SECTION_CONTACT = "SECTION_CONTACT";
@@ -49,8 +48,6 @@ public class JobAdvertisementUpdater {
 
     private String jobCenterCode;
 
-    private String drivingLicenseLevel;
-
     private ApplyChannel applyChannel;
 
     private Company company;
@@ -76,7 +73,6 @@ public class JobAdvertisementUpdater {
         this.euresAnonymous = builder.euresAnonymous;
         this.employment = builder.employment;
         this.jobCenterCode = builder.jobCenterCode;
-        this.drivingLicenseLevel = builder.drivingLicenseLevel;
         this.applyChannel = builder.applyChannel;
         this.company = builder.company;
         this.contact = builder.contact;
@@ -133,10 +129,6 @@ public class JobAdvertisementUpdater {
         return jobCenterCode;
     }
 
-    public String getDrivingLicenseLevel() {
-        return drivingLicenseLevel;
-    }
-
     public ApplyChannel getApplyChannel() {
         return applyChannel;
     }
@@ -175,7 +167,6 @@ public class JobAdvertisementUpdater {
         private boolean euresAnonymous;
         private Employment employment;
         private String jobCenterCode;
-        private String drivingLicenseLevel;
         private ApplyChannel applyChannel;
         private Company company;
         private Contact contact;
@@ -238,12 +229,6 @@ public class JobAdvertisementUpdater {
         public Builder setJobCenterCode(String jobCenterCode) {
             this.changedSections.add(SECTION_JOB_CENTER_CODE);
             this.jobCenterCode = jobCenterCode;
-            return this;
-        }
-
-        public Builder setDrivingLicenseLevel(String drivingLicenseLevel) {
-            this.changedSections.add(SECTION_DRIVING_LICENSE_LEVEL);
-            this.drivingLicenseLevel = drivingLicenseLevel;
             return this;
         }
 

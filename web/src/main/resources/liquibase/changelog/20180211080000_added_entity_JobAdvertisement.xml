@@ -77,7 +77,6 @@
             <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN" type="integer"/>
             <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MAX" type="integer"/>
             <column name="JOB_CENTER_CODE" type="varchar(5)"/>
-            <column name="DRIVING_LICENSE_LEVEL" type="varchar(3)"/>
             <column name="APPLY_CHANNEL_MAIL_ADDRESS" type="varchar(255)"/>
             <column name="APPLY_CHANNEL_EMAIL_ADDRESS" type="varchar(255)"/>
             <column name="APPLY_CHANNEL_PHONE_NUMBER" type="varchar(20)"/>

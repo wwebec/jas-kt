@@ -49,8 +49,6 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setBeschreibung(jobAdvertisement.getDescription());
 
         fillEmployment(tOsteEgov, jobAdvertisement.getEmployment());
-        tOsteEgov.setKategorieCode(AvamCodeResolver.DRIVING_LICENSE_LEVELS.getLeft(jobAdvertisement.getDrivingLicenseLevel()));
-
         fillApplyChannel(tOsteEgov, jobAdvertisement.getApplyChannel());
         fillCompany(tOsteEgov, jobAdvertisement.getCompany());
         fillContact(tOsteEgov, jobAdvertisement.getContact());

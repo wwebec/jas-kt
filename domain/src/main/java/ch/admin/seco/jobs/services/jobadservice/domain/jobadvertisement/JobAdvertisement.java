@@ -5,7 +5,6 @@ import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.h
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_APPLY_CHANNEL;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_COMPANY;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_CONTACT;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_DRIVING_LICENSE_LEVEL;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EMPLOYMENT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EURES;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EXTERNAL_URL;
@@ -109,8 +108,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String jobCenterCode;
 
-    private String drivingLicenseLevel;
-
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
@@ -206,7 +203,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.cancellationCode = builder.cancellationCode;
         this.applyChannel = builder.applyChannel;
         this.languageSkills = builder.languageSkills;
-        this.drivingLicenseLevel = builder.drivingLicenseLevel;
         this.cancellationDate = builder.cancellationDate;
         this.externalUrl = builder.externalUrl;
         this.rejectionReason = builder.rejectionReason;
@@ -324,10 +320,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public String getJobCenterCode() {
         return jobCenterCode;
-    }
-
-    public String getDrivingLicenseLevel() {
-        return drivingLicenseLevel;
     }
 
     public ApplyChannel getApplyChannel() {
@@ -492,7 +484,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 ", description='" + description + '\'' +
                 ", employment=" + employment +
                 ", jobCenterCode='" + jobCenterCode + '\'' +
-                ", drivingLicenseLevel='" + drivingLicenseLevel + '\'' +
                 ", applyChannel=" + applyChannel +
                 ", company=" + company +
                 ", contact=" + contact +
@@ -548,11 +539,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
         if (updater.hasAnyChangesIn(SECTION_JOB_CENTER_CODE) && hasChanged(this.jobCenterCode, updater.getJobCenterCode())) {
             this.jobCenterCode = updater.getJobCenterCode();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_DRIVING_LICENSE_LEVEL) && hasChanged(this.drivingLicenseLevel, updater.getDrivingLicenseLevel())) {
-            this.drivingLicenseLevel = updater.getDrivingLicenseLevel();
             hasChangedAnything = true;
         }
 
@@ -620,7 +606,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private String description;
         private Employment employment;
         private String jobCenterCode;
-        private String drivingLicenseLevel;
         private ApplyChannel applyChannel;
         private Company company;
         private Contact contact;
@@ -753,11 +738,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
         public Builder setJobCenterCode(String jobCenterCode) {
             this.jobCenterCode = jobCenterCode;
-            return this;
-        }
-
-        public Builder setDrivingLicenseLevel(String drivingLicenseLevel) {
-            this.drivingLicenseLevel = drivingLicenseLevel;
             return this;
         }
 
