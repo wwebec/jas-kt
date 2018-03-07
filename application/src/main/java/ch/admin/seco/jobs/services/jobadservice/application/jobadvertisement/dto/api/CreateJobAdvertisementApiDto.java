@@ -1,129 +1,134 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
-import java.time.LocalDate;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import java.time.LocalDate;
 
 public class CreateJobAdvertisementApiDto {
-	@NotNull
-	private LocalDate publicationStartDate;
 
-	private LocalDate publicationEndDate;
+    // TODO Add RAV-flag
 
-	private String reference;
+    @NotNull
+    private LocalDate publicationStartDate;
 
-	private String url;
+    private LocalDate publicationEndDate;
 
-	private String applicationUrl;
+    private String reference;
 
-	@Valid
-	@NotNull
-	private JobApiDto job;
+    private String url;
 
-	@NotNull
-	private CompanyApiDto company;
+    private ApplyChannelDto applyChannel;
 
-	private ContactApiDto contact;
+    @Valid
+    @NotNull
+    private JobApiDto job;
 
-	@NotNull
-	private OccupationDto occupation;
+    @NotNull
+    private CompanyDto company;
 
-	protected CreateJobAdvertisementApiDto() {
-		// For reflection libs
-	}
+    private ContactDto contact;
 
-	public CreateJobAdvertisementApiDto(LocalDate publicationStartDate,
-			LocalDate publicationEndDate,
-			String reference,
-			String url,
-			String applicationUrl,
-			JobApiDto job,
-			CompanyApiDto company,
-			ContactApiDto contact,
-			OccupationDto occupation) {
-		this.publicationStartDate = publicationStartDate;
-		this.publicationEndDate = publicationEndDate;
-		this.reference = reference;
-		this.url = url;
-		this.applicationUrl = applicationUrl;
-		this.job = job;
-		this.company = company;
-		this.contact = contact;
-		this.occupation = occupation;
-	}
+    @NotNull
+    private OccupationDto occupation;
 
-	public OccupationDto getOccupation() {
-		return occupation;
-	}
+    protected CreateJobAdvertisementApiDto() {
+        // For reflection libs
+    }
 
-	public void setOccupation(OccupationDto occupation) {
-		this.occupation = occupation;
-	}
+    public CreateJobAdvertisementApiDto(LocalDate publicationStartDate,
+                                        LocalDate publicationEndDate,
+                                        String reference,
+                                        String url,
+                                        ApplyChannelDto applyChannel,
+                                        JobApiDto job,
+                                        CompanyDto company,
+                                        ContactDto contact,
+                                        OccupationDto occupation) {
+        this.publicationStartDate = publicationStartDate;
+        this.publicationEndDate = publicationEndDate;
+        this.reference = reference;
+        this.url = url;
+        this.applyChannel = applyChannel;
+        this.job = job;
+        this.company = company;
+        this.contact = contact;
+        this.occupation = occupation;
+    }
 
-	public LocalDate getPublicationStartDate() {
-		return publicationStartDate;
-	}
+    public OccupationDto getOccupation() {
+        return occupation;
+    }
 
-	public void setPublicationStartDate(LocalDate publicationStartDate) {
-		this.publicationStartDate = publicationStartDate;
-	}
+    public void setOccupation(OccupationDto occupation) {
+        this.occupation = occupation;
+    }
 
-	public LocalDate getPublicationEndDate() {
-		return publicationEndDate;
-	}
+    public LocalDate getPublicationStartDate() {
+        return publicationStartDate;
+    }
 
-	public void setPublicationEndDate(LocalDate publicationEndDate) {
-		this.publicationEndDate = publicationEndDate;
-	}
+    public void setPublicationStartDate(LocalDate publicationStartDate) {
+        this.publicationStartDate = publicationStartDate;
+    }
 
-	public String getReference() {
-		return reference;
-	}
+    public LocalDate getPublicationEndDate() {
+        return publicationEndDate;
+    }
 
-	public void setReference(String reference) {
-		this.reference = reference;
-	}
+    public void setPublicationEndDate(LocalDate publicationEndDate) {
+        this.publicationEndDate = publicationEndDate;
+    }
 
-	public String getUrl() {
-		return url;
-	}
+    public String getReference() {
+        return reference;
+    }
 
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
 
-	public String getApplicationUrl() {
-		return applicationUrl;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public void setApplicationUrl(String applicationUrl) {
-		this.applicationUrl = applicationUrl;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public JobApiDto getJob() {
-		return job;
-	}
+    public ApplyChannelDto getApplyChannel() {
+        return applyChannel;
+    }
 
-	public void setJob(JobApiDto job) {
-		this.job = job;
-	}
+    public void setApplyChannel(ApplyChannelDto applyChannel) {
+        this.applyChannel = applyChannel;
+    }
 
-	public CompanyApiDto getCompany() {
-		return company;
-	}
+    public JobApiDto getJob() {
+        return job;
+    }
 
-	public void setCompany(CompanyApiDto company) {
-		this.company = company;
-	}
+    public void setJob(JobApiDto job) {
+        this.job = job;
+    }
 
-	public ContactApiDto getContact() {
-		return contact;
-	}
+    public CompanyDto getCompany() {
+        return company;
+    }
 
-	public void setContact(ContactApiDto contact) {
-		this.contact = contact;
-	}
+    public void setCompany(CompanyDto company) {
+        this.company = company;
+    }
+
+    public ContactDto getContact() {
+        return contact;
+    }
+
+    public void setContact(ContactDto contact) {
+        this.contact = contact;
+    }
 }

@@ -1,13 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 
 import javax.validation.constraints.NotNull;
 
 public class ContactDto {
 
     @NotNull
-    private String salutation;
+    private Salutation salutation;
     @NotNull
     private String firstName;
     @NotNull
@@ -21,7 +22,7 @@ public class ContactDto {
         // For reflection libs
     }
 
-    public ContactDto(String salutation, String firstName, String lastName, String phone, String email) {
+    public ContactDto(Salutation salutation, String firstName, String lastName, String phone, String email) {
         this.salutation = salutation;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -29,11 +30,11 @@ public class ContactDto {
         this.email = email;
     }
 
-    public String getSalutation() {
+    public Salutation getSalutation() {
         return salutation;
     }
 
-    public void setSalutation(String salutation) {
+    public void setSalutation(Salutation salutation) {
         this.salutation = salutation;
     }
 
@@ -71,7 +72,7 @@ public class ContactDto {
 
     public static ContactDto toDto(Contact contact) {
         ContactDto contactDto = new ContactDto();
-        contactDto.setSalutation(contact.getSalutation().toString());
+        contactDto.setSalutation(contact.getSalutation());
         contactDto.setFirstName(contact.getFirstName());
         contactDto.setLastName(contact.getLastName());
         contactDto.setPhone(contact.getPhone());

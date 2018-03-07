@@ -17,7 +17,7 @@ public interface LocalityApiClient {
     LocalityResource getLocality(@PathVariable("id") UUID id);
 
     @GetMapping(value = "/api/localities")
-    List<LocalityResource> findLocalitiesByZipCode(@RequestParam("zipCode") String zipCode);
+    List<LocalityResource> findLocalitiesByPostalCode(@RequestParam("zipCode") String postalCode);
 
 }
 
@@ -30,7 +30,7 @@ class LocalityApiClientFallback implements LocalityApiClient {
     }
 
     @Override
-    public List<LocalityResource> findLocalitiesByZipCode(String zipCode) {
+    public List<LocalityResource> findLocalitiesByPostalCode(String postalCode) {
         return Collections.emptyList();
     }
 }

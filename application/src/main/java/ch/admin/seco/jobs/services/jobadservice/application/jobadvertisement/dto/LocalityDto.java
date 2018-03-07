@@ -1,16 +1,16 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import javax.validation.constraints.NotNull;
-
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;
+
+import javax.validation.constraints.NotEmpty;
 
 public class LocalityDto {
 
     private String remarks;
     private String city;
-    @NotNull
-    private String zipCode;
+    @NotEmpty
+    private String postalCode;
     private String communalCode;
     private String regionCode;
     private String cantonCode;
@@ -21,10 +21,10 @@ public class LocalityDto {
         // For reflection libs
     }
 
-    public LocalityDto(String remarks, String city, String zipCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint location) {
+    public LocalityDto(String remarks, String city, String postalCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint location) {
         this.remarks = remarks;
         this.city = city;
-        this.zipCode = zipCode;
+        this.postalCode = postalCode;
         this.communalCode = communalCode;
         this.regionCode = regionCode;
         this.cantonCode = cantonCode;
@@ -48,12 +48,12 @@ public class LocalityDto {
         this.city = city;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public String getCommunalCode() {
@@ -100,7 +100,7 @@ public class LocalityDto {
         LocalityDto localityDto = new LocalityDto();
         localityDto.setRemarks(locality.getRemarks());
         localityDto.setCity(locality.getCity());
-        localityDto.setZipCode(locality.getZipCode());
+        localityDto.setPostalCode(locality.getPostalCode());
         localityDto.setCommunalCode(locality.getCommunalCode());
         localityDto.setRegionCode(locality.getRegionCode());
         localityDto.setCantonCode(locality.getCantonCode());

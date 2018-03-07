@@ -45,7 +45,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 
@@ -130,9 +129,9 @@ public class JobAdvertisementApplicationService {
                 .setOccupations(Collections.singletonList(occupation))
                 .setReportingObligation(reportingObligation)
                 .setEmployment(ApiDtoConverter.toEmployment(createJobAdvertisementApiDto.getJob()))
-                .setApplyChannel(ApiDtoConverter.toApplyChannel(createJobAdvertisementApiDto))
-                .setCompany(ApiDtoConverter.toCompany(createJobAdvertisementApiDto.getCompany()))
-                .setContact(ApiDtoConverter.toContact(createJobAdvertisementApiDto.getContact()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementApiDto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementApiDto.getCompany()))
+                .setContact(toContact(createJobAdvertisementApiDto.getContact()))
                 .setLanguageSkills(ApiDtoConverter.toLanguageSkills(createJobAdvertisementApiDto.getJob().getLanguageSkills()))
                 .build();
 
@@ -228,10 +227,10 @@ public class JobAdvertisementApplicationService {
     }
 
     private Occupation enrichOccupationWithProfessionCodes(Occupation occupation) {
-        Profession profession = professionSerivce.findByAvamCode(occupation.getAvamCode());
+        Profession profession = professionSerivce.findByAvamCode(occupation.getAvamOccupationCode());
         if (profession != null) {
             return new Occupation(
-                    occupation.getAvamCode(),
+                    occupation.getAvamOccupationCode(),
                     profession.getSbn3Code(),
                     profession.getSbn5Code(),
                     profession.getBfsCode(),
@@ -244,9 +243,9 @@ public class JobAdvertisementApplicationService {
     }
 
     private boolean checkReportingObligation(Occupation occupation, Locality locality) {
-        String avamCode = occupation.getAvamCode();
+        String avamOccupationCode = occupation.getAvamOccupationCode();
         String cantonCode = locality.getCantonCode();
-        return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamCode, cantonCode);
+        return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
     }
 
     private Employment toEmployment(EmploymentDto employmentDto) {
@@ -283,11 +282,11 @@ public class JobAdvertisementApplicationService {
                     .setName(companyDto.getName())
                     .setStreet(companyDto.getStreet())
                     .setHouseNumber(companyDto.getHouseNumber())
-                    .setZipCode(companyDto.getZipCode())
+                    .setPostalCode(companyDto.getPostalCode())
                     .setCity(companyDto.getCity())
                     .setCountryIsoCode(companyDto.getCountryIsoCode())
                     .setPostOfficeBoxNumber(companyDto.getPostOfficeBoxNumber())
-                    .setPostOfficeBoxZipCode(companyDto.getPostOfficeBoxZipCode())
+                    .setPostOfficeBoxPostalCode(companyDto.getPostOfficeBoxPostalCode())
                     .setPostOfficeBoxCity(companyDto.getPostOfficeBoxCity())
                     .setPhone(companyDto.getPhone())
                     .setEmail(companyDto.getEmail())
@@ -300,7 +299,7 @@ public class JobAdvertisementApplicationService {
     private Contact toContact(ContactDto contactDto) {
         if (contactDto != null) {
             return new Contact(
-                    Salutation.valueOf(contactDto.getSalutation()),
+                    contactDto.getSalutation(),
                     contactDto.getFirstName(),
                     contactDto.getLastName(),
                     contactDto.getPhone(),
@@ -315,7 +314,7 @@ public class JobAdvertisementApplicationService {
             return new Locality(
                     localityDto.getRemarks(),
                     localityDto.getCity(),
-                    localityDto.getZipCode(),
+                    localityDto.getPostalCode(),
                     localityDto.getCommunalCode(),
                     localityDto.getRegionCode(),
                     localityDto.getCantonCode(),
@@ -329,7 +328,7 @@ public class JobAdvertisementApplicationService {
     private Occupation toOccupation(OccupationDto occupationDto) {
         if (occupationDto != null) {
             return new Occupation(
-                    occupationDto.getAvamCode(),
+                    occupationDto.getAvamOccupationCode(),
                     occupationDto.getWorkExperience(),
                     occupationDto.getEducationCode()
             );

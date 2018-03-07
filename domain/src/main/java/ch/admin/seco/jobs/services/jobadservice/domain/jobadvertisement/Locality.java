@@ -1,14 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import java.util.Objects;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.validation.Valid;
-
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import java.util.Objects;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -18,11 +17,11 @@ public class Locality implements ValueObject<Locality> {
 
     private String city;
 
-    private String zipCode;
+    private String postalCode;
 
     private String communalCode;
 
-    private String regionCode; // TODO Still needed?
+    private String regionCode;
 
     private String cantonCode;
 
@@ -36,17 +35,10 @@ public class Locality implements ValueObject<Locality> {
         // For reflection libs
     }
 
-    public Locality(String remarks, String city, String zipCode, String countryIsoCode) {
+    public Locality(String remarks, String city, String postalCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint location) {
         this.remarks = remarks;
         this.city = city;
-        this.zipCode = zipCode;
-        this.countryIsoCode = countryIsoCode;
-    }
-
-    public Locality(String remarks, String city, String zipCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint location) {
-        this.remarks = remarks;
-        this.city = city;
-        this.zipCode = zipCode;
+        this.postalCode = postalCode;
         this.communalCode = communalCode;
         this.regionCode = regionCode;
         this.cantonCode = cantonCode;
@@ -62,8 +54,8 @@ public class Locality implements ValueObject<Locality> {
         return city;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
     public String getCommunalCode() {
@@ -98,7 +90,7 @@ public class Locality implements ValueObject<Locality> {
         Locality locality = (Locality) o;
         return Objects.equals(remarks, locality.remarks) &&
                 Objects.equals(city, locality.city) &&
-                Objects.equals(zipCode, locality.zipCode) &&
+                Objects.equals(postalCode, locality.postalCode) &&
                 Objects.equals(communalCode, locality.communalCode) &&
                 Objects.equals(regionCode, locality.regionCode) &&
                 Objects.equals(cantonCode, locality.cantonCode) &&
@@ -108,7 +100,7 @@ public class Locality implements ValueObject<Locality> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(remarks, city, zipCode, communalCode, regionCode, cantonCode, countryIsoCode, location);
+        return Objects.hash(remarks, city, postalCode, communalCode, regionCode, cantonCode, countryIsoCode, location);
     }
 
     @Override
@@ -116,7 +108,7 @@ public class Locality implements ValueObject<Locality> {
         return "Locality{" +
                 "remarks='" + remarks + '\'' +
                 ", city='" + city + '\'' +
-                ", zipCode='" + zipCode + '\'' +
+                ", postalCode='" + postalCode + '\'' +
                 ", communalCode='" + communalCode + '\'' +
                 ", regionCode='" + regionCode + '\'' +
                 ", cantonCode='" + cantonCode + '\'' +

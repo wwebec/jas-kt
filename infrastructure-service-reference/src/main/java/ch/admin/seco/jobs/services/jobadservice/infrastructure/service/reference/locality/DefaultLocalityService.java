@@ -24,7 +24,7 @@ public class DefaultLocalityService implements LocalityService {
     @Override
     public Locality enrichCodes(Locality locality) {
         if ((locality != null) && isManagedCountry(locality.getCountryIsoCode())) {
-            List<LocalityResource> localityResources = localityApiClient.findLocalitiesByZipCode(locality.getZipCode());
+            List<LocalityResource> localityResources = localityApiClient.findLocalitiesByPostalCode(locality.getPostalCode());
             if ((localityResources != null) && !localityResources.isEmpty()) {
                 LocalityResource matchingLocalityResource = localityResources.stream()
                         .filter(localityResource -> localityResource.getCity().equalsIgnoreCase(locality.getCity()))
@@ -33,7 +33,7 @@ public class DefaultLocalityService implements LocalityService {
                     return new Locality(
                             locality.getRemarks(),
                             locality.getCity(),
-                            locality.getZipCode(),
+                            locality.getPostalCode(),
                             matchingLocalityResource.getCommunalCode(),
                             matchingLocalityResource.getRegionCode(),
                             matchingLocalityResource.getCantonCode(),

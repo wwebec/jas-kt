@@ -12,11 +12,11 @@ public class CompanyDto {
     private String street;
     private String houseNumber;
     @NotNull
-    private String zipCode;
+    private String postalCode;
     private String city;
     private String countryIsoCode;
     private String postOfficeBoxNumber;
-    private String postOfficeBoxZipCode;
+    private String postOfficeBoxPostalCode;
     private String postOfficeBoxCity;
     private String phone;
     private String email;
@@ -26,15 +26,15 @@ public class CompanyDto {
         // For reflection libs
     }
 
-    public CompanyDto(String name, String street, String houseNumber, String zipCode, String city, String countryIsoCode, String postOfficeBoxNumber, String postOfficeBoxZipCode, String postOfficeBoxCity, String phone, String email, String website) {
+    public CompanyDto(String name, String street, String houseNumber, String postalCode, String city, String countryIsoCode, String postOfficeBoxNumber, String postOfficeBoxPostalCode, String postOfficeBoxCity, String phone, String email, String website) {
         this.name = name;
         this.street = street;
         this.houseNumber = houseNumber;
-        this.zipCode = zipCode;
+        this.postalCode = postalCode;
         this.city = city;
         this.countryIsoCode = countryIsoCode;
         this.postOfficeBoxNumber = postOfficeBoxNumber;
-        this.postOfficeBoxZipCode = postOfficeBoxZipCode;
+        this.postOfficeBoxPostalCode = postOfficeBoxPostalCode;
         this.postOfficeBoxCity = postOfficeBoxCity;
         this.phone = phone;
         this.email = email;
@@ -65,12 +65,12 @@ public class CompanyDto {
         this.houseNumber = houseNumber;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
     public String getCity() {
@@ -97,12 +97,12 @@ public class CompanyDto {
         this.postOfficeBoxNumber = postOfficeBoxNumber;
     }
 
-    public String getPostOfficeBoxZipCode() {
-        return postOfficeBoxZipCode;
+    public String getPostOfficeBoxPostalCode() {
+        return postOfficeBoxPostalCode;
     }
 
-    public void setPostOfficeBoxZipCode(String postOfficeBoxZipCode) {
-        this.postOfficeBoxZipCode = postOfficeBoxZipCode;
+    public void setPostOfficeBoxPostalCode(String postOfficeBoxPostalCode) {
+        this.postOfficeBoxPostalCode = postOfficeBoxPostalCode;
     }
 
     public String getPostOfficeBoxCity() {
@@ -142,11 +142,11 @@ public class CompanyDto {
         companyDto.setName(company.getName());
         companyDto.setStreet(company.getStreet());
         companyDto.setHouseNumber(company.getHouseNumber());
-        companyDto.setZipCode(company.getZipCode());
+        companyDto.setPostalCode(company.getPostalCode());
         companyDto.setCity(company.getCity());
         companyDto.setCountryIsoCode(company.getCountryIsoCode());
         companyDto.setPostOfficeBoxNumber(company.getPostOfficeBoxNumber());
-        companyDto.setPostOfficeBoxZipCode(company.getPostOfficeBoxZipCode());
+        companyDto.setPostOfficeBoxPostalCode(company.getPostOfficeBoxPostalCode());
         companyDto.setPostOfficeBoxCity(company.getPostOfficeBoxCity());
         companyDto.setPhone(company.getPhone());
         companyDto.setEmail(company.getEmail());

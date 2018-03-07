@@ -4,62 +4,62 @@ import javax.validation.constraints.NotEmpty;
 
 public class LocationApiDto {
 
-	private String countryCode;
-	private String locality;
-	private String postalCode;
-	@NotEmpty
-	private String cantonCode;
-	private String additionalDetails;
+    private String remarks;
+    private String city;
+    @NotEmpty
+    private String postalCode;
+    private String cantonCode;
+    private String countryIsoCode;
 
-	protected LocationApiDto() {
-		// For reflection libs
-	}
+    protected LocationApiDto() {
+        // For reflection libs
+    }
 
-	public LocationApiDto(String countryCode, String locality, String postalCode, String cantonCode, String additionalDetails) {
-		this.countryCode = countryCode;
-		this.locality = locality;
-		this.postalCode = postalCode;
-		this.cantonCode = cantonCode;
-		this.additionalDetails = additionalDetails;
-	}
+    public LocationApiDto(String remarks, String city, String postalCode, String cantonCode, String countryIsoCode) {
+        this.remarks = remarks;
+        this.city = city;
+        this.postalCode = postalCode;
+        this.cantonCode = cantonCode;
+        this.countryIsoCode = countryIsoCode;
+    }
 
-	public String getCantonCode() {
-		return cantonCode;
-	}
+    public String getRemarks() {
+        return remarks;
+    }
 
-	public void setCantonCode(String cantonCode) {
-		this.cantonCode = cantonCode;
-	}
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
-	public String getCountryCode() {
-		return countryCode;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public String getLocality() {
-		return locality;
-	}
+    public String getPostalCode() {
+        return postalCode;
+    }
 
-	public void setLocality(String locality) {
-		this.locality = locality;
-	}
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
 
-	public String getPostalCode() {
-		return postalCode;
-	}
+    public String getCantonCode() {
+        return cantonCode;
+    }
 
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-	}
+    public void setCantonCode(String cantonCode) {
+        this.cantonCode = cantonCode;
+    }
 
-	public String getAdditionalDetails() {
-		return additionalDetails;
-	}
+    public String getCountryIsoCode() {
+        return countryIsoCode;
+    }
 
-	public void setAdditionalDetails(String additionalDetails) {
-		this.additionalDetails = additionalDetails;
-	}
+    public void setCountryIsoCode(String countryIsoCode) {
+        this.countryIsoCode = countryIsoCode;
+    }
 }

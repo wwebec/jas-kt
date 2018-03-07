@@ -106,9 +106,9 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setUntStrasse(company.getStreet());
         tOsteEgov.setUntHausNr(company.getHouseNumber());
         tOsteEgov.setUntOrt(company.getCity());
-        tOsteEgov.setUntPlz(company.getZipCode());
+        tOsteEgov.setUntPlz(company.getPostalCode());
         tOsteEgov.setUntPostfach(company.getPostOfficeBoxNumber());
-        tOsteEgov.setUntPostfachPlz(company.getPostOfficeBoxZipCode());
+        tOsteEgov.setUntPostfachPlz(company.getPostOfficeBoxPostalCode());
         tOsteEgov.setUntPostfachOrt(company.getPostOfficeBoxCity());
         tOsteEgov.setUntLand(company.getCountryIsoCode());
     }
@@ -130,7 +130,7 @@ public class JobAdvertisementAssembler {
         }
         tOsteEgov.setArbeitsOrtText(locality.getRemarks());
         tOsteEgov.setArbeitsOrtOrt(locality.getCity());
-        tOsteEgov.setArbeitsOrtPlz(locality.getZipCode());
+        tOsteEgov.setArbeitsOrtPlz(locality.getPostalCode());
         tOsteEgov.setArbeitsOrtGemeinde(locality.getCommunalCode());
         tOsteEgov.setArbeitsOrtLand(locality.getCountryIsoCode());
     }

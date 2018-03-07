@@ -1,52 +1,34 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_02;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_03;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_04;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_05;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.Collections;
-
+import ch.admin.seco.jobs.services.jobadservice.application.LocalityService;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
+import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CreateJobAdvertisementApiDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.JobApiDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LocationApiDto;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import ch.admin.seco.jobs.services.jobadservice.application.LocalityService;
-import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
-import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementWebFormDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LocalityDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
+import java.time.LocalDate;
+import java.util.Collections;
+
+import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
@@ -78,7 +60,7 @@ public class JobAdvertisementApplicationServiceTest {
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
 
-        when(localityService.enrichCodes(any())).thenReturn(new Locality("remarks", "ctiy", "zipCode", null, null, "BE", "CH", null));
+        when(localityService.enrichCodes(any())).thenReturn(new Locality("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null));
     }
 
     @After
@@ -96,9 +78,9 @@ public class JobAdvertisementApplicationServiceTest {
                 new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), 365, true, false, 80, 100),
                 "drivingLicenseLevel",
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new CompanyDto("name", "stree", "houseNumber", "zipCode", "city", "CH", null, null, null, "phone", "email", "website"),
-                new ContactDto("MR", "firstName", "lastName", "phone", "email"),
-                new LocalityDto("remarks", "ctiy", "zipCode", null, null, "BE", "CH", null),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
+                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email"),
+                new LocalityDto("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
         );
@@ -123,16 +105,14 @@ public class JobAdvertisementApplicationServiceTest {
                 LocalDate.of(2018, 12, 31),
                 "ref",
                 "http://url",
-                "http://url",
-                new JobApiDto("title", "descriptioin", 10, 90, LocalDate.of(2018, 1, 1),
+                new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
+                new JobApiDto("title", "descriptioin", 10, 90,
+                        LocalDate.of(2018, 1, 1),
                         LocalDate.of(2018, 12, 31), 30, true, true,
-                        new LocationApiDto("remarks", "ctiy", "zipCode", "BE", "details"), Collections.emptyList()),
-                new CompanyApiDto(
-                        "name", "CH", "street", "12", "Bern", "2222", "number", "email", "website",
-                        new PostboxApiDto("sdf", "Bern", "code")),
-                new ContactApiDto(
-                        ContactApiDto.Title.mister,
-                        "first", "last", "number", "email"),
+                        new LocationApiDto("remarks", "ctiy", "postalCode", "BE", "details"),
+                        Collections.emptyList()),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
+                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")
         );
 
