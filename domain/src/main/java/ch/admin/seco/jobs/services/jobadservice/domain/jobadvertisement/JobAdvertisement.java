@@ -12,7 +12,7 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.J
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_FINGERPRINT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_JOB_CENTER_CODE;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LANGUAGE_SKILLS;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LOCALITY;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LOCATION;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_OCCUPATIONS;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLICATION_DATES;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_REPORTING_OBLIGATION;
@@ -153,18 +153,18 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "remarks", column = @Column(name = "LOCALITY_REMARKS")),
-            @AttributeOverride(name = "city", column = @Column(name = "LOCALITY_CITY")),
-            @AttributeOverride(name = "postalCode", column = @Column(name = "LOCALITY_POSTAL_CODE")),
-            @AttributeOverride(name = "communalCode", column = @Column(name = "LOCALITY_COMMUNAL_CODE")),
-            @AttributeOverride(name = "regionCode", column = @Column(name = "LOCALITY_REGION_CODE")),
-            @AttributeOverride(name = "cantonCode", column = @Column(name = "LOCALITY_CANTON_CODE")),
-            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "LOCALITY_COUNTRY_ISO_CODE")),
-            @AttributeOverride(name = "location.longitude", column = @Column(name = "LOCALITY_LOCATION_LONGITUDE")),
-            @AttributeOverride(name = "location.latitude", column = @Column(name = "LOCALITY_LOCATION_LATITUDE"))
+            @AttributeOverride(name = "remarks", column = @Column(name = "LOCATION_REMARKS")),
+            @AttributeOverride(name = "city", column = @Column(name = "LOCATION_CITY")),
+            @AttributeOverride(name = "postalCode", column = @Column(name = "LOCATION_POSTAL_CODE")),
+            @AttributeOverride(name = "communalCode", column = @Column(name = "LOCATION_COMMUNAL_CODE")),
+            @AttributeOverride(name = "regionCode", column = @Column(name = "LOCATION_REGION_CODE")),
+            @AttributeOverride(name = "cantonCode", column = @Column(name = "LOCATION_CANTON_CODE")),
+            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "LOCATION_COUNTRY_ISO_CODE")),
+            @AttributeOverride(name = "coordinates.longitude", column = @Column(name = "LOCATION_LONGITUDE")),
+            @AttributeOverride(name = "coordinates.latitude", column = @Column(name = "LOCATION_LATITUDE"))
     })
     @Valid
-    private Locality locality;
+    private Location location;
 
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
@@ -186,7 +186,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.stellennummerEgov = builder.stellennummerEgov;
         this.occupations = builder.occupations;
         this.eures = builder.eures;
-        this.locality = builder.locality;
+        this.location = builder.location;
         this.publicationStartDate = builder.publicationStartDate;
         this.rejectionCode = builder.rejectionCode;
         this.approvalDate = builder.approvalDate;
@@ -342,8 +342,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return contact;
     }
 
-    public Locality getLocality() {
-        return locality;
+    public Location getLocation() {
+        return location;
     }
 
     public List<Occupation> getOccupations() {
@@ -496,7 +496,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 ", applyChannel=" + applyChannel +
                 ", company=" + company +
                 ", contact=" + contact +
-                ", locality=" + locality +
+                ", location=" + location +
                 ", occupations=" + occupations +
                 ", languageSkills=" + languageSkills +
                 '}';
@@ -571,8 +571,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_LOCALITY) && hasChanged(this.locality, updater.getLocality())) {
-            this.locality = updater.getLocality();
+        if (updater.hasAnyChangesIn(SECTION_LOCATION) && hasChanged(this.location, updater.getLocation())) {
+            this.location = updater.getLocation();
             hasChangedAnything = true;
         }
 
@@ -624,7 +624,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private ApplyChannel applyChannel;
         private Company company;
         private Contact contact;
-        private Locality locality;
+        private Location location;
         private List<Occupation> occupations;
         private List<LanguageSkill> languageSkills;
 
@@ -776,8 +776,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             return this;
         }
 
-        public Builder setLocality(Locality locality) {
-            this.locality = locality;
+        public Builder setLocation(Location location) {
+            this.location = location;
             return this;
         }
 

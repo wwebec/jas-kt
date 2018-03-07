@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.application.LocalityService;
+import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
@@ -47,7 +47,7 @@ public class JobAdvertisementApplicationServiceTest {
     private ReportingObligationService reportingObligationService;
 
     @MockBean
-    private LocalityService localityService;
+    private LocationService locationService;
 
     @MockBean
     private ProfessionService professionService;
@@ -65,7 +65,7 @@ public class JobAdvertisementApplicationServiceTest {
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
 
-        when(localityService.enrichCodes(any())).thenReturn(new Locality("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null));
+        when(locationService.enrichCodes(any())).thenReturn(new Location("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null));
         when(egovNumberGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
     }
 
@@ -86,7 +86,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
                 new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email"),
-                new LocalityDto("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null),
+                new LocationDto("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
         );

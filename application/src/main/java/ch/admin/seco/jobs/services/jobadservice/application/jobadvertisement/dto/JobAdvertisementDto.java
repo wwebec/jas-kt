@@ -38,7 +38,7 @@ public class JobAdvertisementDto {
     private ApplyChannelDto applyChannel;
     private CompanyDto company;
     private ContactDto contact;
-    private LocalityDto locality;
+    private LocationDto location;
     private List<OccupationDto> occupations;
     private List<LanguageSkillDto> languageSkills;
 
@@ -46,7 +46,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, EmploymentDto employment, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocalityDto locality, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
+    public JobAdvertisementDto(String id, String stellennummerEgov, String stellennummerAvam, String fingerprint, SourceSystem sourceSystem, String sourceEntryId, String externalUrl, JobAdvertisementStatus status, LocalDate ravRegistrationDate, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, boolean reportingObligation, LocalDate reportingObligationEndDate, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean eures, boolean euresAnonymous, String title, String description, EmploymentDto employment, String jobCenterCode, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocationDto location, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
         this.id = id;
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
@@ -76,7 +76,7 @@ public class JobAdvertisementDto {
         this.applyChannel = applyChannel;
         this.company = company;
         this.contact = contact;
-        this.locality = locality;
+        this.location = location;
         this.occupations = occupations;
         this.languageSkills = languageSkills;
     }
@@ -120,7 +120,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setApplyChannel(ApplyChannelDto.toDto(jobAdvertisement.getApplyChannel()));
         jobAdvertisementDto.setCompany(CompanyDto.toDto(jobAdvertisement.getCompany()));
         jobAdvertisementDto.setContact(ContactDto.toDto(jobAdvertisement.getContact()));
-        jobAdvertisementDto.setLocality(LocalityDto.toDto(jobAdvertisement.getLocality()));
+        jobAdvertisementDto.setLocation(LocationDto.toDto(jobAdvertisement.getLocation()));
         jobAdvertisementDto.setOccupations(OccupationDto.toDto(jobAdvertisement.getOccupations()));
         jobAdvertisementDto.setLanguageSkills(LanguageSkillDto.toDto(jobAdvertisement.getLanguageSkills()));
         return jobAdvertisementDto;
@@ -350,8 +350,8 @@ public class JobAdvertisementDto {
         this.employment = employment;
     }
 
-    public LocalityDto getLocality() {
-        return locality;
+    public LocationDto getLocation() {
+        return location;
     }
 
     public List<OccupationDto> getOccupations() {
@@ -370,7 +370,7 @@ public class JobAdvertisementDto {
         this.languageSkills = languageSkills;
     }
 
-    public void setLocality(LocalityDto locality) {
-        this.locality = locality;
+    public void setLocation(LocationDto location) {
+        this.location = location;
     }
 }

@@ -7,12 +7,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ch.admin.seco.jobs.services.jobadservice.application.LocalityService;
+import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
@@ -25,7 +26,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LocalityDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ApiDtoConverter;
@@ -33,18 +34,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementFactory;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 
@@ -60,7 +50,7 @@ public class JobAdvertisementApplicationService {
 
     private final ReportingObligationService reportingObligationService;
 
-    private final LocalityService localityService;
+    private final LocationService locationService;
 
     private final ProfessionService professionSerivce;
 
@@ -69,30 +59,30 @@ public class JobAdvertisementApplicationService {
             JobAdvertisementFactory jobAdvertisementFactory,
             RavRegistrationService ravRegistrationService,
             ReportingObligationService reportingObligationService,
-            LocalityService localityService,
+            LocationService locationService,
             ProfessionService professionSerivce) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.ravRegistrationService = ravRegistrationService;
         this.reportingObligationService = reportingObligationService;
-        this.localityService = localityService;
+        this.locationService = locationService;
         this.professionSerivce = professionSerivce;
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto) {
-        Locality locality = toLocality(createJobAdvertisementWebFormDto.getLocality());
-        locality = localityService.enrichCodes(locality);
+        Location location = toLocation(createJobAdvertisementWebFormDto.getLocation());
+        location = locationService.enrichCodes(location);
 
         Occupation occupation = toOccupation(createJobAdvertisementWebFormDto.getOccupation());
         occupation = enrichOccupationWithProfessionCodes(occupation);
 
         boolean reportingObligation = checkReportingObligation(
                 occupation,
-                locality
+                location
         );
 
         final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
-                .setLocality(locality)
+                .setLocation(location)
                 .setOccupations(Collections.singletonList(occupation))
                 .setReportingObligation(reportingObligation)
                 // FIXME eval eures if anonymous or not (User/Security)
@@ -113,19 +103,19 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromApi(CreateJobAdvertisementApiDto createJobAdvertisementApiDto) {
-        Locality locality = ApiDtoConverter.toLocality(createJobAdvertisementApiDto.getJob().getLocation());
-        locality = localityService.enrichCodes(locality);
+        Location location = ApiDtoConverter.toLocation(createJobAdvertisementApiDto.getJob().getLocation());
+        location = locationService.enrichCodes(location);
 
         Occupation occupation = toOccupation(createJobAdvertisementApiDto.getOccupation());
         occupation = enrichOccupationWithProfessionCodes(occupation);
 
         boolean reportingObligation = checkReportingObligation(
                 occupation,
-                locality
+                location
         );
 
         final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
-                .setLocality(locality)
+                .setLocation(location)
                 .setOccupations(Collections.singletonList(occupation))
                 .setReportingObligation(reportingObligation)
                 .setEmployment(ApiDtoConverter.toEmployment(createJobAdvertisementApiDto.getJob()))
@@ -242,9 +232,9 @@ public class JobAdvertisementApplicationService {
         return occupation;
     }
 
-    private boolean checkReportingObligation(Occupation occupation, Locality locality) {
+    private boolean checkReportingObligation(Occupation occupation, Location location) {
         String avamOccupationCode = occupation.getAvamOccupationCode();
-        String cantonCode = locality.getCantonCode();
+        String cantonCode = location.getCantonCode();
         return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
     }
 
@@ -309,17 +299,17 @@ public class JobAdvertisementApplicationService {
         return null;
     }
 
-    private Locality toLocality(LocalityDto localityDto) {
-        if (localityDto != null) {
-            return new Locality(
-                    localityDto.getRemarks(),
-                    localityDto.getCity(),
-                    localityDto.getPostalCode(),
-                    localityDto.getCommunalCode(),
-                    localityDto.getRegionCode(),
-                    localityDto.getCantonCode(),
-                    localityDto.getCountryIsoCode(),
-                    localityDto.getLocation()
+    private Location toLocation(LocationDto locationDto) {
+        if (locationDto != null) {
+            return new Location(
+                    locationDto.getRemarks(),
+                    locationDto.getCity(),
+                    locationDto.getPostalCode(),
+                    locationDto.getCommunalCode(),
+                    locationDto.getRegionCode(),
+                    locationDto.getCantonCode(),
+                    locationDto.getCountryIsoCode(),
+                    locationDto.getCoordinates()
             );
         }
         return null;

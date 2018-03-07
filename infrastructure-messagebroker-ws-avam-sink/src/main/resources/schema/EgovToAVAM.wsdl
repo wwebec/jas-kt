@@ -132,7 +132,7 @@
 	 -->
 	<service name="EgovService">
 		<port binding="tns:EgovPortBinding" name="EgovService">
-			<soap:address location="http://localhost:9080/AVAM_Web/services/EgovService"/>
+			<soap:address coordinates="http://localhost:9080/AVAM_Web/services/EgovService"/>
 		</port>
 	</service>
 </definitions>

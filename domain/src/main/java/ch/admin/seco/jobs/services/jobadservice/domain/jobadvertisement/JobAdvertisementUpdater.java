@@ -21,7 +21,7 @@ public class JobAdvertisementUpdater {
     static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
     static final String SECTION_COMPANY = "SECTION_COMPANY";
     static final String SECTION_CONTACT = "SECTION_CONTACT";
-    static final String SECTION_LOCALITY = "SECTION_LOCALITY";
+    static final String SECTION_LOCATION = "SECTION_LOCATION";
     static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
     static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
 
@@ -57,7 +57,7 @@ public class JobAdvertisementUpdater {
 
     private Contact contact;
 
-    private Locality locality;
+    private Location location;
 
     private List<Occupation> occupations;
 
@@ -80,7 +80,7 @@ public class JobAdvertisementUpdater {
         this.applyChannel = builder.applyChannel;
         this.company = builder.company;
         this.contact = builder.contact;
-        this.locality = builder.locality;
+        this.location = builder.location;
         this.occupations = builder.occupations;
         this.languageSkills = builder.languageSkills;
     }
@@ -149,8 +149,8 @@ public class JobAdvertisementUpdater {
         return contact;
     }
 
-    public Locality getLocality() {
-        return locality;
+    public Location getLocation() {
+        return location;
     }
 
     public List<Occupation> getOccupations() {
@@ -179,7 +179,7 @@ public class JobAdvertisementUpdater {
         private ApplyChannel applyChannel;
         private Company company;
         private Contact contact;
-        private Locality locality;
+        private Location location;
         private List<Occupation> occupations;
         private List<LanguageSkill> languageSkills;
 
@@ -265,9 +265,9 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setLocality(Locality locality) {
-            this.changedSections.add(SECTION_LOCALITY);
-            this.locality = locality;
+        public Builder setLocation(Location location) {
+            this.changedSections.add(SECTION_LOCATION);
+            this.location = location;
             return this;
         }
 

@@ -1,11 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 
 import javax.validation.constraints.NotEmpty;
 
-public class LocalityDto {
+public class LocationDto {
 
     private String remarks;
     private String city;
@@ -15,13 +15,13 @@ public class LocalityDto {
     private String regionCode;
     private String cantonCode;
     private String countryIsoCode;
-    private GeoPoint location;
+    private GeoPoint coordinates;
 
-    protected LocalityDto() {
+    protected LocationDto() {
         // For reflection libs
     }
 
-    public LocalityDto(String remarks, String city, String postalCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint location) {
+    public LocationDto(String remarks, String city, String postalCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint coordinates) {
         this.remarks = remarks;
         this.city = city;
         this.postalCode = postalCode;
@@ -29,7 +29,7 @@ public class LocalityDto {
         this.regionCode = regionCode;
         this.cantonCode = cantonCode;
         this.countryIsoCode = countryIsoCode;
-        this.location = location;
+        this.coordinates = coordinates;
     }
 
     public String getRemarks() {
@@ -88,24 +88,24 @@ public class LocalityDto {
         this.countryIsoCode = countryIsoCode;
     }
 
-    public GeoPoint getLocation() {
-        return location;
+    public GeoPoint getCoordinates() {
+        return coordinates;
     }
 
-    public void setLocation(GeoPoint location) {
-        this.location = location;
+    public void setCoordinates(GeoPoint coordinates) {
+        this.coordinates = coordinates;
     }
 
-    public static LocalityDto toDto(Locality locality) {
-        LocalityDto localityDto = new LocalityDto();
-        localityDto.setRemarks(locality.getRemarks());
-        localityDto.setCity(locality.getCity());
-        localityDto.setPostalCode(locality.getPostalCode());
-        localityDto.setCommunalCode(locality.getCommunalCode());
-        localityDto.setRegionCode(locality.getRegionCode());
-        localityDto.setCantonCode(locality.getCantonCode());
-        localityDto.setCountryIsoCode(locality.getCountryIsoCode());
-        localityDto.setLocation(locality.getLocation());
-        return localityDto;
+    public static LocationDto toDto(Location location) {
+        LocationDto locationDto = new LocationDto();
+        locationDto.setRemarks(location.getRemarks());
+        locationDto.setCity(location.getCity());
+        locationDto.setPostalCode(location.getPostalCode());
+        locationDto.setCommunalCode(location.getCommunalCode());
+        locationDto.setRegionCode(location.getRegionCode());
+        locationDto.setCantonCode(location.getCantonCode());
+        locationDto.setCountryIsoCode(location.getCountryIsoCode());
+        locationDto.setCoordinates(location.getCoordinates());
+        return locationDto;
     }
 }

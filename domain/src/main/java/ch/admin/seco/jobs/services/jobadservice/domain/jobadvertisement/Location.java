@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Embeddable
 @Access(AccessType.FIELD)
-public class Locality implements ValueObject<Locality> {
+public class Location implements ValueObject<Location> {
 
     private String remarks;
 
@@ -29,13 +29,13 @@ public class Locality implements ValueObject<Locality> {
 
     @Embedded
     @Valid
-    private GeoPoint location;
+    private GeoPoint coordinates;
 
-    protected Locality() {
+    protected Location() {
         // For reflection libs
     }
 
-    public Locality(String remarks, String city, String postalCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint location) {
+    public Location(String remarks, String city, String postalCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint coordinates) {
         this.remarks = remarks;
         this.city = city;
         this.postalCode = postalCode;
@@ -43,7 +43,7 @@ public class Locality implements ValueObject<Locality> {
         this.regionCode = regionCode;
         this.cantonCode = cantonCode;
         this.countryIsoCode = countryIsoCode;
-        this.location = location;
+        this.coordinates = coordinates;
     }
 
     public String getRemarks() {
@@ -74,12 +74,12 @@ public class Locality implements ValueObject<Locality> {
         return countryIsoCode;
     }
 
-    public GeoPoint getLocation() {
-        return location;
+    public GeoPoint getCoordinates() {
+        return coordinates;
     }
 
     @Override
-    public boolean sameValueObjectAs(Locality other) {
+    public boolean sameValueObjectAs(Location other) {
         return equals(other);
     }
 
@@ -87,25 +87,25 @@ public class Locality implements ValueObject<Locality> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Locality locality = (Locality) o;
-        return Objects.equals(remarks, locality.remarks) &&
-                Objects.equals(city, locality.city) &&
-                Objects.equals(postalCode, locality.postalCode) &&
-                Objects.equals(communalCode, locality.communalCode) &&
-                Objects.equals(regionCode, locality.regionCode) &&
-                Objects.equals(cantonCode, locality.cantonCode) &&
-                Objects.equals(countryIsoCode, locality.countryIsoCode) &&
-                Objects.equals(location, locality.location);
+        Location location = (Location) o;
+        return Objects.equals(remarks, location.remarks) &&
+                Objects.equals(city, location.city) &&
+                Objects.equals(postalCode, location.postalCode) &&
+                Objects.equals(communalCode, location.communalCode) &&
+                Objects.equals(regionCode, location.regionCode) &&
+                Objects.equals(cantonCode, location.cantonCode) &&
+                Objects.equals(countryIsoCode, location.countryIsoCode) &&
+                Objects.equals(coordinates, location.coordinates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(remarks, city, postalCode, communalCode, regionCode, cantonCode, countryIsoCode, location);
+        return Objects.hash(remarks, city, postalCode, communalCode, regionCode, cantonCode, countryIsoCode, coordinates);
     }
 
     @Override
     public String toString() {
-        return "Locality{" +
+        return "Location{" +
                 "remarks='" + remarks + '\'' +
                 ", city='" + city + '\'' +
                 ", postalCode='" + postalCode + '\'' +
@@ -113,7 +113,7 @@ public class Locality implements ValueObject<Locality> {
                 ", regionCode='" + regionCode + '\'' +
                 ", cantonCode='" + cantonCode + '\'' +
                 ", countryIsoCode='" + countryIsoCode + '\'' +
-                ", location=" + location +
+                ", coordinates=" + coordinates +
                 '}';
     }
 }

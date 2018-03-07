@@ -4,7 +4,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.utils.MappingBuilder;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,28 +18,28 @@ public class ApiDtoConverter {
             .put(LanguageSkillApiDto.LanguageLevel.very_good, LanguageLevel.PROFICIENT)
             .toImmutable();
 
-    public static Employment toEmployment(JobApiDto job) {
+    public static Employment toEmployment(JobApiDto jobApiDto) {
         return new Employment(
-                job.getStartDate(),
-                job.getEndDate(),
-                job.getDurationInDays(),
-                job.getStartsImmediately(),
-                job.getPermanent(),
-                job.getWorkingTimePercentageFrom(),
-                job.getWorkingTimePercentageTo()
+                jobApiDto.getStartDate(),
+                jobApiDto.getEndDate(),
+                jobApiDto.getDurationInDays(),
+                jobApiDto.getStartsImmediately(),
+                jobApiDto.getPermanent(),
+                jobApiDto.getWorkingTimePercentageFrom(),
+                jobApiDto.getWorkingTimePercentageTo()
         );
     }
 
-    public static Locality toLocality(LocationApiDto localityDto) {
-        if (localityDto != null) {
-            return new Locality(
-                    localityDto.getRemarks(),
-                    localityDto.getCity(),
-                    localityDto.getPostalCode(),
+    public static Location toLocation(LocationApiDto locationApiDto) {
+        if (locationApiDto != null) {
+            return new Location(
+                    locationApiDto.getRemarks(),
+                    locationApiDto.getCity(),
+                    locationApiDto.getPostalCode(),
                     null,
                     null,
-                    localityDto.getCantonCode(),
-                    localityDto.getCountryIsoCode(),
+                    locationApiDto.getCantonCode(),
+                    locationApiDto.getCountryIsoCode(),
                     null
             );
         }

@@ -1,8 +1,8 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.locality;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.location;
 
 import java.util.UUID;
 
-public class LocalityResource {
+public class LocationResource {
 
     private UUID id;
     private String city;
@@ -12,11 +12,11 @@ public class LocalityResource {
     private String regionCode;
     private GeoPointResource geoPoint;
 
-    protected LocalityResource() {
+    protected LocationResource() {
         // For reflection libs
     }
 
-    public LocalityResource(UUID id, String city, String zipCode, String communalCode, String cantonCode, String regionCode, GeoPointResource geoPoint) {
+    public LocationResource(UUID id, String city, String zipCode, String communalCode, String cantonCode, String regionCode, GeoPointResource geoPoint) {
         this.id = id;
         this.city = city;
         this.zipCode = zipCode;
