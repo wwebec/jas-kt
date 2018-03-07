@@ -4,4 +4,5 @@ public enum MessageSystem {
 
     AVAM,
     JOB_AD_SERVICE
+
 }
