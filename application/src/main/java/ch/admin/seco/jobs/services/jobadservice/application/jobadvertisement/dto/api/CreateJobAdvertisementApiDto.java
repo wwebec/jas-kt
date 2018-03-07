@@ -18,6 +18,8 @@ public class CreateJobAdvertisementApiDto {
 
     private LocalDate publicationEndDate;
 
+    private boolean reportToAvam;
+
     private String reference;
 
     private String url;
