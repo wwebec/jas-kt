@@ -1,5 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.JOB_ADVERTISEMENT_CANCELLED;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.MessageHeaders.EVENT;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.MessageHeaders.SOURCE_SYSTEM;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.MessageHeaders.TARGET_SYSTEM;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.MessageSystem.AVAM;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.MessageSystem.JOB_AD_SERVICE;
+
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.context.event.EventListener;
@@ -12,7 +20,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvent;
 
 public class DefaultAvamService implements RavRegistrationService {
-
 
     private final DomainEventPublisher domainEventPublisher;
 
@@ -27,9 +34,9 @@ public class DefaultAvamService implements RavRegistrationService {
     public void register(JobAdvertisement jobAdvertisement) {
         output.send(MessageBuilder
                 .withPayload(jobAdvertisement)
-                .setHeader("event", "JOB_ADVERTISEMENT_INSPECTING")
-                .setHeader("source", "job-ad-service")
-                .setHeader("target", "avam")
+                .setHeader(EVENT, JOB_ADVERTISEMENT_INSPECTING)
+                .setHeader(SOURCE_SYSTEM, JOB_AD_SERVICE)
+                .setHeader(TARGET_SYSTEM, AVAM)
                 .build());
     }
 
@@ -37,9 +44,9 @@ public class DefaultAvamService implements RavRegistrationService {
     public void deregister(JobAdvertisement jobAdvertisement) {
         output.send(MessageBuilder
                 .withPayload(jobAdvertisement)
-                .setHeader("event", "JOB_ADVERTISEMENT_CANCELLED")
-                .setHeader("source", "job-ad-service")
-                .setHeader("target", "avam")
+                .setHeader(EVENT, JOB_ADVERTISEMENT_CANCELLED)
+                .setHeader(SOURCE_SYSTEM, JOB_AD_SERVICE)
+                .setHeader(TARGET_SYSTEM, AVAM)
                 .build());
     }
 

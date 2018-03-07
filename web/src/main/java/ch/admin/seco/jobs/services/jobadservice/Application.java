@@ -52,6 +52,10 @@ public class Application {
         SpringApplication app = new SpringApplication(Application.class);
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
+        displayAppStartInfo(env);
+    }
+
+    private static void displayAppStartInfo(Environment env) throws UnknownHostException {
         String protocol = "http";
         if (env.getProperty("server.ssl.key-store") != null) {
             protocol = "https";
@@ -76,10 +80,10 @@ public class Application {
     }
 
     /**
-     * Initializes candidateservice.
-     * <p>
+     * Initializes job-ad-service.
+     *
      * Spring profiles can be configured with a program arguments --spring.profiles.active=your-active-profile
-     * <p>
+     *
      * You can find more information on how profiles work with JHipster on <a href="http://www.jhipster.tech/profiles/">http://www.jhipster.tech/profiles/</a>.
      */
     @PostConstruct
