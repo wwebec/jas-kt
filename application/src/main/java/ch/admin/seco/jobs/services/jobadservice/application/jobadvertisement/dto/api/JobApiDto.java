@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 public class JobApiDto {
-	// TODO Job-Sprache
+	// TODO Job-Language
 
 	private String title;
 	@Size(max = 10000)
