@@ -1,42 +1,29 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
+import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
+import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ApiDtoConverter;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CreateJobAdvertisementApiDto;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
-import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
-import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CancellationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementWebFormDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ApiDtoConverter;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CreateJobAdvertisementApiDto;
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
 
 @Service
 @Transactional(rollbackFor = {Exception.class})
@@ -56,11 +43,11 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
-            JobAdvertisementFactory jobAdvertisementFactory,
-            RavRegistrationService ravRegistrationService,
-            ReportingObligationService reportingObligationService,
-            LocationService locationService,
-            ProfessionService professionSerivce) {
+                                              JobAdvertisementFactory jobAdvertisementFactory,
+                                              RavRegistrationService ravRegistrationService,
+                                              ReportingObligationService reportingObligationService,
+                                              LocationService locationService,
+                                              ProfessionService professionSerivce) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.ravRegistrationService = ravRegistrationService;
@@ -122,7 +109,7 @@ public class JobAdvertisementApplicationService {
                 .setApplyChannel(toApplyChannel(createJobAdvertisementApiDto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementApiDto.getCompany()))
                 .setContact(toContact(createJobAdvertisementApiDto.getContact()))
-                .setLanguageSkills(ApiDtoConverter.toLanguageSkills(createJobAdvertisementApiDto.getJob().getLanguageSkills()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementApiDto.getJob().getLanguageSkills()))
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(
