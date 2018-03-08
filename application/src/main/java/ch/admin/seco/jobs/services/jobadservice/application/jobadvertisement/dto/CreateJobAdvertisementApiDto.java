@@ -1,9 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

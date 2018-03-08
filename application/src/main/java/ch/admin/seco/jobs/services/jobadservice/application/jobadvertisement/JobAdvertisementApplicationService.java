@@ -5,8 +5,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ApiDtoConverter;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CreateJobAdvertisementApiDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementApiDto;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
@@ -90,7 +89,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromApi(CreateJobAdvertisementApiDto createJobAdvertisementApiDto) {
-        Location location = ApiDtoConverter.toLocation(createJobAdvertisementApiDto.getJob().getLocation());
+        Location location = toLocation(createJobAdvertisementApiDto.getJob().getLocation());
         location = locationService.enrichCodes(location);
 
         Occupation occupation = toOccupation(createJobAdvertisementApiDto.getOccupation());
@@ -105,7 +104,7 @@ public class JobAdvertisementApplicationService {
                 .setLocation(location)
                 .setOccupations(Collections.singletonList(occupation))
                 .setReportingObligation(reportingObligation)
-                .setEmployment(ApiDtoConverter.toEmployment(createJobAdvertisementApiDto.getJob()))
+                .setEmployment(toEmployment(createJobAdvertisementApiDto.getJob()))
                 .setApplyChannel(toApplyChannel(createJobAdvertisementApiDto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementApiDto.getCompany()))
                 .setContact(toContact(createJobAdvertisementApiDto.getContact()))
@@ -226,6 +225,17 @@ public class JobAdvertisementApplicationService {
         return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
     }
 
+    public Employment toEmployment(JobApiDto jobApiDto) {
+        return new Employment(
+                jobApiDto.getStartDate(),
+                jobApiDto.getEndDate(),
+                jobApiDto.getDurationInDays(),
+                jobApiDto.getStartsImmediately(),
+                jobApiDto.getPermanent(),
+                jobApiDto.getWorkingTimePercentageFrom(),
+                jobApiDto.getWorkingTimePercentageTo()
+        );
+    }
     private Employment toEmployment(EmploymentDto employmentDto) {
         if (employmentDto != null) {
             return new Employment(
@@ -282,6 +292,22 @@ public class JobAdvertisementApplicationService {
                     contactDto.getLastName(),
                     contactDto.getPhone(),
                     contactDto.getEmail()
+            );
+        }
+        return null;
+    }
+
+    public Location toLocation(CreateLocationDto createLocationDto) {
+        if (createLocationDto != null) {
+            return new Location(
+                    createLocationDto.getRemarks(),
+                    createLocationDto.getCity(),
+                    createLocationDto.getPostalCode(),
+                    null,
+                    null,
+                    null,
+                    createLocationDto.getCountryIsoCode(),
+                    null
             );
         }
         return null;

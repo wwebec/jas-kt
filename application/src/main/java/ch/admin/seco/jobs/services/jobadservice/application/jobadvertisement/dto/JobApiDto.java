@@ -1,6 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -27,7 +25,7 @@ public class JobApiDto {
     private Boolean permanent;
     @NotNull
     @Valid
-    private LocationApiDto location;
+    private CreateLocationDto location;
     @Size(max = 5)
     private List<LanguageSkillDto> languageSkills;
 
@@ -44,7 +42,7 @@ public class JobApiDto {
                      Integer durationInDays,
                      Boolean startsImmediately,
                      Boolean permanent,
-                     LocationApiDto location,
+                     CreateLocationDto location,
                      List<LanguageSkillDto> languageSkills) {
         this.title = title;
         this.description = description;
@@ -123,11 +121,11 @@ public class JobApiDto {
         this.permanent = permanent;
     }
 
-    public LocationApiDto getLocation() {
+    public CreateLocationDto getLocation() {
         return location;
     }
 
-    public void setLocation(LocationApiDto location) {
+    public void setLocation(CreateLocationDto location) {
         this.location = location;
     }
 

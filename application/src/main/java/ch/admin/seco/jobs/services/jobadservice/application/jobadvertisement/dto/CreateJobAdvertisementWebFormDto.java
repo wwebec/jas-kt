@@ -29,7 +29,7 @@ public class CreateJobAdvertisementWebFormDto {
     private ContactDto contact;
 
     @NotNull
-    private LocationDto location;
+    private CreateLocationDto location;
 
     @NotNull
     private OccupationDto occupation;
@@ -40,7 +40,7 @@ public class CreateJobAdvertisementWebFormDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementWebFormDto(boolean eures, String title, String description, EmploymentDto employment, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, LocationDto location, OccupationDto occupation, List<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementWebFormDto(boolean eures, String title, String description, EmploymentDto employment, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location, OccupationDto occupation, List<LanguageSkillDto> languageSkills) {
         this.eures = eures;
         this.title = title;
         this.description = description;
@@ -118,11 +118,11 @@ public class CreateJobAdvertisementWebFormDto {
         this.contact = contact;
     }
 
-    public LocationDto getLocation() {
+    public CreateLocationDto getLocation() {
         return location;
     }
 
-    public void setLocation(LocationDto location) {
+    public void setLocation(CreateLocationDto location) {
         this.location = location;
     }
 

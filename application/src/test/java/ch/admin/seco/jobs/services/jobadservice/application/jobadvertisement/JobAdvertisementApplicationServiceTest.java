@@ -5,9 +5,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.CreateJobAdvertisementApiDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.JobApiDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.LocationApiDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
@@ -86,7 +83,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
                 new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email"),
-                new LocationDto("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null),
+                new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
         );
@@ -117,7 +114,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new JobApiDto("title", "descriptioin", 10, 90,
                         LocalDate.of(2018, 1, 1),
                         LocalDate.of(2018, 12, 31), 30, true, true,
-                        new LocationApiDto("remarks", "ctiy", "postalCode", "BE", "details"),
+                        new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                         Collections.emptyList()),
                 new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email"),
