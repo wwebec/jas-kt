@@ -1,8 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.logging;
 
-import java.net.InetSocketAddress;
-import java.util.Iterator;
-
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -18,12 +15,16 @@ import net.logstash.logback.encoder.LogstashEncoder;
 import net.logstash.logback.stacktrace.ShortenedThrowableConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.InetSocketAddress;
+import java.util.Iterator;
+
 @Configuration
+@EnableConfigurationProperties(LogstashProperties.class)
 @RefreshScope
 public class LoggingConfiguration {
 
@@ -39,7 +40,7 @@ public class LoggingConfiguration {
     private LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
 
     public LoggingConfiguration(@Value("${spring.application.name}") String appName, @Value("${server.port}") String serverPort,
-        @Value("${info.project.version}") String version, LogstashProperties logstashProperties) {
+                                @Value("${info.project.version}") String version, LogstashProperties logstashProperties) {
         this.appName = appName;
         this.serverPort = serverPort;
         this.version = version;
@@ -65,7 +66,7 @@ public class LoggingConfiguration {
         logstashAppender.setContext(context);
         String optionalFields = "";
         String customFields = "{\"app_name\":\"" + appName + "\",\"app_port\":\"" + serverPort + "\"," +
-            optionalFields + "\"version\":\"" + version + "\"}";
+                optionalFields + "\"version\":\"" + version + "\"}";
 
         // More documentation is available at: https://github.com/logstash/logstash-logback-encoder
         LogstashEncoder logstashEncoder = new LogstashEncoder();
