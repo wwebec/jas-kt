@@ -16,11 +16,11 @@ public class Company implements ValueObject<Company> {
     private String name;
     private String street;
     private String houseNumber;
-    private String zipCode;
+    private String postalCode;
     private String city;
     private String countryIsoCode;
     private String postOfficeBoxNumber;
-    private String postOfficeBoxZipCode;
+    private String postOfficeBoxPostalCode;
     private String postOfficeBoxCity;
     private String phone;
     private String email;
@@ -34,11 +34,11 @@ public class Company implements ValueObject<Company> {
         this.name = Condition.notBlank(builder.name, "The name of a company can't be null");
         this.street = builder.street;
         this.houseNumber = builder.houseNumber;
-        this.zipCode = Condition.notBlank(builder.zipCode, "The ZIP code of a company can't be null");
+        this.postalCode = Condition.notBlank(builder.postalCode, "The postal code of a company can't be null");
         this.city = Condition.notBlank(builder.city, "The city of a company can't be null");
         this.countryIsoCode = Condition.notBlank(builder.countryIsoCode, "The country of a company can't be null");
         this.postOfficeBoxNumber = builder.postOfficeBoxNumber;
-        this.postOfficeBoxZipCode = builder.postOfficeBoxZipCode;
+        this.postOfficeBoxPostalCode = builder.postOfficeBoxPostalCode;
         this.postOfficeBoxCity = builder.postOfficeBoxCity;
         this.phone = builder.phone;
         this.email = builder.email;
@@ -57,8 +57,8 @@ public class Company implements ValueObject<Company> {
         return houseNumber;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
     public String getCity() {
@@ -73,8 +73,8 @@ public class Company implements ValueObject<Company> {
         return postOfficeBoxNumber;
     }
 
-    public String getPostOfficeBoxZipCode() {
-        return postOfficeBoxZipCode;
+    public String getPostOfficeBoxPostalCode() {
+        return postOfficeBoxPostalCode;
     }
 
     public String getPostOfficeBoxCity() {
@@ -106,11 +106,11 @@ public class Company implements ValueObject<Company> {
         return Objects.equals(name, company.name) &&
                 Objects.equals(street, company.street) &&
                 Objects.equals(houseNumber, company.houseNumber) &&
-                Objects.equals(zipCode, company.zipCode) &&
+                Objects.equals(postalCode, company.postalCode) &&
                 Objects.equals(city, company.city) &&
                 Objects.equals(countryIsoCode, company.countryIsoCode) &&
                 Objects.equals(postOfficeBoxNumber, company.postOfficeBoxNumber) &&
-                Objects.equals(postOfficeBoxZipCode, company.postOfficeBoxZipCode) &&
+                Objects.equals(postOfficeBoxPostalCode, company.postOfficeBoxPostalCode) &&
                 Objects.equals(postOfficeBoxCity, company.postOfficeBoxCity) &&
                 Objects.equals(phone, company.phone) &&
                 Objects.equals(email, company.email) &&
@@ -119,7 +119,7 @@ public class Company implements ValueObject<Company> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, street, houseNumber, zipCode, city, countryIsoCode, postOfficeBoxNumber, postOfficeBoxZipCode, postOfficeBoxCity, phone, email, website);
+        return Objects.hash(name, street, houseNumber, postalCode, city, countryIsoCode, postOfficeBoxNumber, postOfficeBoxPostalCode, postOfficeBoxCity, phone, email, website);
     }
 
     @Override
@@ -128,11 +128,11 @@ public class Company implements ValueObject<Company> {
                 "name='" + name + '\'' +
                 ", street='" + street + '\'' +
                 ", houseNumber='" + houseNumber + '\'' +
-                ", zipCode='" + zipCode + '\'' +
+                ", postalCode='" + postalCode + '\'' +
                 ", city='" + city + '\'' +
                 ", countryIsoCode='" + countryIsoCode + '\'' +
                 ", postOfficeBoxNumber='" + postOfficeBoxNumber + '\'' +
-                ", postOfficeBoxZipCode='" + postOfficeBoxZipCode + '\'' +
+                ", postOfficeBoxPostalCode='" + postOfficeBoxPostalCode + '\'' +
                 ", postOfficeBoxCity='" + postOfficeBoxCity + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
@@ -145,11 +145,11 @@ public class Company implements ValueObject<Company> {
         private String name;
         private String street;
         private String houseNumber;
-        private String zipCode;
+        private String postalCode;
         private String city;
         private String countryIsoCode;
         private String postOfficeBoxNumber;
-        private String postOfficeBoxZipCode;
+        private String postOfficeBoxPostalCode;
         private String postOfficeBoxCity;
         private String phone;
         private String email;
@@ -185,8 +185,8 @@ public class Company implements ValueObject<Company> {
             return this;
         }
 
-        public Builder<T> setZipCode(String zipCode) {
-            this.zipCode = zipCode;
+        public Builder<T> setPostalCode(String postalCode) {
+            this.postalCode = postalCode;
             return this;
         }
 
@@ -205,8 +205,8 @@ public class Company implements ValueObject<Company> {
             return this;
         }
 
-        public Builder<T> setPostOfficeBoxZipCode(String postOfficeBoxZipCode) {
-            this.postOfficeBoxZipCode = postOfficeBoxZipCode;
+        public Builder<T> setPostOfficeBoxPostalCode(String postOfficeBoxPostalCode) {
+            this.postOfficeBoxPostalCode = postOfficeBoxPostalCode;
             return this;
         }
 

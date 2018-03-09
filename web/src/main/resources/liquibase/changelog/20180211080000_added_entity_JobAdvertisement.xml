@@ -77,7 +77,6 @@
             <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN" type="integer"/>
             <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MAX" type="integer"/>
             <column name="JOB_CENTER_CODE" type="varchar(5)"/>
-            <column name="DRIVING_LICENSE_LEVEL" type="varchar(3)"/>
             <column name="APPLY_CHANNEL_MAIL_ADDRESS" type="varchar(255)"/>
             <column name="APPLY_CHANNEL_EMAIL_ADDRESS" type="varchar(255)"/>
             <column name="APPLY_CHANNEL_PHONE_NUMBER" type="varchar(20)"/>
@@ -86,11 +85,11 @@
             <column name="COMPANY_NAME" type="varchar(255)"/>
             <column name="COMPANY_STREET" type="varchar(50)"/>
             <column name="COMPANY_HOUSE_NUMBER" type="varchar(10)"/>
-            <column name="COMPANY_ZIP_CODE" type="varchar(10)"/>
+            <column name="COMPANY_POSTAL_CODE" type="varchar(10)"/>
             <column name="COMPANY_CITY" type="varchar(50)"/>
             <column name="COMPANY_COUNTRY_ISO_CODE" type="varchar(2)"/>
             <column name="COMPANY_POST_OFFICE_BOX_NUMBER" type="varchar(10)"/>
-            <column name="COMPANY_POST_OFFICE_BOX_ZIP_CODE" type="varchar(10)"/>
+            <column name="COMPANY_POST_OFFICE_BOX_POSTAL_CODE" type="varchar(10)"/>
             <column name="COMPANY_POST_OFFICE_BOX_CITY" type="varchar(50)"/>
             <column name="COMPANY_PHONE" type="varchar(20)"/>
             <column name="COMPANY_EMAIL" type="varchar(255)"/>
@@ -100,22 +99,22 @@
             <column name="CONTACT_LAST_NAME" type="varchar(50)"/>
             <column name="CONTACT_PHONE" type="varchar(20)"/>
             <column name="CONTACT_EMAIL" type="varchar(50)"/>
-            <column name="LOCALITY_REMARKS" type="varchar(255)"/>
-            <column name="LOCALITY_CITY" type="varchar(50)"/>
-            <column name="LOCALITY_ZIP_CODE" type="varchar(10)"/>
-            <column name="LOCALITY_COMMUNAL_CODE" type="varchar(4)"/>
-            <column name="LOCALITY_REGION_CODE" type="varchar(4)"/>
-            <column name="LOCALITY_CANTON_CODE" type="varchar(2)"/>
-            <column name="LOCALITY_COUNTRY_ISO_CODE" type="varchar(2)"/>
-            <column name="LOCALITY_LOCATION_LONGITUDE" type="double"/>
-            <column name="LOCALITY_LOCATION_LATITUDE" type="double"/>
+            <column name="LOCATION_REMARKS" type="varchar(255)"/>
+            <column name="LOCATION_CITY" type="varchar(50)"/>
+            <column name="LOCATION_POSTAL_CODE" type="varchar(10)"/>
+            <column name="LOCATION_COMMUNAL_CODE" type="varchar(4)"/>
+            <column name="LOCATION_REGION_CODE" type="varchar(4)"/>
+            <column name="LOCATION_CANTON_CODE" type="varchar(2)"/>
+            <column name="LOCATION_COUNTRY_ISO_CODE" type="varchar(2)"/>
+            <column name="LOCATION_LONGITUDE" type="double"/>
+            <column name="LOCATION_LATITUDE" type="double"/>
         </createTable>
 
         <createTable tableName="JOB_ADVERTISEMENT_OCCUPATION">
             <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
                 <constraints nullable="false"/>
             </column>
-            <column name="AVAM_CODE" type="varchar(16)">
+            <column name="AVAM_OCCUPATION_CODE" type="varchar(16)">
                 <constraints nullable="false"/>
             </column>
             <column name="SBN3_CODE" type="varchar(16)"/>

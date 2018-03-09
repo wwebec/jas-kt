@@ -16,7 +16,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 @Access(AccessType.FIELD)
 public class Occupation implements ValueObject<Occupation> {
 
-    private String avamCode;
+    private String avamOccupationCode;
 
     @Column(name = "SBN3_CODE")
     private String sbn3Code;
@@ -37,26 +37,26 @@ public class Occupation implements ValueObject<Occupation> {
         // For reflection libs
     }
 
-    public Occupation(String avamCode) {
-        this.avamCode = Condition.notBlank(avamCode);
+    public Occupation(String avamOccupationCode) {
+        this.avamOccupationCode = Condition.notBlank(avamOccupationCode);
     }
 
-    public Occupation(String avamCode, WorkExperience workExperience, String educationCode) {
-        this(avamCode);
+    public Occupation(String avamOccupationCode, WorkExperience workExperience, String educationCode) {
+        this(avamOccupationCode);
         this.workExperience = workExperience;
         this.educationCode = educationCode;
     }
 
-    public Occupation(String avamCode, String sbn3Code, String sbn5Code, String bfsCode, String label, WorkExperience workExperience, String educationCode) {
-        this(avamCode, workExperience, educationCode);
+    public Occupation(String avamOccupationCode, String sbn3Code, String sbn5Code, String bfsCode, String label, WorkExperience workExperience, String educationCode) {
+        this(avamOccupationCode, workExperience, educationCode);
         this.sbn3Code = sbn3Code;
         this.sbn5Code = sbn5Code;
         this.bfsCode = bfsCode;
         this.label = label;
     }
 
-    public String getAvamCode() {
-        return avamCode;
+    public String getAvamOccupationCode() {
+        return avamOccupationCode;
     }
 
     public String getSbn3Code() {
@@ -90,7 +90,7 @@ public class Occupation implements ValueObject<Occupation> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(avamCode, sbn3Code, sbn5Code, bfsCode, label, workExperience, educationCode);
+        return Objects.hash(avamOccupationCode, sbn3Code, sbn5Code, bfsCode, label, workExperience, educationCode);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class Occupation implements ValueObject<Occupation> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Occupation that = (Occupation) o;
-        return Objects.equals(avamCode, that.avamCode) &&
+        return Objects.equals(avamOccupationCode, that.avamOccupationCode) &&
                 Objects.equals(sbn3Code, that.sbn3Code) &&
                 Objects.equals(sbn5Code, that.sbn5Code) &&
                 Objects.equals(bfsCode, that.bfsCode) &&
@@ -110,7 +110,7 @@ public class Occupation implements ValueObject<Occupation> {
     @Override
     public String toString() {
         return "Occupation{" +
-                "avamCode='" + avamCode + '\'' +
+                "avamOccupationCode='" + avamOccupationCode + '\'' +
                 ", sbn3Code='" + sbn3Code + '\'' +
                 ", sbn5Code='" + sbn5Code + '\'' +
                 ", bfsCode='" + bfsCode + '\'' +

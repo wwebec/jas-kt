@@ -6,9 +6,12 @@ import java.util.stream.Collectors;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
+import javax.validation.constraints.NotEmpty;
+
 public class OccupationDto {
 
-    private String avamCode;
+    @NotEmpty
+    private String avamOccupationCode;
     private WorkExperience workExperience;
     private String educationCode;
 
@@ -16,22 +19,22 @@ public class OccupationDto {
         // For reflection libs
     }
 
-    public OccupationDto(String avamCode, WorkExperience workExperience, String educationCode) {
-        this.avamCode = avamCode;
+    public OccupationDto(String avamOccupationCode, WorkExperience workExperience, String educationCode) {
+        this.avamOccupationCode = avamOccupationCode;
         this.workExperience = workExperience;
         this.educationCode = educationCode;
     }
 
     public static OccupationDto toDto(Occupation occupation) {
         OccupationDto occupationDto = new OccupationDto();
-        occupationDto.setAvamCode(occupation.getAvamCode());
+        occupationDto.setAvamOccupationCode(occupation.getAvamOccupationCode());
         occupationDto.setWorkExperience(occupation.getWorkExperience());
         occupationDto.setEducationCode(occupation.getEducationCode());
         return occupationDto;
     }
 
-    public String getAvamCode() {
-        return avamCode;
+    public String getAvamOccupationCode() {
+        return avamOccupationCode;
     }
 
     public WorkExperience getWorkExperience() {
@@ -42,8 +45,8 @@ public class OccupationDto {
         this.workExperience = workExperience;
     }
 
-    public void setAvamCode(String avamCode) {
-        this.avamCode = avamCode;
+    public void setAvamOccupationCode(String avamOccupationCode) {
+        this.avamOccupationCode = avamOccupationCode;
     }
 
     public String getEducationCode() {

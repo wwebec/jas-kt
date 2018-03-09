@@ -17,11 +17,10 @@ public class JobAdvertisementUpdater {
     static final String SECTION_EURES = "SECTION_EURES";
     static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
     static final String SECTION_JOB_CENTER_CODE = "SECTION_JOB_CENTER_CODE";
-    static final String SECTION_DRIVING_LICENSE_LEVEL = "SECTION_DRIVING_LICENSE_LEVEL";
     static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
     static final String SECTION_COMPANY = "SECTION_COMPANY";
     static final String SECTION_CONTACT = "SECTION_CONTACT";
-    static final String SECTION_LOCALITY = "SECTION_LOCALITY";
+    static final String SECTION_LOCATION = "SECTION_LOCATION";
     static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
     static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
 
@@ -49,15 +48,13 @@ public class JobAdvertisementUpdater {
 
     private String jobCenterCode;
 
-    private String drivingLicenseLevel;
-
     private ApplyChannel applyChannel;
 
     private Company company;
 
     private Contact contact;
 
-    private Locality locality;
+    private Location location;
 
     private List<Occupation> occupations;
 
@@ -76,11 +73,10 @@ public class JobAdvertisementUpdater {
         this.euresAnonymous = builder.euresAnonymous;
         this.employment = builder.employment;
         this.jobCenterCode = builder.jobCenterCode;
-        this.drivingLicenseLevel = builder.drivingLicenseLevel;
         this.applyChannel = builder.applyChannel;
         this.company = builder.company;
         this.contact = builder.contact;
-        this.locality = builder.locality;
+        this.location = builder.location;
         this.occupations = builder.occupations;
         this.languageSkills = builder.languageSkills;
     }
@@ -133,10 +129,6 @@ public class JobAdvertisementUpdater {
         return jobCenterCode;
     }
 
-    public String getDrivingLicenseLevel() {
-        return drivingLicenseLevel;
-    }
-
     public ApplyChannel getApplyChannel() {
         return applyChannel;
     }
@@ -149,8 +141,8 @@ public class JobAdvertisementUpdater {
         return contact;
     }
 
-    public Locality getLocality() {
-        return locality;
+    public Location getLocation() {
+        return location;
     }
 
     public List<Occupation> getOccupations() {
@@ -175,11 +167,10 @@ public class JobAdvertisementUpdater {
         private boolean euresAnonymous;
         private Employment employment;
         private String jobCenterCode;
-        private String drivingLicenseLevel;
         private ApplyChannel applyChannel;
         private Company company;
         private Contact contact;
-        private Locality locality;
+        private Location location;
         private List<Occupation> occupations;
         private List<LanguageSkill> languageSkills;
 
@@ -241,12 +232,6 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setDrivingLicenseLevel(String drivingLicenseLevel) {
-            this.changedSections.add(SECTION_DRIVING_LICENSE_LEVEL);
-            this.drivingLicenseLevel = drivingLicenseLevel;
-            return this;
-        }
-
         public Builder setApplyChannel(ApplyChannel applyChannel) {
             this.changedSections.add(SECTION_APPLY_CHANNEL);
             this.applyChannel = applyChannel;
@@ -265,9 +250,9 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setLocality(Locality locality) {
-            this.changedSections.add(SECTION_LOCALITY);
-            this.locality = locality;
+        public Builder setLocation(Location location) {
+            this.changedSections.add(SECTION_LOCATION);
+            this.location = location;
             return this;
         }
 

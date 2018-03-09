@@ -4,14 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Locality;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.TOsteEgov;
 
 public class JobAdvertisementAssembler {
@@ -55,12 +49,10 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setBeschreibung(jobAdvertisement.getDescription());
 
         fillEmployment(tOsteEgov, jobAdvertisement.getEmployment());
-        tOsteEgov.setKategorieCode(AvamCodeResolver.DRIVING_LICENSE_LEVELS.getLeft(jobAdvertisement.getDrivingLicenseLevel()));
-
         fillApplyChannel(tOsteEgov, jobAdvertisement.getApplyChannel());
         fillCompany(tOsteEgov, jobAdvertisement.getCompany());
         fillContact(tOsteEgov, jobAdvertisement.getContact());
-        fillLocality(tOsteEgov, jobAdvertisement.getLocality());
+        fillLocation(tOsteEgov, jobAdvertisement.getLocation());
         fillOccupation(tOsteEgov, jobAdvertisement.getOccupations());
         fillLangaugeSkills(tOsteEgov, jobAdvertisement.getLanguageSkills());
 
@@ -106,9 +98,9 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setUntStrasse(company.getStreet());
         tOsteEgov.setUntHausNr(company.getHouseNumber());
         tOsteEgov.setUntOrt(company.getCity());
-        tOsteEgov.setUntPlz(company.getZipCode());
+        tOsteEgov.setUntPlz(company.getPostalCode());
         tOsteEgov.setUntPostfach(company.getPostOfficeBoxNumber());
-        tOsteEgov.setUntPostfachPlz(company.getPostOfficeBoxZipCode());
+        tOsteEgov.setUntPostfachPlz(company.getPostOfficeBoxPostalCode());
         tOsteEgov.setUntPostfachOrt(company.getPostOfficeBoxCity());
         tOsteEgov.setUntLand(company.getCountryIsoCode());
     }
@@ -124,15 +116,15 @@ public class JobAdvertisementAssembler {
         tOsteEgov.setKpEmail(contact.getEmail());
     }
 
-    private void fillLocality(TOsteEgov tOsteEgov, Locality locality) {
-        if (locality == null) {
+    private void fillLocation(TOsteEgov tOsteEgov, Location location) {
+        if (location == null) {
             return;
         }
-        tOsteEgov.setArbeitsOrtText(locality.getRemarks());
-        tOsteEgov.setArbeitsOrtOrt(locality.getCity());
-        tOsteEgov.setArbeitsOrtPlz(locality.getZipCode());
-        tOsteEgov.setArbeitsOrtGemeinde(locality.getCommunalCode());
-        tOsteEgov.setArbeitsOrtLand(locality.getCountryIsoCode());
+        tOsteEgov.setArbeitsOrtText(location.getRemarks());
+        tOsteEgov.setArbeitsOrtOrt(location.getCity());
+        tOsteEgov.setArbeitsOrtPlz(location.getPostalCode());
+        tOsteEgov.setArbeitsOrtGemeinde(location.getCommunalCode());
+        tOsteEgov.setArbeitsOrtLand(location.getCountryIsoCode());
     }
 
     private void fillOccupation(TOsteEgov tOsteEgov, List<Occupation> occupations) {

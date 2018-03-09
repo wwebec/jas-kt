@@ -5,14 +5,13 @@ import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.h
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_APPLY_CHANNEL;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_COMPANY;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_CONTACT;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_DRIVING_LICENSE_LEVEL;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EMPLOYMENT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EURES;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EXTERNAL_URL;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_FINGERPRINT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_JOB_CENTER_CODE;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LANGUAGE_SKILLS;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LOCALITY;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LOCATION;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_OCCUPATIONS;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLICATION_DATES;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_REPORTING_OBLIGATION;
@@ -78,6 +77,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String cancellationCode;
 
+    private boolean reportToRav;
+
     private boolean reportingObligation;
 
     private LocalDate reportingObligationEndDate;
@@ -109,8 +110,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String jobCenterCode;
 
-    private String drivingLicenseLevel;
-
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
@@ -127,11 +126,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "name", column = @Column(name = "COMPANY_NAME")),
             @AttributeOverride(name = "street", column = @Column(name = "COMPANY_STREET")),
             @AttributeOverride(name = "houseNumber", column = @Column(name = "COMPANY_HOUSE_NUMBER")),
-            @AttributeOverride(name = "zipCode", column = @Column(name = "COMPANY_ZIP_CODE")),
+            @AttributeOverride(name = "postalCode", column = @Column(name = "COMPANY_POSTAL_CODE")),
             @AttributeOverride(name = "city", column = @Column(name = "COMPANY_CITY")),
             @AttributeOverride(name = "countryIsoCode", column = @Column(name = "COMPANY_COUNTRY_ISO_CODE")),
             @AttributeOverride(name = "postOfficeBoxNumber", column = @Column(name = "COMPANY_POST_OFFICE_BOX_NUMBER")),
-            @AttributeOverride(name = "postOfficeBoxZipCode", column = @Column(name = "COMPANY_POST_OFFICE_BOX_ZIP_CODE")),
+            @AttributeOverride(name = "postOfficeBoxPostalCode", column = @Column(name = "COMPANY_POST_OFFICE_BOX_POSTAL_CODE")),
             @AttributeOverride(name = "postOfficeBoxCity", column = @Column(name = "COMPANY_POST_OFFICE_BOX_CITY")),
             @AttributeOverride(name = "phone", column = @Column(name = "COMPANY_PHONE")),
             @AttributeOverride(name = "email", column = @Column(name = "COMPANY_EMAIL")),
@@ -153,18 +152,18 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "remarks", column = @Column(name = "LOCALITY_REMARKS")),
-            @AttributeOverride(name = "city", column = @Column(name = "LOCALITY_CITY")),
-            @AttributeOverride(name = "zipCode", column = @Column(name = "LOCALITY_ZIP_CODE")),
-            @AttributeOverride(name = "communalCode", column = @Column(name = "LOCALITY_COMMUNAL_CODE")),
-            @AttributeOverride(name = "regionCode", column = @Column(name = "LOCALITY_REGION_CODE")),
-            @AttributeOverride(name = "cantonCode", column = @Column(name = "LOCALITY_CANTON_CODE")),
-            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "LOCALITY_COUNTRY_ISO_CODE")),
-            @AttributeOverride(name = "location.longitude", column = @Column(name = "LOCALITY_LOCATION_LONGITUDE")),
-            @AttributeOverride(name = "location.latitude", column = @Column(name = "LOCALITY_LOCATION_LATITUDE"))
+            @AttributeOverride(name = "remarks", column = @Column(name = "LOCATION_REMARKS")),
+            @AttributeOverride(name = "city", column = @Column(name = "LOCATION_CITY")),
+            @AttributeOverride(name = "postalCode", column = @Column(name = "LOCATION_POSTAL_CODE")),
+            @AttributeOverride(name = "communalCode", column = @Column(name = "LOCATION_COMMUNAL_CODE")),
+            @AttributeOverride(name = "regionCode", column = @Column(name = "LOCATION_REGION_CODE")),
+            @AttributeOverride(name = "cantonCode", column = @Column(name = "LOCATION_CANTON_CODE")),
+            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "LOCATION_COUNTRY_ISO_CODE")),
+            @AttributeOverride(name = "coordinates.longitude", column = @Column(name = "LOCATION_LONGITUDE")),
+            @AttributeOverride(name = "coordinates.latitude", column = @Column(name = "LOCATION_LATITUDE"))
     })
     @Valid
-    private Locality locality;
+    private Location location;
 
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
@@ -182,34 +181,33 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private JobAdvertisement(Builder builder) {
         this(builder.id, builder.sourceSystem, builder.status, builder.title, builder.description);
-
         this.stellennummerEgov = builder.stellennummerEgov;
-        this.occupations = builder.occupations;
-        this.eures = builder.eures;
-        this.locality = builder.locality;
-        this.publicationStartDate = builder.publicationStartDate;
-        this.rejectionCode = builder.rejectionCode;
-        this.approvalDate = builder.approvalDate;
-        this.reportingObligationEndDate = builder.reportingObligationEndDate;
-        this.jobCenterCode = builder.jobCenterCode;
-        this.company = builder.company;
-        this.employment = builder.employment;
-        this.sourceEntryId = builder.sourceEntryId;
-        this.rejectionDate = builder.rejectionDate;
-        this.contact = builder.contact;
-        this.reportingObligation = builder.reportingObligation;
         this.stellennummerAvam = builder.stellennummerAvam;
-        this.publicationEndDate = builder.publicationEndDate;
-        this.ravRegistrationDate = builder.ravRegistrationDate;
-        this.euresAnonymous = builder.euresAnonymous;
         this.fingerprint = builder.fingerprint;
-        this.cancellationCode = builder.cancellationCode;
-        this.applyChannel = builder.applyChannel;
-        this.languageSkills = builder.languageSkills;
-        this.drivingLicenseLevel = builder.drivingLicenseLevel;
-        this.cancellationDate = builder.cancellationDate;
+        this.sourceEntryId = builder.sourceEntryId;
         this.externalUrl = builder.externalUrl;
+        this.ravRegistrationDate = builder.ravRegistrationDate;
+        this.approvalDate = builder.approvalDate;
+        this.rejectionDate = builder.rejectionDate;
+        this.rejectionCode = builder.rejectionCode;
         this.rejectionReason = builder.rejectionReason;
+        this.cancellationDate = builder.cancellationDate;
+        this.cancellationCode = builder.cancellationCode;
+        this.reportToRav = builder.reportToRav;
+        this.reportingObligation = builder.reportingObligation;
+        this.reportingObligationEndDate = builder.reportingObligationEndDate;
+        this.publicationStartDate = builder.publicationStartDate;
+        this.publicationEndDate = builder.publicationEndDate;
+        this.eures = builder.eures;
+        this.euresAnonymous = builder.euresAnonymous;
+        this.employment = builder.employment;
+        this.jobCenterCode = builder.jobCenterCode;
+        this.applyChannel = builder.applyChannel;
+        this.company = builder.company;
+        this.contact = builder.contact;
+        this.location = builder.location;
+        this.occupations = builder.occupations;
+        this.languageSkills = builder.languageSkills;
     }
 
     public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status,
@@ -286,6 +284,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return cancellationCode;
     }
 
+    public boolean isReportToRav() {
+        return reportToRav;
+    }
+
     public boolean isReportingObligation() {
         return reportingObligation;
     }
@@ -326,10 +328,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return jobCenterCode;
     }
 
-    public String getDrivingLicenseLevel() {
-        return drivingLicenseLevel;
-    }
-
     public ApplyChannel getApplyChannel() {
         return applyChannel;
     }
@@ -342,8 +340,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return contact;
     }
 
-    public Locality getLocality() {
-        return locality;
+    public Location getLocation() {
+        return location;
     }
 
     public List<Occupation> getOccupations() {
@@ -492,11 +490,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 ", description='" + description + '\'' +
                 ", employment=" + employment +
                 ", jobCenterCode='" + jobCenterCode + '\'' +
-                ", drivingLicenseLevel='" + drivingLicenseLevel + '\'' +
                 ", applyChannel=" + applyChannel +
                 ", company=" + company +
                 ", contact=" + contact +
-                ", locality=" + locality +
+                ", location=" + location +
                 ", occupations=" + occupations +
                 ", languageSkills=" + languageSkills +
                 '}';
@@ -551,11 +548,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_DRIVING_LICENSE_LEVEL) && hasChanged(this.drivingLicenseLevel, updater.getDrivingLicenseLevel())) {
-            this.drivingLicenseLevel = updater.getDrivingLicenseLevel();
-            hasChangedAnything = true;
-        }
-
         if (updater.hasAnyChangesIn(SECTION_APPLY_CHANNEL) && hasChanged(this.applyChannel, updater.getApplyChannel())) {
             this.applyChannel = updater.getApplyChannel();
             hasChangedAnything = true;
@@ -571,8 +563,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_LOCALITY) && hasChanged(this.locality, updater.getLocality())) {
-            this.locality = updater.getLocality();
+        if (updater.hasAnyChangesIn(SECTION_LOCATION) && hasChanged(this.location, updater.getLocation())) {
+            this.location = updater.getLocation();
             hasChangedAnything = true;
         }
 
@@ -610,6 +602,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private String rejectionReason;
         private LocalDate cancellationDate;
         private String cancellationCode;
+        private boolean reportToRav;
         private boolean reportingObligation;
         private LocalDate reportingObligationEndDate;
         private LocalDate publicationStartDate;
@@ -620,11 +613,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private String description;
         private Employment employment;
         private String jobCenterCode;
-        private String drivingLicenseLevel;
         private ApplyChannel applyChannel;
         private Company company;
         private Contact contact;
-        private Locality locality;
+        private Location location;
         private List<Occupation> occupations;
         private List<LanguageSkill> languageSkills;
 
@@ -706,6 +698,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             return this;
         }
 
+        public Builder setReportToRav(boolean reportToRav) {
+            this.reportToRav = reportToRav;
+            return this;
+        }
+
         public Builder setReportingObligation(boolean reportingObligation) {
             this.reportingObligation = reportingObligation;
             return this;
@@ -756,11 +753,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             return this;
         }
 
-        public Builder setDrivingLicenseLevel(String drivingLicenseLevel) {
-            this.drivingLicenseLevel = drivingLicenseLevel;
-            return this;
-        }
-
         public Builder setApplyChannel(ApplyChannel applyChannel) {
             this.applyChannel = applyChannel;
             return this;
@@ -776,8 +768,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             return this;
         }
 
-        public Builder setLocality(Locality locality) {
-            this.locality = locality;
+        public Builder setLocation(Location location) {
+            this.location = location;
             return this;
         }
 

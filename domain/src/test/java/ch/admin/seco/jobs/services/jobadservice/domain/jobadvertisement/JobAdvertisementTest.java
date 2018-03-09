@@ -41,11 +41,11 @@ public class JobAdvertisementTest {
                                         .setName("name")
                                         .setStreet("street")
                                         .setHouseNumber("houseNumber")
-                                        .setZipCode("zipCode")
+                                        .setPostalCode("postalCode")
                                         .setCity("city")
                                         .setCountryIsoCode("countryIsoCode")
                                         .setPostOfficeBoxNumber("postOfficeBoxNumber")
-                                        .setPostOfficeBoxZipCode("postOfficeBoxZipCode")
+                                        .setPostOfficeBoxPostalCode("postOfficeBoxPostalCode")
                                         .setPostOfficeBoxCity("postOfficeBoxCity")
                                         .setPhone("phone")
                                         .setEmail("email")
@@ -63,11 +63,11 @@ public class JobAdvertisementTest {
         assertThat(company.getName()).isEqualTo("name");
         assertThat(company.getStreet()).isEqualTo("street");
         assertThat(company.getHouseNumber()).isEqualTo("houseNumber");
-        assertThat(company.getZipCode()).isEqualTo("zipCode");
+        assertThat(company.getPostalCode()).isEqualTo("postalCode");
         assertThat(company.getCity()).isEqualTo("city");
         assertThat(company.getCountryIsoCode()).isEqualTo("countryIsoCode");
         assertThat(company.getPostOfficeBoxNumber()).isEqualTo("postOfficeBoxNumber");
-        assertThat(company.getPostOfficeBoxZipCode()).isEqualTo("postOfficeBoxZipCode");
+        assertThat(company.getPostOfficeBoxPostalCode()).isEqualTo("postOfficeBoxPostalCode");
         assertThat(company.getPostOfficeBoxCity()).isEqualTo("postOfficeBoxCity");
         assertThat(company.getPhone()).isEqualTo("phone");
         assertThat(company.getEmail()).isEqualTo("email");
