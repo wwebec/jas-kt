@@ -25,7 +25,7 @@ apply from: "gradle/docker.gradle"
 
 allprojects {
     group 'ch.admin.seco.jobs.services.jobadservice'
-    version != 'unspecified' ? version : '0.0.1-SNAPSHOT'
+    version = version != 'unspecified' ? version : '0.0.1-SNAPSHOT'
 }
 
 subprojects {
