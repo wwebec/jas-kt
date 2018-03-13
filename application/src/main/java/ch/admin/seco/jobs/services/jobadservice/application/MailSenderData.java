@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application;
 
-import com.google.common.base.Preconditions;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 
 import java.util.*;
 
@@ -12,6 +12,10 @@ public class MailSenderData {
 
     private final String[] to;
 
+    private final String[] cc;
+
+    private final String[] bcc;
+
     private final String templateName;
 
     private final Map<String, Object> templateVariables;
@@ -21,22 +25,24 @@ public class MailSenderData {
     private final Collection<EmailAttachement> emailAttachments;
 
     MailSenderData(Builder builder) {
-        this.subject = Preconditions.checkNotNull(builder.subject);
+        this.subject = Condition.notBlank(builder.subject, "E-Mail must contain a subject.");
         this.from = builder.from;
-        this.to = Preconditions.checkNotNull(builder.to);
-        this.templateName = Preconditions.checkNotNull(builder.templateName);
+        this.to = Condition.notNull(builder.to);
+        this.cc = builder.cc;
+        this.bcc = builder.bcc;
+        this.templateName = Condition.notBlank(builder.templateName, "E-Mail must contain a template.");
         if (builder.templateVariables != null) {
             this.templateVariables = builder.templateVariables;
         } else {
             this.templateVariables = Collections.emptyMap();
         }
-        this.locale = Preconditions.checkNotNull(builder.locale);
+        this.locale = Condition.notNull(builder.locale, "E-Mail must contain a locale.");
         if (builder.emailAttachements != null) {
             this.emailAttachments = builder.emailAttachements;
         } else {
             this.emailAttachments = Collections.emptyList();
         }
-        Preconditions.checkArgument(builder.to.length > 0, "E-Mail must contain at least one receiver.");
+        Condition.isTrue(builder.to.length > 0, "E-Mail must contain at least one receiver.");
     }
 
     public String getSubject() {
@@ -49,6 +55,14 @@ public class MailSenderData {
 
     public String[] getTo() {
         return to;
+    }
+
+    public String[] getCc() {
+        return cc;
+    }
+
+    public String[] getBcc() {
+        return bcc;
     }
 
     public String getTemplateName() {
@@ -75,6 +89,10 @@ public class MailSenderData {
 
         private String[] to;
 
+        private String[] cc;
+
+        private String[] bcc;
+
         private String templateName;
 
         private Map<String, Object> templateVariables;
@@ -95,6 +113,16 @@ public class MailSenderData {
 
         public Builder setTo(String... to) {
             this.to = to;
+            return this;
+        }
+
+        public Builder setCc(String... cc) {
+            this.cc = cc;
+            return this;
+        }
+
+        public Builder setBcc(String... bcc) {
+            this.bcc = bcc;
             return this;
         }
 
@@ -130,6 +158,8 @@ public class MailSenderData {
                 "subject='" + subject + '\'' +
                 ", from='" + from + '\'' +
                 ", to=" + Arrays.toString(to) +
+                ", cc=" + Arrays.toString(cc) +
+                ", bcc=" + Arrays.toString(bcc) +
                 ", templateName='" + templateName + '\'' +
                 ", templateVariables=" + templateVariables +
                 ", locale=" + locale +

@@ -58,6 +58,8 @@ public class DefaultMailSenderService implements MailSenderService {
             message.setFrom(from);
             message.setReplyTo(from);
             message.setTo(mailSenderData.getTo());
+            message.setCc(mailSenderData.getCc());
+            message.setBcc(mailSenderData.getBcc());
             message.setSubject(subject);
             message.setText(content, true);
             mailSenderData.getEmailAttachments().forEach(attachment -> {

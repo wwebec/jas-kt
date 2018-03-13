@@ -24,7 +24,12 @@ public class JobAdvertisementMailEventListener {
     private static final String JOB_ADVERTISEMENT_APPROVED_TEMPLATE = "JobAdApprovedMail.html";
     private static final String JOB_ADVERTISEMENT_REJECTED_TEMPLATE = "JobAdRejectedMail.html";
     private static final String JOB_ADVERTISEMENT_CANCELLED_TEMPLATE = "JobAdCancelledMail.html";
+
+    // TODO To clarify which language should be used with the PO (JobAdvertisement, Contact, ...)
     private static final Locale DEFAULT_LOCALE = Locale.GERMAN;
+
+    // TODO To clarify which bcc address should be used with the PO (Taken from MailSenderProperties. Maybe move it in the MailSenderService)
+    private static final String BCC = null;
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final MailSenderService mailSenderService;
@@ -46,6 +51,7 @@ public class JobAdvertisementMailEventListener {
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
+                        .setBcc(BCC)
                         .setSubject("mail.jobAd.created.subject")
                         .setTemplateName(JOB_ADVERTISEMENT_CREATED_TEMPLATE)
                         .setTemplateVariables(variables)
@@ -65,6 +71,7 @@ public class JobAdvertisementMailEventListener {
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
+                        .setBcc(BCC)
                         .setSubject("mail.jobAd.approved.subject")
                         .setTemplateName(JOB_ADVERTISEMENT_APPROVED_TEMPLATE)
                         .setTemplateVariables(variables)
@@ -84,6 +91,7 @@ public class JobAdvertisementMailEventListener {
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
+                        .setBcc(BCC)
                         .setSubject("mail.jobAd.rejected.subject")
                         .setTemplateName(JOB_ADVERTISEMENT_REJECTED_TEMPLATE)
                         .setTemplateVariables(variables)
@@ -103,6 +111,7 @@ public class JobAdvertisementMailEventListener {
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
+                        .setBcc(BCC)
                         .setSubject("mail.jobAd.cancelled.subject")
                         .setTemplateName(JOB_ADVERTISEMENT_CANCELLED_TEMPLATE)
                         .setTemplateVariables(variables)
