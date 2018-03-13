@@ -5,7 +5,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -25,26 +24,28 @@ public class DefaultMailSenderService implements MailSenderService {
 
     private final JavaMailSender mailSender;
 
-    private final String mailFromAddress;
+    private final MailSenderProperties mailSenderProperties;
 
     DefaultMailSenderService(SpringTemplateEngine templateEngine,
-                            JavaMailSender mailSender,
-                            @Value("${mail.sender.address}") String mailFromAddress) {
+                             JavaMailSender mailSender,
+                             MailSenderProperties mailSenderProperties) {
         this.templateEngine = templateEngine;
         this.mailSender = mailSender;
-        this.mailFromAddress = mailFromAddress;
+        this.mailSenderProperties = mailSenderProperties;
     }
 
     @Async
     @Override
     public void send(MailSenderData mailSenderData) {
         Context context = new Context();
+        context.setVariable("baseUrl", mailSenderProperties.getBaseUrl());
+        context.setVariable("user", null);
         context.setVariables(mailSenderData.getTemplateVariables());
         context.setLocale(mailSenderData.getLocale());
-        final String body = StringUtils.strip(templateEngine.process(mailSenderData.getTemplateName(), context));
-        final String from = mailSenderData.getFrom().orElse(this.mailFromAddress);
+        final String content = StringUtils.strip(templateEngine.process(mailSenderData.getTemplateName(), context));
+        final String from = mailSenderData.getFrom().orElse(mailSenderProperties.getFromAddress());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending email with MailSenderData={}, \n BODY={}", mailSenderData, body);
+            LOG.debug("Sending email with MailSenderData={}, \n BODY={}", mailSenderData, content);
         }
         mailSender.send(mimeMessage -> {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, !mailSenderData.getEmailAttachments().isEmpty(), UTF_8);
@@ -52,7 +53,7 @@ public class DefaultMailSenderService implements MailSenderService {
             message.setReplyTo(from);
             message.setTo(mailSenderData.getTo());
             message.setSubject(mailSenderData.getSubject());
-            message.setText(body, true);
+            message.setText(content, true);
             mailSenderData.getEmailAttachments().forEach(attachment -> {
                 try {
                     message.addAttachment(attachment.getFileName(), new ByteArrayDataSource(attachment.getContent(), attachment.getMimeType()));

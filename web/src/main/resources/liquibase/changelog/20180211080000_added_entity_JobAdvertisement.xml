@@ -59,6 +59,7 @@
             <column name="REJECTION_REASON" type="varchar(800)"/>
             <column name="CANCELLATION_DATE" type="date"/>
             <column name="CANCELLATION_CODE" type="varchar(10)"/>
+            <column name="REPORT_TO_RAV" type="boolean"/>
             <column name="REPORTING_OBLIGATION" type="boolean"/>
             <column name="REPORTING_OBLIGATION_END_DATE" type="date"/>
             <column name="PUBLICATION_START_DATE" type="date"/>

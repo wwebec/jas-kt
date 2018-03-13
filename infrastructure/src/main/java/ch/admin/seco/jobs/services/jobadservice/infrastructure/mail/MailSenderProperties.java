@@ -20,14 +20,16 @@ public class MailSenderProperties {
 
     @Min(0)
     @Max(65535)
-    private Integer port;
+    private int port;
 
     private String username;
 
     private String password;
 
     @NotEmpty
-    private String fromAdress;
+    private String fromAddress;
+
+    private String baseUrl;
 
     @NotNull
     private Resource templatesResource;
@@ -77,12 +79,20 @@ public class MailSenderProperties {
         this.password = password;
     }
 
-    public String getFromAdress() {
-        return fromAdress;
+    public String getFromAddress() {
+        return fromAddress;
     }
 
-    public void setFromAdress(String fromAdress) {
-        this.fromAdress = fromAdress;
+    public void setFromAddress(String fromAddress) {
+        this.fromAddress = fromAddress;
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 
     public Resource getTemplatesResource() {

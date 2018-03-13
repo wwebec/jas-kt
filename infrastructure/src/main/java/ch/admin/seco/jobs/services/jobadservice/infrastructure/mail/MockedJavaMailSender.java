@@ -18,7 +18,7 @@ public class MockedJavaMailSender extends JavaMailSenderImpl {
         for (MimeMessage mimeMessage : mimeMessages) {
             try {
                 final Address[] allRecipients = mimeMessage.getAllRecipients();
-                LOG.info("From: {}\nTo: {}\nSubject: {}\nAttachments: {}\nContent:\n{}", mimeMessage.getFrom(), allRecipients, mimeMessage.getSubject(), mimeMessage.getContent());
+                LOG.info("Mail sended:\nFrom: {}\nTo: {}\nSubject: {}\nAttachments: {}\nContent:\n{}", mimeMessage.getFrom(), allRecipients, mimeMessage.getSubject(), null, mimeMessage.getContent());
             } catch (MessagingException | IOException e) {
                 LOG.error("Sending mail error:", e);
             }

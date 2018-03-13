@@ -27,7 +27,7 @@ public class MailSenderConfig {
 
     @Bean
     public MailSenderService mailSenderService() {
-        return new DefaultMailSenderService(templateEngine, javaMailSender, this.mailSenderProperties.getFromAdress());
+        return new DefaultMailSenderService(templateEngine, javaMailSender, mailSenderProperties);
     }
 
     @Configuration

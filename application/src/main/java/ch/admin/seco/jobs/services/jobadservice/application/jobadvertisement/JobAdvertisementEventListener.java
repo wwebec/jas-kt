@@ -13,6 +13,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class JobAdvertisementEventListener {
@@ -26,7 +28,7 @@ public class JobAdvertisementEventListener {
         this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onCreated(JobAdvertisementEvent jobAdvertisementEvent) {
         if (!JOB_ADVERTISEMENT_CREATED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
@@ -39,7 +41,7 @@ public class JobAdvertisementEventListener {
         }
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onRefined(JobAdvertisementEvent jobAdvertisementEvent) {
         if (!JOB_ADVERTISEMENT_REFINED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
@@ -47,7 +49,7 @@ public class JobAdvertisementEventListener {
         jobAdvertisementApplicationService.publish(jobAdvertisementEvent.getAggregateId());
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onBlackoutExpired(JobAdvertisementEvent jobAdvertisementEvent) {
         if (!JOB_ADVERTISEMENT_BLACKOUT_EXPIRED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
@@ -55,7 +57,7 @@ public class JobAdvertisementEventListener {
         jobAdvertisementApplicationService.publish(jobAdvertisementEvent.getAggregateId());
     }
 
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onPublishExpired(JobAdvertisementEvent jobAdvertisementEvent) {
         if (!JOB_ADVERTISEMENT_PUBLISH_EXPIRED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
