@@ -1,7 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.core.io.Resource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.validation.annotation.Validated;
 
@@ -32,7 +31,7 @@ public class MailSenderProperties {
     private String baseUrl;
 
     @NotNull
-    private Resource templatesResource;
+    private String templatesPath;
 
     public JavaMailSenderImpl getJavaMailSender() {
         final JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
@@ -95,11 +94,11 @@ public class MailSenderProperties {
         this.baseUrl = baseUrl;
     }
 
-    public Resource getTemplatesResource() {
-        return templatesResource;
+    public String getTemplatesPath() {
+        return templatesPath;
     }
 
-    public void setTemplatesResource(Resource templatesResource) {
-        this.templatesResource = templatesResource;
+    public void setTemplatesPath(String templatesPath) {
+        this.templatesPath = templatesPath;
     }
 }

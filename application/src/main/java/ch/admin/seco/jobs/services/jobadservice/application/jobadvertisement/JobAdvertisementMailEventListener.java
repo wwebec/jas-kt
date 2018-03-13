@@ -46,7 +46,7 @@ public class JobAdvertisementMailEventListener {
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
-                        .setSubject("JobAdvertisement created")
+                        .setSubject("mail.jobAd.created.subject")
                         .setTemplateName(JOB_ADVERTISEMENT_CREATED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(DEFAULT_LOCALE)
@@ -65,7 +65,7 @@ public class JobAdvertisementMailEventListener {
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
-                        .setSubject("JobAdvertisement approved")
+                        .setSubject("mail.jobAd.approved.subject")
                         .setTemplateName(JOB_ADVERTISEMENT_APPROVED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(DEFAULT_LOCALE)
@@ -84,7 +84,7 @@ public class JobAdvertisementMailEventListener {
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
-                        .setSubject("JobAdvertisement rejected")
+                        .setSubject("mail.jobAd.rejected.subject")
                         .setTemplateName(JOB_ADVERTISEMENT_REJECTED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(DEFAULT_LOCALE)
@@ -103,7 +103,7 @@ public class JobAdvertisementMailEventListener {
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
-                        .setSubject("JobAdvertisement cancelled")
+                        .setSubject("mail.jobAd.cancelled.subject")
                         .setTemplateName(JOB_ADVERTISEMENT_CANCELLED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(DEFAULT_LOCALE)
