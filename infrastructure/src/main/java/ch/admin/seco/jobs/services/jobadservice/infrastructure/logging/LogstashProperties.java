@@ -3,7 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.logging;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "logstash", ignoreUnknownFields = false)
-
 public class LogstashProperties {
 
     private boolean enabled = false;

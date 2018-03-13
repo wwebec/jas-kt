@@ -6,5 +6,6 @@ public class ProfileRegistry {
     public static final String DEV = "dev";
     public static final String CLOUD = "cloud";
     public static final String AVAM_MOCK = "avam-mock";
+    public static final String OAUTH2 = "oauth2";
 
 }
