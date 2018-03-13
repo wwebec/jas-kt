@@ -19,19 +19,28 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-undertow'
 
-//    compile 'org.zalando:problem-spring-web'
     compile 'org.springframework.cloud:spring-cloud-starter'
-//    compile 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon'
-//    compile 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
-//    compile 'org.springframework.retry:spring-retry'
-    //compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    compile 'org.springframework.cloud:spring-cloud-starter-netflix-ribbon'
+    compile 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix'
+    compile 'org.springframework.retry:spring-retry'
+    compile 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     compile 'org.springframework.cloud:spring-cloud-starter-config'
-//    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
+    compile 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
     compile 'org.springframework.security:spring-security-web'
+    compile "org.springframework.security.oauth:spring-security-oauth2"
+    compile "org.springframework.security.oauth.boot:spring-security-oauth2-autoconfigure"
+    compile "org.springframework.security:spring-security-jwt"
 
     compile 'io.jsonwebtoken:jjwt'
     compile 'io.springfox:springfox-swagger2'
     runtime 'io.springfox:springfox-swagger-ui'
+
+    compile 'org.codehaus.jackson:jackson-core-asl'
+    compile 'com.fasterxml.jackson.core:jackson-annotations'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+    compile 'com.fasterxml.jackson.module:jackson-module-afterburner'
 
     compile 'io.dropwizard.metrics:metrics-core'
     compile 'io.dropwizard.metrics:metrics-json'
@@ -40,8 +49,9 @@ dependencies {
     compile 'io.dropwizard.metrics:metrics-servlets'
     compile 'com.ryantenney.metrics:metrics-spring'
     compile 'net.logstash.logback:logstash-logback-encoder'
+    compile 'org.zalando:problem-spring-web'
 
-    testCompile 'org.springframework.boot:spring-boot-test'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.security:spring-security-test'
 
 //    optional('org.springframework.boot:spring-boot-configuration-processor') {
@@ -97,6 +107,14 @@ afterEvaluate {
                     'Git-Commit': repo.head().getAbbreviatedId(8),
                     'Git-Branch': repo.branch.getCurrent().getName()
             )
+        }
+    }
+}
+
+publishing {
+    publications {
+        bootJava(MavenPublication) {
+            artifact bootJar
         }
     }
 }
