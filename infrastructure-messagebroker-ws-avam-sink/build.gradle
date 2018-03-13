@@ -19,4 +19,16 @@ dependencies {
     optional "org.springframework.boot:spring-boot-configuration-processor"
 }
 
+bootJar {
+    mainClassName = 'ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceApplication'
+}
+
 compileJava.dependsOn(processResources)
+
+publishing {
+    publications {
+        bootJava(MavenPublication) {
+            artifact bootJar
+        }
+    }
+}

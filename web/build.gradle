@@ -110,3 +110,11 @@ afterEvaluate {
         }
     }
 }
+
+publishing {
+    publications {
+        bootJava(MavenPublication) {
+            artifact bootJar
+        }
+    }
+}

@@ -7,16 +7,7 @@ publishing {
                 username System.env.ARTIFACTORY_USERNAME
                 password System.env.ARTIFACTORY_PASSWORD
             }
-            url "${artifactoryRepoBase}/${repositoryName()}"
+            url "${artifactoryRepoBase}/libs-${project.version.endsWith('-SNAPSHOT') ? 'snapshots' : 'releases'}-local"
         }
     }
-    publications {
-        bootJava(MavenPublication) {
-            artifact bootJar
-        }
-    }
-}
-
-def repositoryName() {
-    System.getenv().containsKey('TRAVIS_TAG') ? 'libs-releases-local' : 'libs-snapshots-local'
 }
