@@ -6,7 +6,7 @@ import java.util.Map;
 import org.springframework.boot.SpringApplication;
 import org.springframework.core.env.Environment;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
 
 /**
  * Utility class to load a Spring profile to be used as default

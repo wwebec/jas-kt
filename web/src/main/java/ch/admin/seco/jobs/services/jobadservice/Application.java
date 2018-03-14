@@ -1,8 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice;
 
-import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.ProfileRegistry.CLOUD;
-import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.ProfileRegistry.DEV;
-import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.ProfileRegistry.PROD;
+import static ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry.CLOUD;
+import static ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry.DEV;
+import static ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry.PROD;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

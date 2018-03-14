@@ -25,7 +25,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
 import ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTConfigurer;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTSecurityProperties;

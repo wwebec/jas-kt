@@ -29,7 +29,7 @@ public class JobAdvertisementMailEventListener {
     private static final Locale DEFAULT_LOCALE = Locale.GERMAN;
 
     // TODO To clarify which bcc address should be used with the PO (Taken from MailSenderProperties. Maybe move it in the MailSenderService)
-    private static final String BCC = null;
+    private static final String BCC = "bcc@example.com";
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final MailSenderService mailSenderService;

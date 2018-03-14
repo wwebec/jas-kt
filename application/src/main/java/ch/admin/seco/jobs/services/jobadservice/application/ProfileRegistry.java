@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
+package ch.admin.seco.jobs.services.jobadservice.application;
 
 public class ProfileRegistry {
 

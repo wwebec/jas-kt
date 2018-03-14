@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.integration.channel.NullChannel;
 import org.springframework.messaging.MessageChannel;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 
 @Configuration
