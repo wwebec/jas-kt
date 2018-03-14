@@ -50,12 +50,12 @@ public class DefaultAvamService implements RavRegistrationService {
                 .build());
     }
 
-    @EventListener(condition = "#jobAdvertisementEvent.getDomainEventType().name()=='JOB_ADVERTISEMENT_INSPECTING'")
+    @EventListener(condition = "#jobAdvertisementEvent.getDomainEventType().getValue()=='JOB_ADVERTISEMENT_INSPECTING'")
     public void register(JobAdvertisementEvent jobAdvertisementEvent) {
         // TODO extract JobAdvertisement and call register
     }
 
-    @EventListener(condition = "#jobAdvertisementEvent.getDomainEventType().name()=='JOB_ADVERTISEMENT_CANCELLED'")
+    @EventListener(condition = "#jobAdvertisementEvent.getDomainEventType().getValue()=='JOB_ADVERTISEMENT_CANCELLED'")
     public void deregister(JobAdvertisementEvent jobAdvertisementEvent) {
         // TODO extract JobAdvertisement and call register
     }

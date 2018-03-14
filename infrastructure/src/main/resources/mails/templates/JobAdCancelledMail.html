@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="#{mail.jobAd.cancelled}">JobAdvertisement cancelled</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}"/>
+    </head>
+    <body>
+        <h1 th:text="#{mail.jobAd.cancelled}">JobAdvertisement cancelled</h1>
+        <ul>
+            <li>Id: <span th:text="${jobAdvertisement.id.value}"></span></li>
+            <li>Title: <span th:text="${jobAdvertisement.title}"></span></li>
+            <li>Description: <span th:text="${jobAdvertisement.description}"></span></li>
+        </ul>
+    </body>
+</html>

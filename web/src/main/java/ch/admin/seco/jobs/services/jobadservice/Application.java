@@ -44,6 +44,11 @@ public class Application {
         this.domainEventPublisher = domainEventPublisher;
     }
 
+    @PostConstruct
+    public void domainEventPublisherRegistry() {
+        DomainEventPublisher.set(domainEventPublisher);
+    }
+
     /**
      * Main method, used to run the application.
      *

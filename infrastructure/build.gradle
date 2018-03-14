@@ -1,5 +1,7 @@
 dependencies {
     compile project(':application')
+    compile 'org.springframework.boot:spring-boot-starter-mail'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compile 'org.springframework.cloud:spring-cloud-context'
     compile 'net.logstash.logback:logstash-logback-encoder'
 }
