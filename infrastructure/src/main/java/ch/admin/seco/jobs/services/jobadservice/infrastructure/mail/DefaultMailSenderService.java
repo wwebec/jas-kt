@@ -14,12 +14,13 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.util.ByteArrayDataSource;
+import java.nio.charset.StandardCharsets;
 
 public class DefaultMailSenderService implements MailSenderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultMailSenderService.class);
 
-    private static final String UTF_8 = "UTF-8";
+    private static final String CONTENT_ENCODING = StandardCharsets.UTF_8.name();
 
     private final SpringTemplateEngine templateEngine;
 
@@ -54,7 +55,7 @@ public class DefaultMailSenderService implements MailSenderService {
             LOG.debug("Sending email with MailSenderData={}, \n BODY={}", mailSenderData, content);
         }
         mailSender.send(mimeMessage -> {
-            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, !mailSenderData.getEmailAttachments().isEmpty(), UTF_8);
+            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, !mailSenderData.getEmailAttachments().isEmpty(), CONTENT_ENCODING);
             message.setFrom(from);
             message.setReplyTo(from);
             message.setTo(mailSenderData.getTo());
