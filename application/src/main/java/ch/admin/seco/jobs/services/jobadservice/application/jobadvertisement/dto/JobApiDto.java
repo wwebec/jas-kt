@@ -8,7 +8,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class JobApiDto {
-    // TODO Job-Language
 
     @NotBlank
     private String languageIsoCode;
