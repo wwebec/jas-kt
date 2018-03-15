@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -9,23 +10,37 @@ import java.util.List;
 public class JobApiDto {
     // TODO Job-Language
 
+    @NotBlank
+    private String languageIsoCode;
+
+    @NotBlank
     private String title;
+
+    @NotBlank
     @Size(max = 10000)
     private String description;
 
     @NotNull
     private Integer workingTimePercentageFrom;
+
     @NotNull
     private Integer workingTimePercentageTo;
+
     private LocalDate startDate;
+
     private LocalDate endDate;
+
     private Integer durationInDays;
+
     @NotNull
     private Boolean startsImmediately;
+
     private Boolean permanent;
+
     @NotNull
     @Valid
     private CreateLocationDto location;
+
     @Size(max = 5)
     private List<LanguageSkillDto> languageSkills;
 
@@ -33,7 +48,8 @@ public class JobApiDto {
         // For reflection libs
     }
 
-    public JobApiDto(String title,
+    public JobApiDto(String languageIsoCode,
+                     String title,
                      String description,
                      Integer workingTimePercentageFrom,
                      Integer workingTimePercentageTo,
@@ -44,6 +60,7 @@ public class JobApiDto {
                      Boolean permanent,
                      CreateLocationDto location,
                      List<LanguageSkillDto> languageSkills) {
+        this.languageIsoCode = languageIsoCode;
         this.title = title;
         this.description = description;
         this.workingTimePercentageFrom = workingTimePercentageFrom;
@@ -55,6 +72,14 @@ public class JobApiDto {
         this.permanent = permanent;
         this.location = location;
         this.languageSkills = languageSkills;
+    }
+
+    public String getLanguageIsoCode() {
+        return languageIsoCode;
+    }
+
+    public void setLanguageIsoCode(String languageIsoCode) {
+        this.languageIsoCode = languageIsoCode;
     }
 
     public String getTitle() {

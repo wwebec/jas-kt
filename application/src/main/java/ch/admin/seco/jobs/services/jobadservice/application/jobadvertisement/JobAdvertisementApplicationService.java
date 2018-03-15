@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -81,6 +82,7 @@ public class JobAdvertisementApplicationService {
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(
+                new Locale(createJobAdvertisementWebFormDto.getLanguageIsoCode()),
                 createJobAdvertisementWebFormDto.getTitle(),
                 createJobAdvertisementWebFormDto.getDescription(),
                 updater
@@ -112,6 +114,7 @@ public class JobAdvertisementApplicationService {
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(
+                new Locale(createJobAdvertisementApiDto.getJob().getLanguageIsoCode()),
                 createJobAdvertisementApiDto.getJob().getTitle(),
                 createJobAdvertisementApiDto.getJob().getDescription(),
                 updater,
@@ -131,7 +134,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public void inspect(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.inspect();
         // FIXME Registration should be called by JOB_ADVERTISEMENT_INSPECTING (Create event listener in package messagebroker)
@@ -140,21 +143,21 @@ public class JobAdvertisementApplicationService {
 
     public void approve(ApprovalDto approvalDto) {
         // TODO tbd where/when the data updates has to be done (over ApprovalDto --> JobAdUpdater?)
-        Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
+        Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(approvalDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
     }
 
     public void reject(RejectionDto rejectionDto) {
-        Condition.notNull(rejectionDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
+        Condition.notNull(rejectionDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(rejectionDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
     }
 
     public void refining(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.refining();
     }
@@ -176,7 +179,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public void publish(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         if (jobAdvertisement.isReportingObligation() && REFINING.equals(jobAdvertisement.getStatus())) {
             jobAdvertisement.publishRestricted();
@@ -186,14 +189,14 @@ public class JobAdvertisementApplicationService {
     }
 
     public void cancel(CancellationDto cancellationDto) {
-        Condition.notNull(cancellationDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
+        Condition.notNull(cancellationDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(cancellationDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
     }
 
     public void archive(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.archive();
     }
@@ -204,6 +207,7 @@ public class JobAdvertisementApplicationService {
     }
 
     private Occupation enrichOccupationWithProfessionCodes(Occupation occupation) {
+        Condition.notNull(occupation, "Occupation can't be null");
         Profession profession = professionSerivce.findByAvamCode(occupation.getAvamOccupationCode());
         if (profession != null) {
             return new Occupation(
@@ -220,6 +224,8 @@ public class JobAdvertisementApplicationService {
     }
 
     private boolean checkReportingObligation(Occupation occupation, Location location) {
+        Condition.notNull(occupation, "Occupation can't be null");
+        Condition.notNull(location, "Location can't be null");
         String avamOccupationCode = occupation.getAvamOccupationCode();
         String cantonCode = location.getCantonCode();
         return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
@@ -291,7 +297,8 @@ public class JobAdvertisementApplicationService {
                     contactDto.getFirstName(),
                     contactDto.getLastName(),
                     contactDto.getPhone(),
-                    contactDto.getEmail()
+                    contactDto.getEmail(),
+                    new Locale(contactDto.getLanguageIsoCode())
             );
         }
         return null;

@@ -66,10 +66,15 @@
             <column name="PUBLICATION_END_DATE" type="date"/>
             <column name="EURES" type="boolean"/>
             <column name="EURES_ANONYMOUS" type="boolean"/>
+            <column name="LANGUAGE" type="varchar(5)">
+                <constraints nullable="false"/>
+            </column>
             <column name="TITLE" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="DESCRIPTION" type="longvarchar"/>
+            <column name="DESCRIPTION" type="longvarchar">
+                <constraints nullable="false"/>
+            </column>
             <column name="EMPLOYMENT_START_DATE" type="date"/>
             <column name="EMPLOYMENT_END_DATE" type="date"/>
             <column name="EMPLOYMENT_DURATION_IN_DAYS" type="integer"/>
@@ -100,6 +105,7 @@
             <column name="CONTACT_LAST_NAME" type="varchar(50)"/>
             <column name="CONTACT_PHONE" type="varchar(20)"/>
             <column name="CONTACT_EMAIL" type="varchar(50)"/>
+            <column name="CONTACT_LANGUAGE" type="varchar(5)"/>
             <column name="LOCATION_REMARKS" type="varchar(255)"/>
             <column name="LOCATION_CITY" type="varchar(50)"/>
             <column name="LOCATION_POSTAL_CODE" type="varchar(10)"/>
