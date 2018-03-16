@@ -6,8 +6,11 @@ apply from: "${rootProject.rootDir}/gradle/maven-publish.gradle"
 dependencies {
     compile project(':domain')
     compile project(':infrastructure-messagebroker-shared')
-    compile 'org.springframework.ws:spring-ws-core'
+
     compile 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+    compile 'org.springframework.boot:spring-boot-starter-web-services'
+    compile 'org.springframework.boot:spring-boot-starter-undertow'
+    compile 'wsdl4j:wsdl4j:1.6.1'
 
     compile 'org.codehaus.jackson:jackson-core-asl'
     compile 'com.fasterxml.jackson.core:jackson-annotations'
@@ -15,13 +18,16 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     compile 'com.fasterxml.jackson.module:jackson-module-afterburner'
 
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
+    testCompile 'org.springframework.ws:spring-ws-test'
+
     optional "org.springframework.boot:spring-boot-configuration-processor"
 }
 
-bootJar {
-    mainClassName = 'ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceApplication'
-}
+//bootJar {
+//    mainClassName = 'ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceApplication'
+//}
 
 compileJava.dependsOn(processResources)
 

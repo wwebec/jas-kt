@@ -1,0 +1,6 @@
+spring:
+    jackson:
+        generator:
+            write_numbers_as_strings: true
+        serialization:
+            write_dates_as_timestamps: false

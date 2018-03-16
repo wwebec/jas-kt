@@ -1,5 +1,5 @@
 dependencies {
-    compile project(':infrastructure-messagebroker-messages')
+    compile project(':infrastructure-messagebroker-shared')
     compile 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
     testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
     optional 'org.springframework.boot:spring-boot-configuration-processor'
