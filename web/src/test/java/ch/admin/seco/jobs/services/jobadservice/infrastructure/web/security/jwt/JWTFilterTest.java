@@ -4,15 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
-import java.time.Instant;
-import java.util.Date;
 import java.util.stream.Collectors;
 
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +23,6 @@ import org.springframework.security.core.userdetails.User;
 public class JWTFilterTest {
 
     private static final String SECRET_KEY = "secret.key";
-    private static final String AUTHORITIES_KEY = "auth";
 
     @Before
     public void setUp() {
@@ -40,7 +35,8 @@ public class JWTFilterTest {
 
         // prepare request
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + createJwtToken("user-1", SECRET_KEY, 10));
+        request.addHeader("Authorization", "Bearer " + JWTTokenGenerator
+                .generateToken("user-1", SECRET_KEY, 10, "ROLE_USER", "ROLE_PRIVATE_EMPLOYMENT_AGENT"));
 
         // execute
         jwtFilter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain(mock(Servlet.class), jwtFilter));
@@ -65,7 +61,8 @@ public class JWTFilterTest {
 
         // prepare request
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + createJwtToken("user-1", "other-secret", 10));
+        request.addHeader("Authorization", "Bearer " + JWTTokenGenerator
+                .generateToken("user-1", "invalid-secret", 10));
 
         // execute
         jwtFilter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain(mock(Servlet.class), jwtFilter));
@@ -82,7 +79,8 @@ public class JWTFilterTest {
 
         // prepare request
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + createJwtToken("user-1", SECRET_KEY, -10));
+        request.addHeader("Authorization", "Bearer " + JWTTokenGenerator
+                .generateToken("user-1", SECRET_KEY, -10));
 
         // execute
         jwtFilter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain(mock(Servlet.class), jwtFilter));
@@ -91,14 +89,5 @@ public class JWTFilterTest {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertThat(authentication)
                 .describedAs("Authentication is not null").isNull();
-    }
-
-    private String createJwtToken(String subject, String secretKey, long expirationInSeconds) {
-        return Jwts.builder()
-                .setSubject(subject)
-                .claim(AUTHORITIES_KEY, "ROLE_USER,ROLE_PRIVATE_EMPLOYMENT_AGENT")
-                .signWith(SignatureAlgorithm.HS512, secretKey)
-                .setExpiration(Date.from(Instant.now().plusSeconds(expirationInSeconds)))
-                .compact();
     }
 }
