@@ -5,6 +5,8 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.J
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_EXPIRED;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.JOB_ADVERTISEMENT_REFINED;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -18,6 +20,8 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class JobAdvertisementEventListener {
+
+    private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementMailEventListener.class);
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
@@ -33,6 +37,7 @@ public class JobAdvertisementEventListener {
         if (!JOB_ADVERTISEMENT_CREATED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
         }
+        LOG.debug("Listener catches event JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
         final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementEvent.getAggregateId());
         if (jobAdvertisement.isReportingObligation() || jobAdvertisement.isReportToRav() || jobAdvertisement.getSourceSystem().equals(SourceSystem.JOBROOM)) {
             jobAdvertisementApplicationService.inspect(jobAdvertisement.getId());
@@ -46,6 +51,7 @@ public class JobAdvertisementEventListener {
         if (!JOB_ADVERTISEMENT_REFINED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
         }
+        LOG.debug("Listener catches event JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
         jobAdvertisementApplicationService.publish(jobAdvertisementEvent.getAggregateId());
     }
 
@@ -54,6 +60,7 @@ public class JobAdvertisementEventListener {
         if (!JOB_ADVERTISEMENT_BLACKOUT_EXPIRED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
         }
+        LOG.debug("Listener catches event JOB_ADVERTISEMENT_BLACKOUT_EXPIRED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
         jobAdvertisementApplicationService.publish(jobAdvertisementEvent.getAggregateId());
     }
 
@@ -62,6 +69,7 @@ public class JobAdvertisementEventListener {
         if (!JOB_ADVERTISEMENT_PUBLISH_EXPIRED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
             return;
         }
+        LOG.debug("Listener catches event JOB_ADVERTISEMENT_PUBLISH_EXPIRED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
         jobAdvertisementApplicationService.archive(jobAdvertisementEvent.getAggregateId());
     }
 
