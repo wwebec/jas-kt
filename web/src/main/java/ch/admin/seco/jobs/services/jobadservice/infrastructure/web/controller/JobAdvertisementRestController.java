@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +37,12 @@ public class JobAdvertisementRestController {
 
     @GetMapping()
     public List<JobAdvertisementDto> getJobAdvertisements() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            System.out.println(authentication.getDetails());
+            System.out.println(authentication.getPrincipal());
+            System.out.println(authentication.getPrincipal());
+        }
         return jobAdvertisementApplicationService.findAll();
     }
 
