@@ -1,7 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageHeaders.EVENT;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.APPROVE;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageHeaders.ACTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.ws.test.server.RequestCreators.withPayload;
 
@@ -70,7 +70,7 @@ public class AvamEndpointTest {
         // assert
         Message<String> received = (Message<String>) messageCollector.forChannel(source.output()).poll();
         assertThat(received).isNotNull();
-        assertThat(received.getHeaders().get(EVENT)).isEqualTo(JOB_ADVERTISEMENT_APPROVED);
+        assertThat(received.getHeaders().get(ACTION)).isEqualTo(APPROVE);
         assertThat(json.parse(received.getPayload()).getObject().getStellennummerEgov()).isEqualTo("OI1349349");
 
     }

@@ -18,6 +18,8 @@ import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationServi
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvent;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.ApproveJobAdvertisementMessage;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.RejectJobAdvertisementMessage;
 
 public class DefaultAvamService implements RavRegistrationService {
 
@@ -57,16 +59,18 @@ public class DefaultAvamService implements RavRegistrationService {
 
     @EventListener(condition = "#jobAdvertisementEvent.getDomainEventType().getValue()=='JOB_ADVERTISEMENT_CANCELLED'")
     public void deregister(JobAdvertisementEvent jobAdvertisementEvent) {
-        // TODO extract JobAdvertisement and call register
+        // TODO extract JobAdvertisement and call deregister
     }
 
-    @StreamListener(target = Processor.INPUT, condition = "headers['event']=='JOB_ADVERTISEMENT_APPROVED'")
-    public void handleApprovedEvent(JobAdvertisementEvent jobAdvertisementEvent) {
-        domainEventPublisher.publishEvent(jobAdvertisementEvent);
+    @StreamListener(target = Processor.INPUT, condition = "headers['action']=='APPROVE'")
+    public void handleApprovedEvent(ApproveJobAdvertisementMessage approveJobAdvertisementMessage) {
+        // TODO Implement approval process
+        // domainEventPublisher.publishEvent(jobAdvertisementEvent);
     }
 
-    @StreamListener(target = Processor.INPUT, condition = "headers['event']=='JOB_ADVERTISEMENT_REJECTED'")
-    public void handleRejectedEvent(JobAdvertisementEvent jobAdvertisementEvent) {
-        domainEventPublisher.publishEvent(jobAdvertisementEvent);
+    @StreamListener(target = Processor.INPUT, condition = "headers['action']=='REJECT'")
+    public void handleRejectedEvent(RejectJobAdvertisementMessage rejectJobAdvertisementMessage) {
+        // TODO Implement rejection process
+        // domainEventPublisher.publishEvent(jobAdvertisementEvent);
     }
 }

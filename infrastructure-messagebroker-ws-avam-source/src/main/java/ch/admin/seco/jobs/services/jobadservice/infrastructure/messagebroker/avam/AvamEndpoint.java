@@ -49,7 +49,7 @@ public class AvamEndpoint {
             } else if (isApproved(oste)) {
                 avamSource.approve(jobAdvertisementFromAvamAssembler.createApproveJobAdvertisement(oste));
             } else if (isCreatedOrUpdatedByRAV(oste)) {
-                avamSource.update(jobAdvertisementFromAvamAssembler.createUpdateJobAdvertisement(oste));
+                avamSource.createOrUpdate(jobAdvertisementFromAvamAssembler.createUpdateJobAdvertisement(oste));
             } else if (isCanceledByRAV(oste)) {
                 avamSource.cancel(jobAdvertisementFromAvamAssembler.createCancelJobAdvertisement(oste));
             } else {

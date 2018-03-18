@@ -22,8 +22,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupati
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.ApproveJobAdvertisementMessage;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.CancelJobAdvertisementMessage;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.CreateOrUpdateJobAdvertisementMessage;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.RejectJobAdvertisementMessage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.UpdateJobAdvertisementMessage;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSOsteEgov;
 
 public class JobAdvertisementFromAvamAssembler {
@@ -45,8 +45,8 @@ public class JobAdvertisementFromAvamAssembler {
         return rejectJobAdvertisement;
     }
 
-    UpdateJobAdvertisementMessage createUpdateJobAdvertisement(WSOsteEgov oste) {
-        UpdateJobAdvertisementMessage updateJobAdvertisement = new UpdateJobAdvertisementMessage();
+    CreateOrUpdateJobAdvertisementMessage createUpdateJobAdvertisement(WSOsteEgov oste) {
+        CreateOrUpdateJobAdvertisementMessage updateJobAdvertisement = new CreateOrUpdateJobAdvertisementMessage();
         updateJobAdvertisement.setSourceSystem(SourceSystem.RAV);
         updateJobAdvertisement.setStellennummerAvam(oste.getStellennummerAvam());
         updateJobAdvertisement.setReportingObligation(true); // TODO set value form AVAM
