@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+
 @Component
 public class JobAdvertisementFactory {
 
@@ -19,11 +21,12 @@ public class JobAdvertisementFactory {
         this.stellennummerEgovGenerator = stellennummerEgovGenerator;
     }
 
-    public JobAdvertisement createFromWebForm(String title, String description, JobAdvertisementUpdater updater) {
+    public JobAdvertisement createFromWebForm(Locale language, String title, String description, JobAdvertisementUpdater updater) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.CREATED)
+                .setLanguage(language)
                 .setTitle(title)
                 .setDescription(description)
                 .setStellennummerEgov(this.stellennummerEgovGenerator.nextStringValue())
@@ -36,11 +39,12 @@ public class JobAdvertisementFactory {
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement createFromApi(String title, String description, JobAdvertisementUpdater updater, boolean reportToRav) {
+    public JobAdvertisement createFromApi(Locale language, String title, String description, JobAdvertisementUpdater updater, boolean reportToRav) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setSourceSystem(SourceSystem.API)
                 .setStatus(JobAdvertisementStatus.CREATED)
+                .setLanguage(language)
                 .setTitle(title)
                 .setDescription(description)
                 .setStellennummerEgov(this.stellennummerEgovGenerator.nextStringValue())
@@ -53,12 +57,13 @@ public class JobAdvertisementFactory {
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement createFromAvam(String title, String description, JobAdvertisementUpdater updater) {
+    public JobAdvertisement createFromAvam(Locale language, String title, String description, JobAdvertisementUpdater updater) {
         // TODO Tbd which data are passed to create the JobAdvertisement Object
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setSourceSystem(SourceSystem.RAV)
                 .setStatus(JobAdvertisementStatus.REFINING)
+                .setLanguage(language)
                 .setTitle(title)
                 .setDescription(description)
                 .setReportToRav(true)
@@ -70,12 +75,13 @@ public class JobAdvertisementFactory {
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement createFromExtern(String title, String description, JobAdvertisementUpdater updater) {
+    public JobAdvertisement createFromExtern(Locale language, String title, String description, JobAdvertisementUpdater updater) {
         // TODO Tbd which data are passed to create the JobAdvertisement Object
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setSourceSystem(SourceSystem.EXTERN)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setLanguage(language)
                 .setTitle(title)
                 .setDescription(description)
                 .setReportToRav(false)

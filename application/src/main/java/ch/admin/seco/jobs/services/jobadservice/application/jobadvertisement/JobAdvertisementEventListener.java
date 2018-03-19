@@ -1,5 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Component;
+
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
@@ -7,12 +13,11 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.J
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishExpiredEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefinedEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
 
 @Component
 public class JobAdvertisementEventListener {
+
+    private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementMailEventListener.class);
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
@@ -25,6 +30,7 @@ public class JobAdvertisementEventListener {
 
     @EventListener
     void onCreated(JobAdvertisementCreatedEvent event) {
+        LOG.debug("Listener catches event JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
         final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
         if (jobAdvertisement.isReportingObligation() || jobAdvertisement.isReportToRav() || jobAdvertisement.getSourceSystem().equals(SourceSystem.JOBROOM)) {
             jobAdvertisementApplicationService.inspect(jobAdvertisement.getId());
@@ -35,16 +41,19 @@ public class JobAdvertisementEventListener {
 
     @EventListener
     void onRefined(JobAdvertisementRefinedEvent event) {
+        LOG.debug("Listener catches event JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
         jobAdvertisementApplicationService.publish(event.getAggregateId());
     }
 
     @EventListener
     void onBlackoutExpired(JobAdvertisementBlackoutExpiredEvent event) {
+        LOG.debug("Listener catches event JOB_ADVERTISEMENT_BLACKOUT_EXPIRED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
         jobAdvertisementApplicationService.publish(event.getAggregateId());
     }
 
     @EventListener
     void onPublishExpired(JobAdvertisementPublishExpiredEvent event) {
+        LOG.debug("Listener catches event JOB_ADVERTISEMENT_PUBLISH_EXPIRED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
         jobAdvertisementApplicationService.archive(event.getAggregateId());
     }
 

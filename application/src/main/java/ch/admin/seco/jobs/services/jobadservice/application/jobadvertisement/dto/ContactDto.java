@@ -3,31 +3,42 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class ContactDto {
 
     @NotNull
     private Salutation salutation;
-    @NotNull
+
+    @NotBlank
     private String firstName;
-    @NotNull
+
+    @NotBlank
     private String lastName;
-    @NotNull
+
+    @NotBlank
     private String phone;
-    @NotNull
+
+    @NotBlank
     private String email;
+
+    @NotBlank
+    @Pattern(regexp = "[a-z]{2}")
+    private String languageIsoCode;
 
     protected ContactDto() {
         // For reflection libs
     }
 
-    public ContactDto(Salutation salutation, String firstName, String lastName, String phone, String email) {
+    public ContactDto(Salutation salutation, String firstName, String lastName, String phone, String email, String languageIsoCode) {
         this.salutation = salutation;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.email = email;
+        this.languageIsoCode = languageIsoCode;
     }
 
     public Salutation getSalutation() {
@@ -70,6 +81,14 @@ public class ContactDto {
         this.email = email;
     }
 
+    public String getLanguageIsoCode() {
+        return languageIsoCode;
+    }
+
+    public void setLanguageIsoCode(String languageIsoCode) {
+        this.languageIsoCode = languageIsoCode;
+    }
+
     public static ContactDto toDto(Contact contact) {
         ContactDto contactDto = new ContactDto();
         contactDto.setSalutation(contact.getSalutation());
@@ -77,6 +96,7 @@ public class ContactDto {
         contactDto.setLastName(contact.getLastName());
         contactDto.setPhone(contact.getPhone());
         contactDto.setEmail(contact.getEmail());
+        contactDto.setLanguageIsoCode(contact.getLanguage().getLanguage());
         return contactDto;
     }
 }
