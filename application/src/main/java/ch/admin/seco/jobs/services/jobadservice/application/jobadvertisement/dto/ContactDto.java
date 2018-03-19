@@ -5,6 +5,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutati
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class ContactDto {
 
@@ -24,6 +25,7 @@ public class ContactDto {
     private String email;
 
     @NotBlank
+    @Pattern(regexp = "[a-z]{2}")
     private String languageIsoCode;
 
     protected ContactDto() {

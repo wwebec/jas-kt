@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import java.util.List;
 
 public class CreateJobAdvertisementWebFormDto {
@@ -9,6 +10,7 @@ public class CreateJobAdvertisementWebFormDto {
     private boolean eures;
 
     @NotBlank
+    @Pattern(regexp = "[a-z]{2}")
     private String languageIsoCode;
 
     @NotBlank
