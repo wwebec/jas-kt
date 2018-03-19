@@ -43,7 +43,7 @@ public class JobAdvertisementMailEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onCreated(JobAdvertisementCreatedEvent event) {
-        LOG.debug("Mail catches event JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
+        LOG.debug("Mail catches event JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: {}", event.getAggregateId());
         final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
@@ -61,7 +61,7 @@ public class JobAdvertisementMailEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onApproved(JobAdvertisementApprovedEvent event) {
-        LOG.debug("Mail catches event JOB_ADVERTISEMENT_APPROVED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
+        LOG.debug("Mail catches event JOB_ADVERTISEMENT_APPROVED for JobAdvertisementId: {}", event.getAggregateId());
         final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
@@ -79,7 +79,7 @@ public class JobAdvertisementMailEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onRejected(JobAdvertisementRejectedEvent event) {
-        LOG.debug("Mail catches event JOB_ADVERTISEMENT_REJECTED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
+        LOG.debug("Mail catches event JOB_ADVERTISEMENT_REJECTED for JobAdvertisementId: {}", event.getAggregateId());
         final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
@@ -97,7 +97,7 @@ public class JobAdvertisementMailEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onCancelled(JobAdvertisementCancelledEvent event) {
-        LOG.debug("Mail catches event JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
+        LOG.debug("Mail catches event JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: {}", event.getAggregateId());
         final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);

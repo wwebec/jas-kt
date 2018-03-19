@@ -44,7 +44,6 @@ public class AvamIntegrationFlowConfig {
                         .deleteAfterPoll(true), c -> c.poller(Pollers.fixedRate(1000).transactional()))
                 .handle(this::sendToAvam)
                 .get();
-
     }
 
     private Object sendToAvam(AvamTask avamTask, Map<String, Object> headers) {
