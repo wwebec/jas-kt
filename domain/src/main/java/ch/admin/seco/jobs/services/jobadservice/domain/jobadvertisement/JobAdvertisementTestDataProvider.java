@@ -4,6 +4,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.TestDataProvider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdvertisement> {
 
@@ -30,6 +31,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
                 JOB_ADVERTISEMENT_ID_01,
                 SourceSystem.JOBROOM,
                 JobAdvertisementStatus.CREATED,
+                Locale.GERMAN,
                 "Job number 1",
                 "This is the job number 1 with the minimum of data"
         );

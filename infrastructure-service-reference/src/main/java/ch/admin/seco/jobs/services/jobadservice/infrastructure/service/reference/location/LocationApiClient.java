@@ -31,6 +31,19 @@ class LocationApiClientFallback implements LocationApiClient {
 
     @Override
     public List<LocationResource> findLocationByPostalCode(String postalCode) {
+        if(postalCode.equalsIgnoreCase("3000")) {
+            return Collections.singletonList(
+                    new LocationResource(
+                            null,
+                            "Bern",
+                            "3000",
+                            "351",
+                            "BE",
+                            "BE01",
+                            new GeoPointResource(46.9480900, 7.4474400)
+                    )
+            );
+        }
         return Collections.emptyList();
     }
 }

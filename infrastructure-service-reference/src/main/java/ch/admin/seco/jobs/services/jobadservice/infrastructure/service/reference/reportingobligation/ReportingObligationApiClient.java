@@ -25,7 +25,7 @@ class ReportingObligationApiClientFallback implements ReportingObligationApiClie
 
     @Override
     public boolean hasReportingObligation(ProfessionCodeType professionCodeType, String professionCode, String cantonCode) {
-        return false;
+        return (professionCode.equals("51000") && cantonCode.equalsIgnoreCase("BE"));
     }
 
 }

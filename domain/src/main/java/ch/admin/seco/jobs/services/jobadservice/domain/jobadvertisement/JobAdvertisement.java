@@ -19,6 +19,7 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.J
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import javax.persistence.AttributeOverride;
@@ -91,6 +92,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private boolean euresAnonymous;
 
+    private Locale language;
+
     private String title;
 
     private String description;
@@ -145,7 +148,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "firstName", column = @Column(name = "CONTACT_FIRST_NAME")),
             @AttributeOverride(name = "lastName", column = @Column(name = "CONTACT_LAST_NAME")),
             @AttributeOverride(name = "phone", column = @Column(name = "CONTACT_PHONE")),
-            @AttributeOverride(name = "email", column = @Column(name = "CONTACT_EMAIL"))
+            @AttributeOverride(name = "email", column = @Column(name = "CONTACT_EMAIL")),
+            @AttributeOverride(name = "language", column = @Column(name = "CONTACT_LANGUAGE"))
     })
     @Valid
     private Contact contact;
@@ -180,7 +184,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     private JobAdvertisement(Builder builder) {
-        this(builder.id, builder.sourceSystem, builder.status, builder.title, builder.description);
+        this(builder.id, builder.sourceSystem, builder.status, builder.language, builder.title, builder.description);
         this.stellennummerEgov = builder.stellennummerEgov;
         this.stellennummerAvam = builder.stellennummerAvam;
         this.fingerprint = builder.fingerprint;
@@ -211,12 +215,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status,
-                            String title, String description) {
-        this.id = Condition.notNull(id);
-        this.sourceSystem = Condition.notNull(sourceSystem);
-        this.status = Condition.notNull(status);
-        this.title = Condition.notBlank(title);
-        this.description = Condition.notBlank(description);
+                            Locale language, String title, String description) {
+        this.id = Condition.notNull(id, "Id can't be null");
+        this.sourceSystem = Condition.notNull(sourceSystem, "Source system can't be null");
+        this.status = Condition.notNull(status, "Status can't be null");
+        this.language = Condition.notNull(language, "Language can't be null");
+        this.title = Condition.notBlank(title, "Title can't be blank");
+        this.description = Condition.notBlank(description, "Description can't be blank");
     }
 
     @Override
@@ -312,6 +317,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return euresAnonymous;
     }
 
+    public Locale getLanguage() {
+        return language;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -365,8 +374,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void inspect() {
-        // TODO check if can be inspected (e.g. stellennummerEgov is not missing)
-        //Condition.notBlank(this.stellennummerEgov, "StellennummerEgov can't be null");
+        Condition.notBlank(this.stellennummerEgov, "StellennummerEgov can't be null");
 
         this.ravRegistrationDate = TimeMachine.now().toLocalDate();
         this.status = status.validateTransitionTo(JobAdvertisementStatus.INSPECTING);
@@ -486,6 +494,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 ", publicationEndDate=" + publicationEndDate +
                 ", eures=" + eures +
                 ", euresAnonymous=" + euresAnonymous +
+                ", language=" + language.getLanguage() +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", employment=" + employment +
@@ -609,6 +618,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private LocalDate publicationEndDate;
         private boolean eures;
         private boolean euresAnonymous;
+        private Locale language;
         private String title;
         private String description;
         private Employment employment;
@@ -730,6 +740,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
         public Builder setEuresAnonymous(boolean euresAnonymous) {
             this.euresAnonymous = euresAnonymous;
+            return this;
+        }
+
+        public Builder setLanguage(Locale language) {
+            this.language = language;
             return this;
         }
 

@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Locale;
 
 import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
@@ -76,13 +77,14 @@ public class JobAdvertisementApplicationServiceTest {
         //Prepare
         CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto = new CreateJobAdvertisementWebFormDto(
                 true,
+                "de",
                 "title",
                 "description",
                 new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), 365, true, false, 80, 100),
                 "drivingLicenseLevel",
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
                 new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
-                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email"),
+                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
                 new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
@@ -111,13 +113,13 @@ public class JobAdvertisementApplicationServiceTest {
                 "ref",
                 "http://url",
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new JobApiDto("title", "descriptioin", 10, 90,
+                new JobApiDto("de","title", "descriptioin", 10, 90,
                         LocalDate.of(2018, 1, 1),
                         LocalDate.of(2018, 12, 31), 30, true, true,
                         new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                         Collections.emptyList()),
                 new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
-                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email"),
+                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")
         );
 
@@ -172,6 +174,7 @@ public class JobAdvertisementApplicationServiceTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
+                .setLanguage(Locale.GERMAN)
                 .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
                 .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                 .setStellennummerEgov(jobAdvertisementId.getValue())
@@ -184,6 +187,7 @@ public class JobAdvertisementApplicationServiceTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
+                .setLanguage(Locale.GERMAN)
                 .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
                 .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                 .setStellennummerEgov(jobAdvertisementId.getValue())
