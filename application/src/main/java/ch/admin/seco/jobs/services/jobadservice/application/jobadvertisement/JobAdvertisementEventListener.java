@@ -1,20 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.JOB_ADVERTISEMENT_BLACKOUT_EXPIRED;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_EXPIRED;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.JOB_ADVERTISEMENT_REFINED;
-
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementBlackoutExpiredEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishExpiredEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefinedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
-
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class JobAdvertisementEventListener {
@@ -28,12 +23,9 @@ public class JobAdvertisementEventListener {
         this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    void onCreated(JobAdvertisementEvent jobAdvertisementEvent) {
-        if (!JOB_ADVERTISEMENT_CREATED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
-            return;
-        }
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementEvent.getAggregateId());
+    @EventListener
+    void onCreated(JobAdvertisementCreatedEvent event) {
+        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
         if (jobAdvertisement.isReportingObligation() || jobAdvertisement.isReportToRav() || jobAdvertisement.getSourceSystem().equals(SourceSystem.JOBROOM)) {
             jobAdvertisementApplicationService.inspect(jobAdvertisement.getId());
         } else {
@@ -41,28 +33,19 @@ public class JobAdvertisementEventListener {
         }
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    void onRefined(JobAdvertisementEvent jobAdvertisementEvent) {
-        if (!JOB_ADVERTISEMENT_REFINED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
-            return;
-        }
-        jobAdvertisementApplicationService.publish(jobAdvertisementEvent.getAggregateId());
+    @EventListener
+    void onRefined(JobAdvertisementRefinedEvent event) {
+        jobAdvertisementApplicationService.publish(event.getAggregateId());
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    void onBlackoutExpired(JobAdvertisementEvent jobAdvertisementEvent) {
-        if (!JOB_ADVERTISEMENT_BLACKOUT_EXPIRED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
-            return;
-        }
-        jobAdvertisementApplicationService.publish(jobAdvertisementEvent.getAggregateId());
+    @EventListener
+    void onBlackoutExpired(JobAdvertisementBlackoutExpiredEvent event) {
+        jobAdvertisementApplicationService.publish(event.getAggregateId());
     }
 
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    void onPublishExpired(JobAdvertisementEvent jobAdvertisementEvent) {
-        if (!JOB_ADVERTISEMENT_PUBLISH_EXPIRED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
-            return;
-        }
-        jobAdvertisementApplicationService.archive(jobAdvertisementEvent.getAggregateId());
+    @EventListener
+    void onPublishExpired(JobAdvertisementPublishExpiredEvent event) {
+        jobAdvertisementApplicationService.archive(event.getAggregateId());
     }
 
 }

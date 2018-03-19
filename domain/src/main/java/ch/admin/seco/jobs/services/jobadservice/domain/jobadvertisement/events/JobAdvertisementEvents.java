@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
+package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventType;
 

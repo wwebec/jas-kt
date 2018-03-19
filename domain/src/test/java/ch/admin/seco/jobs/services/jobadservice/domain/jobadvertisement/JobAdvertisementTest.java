@@ -2,6 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

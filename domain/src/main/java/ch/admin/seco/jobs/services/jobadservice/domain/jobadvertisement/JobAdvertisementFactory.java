@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.stereotype.Component;
@@ -31,7 +32,7 @@ public class JobAdvertisementFactory {
 
         jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED, newJobAdvertisement));
+        DomainEventPublisher.publish(new JobAdvertisementCreatedEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 
@@ -48,7 +49,7 @@ public class JobAdvertisementFactory {
 
         jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED, newJobAdvertisement));
+        DomainEventPublisher.publish(new JobAdvertisementCreatedEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 
@@ -57,7 +58,7 @@ public class JobAdvertisementFactory {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setSourceSystem(SourceSystem.RAV)
-                .setStatus(JobAdvertisementStatus.APPROVED)
+                .setStatus(JobAdvertisementStatus.REFINING)
                 .setTitle(title)
                 .setDescription(description)
                 .setReportToRav(true)
@@ -65,7 +66,7 @@ public class JobAdvertisementFactory {
 
         jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED, newJobAdvertisement));
+        DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 
@@ -82,7 +83,7 @@ public class JobAdvertisementFactory {
 
         jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC, newJobAdvertisement));
+        DomainEventPublisher.publish(new JobAdvertisementPublishPublicEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 }
