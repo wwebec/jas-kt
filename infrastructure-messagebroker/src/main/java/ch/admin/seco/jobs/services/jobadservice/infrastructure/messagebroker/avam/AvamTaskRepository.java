@@ -3,5 +3,5 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AvamTaskRepository extends JpaRepository<AvamTask, JobAdvertisementId> {
+public interface AvamTaskRepository extends JpaRepository<AvamTask, AvamTaskId> {
 }
