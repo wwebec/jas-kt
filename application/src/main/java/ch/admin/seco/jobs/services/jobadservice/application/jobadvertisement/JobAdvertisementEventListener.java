@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.J
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishExpiredEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefinedEvent;
+
+import java.util.Optional;
 
 @Component
 public class JobAdvertisementEventListener {
@@ -31,7 +35,7 @@ public class JobAdvertisementEventListener {
     @EventListener
     void onCreated(JobAdvertisementCreatedEvent event) {
         LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
+        final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         if (jobAdvertisement.isReportingObligation() || jobAdvertisement.isReportToRav() || jobAdvertisement.getSourceSystem().equals(SourceSystem.JOBROOM)) {
             jobAdvertisementApplicationService.inspect(jobAdvertisement.getId());
         } else {
@@ -55,6 +59,11 @@ public class JobAdvertisementEventListener {
     void onPublishExpired(JobAdvertisementPublishExpiredEvent event) {
         LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_PUBLISH_EXPIRED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         jobAdvertisementApplicationService.archive(event.getAggregateId());
+    }
+
+    private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
+        return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
     }
 
 }

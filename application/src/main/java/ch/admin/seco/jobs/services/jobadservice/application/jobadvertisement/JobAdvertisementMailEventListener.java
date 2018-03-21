@@ -2,7 +2,9 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
 import org.slf4j.Logger;
@@ -14,6 +16,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class JobAdvertisementMailEventListener {
@@ -44,7 +47,7 @@ public class JobAdvertisementMailEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onCreated(JobAdvertisementCreatedEvent event) {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
+        final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
@@ -62,7 +65,7 @@ public class JobAdvertisementMailEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onApproved(JobAdvertisementApprovedEvent event) {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_APPROVED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
+        final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
@@ -80,7 +83,7 @@ public class JobAdvertisementMailEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onRejected(JobAdvertisementRejectedEvent event) {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REJECTED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
+        final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
@@ -98,7 +101,7 @@ public class JobAdvertisementMailEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onCancelled(JobAdvertisementCancelledEvent event) {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
+        final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
@@ -111,6 +114,11 @@ public class JobAdvertisementMailEventListener {
                         .setLocale(jobAdvertisement.getContact().getLanguage())
                         .build()
         );
+    }
+
+    private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
+        return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
     }
 
 }
