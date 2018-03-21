@@ -25,8 +25,8 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WS
 public class AvamEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(AvamEndpoint.class);
 
-    private static final String SECO_WS_OK = "SECO_WS: OK";
-    private static final String SECO_WS_ERROR = "SECO_WS: ERROR";
+    private static final String RESPONSE_OK = "SECO_WS: OK";
+    private static final String RESPONSE_ERROR = "SECO_WS: ERROR";
     private static final String NAMESPACE_URI = "http://valueobjects.common.avam.bit.admin.ch";
 
     private final AvamSource avamSource;
@@ -54,14 +54,14 @@ public class AvamEndpoint {
                 avamSource.cancel(jobAdvertisementFromAvamAssembler.createCancelJobAdvertisement(oste));
             } else {
                 LOGGER.warn("Received JobAdvertisement in unknown state from AVAM: {}", transformToXml(request));
-                return createReponse(SECO_WS_ERROR);
+                return createReponse(RESPONSE_ERROR);
             }
 
-            return createReponse(SECO_WS_OK);
+            return createReponse(RESPONSE_OK);
 
         } catch (Throwable e) {
             LOGGER.warn("Processing 'InsertOste' failed: {}", transformToXml(request), e);
-            return createReponse(SECO_WS_ERROR);
+            return createReponse(RESPONSE_ERROR);
         }
     }
 
@@ -82,7 +82,6 @@ public class AvamEndpoint {
 
     private boolean isCreatedOrUpdatedByRAV(WSOsteEgov oste) {
         return isFromRAV(oste) && !isCanceled(oste);
-
     }
 
     private boolean isCanceledByRAV(WSOsteEgov oste) {

@@ -13,6 +13,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSy
 
 public class UpdateJobAdvertisementMessage {
 
+    private String stellennummerEgov;
+
     private String stellennummerAvam;
 
     private SourceSystem sourceSystem;
@@ -50,6 +52,14 @@ public class UpdateJobAdvertisementMessage {
     private List<Occupation> occupations;
 
     private List<LanguageSkill> languageSkills;
+
+    public String getStellennummerEgov() {
+        return stellennummerEgov;
+    }
+
+    public void setStellennummerEgov(String stellennummerEgov) {
+        this.stellennummerEgov = stellennummerEgov;
+    }
 
     public String getStellennummerAvam() {
         return stellennummerAvam;

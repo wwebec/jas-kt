@@ -9,9 +9,13 @@ public class ApproveJobAdvertisementMessage {
 
     private String stellennummerEgov;
 
+    private String stellennummerAvam;
+
     private boolean reportingObligation;
 
     private LocalDate reportingObligationEndDate;
+
+    private LocalDate approvalDate;
 
     private List<Occupation> occupations;
 
@@ -21,6 +25,14 @@ public class ApproveJobAdvertisementMessage {
 
     public void setStellennummerEgov(String stellennummerEgov) {
         this.stellennummerEgov = stellennummerEgov;
+    }
+
+    public String getStellennummerAvam() {
+        return stellennummerAvam;
+    }
+
+    public void setStellennummerAvam(String stellennummerAvam) {
+        this.stellennummerAvam = stellennummerAvam;
     }
 
     public boolean isReportingObligation() {
@@ -37,6 +49,14 @@ public class ApproveJobAdvertisementMessage {
 
     public void setReportingObligationEndDate(LocalDate reportingObligationEndDate) {
         this.reportingObligationEndDate = reportingObligationEndDate;
+    }
+
+    public LocalDate getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(LocalDate approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
     public List<Occupation> getOccupations() {
