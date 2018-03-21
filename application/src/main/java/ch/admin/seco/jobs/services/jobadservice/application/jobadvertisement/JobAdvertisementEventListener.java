@@ -30,7 +30,7 @@ public class JobAdvertisementEventListener {
 
     @EventListener
     void onCreated(JobAdvertisementCreatedEvent event) {
-        LOG.debug("Listener catches event JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: {}", event.getAggregateId());
+        LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: {}", event.getAggregateId());
         final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(event.getAggregateId());
         if (jobAdvertisement.isReportingObligation() || jobAdvertisement.isReportToRav() || jobAdvertisement.getSourceSystem().equals(SourceSystem.JOBROOM)) {
             jobAdvertisementApplicationService.inspect(jobAdvertisement.getId());
@@ -41,19 +41,19 @@ public class JobAdvertisementEventListener {
 
     @EventListener
     void onRefined(JobAdvertisementRefinedEvent event) {
-        LOG.debug("Listener catches event JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: {}", event.getAggregateId());
+        LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: {}", event.getAggregateId());
         jobAdvertisementApplicationService.publish(event.getAggregateId());
     }
 
     @EventListener
     void onBlackoutExpired(JobAdvertisementBlackoutExpiredEvent event) {
-        LOG.debug("Listener catches event JOB_ADVERTISEMENT_BLACKOUT_EXPIRED for JobAdvertisementId: {}", event.getAggregateId());
+        LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_BLACKOUT_EXPIRED for JobAdvertisementId: {}", event.getAggregateId());
         jobAdvertisementApplicationService.publish(event.getAggregateId());
     }
 
     @EventListener
     void onPublishExpired(JobAdvertisementPublishExpiredEvent event) {
-        LOG.debug("Listener catches event JOB_ADVERTISEMENT_PUBLISH_EXPIRED for JobAdvertisementId: {}", event.getAggregateId());
+        LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_PUBLISH_EXPIRED for JobAdvertisementId: {}", event.getAggregateId());
         jobAdvertisementApplicationService.archive(event.getAggregateId());
     }
 

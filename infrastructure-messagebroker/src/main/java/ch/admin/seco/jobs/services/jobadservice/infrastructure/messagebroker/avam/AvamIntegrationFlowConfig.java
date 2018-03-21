@@ -47,7 +47,7 @@ public class AvamIntegrationFlowConfig {
     }
 
     private Object sendToAvam(AvamTask avamTask, Map<String, Object> headers) {
-        LOG.debug("Find AVAM task for JobAdversiementId: {}", avamTask.getJobAdvertisementId().getValue());
+        LOG.debug("Find AVAM-task for JobAdversiementId: {}", avamTask.getJobAdvertisementId().getValue());
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(avamTask.getJobAdvertisementId());
         if (jobAdvertisement.isPresent()) {
             if (avamTask.getType().equals(AvamTaskType.REGISTER)) {

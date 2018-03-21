@@ -16,7 +16,7 @@ public class AvamTask {
     @Valid
     private AvamTaskId avamTaskId;
 
-    @EmbeddedId
+    @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private JobAdvertisementId jobAdvertisementId;
