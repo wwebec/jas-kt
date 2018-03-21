@@ -3,6 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
+import com.esotericsoftware.minlog.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -50,12 +51,18 @@ public class AvamIntegrationFlowConfig {
         LOG.debug("Find AVAM-task for JobAdversiementId: '{}'", avamTask.getJobAdvertisementId().getValue());
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(avamTask.getJobAdvertisementId());
         if (jobAdvertisement.isPresent()) {
-            if (avamTask.getType().equals(AvamTaskType.REGISTER)) {
-                ravRegistrationService.register(jobAdvertisement.get());
+            switch (avamTask.getType()) {
+                case REGISTER:
+                    ravRegistrationService.register(jobAdvertisement.get());
+                    break;
+                case DEREGISTER:
+                    ravRegistrationService.deregister(jobAdvertisement.get());
+                    break;
+                default:
+                    throw new UnsupportedOperationException(avamTask.getType() + " unknown");
             }
-            if (avamTask.getType().equals(AvamTaskType.DEREGISTER)) {
-                ravRegistrationService.deregister(jobAdvertisement.get());
-            }
+        } else {
+            Log.error("Missing JobAdvertisementId '{}'. AVAM-Task will be removed", avamTask.getJobAdvertisementId().getValue());
         }
         return null;
     }
