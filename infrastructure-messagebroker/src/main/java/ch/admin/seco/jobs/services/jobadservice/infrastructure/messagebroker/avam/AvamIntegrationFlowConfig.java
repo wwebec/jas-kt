@@ -3,7 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import com.esotericsoftware.minlog.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -62,7 +61,7 @@ public class AvamIntegrationFlowConfig {
                     throw new UnsupportedOperationException(avamTask.getType() + " unknown");
             }
         } else {
-            Log.error("Missing JobAdvertisementId '{}'. AVAM-Task will be removed", avamTask.getJobAdvertisementId().getValue());
+            LOG.error("Missing JobAdvertisementId '{}'. AVAM-Task will be removed", avamTask.getJobAdvertisementId().getValue());
         }
         return null;
     }
