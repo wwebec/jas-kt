@@ -1,10 +1,12 @@
-package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
+package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 
 public class JobAdvertisementEvent extends DomainEvent<JobAdvertisementId> {
 
-    private JobAdvertisementId jobAdvertisementId;
+    protected JobAdvertisementId jobAdvertisementId;
 
     public JobAdvertisementEvent(JobAdvertisementEvents jobAdvertisementEventType, JobAdvertisement jobAdvertisement) {
         super(jobAdvertisementEventType.getDomainEventType(), JobAdvertisement.class.getSimpleName());

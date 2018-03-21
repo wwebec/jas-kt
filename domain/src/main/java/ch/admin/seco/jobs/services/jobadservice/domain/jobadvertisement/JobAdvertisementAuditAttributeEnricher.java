@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class JobAdvertisementAuditAttributeEnricher implements AuditAttributeEnr
         final JobAdvertisementId jobAdvertisementId = jobAdvertisementEvent.getAggregateId();
         final Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
         if(!jobAdvertisement.isPresent()) {
-            LOGGER.info("JobAdvertisement with id {} was not found and can't be enrich Attributes with further information", jobAdvertisementId.getValue());
+            LOGGER.info("JobAdvertisement with id '{}' was not found and can't be enrich Attributes with further information", jobAdvertisementId.getValue());
             return Collections.emptyMap();
         }
         // TODO enrich the attributes

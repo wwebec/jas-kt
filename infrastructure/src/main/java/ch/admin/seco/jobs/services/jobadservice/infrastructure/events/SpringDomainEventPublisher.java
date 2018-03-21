@@ -26,7 +26,7 @@ public class SpringDomainEventPublisher implements DomainEventPublisher, Applica
 
     @Override
     public void publishEvent(DomainEvent domainEvent) {
-        LOGGER.debug("Starting Publishing Domain Event: ID '{}' | Type '{}' ", domainEvent.getId().getValue(), domainEvent.getDomainEventType().getValue());
+        LOGGER.debug("Starting Publishing Domain Event: ID '{}', Type '{}', AggregateId '{}'", domainEvent.getId().getValue(), domainEvent.getDomainEventType().getValue(), domainEvent.getAggregateId().getValue());
         // FIXME get the real user
         //domainEvent.setAuditUser(userContext.getAuditUser());
         domainEvent.setAuditUser(new AuditUser("intern-1", "extern-1", "My", "User", "my.user@example.org"));

@@ -2,8 +2,10 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +16,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementEvents.*;
+import java.util.Optional;
 
 @Component
 public class JobAdvertisementMailEventListener {
@@ -44,12 +45,9 @@ public class JobAdvertisementMailEventListener {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    void onCreated(JobAdvertisementEvent jobAdvertisementEvent) {
-        if (!JOB_ADVERTISEMENT_CREATED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
-            return;
-        }
-        LOG.debug("Mail catches event JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementEvent.getAggregateId());
+    void onCreated(JobAdvertisementCreatedEvent event) {
+        LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
@@ -65,12 +63,9 @@ public class JobAdvertisementMailEventListener {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    void onApproved(JobAdvertisementEvent jobAdvertisementEvent) {
-        if (!JOB_ADVERTISEMENT_APPROVED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
-            return;
-        }
-        LOG.debug("Mail catches event JOB_ADVERTISEMENT_APPROVED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementEvent.getAggregateId());
+    void onApproved(JobAdvertisementApprovedEvent event) {
+        LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_APPROVED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
@@ -86,12 +81,9 @@ public class JobAdvertisementMailEventListener {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    void onRejected(JobAdvertisementEvent jobAdvertisementEvent) {
-        if (!JOB_ADVERTISEMENT_REJECTED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
-            return;
-        }
-        LOG.debug("Mail catches event JOB_ADVERTISEMENT_REJECTED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementEvent.getAggregateId());
+    void onRejected(JobAdvertisementRejectedEvent event) {
+        LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REJECTED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
@@ -107,12 +99,9 @@ public class JobAdvertisementMailEventListener {
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    void onCancelled(JobAdvertisementEvent jobAdvertisementEvent) {
-        if (!JOB_ADVERTISEMENT_CANCELLED.getDomainEventType().equals(jobAdvertisementEvent.getDomainEventType())) {
-            return;
-        }
-        LOG.debug("Mail catches event JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: {}", jobAdvertisementEvent.getAggregateId());
-        final JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementEvent.getAggregateId());
+    void onCancelled(JobAdvertisementCancelledEvent event) {
+        LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
@@ -125,6 +114,11 @@ public class JobAdvertisementMailEventListener {
                         .setLocale(jobAdvertisement.getContact().getLanguage())
                         .build()
         );
+    }
+
+    private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
+        return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
     }
 
 }
