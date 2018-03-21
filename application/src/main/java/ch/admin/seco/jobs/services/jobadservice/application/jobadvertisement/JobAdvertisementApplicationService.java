@@ -141,7 +141,7 @@ public class JobAdvertisementApplicationService {
 
     public void inspect(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
-        LOG.debug("Starting inspect for JobAdvertisementId: {}", jobAdvertisementId.getValue());
+        LOG.debug("Starting inspect for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.inspect();
         // FIXME Registration should be called by JOB_ADVERTISEMENT_INSPECTING (Create event listener in package messagebroker)
@@ -151,7 +151,7 @@ public class JobAdvertisementApplicationService {
     public void approve(ApprovalDto approvalDto) {
         // TODO tbd where/when the data updates has to be done (over ApprovalDto --> JobAdUpdater?)
         Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
-        LOG.debug("Starting approve for JobAdvertisementId: {}", approvalDto.getJobAdvertisementId());
+        LOG.debug("Starting approve for JobAdvertisementId: '{}'", approvalDto.getJobAdvertisementId());
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(approvalDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
@@ -159,7 +159,7 @@ public class JobAdvertisementApplicationService {
 
     public void reject(RejectionDto rejectionDto) {
         Condition.notNull(rejectionDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
-        LOG.debug("Starting reject for JobAdvertisementId: {}", rejectionDto.getJobAdvertisementId());
+        LOG.debug("Starting reject for JobAdvertisementId: '{}'", rejectionDto.getJobAdvertisementId());
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(rejectionDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
@@ -167,7 +167,7 @@ public class JobAdvertisementApplicationService {
 
     public void refining(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
-        LOG.debug("Starting refining for JobAdvertisementId: {}", jobAdvertisementId.getValue());
+        LOG.debug("Starting refining for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.refining();
     }
@@ -190,20 +190,20 @@ public class JobAdvertisementApplicationService {
 
     public void publish(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
-        LOG.debug("Starting publish for JobAdvertisementId: {}", jobAdvertisementId.getValue());
+        LOG.debug("Starting publish for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         if (jobAdvertisement.isReportingObligation() && REFINING.equals(jobAdvertisement.getStatus())) {
-            LOG.debug("Publish in restricted area for JobAdvertisementId: {}", jobAdvertisementId.getValue());
+            LOG.debug("Publish in restricted area for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
             jobAdvertisement.publishRestricted();
         } else {
-            LOG.debug("Publish in public area for JobAdvertisementId: {}", jobAdvertisementId.getValue());
+            LOG.debug("Publish in public area for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
             jobAdvertisement.publishPublic();
         }
     }
 
     public void cancel(CancellationDto cancellationDto) {
         Condition.notNull(cancellationDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
-        LOG.debug("Starting cancel for JobAdvertisementId: {}", cancellationDto.getJobAdvertisementId());
+        LOG.debug("Starting cancel for JobAdvertisementId: '{}'", cancellationDto.getJobAdvertisementId());
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(cancellationDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
@@ -211,7 +211,7 @@ public class JobAdvertisementApplicationService {
 
     public void archive(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
-        LOG.debug("Starting archive for JobAdvertisementId: {}", jobAdvertisementId.getValue());
+        LOG.debug("Starting archive for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.archive();
     }

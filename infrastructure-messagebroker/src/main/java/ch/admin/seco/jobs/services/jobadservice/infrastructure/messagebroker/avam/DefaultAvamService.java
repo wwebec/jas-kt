@@ -32,7 +32,7 @@ public class DefaultAvamService implements RavRegistrationService {
 
     @Override
     public void register(JobAdvertisement jobAdvertisement) {
-        LOG.debug("Send through the message broker for action: REGISTER, JobAdvertisementId: {}", jobAdvertisement.getId().getValue());
+        LOG.debug("Send through the message broker for action: REGISTER, JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         output.send(MessageBuilder
                 .withPayload(jobAdvertisement)
                 .setHeader(EVENT, JOB_ADVERTISEMENT_INSPECTING)
@@ -43,7 +43,7 @@ public class DefaultAvamService implements RavRegistrationService {
 
     @Override
     public void deregister(JobAdvertisement jobAdvertisement) {
-        LOG.debug("Send through the message broker for action: DEREGISTER, JobAdvertisementId: {}", jobAdvertisement.getId().getValue());
+        LOG.debug("Send through the message broker for action: DEREGISTER, JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         output.send(MessageBuilder
                 .withPayload(jobAdvertisement)
                 .setHeader(EVENT, JOB_ADVERTISEMENT_CANCELLED)
