@@ -7,4 +7,5 @@
     <include file="classpath:/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180211080000_added_entity_JobAdvertisement.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180306080000_added_sequence_EgovNum.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20180321080000_added_entity_AvamTask.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
