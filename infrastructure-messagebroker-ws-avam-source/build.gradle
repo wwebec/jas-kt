@@ -18,6 +18,8 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     compile 'com.fasterxml.jackson.module:jackson-module-afterburner'
 
+    compile 'com.googlecode.libphonenumber:libphonenumber'
+    
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
     testCompile 'org.springframework.ws:spring-ws-test'
@@ -25,16 +27,4 @@ dependencies {
     optional "org.springframework.boot:spring-boot-configuration-processor"
 }
 
-//bootJar {
-//    mainClassName = 'ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceApplication'
-//}
-
 compileJava.dependsOn(processResources)
-
-publishing {
-    publications {
-        bootJava(MavenPublication) {
-            artifact bootJar
-        }
-    }
-}

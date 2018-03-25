@@ -1,9 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.stereotype.Component;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 
 @Component
 public class JobAdvertisementFactory {
@@ -13,7 +14,7 @@ public class JobAdvertisementFactory {
 
     @Autowired
     public JobAdvertisementFactory(JobAdvertisementRepository jobAdvertisementRepository,
-                                   DataFieldMaxValueIncrementer stellennummerEgovGenerator) {
+            DataFieldMaxValueIncrementer stellennummerEgovGenerator) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.stellennummerEgovGenerator = stellennummerEgovGenerator;
     }
@@ -52,16 +53,19 @@ public class JobAdvertisementFactory {
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement createFromAvam(String title, String description, JobAdvertisementUpdater updater) {
+    public JobAdvertisement createFromAvam(String stellennummerAvam, String title, String description, JobAdvertisementUpdater updater) {
         // TODO Tbd which data are passed to create the JobAdvertisement Object
-        JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
-                .setId(new JobAdvertisementId())
-                .setSourceSystem(SourceSystem.RAV)
-                .setStatus(JobAdvertisementStatus.APPROVED)
-                .setTitle(title)
-                .setDescription(description)
-                .setReportToRav(true)
-                .build();
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam)
+                .orElseGet(() ->
+                        new JobAdvertisement.Builder()
+                                .setId(new JobAdvertisementId())
+                                .setStellennummerAvam(stellennummerAvam)
+                                .setSourceSystem(SourceSystem.RAV)
+                                .setStatus(JobAdvertisementStatus.APPROVED)
+                                .setTitle(title)
+                                .setDescription(description)
+                                .setReportToRav(true)
+                                .build());
 
         jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);

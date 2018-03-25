@@ -1,166 +1,239 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.EXPERIENCES;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.SALUTATIONS;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.parseToLocalDate;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.ApproveJobAdvertisementMessage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.CancelJobAdvertisementMessage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.CreateOrUpdateJobAdvertisementMessage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.RejectJobAdvertisementMessage;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.util.StringUtils;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CancellationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSOsteEgov;
 
 public class JobAdvertisementFromAvamAssembler {
 
-    ApproveJobAdvertisementMessage createApproveJobAdvertisement(WSOsteEgov oste) {
-        ApproveJobAdvertisementMessage approveJobAdvertisement = new ApproveJobAdvertisementMessage();
-        approveJobAdvertisement.setStellennummerEgov(oste.getStellennummerEgov());
-        approveJobAdvertisement.setOccupations(fillOccupations(oste));
-        approveJobAdvertisement.setReportingObligation(true); // TODO set value form AVAM
-        approveJobAdvertisement.setReportingObligationEndDate(parseToLocalDate(null)); // TODO set value form AVAM
-        return approveJobAdvertisement;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(JobAdvertisementFromAvamAssembler.class);
+    private static final EmailValidator emailValidator = new EmailValidator();
 
-    RejectJobAdvertisementMessage createRejectJobAdvertisement(WSOsteEgov oste) {
-        RejectJobAdvertisementMessage rejectJobAdvertisement = new RejectJobAdvertisementMessage();
-        rejectJobAdvertisement.setStellennummerEgov(oste.getStellennummerEgov());
-        rejectJobAdvertisement.setRejectionCode(oste.getAbmeldeGrundCode());
-        rejectJobAdvertisement.setRejectionDate(parseToLocalDate(oste.getAbmeldeDatum()));
-        return rejectJobAdvertisement;
-    }
-
-    CreateOrUpdateJobAdvertisementMessage createUpdateJobAdvertisement(WSOsteEgov oste) {
-        CreateOrUpdateJobAdvertisementMessage updateJobAdvertisement = new CreateOrUpdateJobAdvertisementMessage();
-        updateJobAdvertisement.setSourceSystem(SourceSystem.RAV);
-        updateJobAdvertisement.setStellennummerAvam(oste.getStellennummerAvam());
-        updateJobAdvertisement.setReportingObligation(true); // TODO set value form AVAM
-        updateJobAdvertisement.setReportingObligationEndDate(parseToLocalDate(null)); // TODO set value form AVAM
-        updateJobAdvertisement.setTitle(oste.getBezeichnung());
-        updateJobAdvertisement.setDescription(oste.getBeschreibung());
-        updateJobAdvertisement.setJobCenterCode(oste.getArbeitsamtBereich());
-        updateJobAdvertisement.setRavRegistrationDate(parseToLocalDate(oste.getAnmeldeDatum()));
-        updateJobAdvertisement.setPublicationEndDate(parseToLocalDate(oste.getGueltigkeit()));
-        updateJobAdvertisement.setEures(safeBoolean(oste.isEures()));
-        updateJobAdvertisement.setEuresAnonymous(safeBoolean(oste.isEuresAnonym()));
-        updateJobAdvertisement.setExternalUrl(oste.getUntUrl());
-        updateJobAdvertisement.setContact(new Contact(
-                SALUTATIONS.getRight(oste.getKpAnredeCode()),
-                oste.getKpVorname(),
-                oste.getKpName(),
-                oste.getKpTelefonNr(),
-                oste.getKpEmail()));
-        updateJobAdvertisement.setCompany(new Company.Builder()
-                .setName(oste.getUntName())
-                .setStreet(oste.getUntStrasse())
-                .setHouseNumber(oste.getUntHausNr())
-                .setPostalCode(oste.getUntPlz())
-                .setCity(oste.getUntOrt())
-                .setCountryIsoCode(oste.getUntLand()) // FIXME value might be NULL
-                .setPostOfficeBoxNumber(oste.getUntPostfach())
-                .setPostOfficeBoxPostalCode(oste.getUntPostfachPlz())
-                .setPostOfficeBoxCity(oste.getUntPostfachOrt())
-                .build());
-        updateJobAdvertisement.setEmployment(new Employment(
-                parseToLocalDate(oste.getStellenantritt()),
-                parseToLocalDate(oste.getVertragsdauer()),
+    ApprovalDto createApprovaldDto(WSOsteEgov avamJobAdvertisement) {
+        return new ApprovalDto(
                 null,
-                safeBoolean(oste.isAbSofort()),
-                safeBoolean(oste.isUnbefristet()),
-                oste.getPensumVon(),
-                oste.getPensumBis()
-        ));
-        updateJobAdvertisement.setLocation(new Location(
-                oste.getArbeitsOrtText(),
-                oste.getArbeitsOrtOrt(),
-                oste.getArbeitsOrtPlz(),
-                String.valueOf(oste.getArbeitsOrtGemeindeNr()),
-                null,
-                null,
-                oste.getArbeitsOrtLand(),
-                null));
-        updateJobAdvertisement.setLanguageSkills(fillLangaugeSkills(oste));
-        updateJobAdvertisement.setOccupations(fillOccupations(oste));
-        return updateJobAdvertisement;
+                avamJobAdvertisement.getStellennummerEgov(),
+                avamJobAdvertisement.getStellennummerAvam(),
+                parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
+                true, // TODO set value from AVAM
+                parseToLocalDate(null)); // TODO set value from AVAM
     }
 
-    CancelJobAdvertisementMessage createCancelJobAdvertisement(WSOsteEgov oste) {
-        CancelJobAdvertisementMessage cancelJobAdvertisement = new CancelJobAdvertisementMessage();
-        cancelJobAdvertisement.setStellennummerAvam(oste.getStellennummerAvam());
-        cancelJobAdvertisement.setCancellationCode(oste.getAbmeldeGrundCode());
-        cancelJobAdvertisement.setCancellationDate(parseToLocalDate(oste.getAbmeldeDatum()));
-        return cancelJobAdvertisement;
+    RejectionDto createRejectionDto(WSOsteEgov avamJobAdvertisement) {
+        return new RejectionDto(
+                null,
+                avamJobAdvertisement.getStellennummerEgov(),
+                avamJobAdvertisement.getStellennummerAvam(),
+                LocalDate.now(),
+                avamJobAdvertisement.getAbmeldeGrundCode(),
+                avamJobAdvertisement.getDetailangabenCode()
+        );
     }
 
-    private List<Occupation> fillOccupations(WSOsteEgov oste) {
-        List<Occupation> occupationList = new ArrayList<>();
-        fillOccupation(occupationList, oste.getBq1AvamBerufNr(), oste.getBq1ErfahrungCode(), oste.getBq1AusbildungCode());
-        fillOccupation(occupationList, oste.getBq2AvamBerufNr(), oste.getBq2ErfahrungCode(), oste.getBq2AusbildungCode());
-        fillOccupation(occupationList, oste.getBq2AvamBerufNr(), oste.getBq3ErfahrungCode(), oste.getBq2AusbildungCode());
+    CreateJobAdvertisementAvamDto createCreateJobAdvertisementAvamDto(WSOsteEgov avamJobAdvertisement) {
+        return new CreateJobAdvertisementAvamDto(
+                avamJobAdvertisement.getStellennummerAvam(),
+                avamJobAdvertisement.isEures() || avamJobAdvertisement.isEuresAnonym(), // FIXME is this correct?
+                avamJobAdvertisement.getBezeichnung(),
+                avamJobAdvertisement.getBeschreibung(),
+                avamJobAdvertisement.getArbeitsamtBereich(),
+                createEmploymentDto(avamJobAdvertisement),
+                createApplyChannelDto(avamJobAdvertisement),
+                createCompanyDto(avamJobAdvertisement),
+                createContactDto(avamJobAdvertisement),
+                createCreateLocationDto(avamJobAdvertisement),
+                createOccupationDtos(avamJobAdvertisement),
+                createLanguageDtos(avamJobAdvertisement)
+        );
+    }
 
-        return occupationList;
+    CancellationDto createCancellationDto(WSOsteEgov avamJobAdvertisement) {
+        return new CancellationDto(
+                null,
+                avamJobAdvertisement.getStellennummerEgov(),
+                avamJobAdvertisement.getStellennummerAvam(),
+                parseToLocalDate(avamJobAdvertisement.getAbmeldeDatum()),
+                avamJobAdvertisement.getAbmeldeGrundCode());
+    }
+
+    private ContactDto createContactDto(WSOsteEgov avamJobAdvertisement) {
+        return new ContactDto(
+                SALUTATIONS.getRight(avamJobAdvertisement.getKpAnredeCode()),
+                avamJobAdvertisement.getKpVorname(),
+                avamJobAdvertisement.getKpName(),
+                sanitizePhoneNumber(avamJobAdvertisement.getKpTelefonNr(), avamJobAdvertisement),
+                sanitizeEmail(avamJobAdvertisement.getKpEmail(), avamJobAdvertisement));
+    }
+
+    private EmploymentDto createEmploymentDto(WSOsteEgov avamJobAdvertisement) {
+        return new EmploymentDto(
+                parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
+                parseToLocalDate(avamJobAdvertisement.getGueltigkeit()),
+                null,
+                avamJobAdvertisement.isAbSofort(),
+                avamJobAdvertisement.isUnbefristet(),
+                nonNull(avamJobAdvertisement.getPensumVon()) ? avamJobAdvertisement.getPensumVon().intValue() : 100,
+                nonNull(avamJobAdvertisement.getPensumBis()) ? avamJobAdvertisement.getPensumBis().intValue() : 100
+        );
+    }
+
+    private CreateLocationDto createCreateLocationDto(WSOsteEgov avamJobAdvertisement) {
+        return new CreateLocationDto(
+                avamJobAdvertisement.getArbeitsOrtText(),
+                avamJobAdvertisement.getArbeitsOrtOrt(),
+                avamJobAdvertisement.getArbeitsOrtPlz(),
+                avamJobAdvertisement.getArbeitsOrtLand());
+    }
+
+    private CompanyDto createCompanyDto(WSOsteEgov avamJobAdvertisement) {
+        return new CompanyDto(avamJobAdvertisement.getUntName(),
+                avamJobAdvertisement.getUntStrasse(),
+                avamJobAdvertisement.getUntHausNr(),
+                avamJobAdvertisement.getUntPlz(),
+                avamJobAdvertisement.getUntOrt(),
+                avamJobAdvertisement.getUntLand(),
+                avamJobAdvertisement.getUntPostfach(),
+                avamJobAdvertisement.getUntPostfachPlz(),
+                avamJobAdvertisement.getUntPostfachOrt(),
+                null, null, null);
+    }
+
+    private ApplyChannelDto createApplyChannelDto(WSOsteEgov avamJobAdvertisement) {
+        return new ApplyChannelDto(
+                String.valueOf(safeBoolean(avamJobAdvertisement.isBewerSchriftlich())), // TODO what is the expected value?
+                sanitizeEmail(avamJobAdvertisement.getUntEmail(), avamJobAdvertisement),
+                sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement),
+                sanitizeUrl(avamJobAdvertisement.getUntUrl(), avamJobAdvertisement),
+                avamJobAdvertisement.getBewerAngaben());
+    }
+
+    private List<OccupationDto> createOccupationDtos(WSOsteEgov avamJobAdvertisement) {
+        return Stream.of(
+                createOccupationDto(avamJobAdvertisement.getBq1AvamBerufNr(), avamJobAdvertisement.getBq1ErfahrungCode(), avamJobAdvertisement.getBq1AusbildungCode()),
+                createOccupationDto(avamJobAdvertisement.getBq2AvamBerufNr(), avamJobAdvertisement.getBq2ErfahrungCode(), avamJobAdvertisement.getBq2AusbildungCode()),
+                createOccupationDto(avamJobAdvertisement.getBq2AvamBerufNr(), avamJobAdvertisement.getBq3ErfahrungCode(), avamJobAdvertisement.getBq2AusbildungCode()))
+                .filter(Objects::nonNull)
+                .collect(toList());
+    }
+
+    private OccupationDto createOccupationDto(BigInteger avamBerufNr, String erfahrungCode, String ausbildungCode) {
+        if (nonNull(avamBerufNr)) {
+            return new OccupationDto(
+                    avamBerufNr.toString(),
+                    AvamCodeResolver.EXPERIENCES.getRight(erfahrungCode),
+                    ausbildungCode
+            );
+        }
+        return null;
+    }
+
+    private List<LanguageSkillDto> createLanguageDtos(WSOsteEgov avamJobAdvertisement) {
+        return Stream.of(
+                createLanguageSkill(avamJobAdvertisement.getSk1SpracheCode(), avamJobAdvertisement.getSk1MuendlichCode(), avamJobAdvertisement.getSk1SchriftlichCode()),
+                createLanguageSkill(avamJobAdvertisement.getSk2SpracheCode(), avamJobAdvertisement.getSk2MuendlichCode(), avamJobAdvertisement.getSk2SchriftlichCode()),
+                createLanguageSkill(avamJobAdvertisement.getSk3SpracheCode(), avamJobAdvertisement.getSk3MuendlichCode(), avamJobAdvertisement.getSk3SchriftlichCode()),
+                createLanguageSkill(avamJobAdvertisement.getSk4SpracheCode(), avamJobAdvertisement.getSk4MuendlichCode(), avamJobAdvertisement.getSk4SchriftlichCode()),
+                createLanguageSkill(avamJobAdvertisement.getSk5SpracheCode(), avamJobAdvertisement.getSk5MuendlichCode(), avamJobAdvertisement.getSk5SchriftlichCode()))
+                .filter(Objects::nonNull)
+                .collect(toList());
+    }
+
+    private LanguageSkillDto createLanguageSkill(String sprachCode, String muendlichCode, String schriftlichCode) {
+        if (hasText(sprachCode)) {
+            return new LanguageSkillDto(
+                    LANGUAGES.getRight(sprachCode),
+                    LANGUAGE_LEVEL.getRight(muendlichCode),
+                    LANGUAGE_LEVEL.getRight(schriftlichCode)
+            );
+        }
+        return null;
     }
 
     private boolean safeBoolean(Boolean value) {
         return (value != null) ? value : false;
     }
 
-    private ApplyChannel fillApplyChannel(WSOsteEgov oste) {
-        return new ApplyChannel(
-                oste.isBewerSchriftlich() ? "true" : null,
-                oste.isBewerElektronisch() ? oste.getUntEmail() : null,
-                oste.isBewerTelefonisch() ? oste.getUntTelefon() : null,
-                oste.isBewerElektronisch() ? oste.getUntUrl() : null,
-                oste.getBewerAngaben());
-    }
-
-    private SourceSystem getSourceSystem(WSOsteEgov oste) {
-        return (hasText(oste.getStellennummerEgov())) ? SourceSystem.JOBROOM : SourceSystem.RAV;
-    }
-
-    private List<LanguageSkill> fillLangaugeSkills(WSOsteEgov oste) {
-        List<LanguageSkill> languageSkills = new ArrayList<>();
-        fillLanguageSkill(languageSkills, oste.getSk1SpracheCode(), oste.getSk1MuendlichCode(), oste.getSk1SchriftlichCode());
-        fillLanguageSkill(languageSkills, oste.getSk2SpracheCode(), oste.getSk2MuendlichCode(), oste.getSk2SchriftlichCode());
-        fillLanguageSkill(languageSkills, oste.getSk3SpracheCode(), oste.getSk3MuendlichCode(), oste.getSk3SchriftlichCode());
-        fillLanguageSkill(languageSkills, oste.getSk4SpracheCode(), oste.getSk4MuendlichCode(), oste.getSk4SchriftlichCode());
-        fillLanguageSkill(languageSkills, oste.getSk5SpracheCode(), oste.getSk5MuendlichCode(), oste.getSk5SchriftlichCode());
-        return languageSkills;
-    }
-
-    private void fillLanguageSkill(List<LanguageSkill> languageSkills, String sprachCode, String muendlichCode, String schriftlichCode) {
-        if (hasText(sprachCode)) {
-            languageSkills.add(new LanguageSkill(
-                    LANGUAGES.getRight(sprachCode),
-                    LANGUAGE_LEVEL.getRight(muendlichCode),
-                    LANGUAGE_LEVEL.getRight(schriftlichCode)
-            ));
+    /*
+     * Check for a valid phone number and remove remarks.
+     */
+    private String sanitizePhoneNumber(String phone, WSOsteEgov avamJobAdvertisement) {
+        if (StringUtils.hasText(phone)) {
+            try {
+                Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().parse(phone, "CH");
+                if (PhoneNumberUtil.getInstance().isValidNumber(phoneNumber)) {
+                    return PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+                }
+            } catch (NumberParseException e) {
+                LOG.warn("JobAd stellennummerAvam: {} has invalid phone number: {}", avamJobAdvertisement.getStellennummerAvam(), phone);
+                String[] phoneParts = phone.toString().split("[^\\d\\(\\)\\+ ]");
+                if (phoneParts.length > 1) {
+                    return sanitizePhoneNumber(phoneParts[0], avamJobAdvertisement);
+                }
+            }
         }
+        return null;
     }
 
-    private void fillOccupation(List<Occupation> occupationList, BigInteger avamBerufNummer, String erfahrungsCode, String ausbildungsCode) {
-        if (nonNull(avamBerufNummer)) {
-            occupationList.add(new Occupation(
-                            avamBerufNummer.toString(),
-                            EXPERIENCES.getRight(erfahrungsCode),
-                            ausbildungsCode
-                    )
-            );
+    private String sanitizeEmail(String testObject, WSOsteEgov avamJobAdvertisement) {
+        if (StringUtils.hasText(testObject)) {
+            String email = StringUtils.trimAllWhitespace(testObject).replace("'", "");
+            if (emailValidator.isValid(email, null)) {
+                return email;
+            } else {
+                LOG.warn("JobAd stellennummerAvam: {} has invalid email: {}", avamJobAdvertisement.getStellennummerAvam(), testObject);
+            }
         }
+        return null;
+    }
+
+    private String sanitizeUrl(String testObject, WSOsteEgov avamJobAdvertisement) {
+        if (StringUtils.hasText(testObject)) {
+            try {
+                URL url = new URL(testObject);
+                return url.toExternalForm();
+            } catch (MalformedURLException e) {
+                LOG.warn("JobAd stellennummerAvam: {} has invalid URL: {}", avamJobAdvertisement.getStellennummerAvam(), testObject);
+                try {
+                    URL url = new URL("http://" + testObject);
+                    return url.toExternalForm();
+                } catch (MalformedURLException e1) {
+                }
+            }
+        }
+        return null;
     }
 }

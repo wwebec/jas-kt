@@ -23,7 +23,7 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WS
 
 @Endpoint
 public class AvamEndpoint {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AvamEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AvamEndpoint.class);
 
     private static final String RESPONSE_OK = "SECO_WS: OK";
     private static final String RESPONSE_ERROR = "SECO_WS: ERROR";
@@ -41,27 +41,28 @@ public class AvamEndpoint {
     @ResponsePayload
     public InsertOsteResponse receiveJobAdvertisementFromAvam(@RequestPayload InsertOste request) {
 
-        WSOsteEgov oste = request.getOste();
+        WSOsteEgov avamJobAdvertisement = request.getOste();
 
         try {
-            if (isRejected(oste)) {
-                avamSource.reject(jobAdvertisementFromAvamAssembler.createRejectJobAdvertisement(oste));
-            } else if (isApproved(oste)) {
-                avamSource.approve(jobAdvertisementFromAvamAssembler.createApproveJobAdvertisement(oste));
-            } else if (isCreatedOrUpdatedByRAV(oste)) {
-                avamSource.createOrUpdate(jobAdvertisementFromAvamAssembler.createUpdateJobAdvertisement(oste));
-            } else if (isCanceledByRAV(oste)) {
-                avamSource.cancel(jobAdvertisementFromAvamAssembler.createCancelJobAdvertisement(oste));
+            if (isRejected(avamJobAdvertisement)) {
+                avamSource.reject(jobAdvertisementFromAvamAssembler.createRejectionDto(avamJobAdvertisement));
+            } else if (isCanceled(avamJobAdvertisement)) {
+                avamSource.cancel(jobAdvertisementFromAvamAssembler.createCancellationDto(avamJobAdvertisement));
+            } else if (isApproved(avamJobAdvertisement)) {
+                avamSource.approve(jobAdvertisementFromAvamAssembler.createApprovaldDto(avamJobAdvertisement));
+            } else if (isCreatedFromAvam(avamJobAdvertisement)) {
+                // TODO how to handle avamJobAdvertisement.isPublikation() == false?
+                avamSource.create(jobAdvertisementFromAvamAssembler.createCreateJobAdvertisementAvamDto(avamJobAdvertisement));
             } else {
-                LOGGER.warn("Received JobAdvertisement in unknown state from AVAM: {}", transformToXml(request));
-                return createReponse(RESPONSE_ERROR);
+                LOG.warn("Received JobAdvertisement in unknown state from AVAM: {}", transformToXml(request));
+                return response(RESPONSE_ERROR);
             }
 
-            return createReponse(RESPONSE_OK);
+            return response(RESPONSE_OK);
 
         } catch (Throwable e) {
-            LOGGER.warn("Processing 'InsertOste' failed: {}", transformToXml(request), e);
-            return createReponse(RESPONSE_ERROR);
+            LOG.warn("Processing 'InsertOste' failed: {}", transformToXml(request), e);
+            return response(RESPONSE_ERROR);
         }
     }
 
@@ -75,44 +76,36 @@ public class AvamEndpoint {
             return sw.toString();
 
         } catch (JAXBException e) {
-            LOGGER.error("Marshalling of JaxbObject failed", e);
+            LOG.error("Marshalling of JaxbObject failed", e);
             return xmlRootObject.toString();
         }
     }
 
-    private boolean isCreatedOrUpdatedByRAV(WSOsteEgov oste) {
-        return isFromRAV(oste) && !isCanceled(oste);
+    private boolean isCreatedFromAvam(WSOsteEgov avamJobAdvertisement) {
+        return !isCanceled(avamJobAdvertisement);
     }
 
-    private boolean isCanceledByRAV(WSOsteEgov oste) {
-        return isFromRAV(oste) && !isCanceled(oste);
+    private boolean isCanceled(WSOsteEgov avamJobAdvertisement) {
+        return hasText(avamJobAdvertisement.getAbmeldeGrundCode());
     }
 
-    private boolean isFromRAV(WSOsteEgov oste) {
-        return !isFromJobroom(oste);
+    private boolean isRejected(WSOsteEgov avamJobAdvertisement) {
+        return isFromJobroom(avamJobAdvertisement) && isTrue(avamJobAdvertisement.isAbgelehnt());
     }
 
-    private boolean isCanceled(WSOsteEgov oste) {
-        return hasText(oste.getAbmeldeGrundCode());
-    }
-
-    private boolean isRejected(WSOsteEgov oste) {
-        return isFromJobroom(oste) && isTrue(oste.isAbgelehnt());
-    }
-
-    private boolean isApproved(WSOsteEgov oste) {
-        return isFromJobroom(oste);
+    private boolean isApproved(WSOsteEgov avamJobAdvertisement) {
+        return isFromJobroom(avamJobAdvertisement);
     }
 
     private boolean isTrue(Boolean bool) {
         return nonNull(bool) && bool;
     }
 
-    private boolean isFromJobroom(WSOsteEgov oste) {
-        return hasText(oste.getStellennummerEgov());
+    private boolean isFromJobroom(WSOsteEgov avamJobAdvertisement) {
+        return hasText(avamJobAdvertisement.getStellennummerEgov());
     }
 
-    private InsertOsteResponse createReponse(String returnCode) {
+    private InsertOsteResponse response(String returnCode) {
         InsertOsteResponse insertOsteResponse = new InsertOsteResponse();
         insertOsteResponse.setReturn(returnCode);
         return insertOsteResponse;

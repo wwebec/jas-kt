@@ -7,12 +7,12 @@
         <osteEgovId>900000</osteEgovId>
         <abSofort>1</abSofort>
         <abgelehnt>0</abgelehnt>
-        <abmeldeDatum>01.05.2012</abmeldeDatum>
+        <abmeldeDatum></abmeldeDatum>
         <abmeldeGrundCode></abmeldeGrundCode>
         <alterBis>50</alterBis>
         <alterVon>20</alterVon>
         <angabenAlter></angabenAlter>
-        <anmeldeDatum>01.03.2012</anmeldeDatum>
+        <anmeldeDatum>01.03.2018</anmeldeDatum>
         <arbeitsamtBereich>BEA12</arbeitsamtBereich>
         <arbeitsOrtGemeindeNr>261</arbeitsOrtGemeindeNr>
         <arbeitsOrtGemeinde>Zürich</arbeitsOrtGemeinde>
@@ -113,8 +113,8 @@
         <ssiAnonym>0</ssiAnonym>
         <ssiPublikation>0</ssiPublikation>
         <stellenantritt></stellenantritt>
-        <stellennummerAvam>TESTNUMMER3</stellennummerAvam>
-        <stellennummerEgov>OI1349349</stellennummerEgov>
+        <stellennummerAvam>AVAM-0001</stellennummerAvam>
+        <stellennummerEgov>EGOV-0001</stellennummerEgov>
         <teletextAnonym>0</teletextAnonym>
         <teletext>0</teletext>
         <teletextKanalCode></teletextKanalCode>

@@ -2,7 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.APPROVE;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.CANCEL;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.CREATE_OR_UPDATE;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.CREATE_FROM_AVAM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.REJECT;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageHeaders.ACTION;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageHeaders.SOURCE_SYSTEM;
@@ -15,10 +15,10 @@ import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.ApproveJobAdvertisementMessage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.CancelJobAdvertisementMessage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.CreateOrUpdateJobAdvertisementMessage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.RejectJobAdvertisementMessage;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CancellationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
 
 @EnableBinding(Source.class)
 public class AvamSource {
@@ -29,39 +29,39 @@ public class AvamSource {
         this.output = output;
     }
 
-    public void approve(ApproveJobAdvertisementMessage approveJobAdvertisement) {
+    public void approve(ApprovalDto approvalDto) {
         output.send(MessageBuilder
-                .withPayload(approveJobAdvertisement)
-                .setHeader(ACTION, APPROVE)
-                .setHeader(SOURCE_SYSTEM, AVAM)
-                .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE)
+                .withPayload(approvalDto)
+                .setHeader(ACTION, APPROVE.name())
+                .setHeader(SOURCE_SYSTEM, AVAM.name())
+                .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE.name())
                 .build());
     }
 
-    public void reject(RejectJobAdvertisementMessage rejectJobAdvertisement) {
+    public void reject(RejectionDto rejectionDto) {
         output.send(MessageBuilder
-                .withPayload(rejectJobAdvertisement)
-                .setHeader(ACTION, REJECT)
-                .setHeader(SOURCE_SYSTEM, AVAM)
-                .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE)
+                .withPayload(rejectionDto)
+                .setHeader(ACTION, REJECT.name())
+                .setHeader(SOURCE_SYSTEM, AVAM.name())
+                .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE.name())
                 .build());
     }
 
-    public void createOrUpdate(CreateOrUpdateJobAdvertisementMessage createOrUpdateJobAdvertisementMessage) {
+    public void create(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
         output.send(MessageBuilder
-                .withPayload(createOrUpdateJobAdvertisementMessage)
-                .setHeader(ACTION, CREATE_OR_UPDATE)
-                .setHeader(SOURCE_SYSTEM, AVAM)
-                .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE)
+                .withPayload(createJobAdvertisementAvamDto)
+                .setHeader(ACTION, CREATE_FROM_AVAM.name())
+                .setHeader(SOURCE_SYSTEM, AVAM.name())
+                .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE.name())
                 .build());
     }
 
-    public void cancel(CancelJobAdvertisementMessage cancelJobAdvertisement) {
+    public void cancel(CancellationDto cancellationDto) {
         output.send(MessageBuilder
-                .withPayload(cancelJobAdvertisement)
-                .setHeader(ACTION, CANCEL)
-                .setHeader(SOURCE_SYSTEM, AVAM)
-                .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE)
+                .withPayload(cancellationDto)
+                .setHeader(ACTION, CANCEL.name())
+                .setHeader(SOURCE_SYSTEM, AVAM.name())
+                .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE.name())
                 .build());
     }
 }
