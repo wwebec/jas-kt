@@ -1,10 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
@@ -15,15 +19,13 @@ public class JobAdvertisementFactoryTest {
     private static final String TEST_STELLEN_NUMMER_EGOV = "1000000";
 
     private DomainEventMockUtils domainEventMockUtils;
-    private JobAdvertisementRepository jobAdvertisementRepository;
     private JobAdvertisementFactory jobAdvertisementFactory;
-    private DataFieldMaxValueIncrementer stellennummerEgovGenerator;
 
     @Before
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
-        jobAdvertisementRepository = spy(TestJobAdvertisementRepository.class);
-        stellennummerEgovGenerator = spy(DataFieldMaxValueIncrementer.class);
+        JobAdvertisementRepository jobAdvertisementRepository = spy(TestJobAdvertisementRepository.class);
+        DataFieldMaxValueIncrementer stellennummerEgovGenerator = spy(DataFieldMaxValueIncrementer.class);
         when(stellennummerEgovGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
 
         jobAdvertisementFactory = new JobAdvertisementFactory(jobAdvertisementRepository, stellennummerEgovGenerator);
@@ -40,6 +42,7 @@ public class JobAdvertisementFactoryTest {
 
         //Execute
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(
+                Locale.GERMAN,
                 "title",
                 "description",
                 new JobAdvertisementUpdater.Builder(null).build()
@@ -60,6 +63,7 @@ public class JobAdvertisementFactoryTest {
 
         //Execute
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(
+                Locale.GERMAN,
                 "title",
                 "description",
                 new JobAdvertisementUpdater.Builder(null).build(),

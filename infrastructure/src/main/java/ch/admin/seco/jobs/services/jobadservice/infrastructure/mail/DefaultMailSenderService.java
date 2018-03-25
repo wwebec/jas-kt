@@ -52,7 +52,7 @@ public class DefaultMailSenderService implements MailSenderService {
         final String from = mailSenderData.getFrom().orElse(mailSenderProperties.getFromAddress());
         final String subject = messageSource.getMessage(mailSenderData.getSubject(), null, mailSenderData.getSubject(), mailSenderData.getLocale());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending email with MailSenderData={}, \n BODY={}", mailSenderData, content);
+            LOG.debug("Sending email with MailSenderData={},\nBODY=\n{}", mailSenderData, content);
         }
         mailSender.send(mimeMessage -> {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, !mailSenderData.getEmailAttachments().isEmpty(), CONTENT_ENCODING);

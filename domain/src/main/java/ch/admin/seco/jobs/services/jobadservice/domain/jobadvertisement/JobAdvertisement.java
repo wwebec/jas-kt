@@ -1,43 +1,21 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_APPLY_CHANNEL;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_COMPANY;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_CONTACT;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EMPLOYMENT;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EURES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EXTERNAL_URL;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_FINGERPRINT;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_JOB_CENTER_CODE;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LANGUAGE_SKILLS;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_LOCATION;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_OCCUPATIONS;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLICATION_DATES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_REPORTING_OBLIGATION;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_SOURCE_ENTRY_ID;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Objects;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Embedded;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.validation.Valid;
-
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*;
+
+import javax.persistence.*;
+import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.*;
 
 @Entity
 public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertisementId> {
@@ -90,6 +68,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private boolean eures;
 
     private boolean euresAnonymous;
+
+    private Locale language;
 
     private String title;
 
@@ -145,7 +125,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "firstName", column = @Column(name = "CONTACT_FIRST_NAME")),
             @AttributeOverride(name = "lastName", column = @Column(name = "CONTACT_LAST_NAME")),
             @AttributeOverride(name = "phone", column = @Column(name = "CONTACT_PHONE")),
-            @AttributeOverride(name = "email", column = @Column(name = "CONTACT_EMAIL"))
+            @AttributeOverride(name = "email", column = @Column(name = "CONTACT_EMAIL")),
+            @AttributeOverride(name = "language", column = @Column(name = "CONTACT_LANGUAGE"))
     })
     @Valid
     private Contact contact;
@@ -180,7 +161,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     private JobAdvertisement(Builder builder) {
-        this(builder.id, builder.sourceSystem, builder.status, builder.title, builder.description);
+        this(builder.id, builder.sourceSystem, builder.status, builder.language, builder.title, builder.description);
         this.stellennummerEgov = builder.stellennummerEgov;
         this.stellennummerAvam = builder.stellennummerAvam;
         this.fingerprint = builder.fingerprint;
@@ -211,12 +192,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status,
-                            String title, String description) {
-        this.id = Condition.notNull(id);
-        this.sourceSystem = Condition.notNull(sourceSystem);
-        this.status = Condition.notNull(status);
-        this.title = Condition.notBlank(title);
-        this.description = Condition.notBlank(description);
+                            Locale language, String title, String description) {
+        this.id = Condition.notNull(id, "Id can't be null");
+        this.sourceSystem = Condition.notNull(sourceSystem, "Source system can't be null");
+        this.status = Condition.notNull(status, "Status can't be null");
+        this.language = Condition.notNull(language, "Language can't be null");
+        this.title = Condition.notBlank(title, "Title can't be blank");
+        this.description = Condition.notBlank(description, "Description can't be blank");
     }
 
     @Override
@@ -312,6 +294,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return euresAnonymous;
     }
 
+    public Locale getLanguage() {
+        return language;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -365,12 +351,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void inspect() {
-        // TODO check if can be inspected (e.g. stellennummerEgov is not missing)
-        //Condition.notBlank(this.stellennummerEgov, "StellennummerEgov can't be null");
+        Condition.notBlank(this.stellennummerEgov, "StellennummerEgov can't be null");
 
         this.ravRegistrationDate = TimeMachine.now().toLocalDate();
         this.status = status.validateTransitionTo(JobAdvertisementStatus.INSPECTING);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING, this));
+        DomainEventPublisher.publish(new JobAdvertisementInspectingEvent(this));
     }
 
     public void approve(String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
@@ -382,21 +367,21 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.reportingObligation = reportingObligation;
         this.reportingObligationEndDate = reportingObligationEndDate;
         this.status = status.validateTransitionTo(JobAdvertisementStatus.APPROVED);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED, this));
+        DomainEventPublisher.publish(new JobAdvertisementApprovedEvent(this));
     }
 
     public void expireBlackout() {
         Condition.isTrue(this.reportingObligationEndDate.isBefore(TimeMachine.now().toLocalDate()), "Must not be published before setReportingObligationEndDate.");
         Condition.isTrue(JobAdvertisementStatus.PUBLISHED_RESTRICTED.equals(status), "Must be in PUBLISHED_RESTRICTED state.");
 
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_BLACKOUT_EXPIRED, this));
+        DomainEventPublisher.publish(new JobAdvertisementBlackoutExpiredEvent(this));
     }
 
     public void expirePublication() {
         Condition.isTrue(this.publicationEndDate.isBefore(TimeMachine.now().toLocalDate()), "Must not be archived before publicationEndDate.");
         Condition.isTrue(JobAdvertisementStatus.PUBLISHED_PUBLIC.equals(status), "Must be in PUBLISHED_PUBLIC state.");
 
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_EXPIRED, this));
+        DomainEventPublisher.publish(new JobAdvertisementPublishExpiredEvent(this));
     }
 
     public void reject(String stellennummerAvam, LocalDate date, String code, String reason) {
@@ -405,38 +390,38 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.rejectionCode = Condition.notBlank(code);
         this.rejectionReason = reason;
         this.status = status.validateTransitionTo(JobAdvertisementStatus.REJECTED);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_REJECTED, this));
+        DomainEventPublisher.publish(new JobAdvertisementRejectedEvent(this));
     }
 
     public void cancel(LocalDate date, String code) {
         this.cancellationDate = Condition.notNull(date);
         this.cancellationCode = Condition.notBlank(code);
         this.status = status.validateTransitionTo(JobAdvertisementStatus.CANCELLED);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_CANCELLED, this));
+        DomainEventPublisher.publish(new JobAdvertisementCancelledEvent(this));
     }
 
     public void refining() {
         this.status = status.validateTransitionTo(JobAdvertisementStatus.REFINING);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_REFINING, this));
+        DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(this));
     }
 
     public void publishRestricted() {
         Condition.notNull(reportingObligationEndDate, "Reporting obligation end date is missing");
 
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_RESTRICTED);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_RESTRICTED, this));
+        DomainEventPublisher.publish(new JobAdvertisementPublishRestrictedEvent(this));
     }
 
     public void publishPublic() {
         Condition.notNull(publicationEndDate, "Publication end date is missing");
 
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC, this));
+        DomainEventPublisher.publish(new JobAdvertisementPublishPublicEvent(this));
     }
 
     public void archive() {
         this.status = status.validateTransitionTo(JobAdvertisementStatus.ARCHIVED);
-        DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_ARCHIVED, this));
+        DomainEventPublisher.publish(new JobAdvertisementArchivedEvent(this));
     }
 
     private void checkIfEndStatus() {
@@ -486,6 +471,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 ", publicationEndDate=" + publicationEndDate +
                 ", eures=" + eures +
                 ", euresAnonymous=" + euresAnonymous +
+                ", language=" + language.getLanguage() +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", employment=" + employment +
@@ -609,6 +595,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private LocalDate publicationEndDate;
         private boolean eures;
         private boolean euresAnonymous;
+        private Locale language;
         private String title;
         private String description;
         private Employment employment;
@@ -730,6 +717,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
         public Builder setEuresAnonymous(boolean euresAnonymous) {
             this.euresAnonymous = euresAnonymous;
+            return this;
+        }
+
+        public Builder setLanguage(Locale language) {
+            this.language = language;
             return this;
         }
 

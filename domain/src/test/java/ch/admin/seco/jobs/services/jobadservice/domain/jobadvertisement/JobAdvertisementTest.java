@@ -2,11 +2,15 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
+
+import java.util.Locale;
 
 public class JobAdvertisementTest {
 
@@ -29,6 +33,7 @@ public class JobAdvertisementTest {
                 JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01,
                 SourceSystem.JOBROOM,
                 JobAdvertisementStatus.CREATED,
+                Locale.GERMAN,
                 "My Title",
                 "My Description"
         );
@@ -80,13 +85,15 @@ public class JobAdvertisementTest {
     @Test
     public void testInspect() {
         //Prepare
-        JobAdvertisement jobAdvertisement = new JobAdvertisement(
-                JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01,
-                SourceSystem.JOBROOM,
-                JobAdvertisementStatus.CREATED,
-                "My Title",
-                "My Description"
-        );
+        JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
+                .setId(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.CREATED)
+                .setStellennummerEgov("stellennummerEgov")
+                .setLanguage(Locale.GERMAN)
+                .setTitle("My Title")
+                .setDescription("My Description")
+                .build();
 
         //Execute
         jobAdvertisement.inspect();

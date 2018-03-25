@@ -1,6 +1,13 @@
 dependencies {
-    compile project(':infrastructure-messagebroker-shared')
+    compile project(':infrastructure-messagebroker-messages')
+    compile 'org.springframework.boot:spring-boot-starter-integration'
+    compile 'org.springframework.integration:spring-integration-jpa'
     compile 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
-    testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
     optional 'org.springframework.boot:spring-boot-configuration-processor'
+
+    testCompile files(this.project(':core').sourceSets.test.output)
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
+    testCompile 'org.assertj:assertj-core'
+    testCompile 'com.h2database:h2'
 }

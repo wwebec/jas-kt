@@ -1,18 +1,22 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import java.util.List;
-
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.util.List;
 
 public class CreateJobAdvertisementWebFormDto {
 
     private boolean eures;
 
-    @NotEmpty
+    @NotBlank
+    @Pattern(regexp = "[a-z]{2}")
+    private String languageIsoCode;
+
+    @NotBlank
     private String title;
 
-    @NotEmpty
+    @NotBlank
     private String description;
 
     @NotNull
@@ -40,8 +44,9 @@ public class CreateJobAdvertisementWebFormDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementWebFormDto(boolean eures, String title, String description, EmploymentDto employment, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location, OccupationDto occupation, List<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementWebFormDto(boolean eures, String languageIsoCode, String title, String description, EmploymentDto employment, String drivingLicenseLevel, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location, OccupationDto occupation, List<LanguageSkillDto> languageSkills) {
         this.eures = eures;
+        this.languageIsoCode = languageIsoCode;
         this.title = title;
         this.description = description;
         this.employment = employment;
@@ -60,6 +65,14 @@ public class CreateJobAdvertisementWebFormDto {
 
     public void setEures(boolean eures) {
         this.eures = eures;
+    }
+
+    public String getLanguageIsoCode() {
+        return languageIsoCode;
+    }
+
+    public void setLanguageIsoCode(String languageIsoCode) {
+        this.languageIsoCode = languageIsoCode;
     }
 
     public String getTitle() {

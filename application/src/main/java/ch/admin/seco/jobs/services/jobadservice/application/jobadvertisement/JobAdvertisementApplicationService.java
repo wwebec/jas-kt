@@ -49,10 +49,26 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
 
 @Service
 @Transactional(rollbackFor = {Exception.class})
 public class JobAdvertisementApplicationService {
+
+    private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
 
@@ -68,11 +84,11 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
-            JobAdvertisementFactory jobAdvertisementFactory,
-            RavRegistrationService ravRegistrationService,
-            ReportingObligationService reportingObligationService,
-            LocationService locationService,
-            ProfessionService professionSerivce) {
+                                              JobAdvertisementFactory jobAdvertisementFactory,
+                                              RavRegistrationService ravRegistrationService,
+                                              ReportingObligationService reportingObligationService,
+                                              LocationService locationService,
+                                              ProfessionService professionSerivce) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.ravRegistrationService = ravRegistrationService;
@@ -82,6 +98,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto) {
+        LOG.debug("Create '{}' from Webform", createJobAdvertisementWebFormDto.getTitle());
         Location location = toLocation(createJobAdvertisementWebFormDto.getLocation());
         location = locationService.enrichCodes(location);
 
@@ -107,6 +124,7 @@ public class JobAdvertisementApplicationService {
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(
+                new Locale(createJobAdvertisementWebFormDto.getLanguageIsoCode()),
                 createJobAdvertisementWebFormDto.getTitle(),
                 createJobAdvertisementWebFormDto.getDescription(),
                 updater
@@ -115,6 +133,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromApi(CreateJobAdvertisementApiDto createJobAdvertisementApiDto) {
+        LOG.debug("Create '{}' from API", createJobAdvertisementApiDto.getJob().getTitle());
         Location location = toLocation(createJobAdvertisementApiDto.getJob().getLocation());
         location = locationService.enrichCodes(location);
 
@@ -138,6 +157,7 @@ public class JobAdvertisementApplicationService {
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(
+                new Locale(createJobAdvertisementApiDto.getJob().getLanguageIsoCode()),
                 createJobAdvertisementApiDto.getJob().getTitle(),
                 createJobAdvertisementApiDto.getJob().getDescription(),
                 updater,
@@ -147,6 +167,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromAvam(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
+        LOG.debug("Create '{}' from AVAM", createJobAdvertisementAvamDto.getTitle());
         Location location = toLocation(createJobAdvertisementAvamDto.getLocation());
         location = locationService.enrichCodes(location);
 
@@ -177,7 +198,7 @@ public class JobAdvertisementApplicationService {
 
     public List<JobAdvertisementDto> findAll() {
         List<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findAll();
-        return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(toList());
+        return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(Collectors.toList());
     }
 
     public JobAdvertisementDto findById(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
@@ -186,7 +207,8 @@ public class JobAdvertisementApplicationService {
     }
 
     public void inspect(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
+        LOG.debug("Starting inspect for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.inspect();
         // FIXME Registration should be called by JOB_ADVERTISEMENT_INSPECTING (Create event listener in package messagebroker)
@@ -195,21 +217,24 @@ public class JobAdvertisementApplicationService {
 
     public void approve(ApprovalDto approvalDto) {
         // TODO tbd where/when the data updates has to be done (over ApprovalDto --> JobAdUpdater?)
-        Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
+        Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
+        LOG.debug("Starting approve for JobAdvertisementId: '{}'", approvalDto.getJobAdvertisementId());
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(approvalDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
     }
 
     public void reject(RejectionDto rejectionDto) {
-        Condition.notNull(rejectionDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
+        Condition.notNull(rejectionDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
+        LOG.debug("Starting reject for JobAdvertisementId: '{}'", rejectionDto.getJobAdvertisementId());
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(rejectionDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
     }
 
     public void refining(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
+        LOG.debug("Starting refining for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.refining();
     }
@@ -231,62 +256,41 @@ public class JobAdvertisementApplicationService {
     }
 
     public void publish(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
+        LOG.debug("Starting publish for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         if (jobAdvertisement.isReportingObligation() && REFINING.equals(jobAdvertisement.getStatus())) {
+            LOG.debug("Publish in restricted area for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
             jobAdvertisement.publishRestricted();
         } else {
+            LOG.debug("Publish in public area for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
             jobAdvertisement.publishPublic();
         }
     }
 
     public void cancel(CancellationDto cancellationDto) {
-        Condition.notNull(cancellationDto.getJobAdvertisementId(), "JobAdvertisementId should not be null");
+        Condition.notNull(cancellationDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
+        LOG.debug("Starting cancel for JobAdvertisementId: '{}'", cancellationDto.getJobAdvertisementId());
         JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(cancellationDto.getJobAdvertisementId());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
     }
 
     public void archive(JobAdvertisementId jobAdvertisementId) {
-        Condition.notNull(jobAdvertisementId, "JobAdvertisementId should not be null");
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
+        LOG.debug("Starting archive for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.archive();
     }
 
-    public Employment toEmployment(JobApiDto jobApiDto) {
-        return new Employment(
-                jobApiDto.getStartDate(),
-                jobApiDto.getEndDate(),
-                jobApiDto.getDurationInDays(),
-                jobApiDto.getStartsImmediately(),
-                jobApiDto.getPermanent(),
-                jobApiDto.getWorkingTimePercentageFrom(),
-                jobApiDto.getWorkingTimePercentageTo()
-        );
-    }
-
-    public Location toLocation(CreateLocationDto createLocationDto) {
-        if (createLocationDto != null) {
-            return new Location(
-                    createLocationDto.getRemarks(),
-                    createLocationDto.getCity(),
-                    createLocationDto.getPostalCode(),
-                    null,
-                    null,
-                    null,
-                    createLocationDto.getCountryIsoCode(),
-                    null
-            );
-        }
-        return null;
-    }
-
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
+        //Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findOne(jobAdvertisementId);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
     }
 
     private Occupation enrichOccupationWithProfessionCodes(Occupation occupation) {
+        Condition.notNull(occupation, "Occupation can't be null");
         Profession profession = professionSerivce.findByAvamCode(occupation.getAvamOccupationCode());
         if (profession != null) {
             return new Occupation(
@@ -303,11 +307,24 @@ public class JobAdvertisementApplicationService {
     }
 
     private boolean checkReportingObligation(Occupation occupation, Location location) {
+        Condition.notNull(occupation, "Occupation can't be null");
+        Condition.notNull(location, "Location can't be null");
         String avamOccupationCode = occupation.getAvamOccupationCode();
         String cantonCode = location.getCantonCode();
         return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
     }
 
+    private Employment toEmployment(JobApiDto jobApiDto) {
+        return new Employment(
+                jobApiDto.getStartDate(),
+                jobApiDto.getEndDate(),
+                jobApiDto.getDurationInDays(),
+                jobApiDto.getStartsImmediately(),
+                jobApiDto.getPermanent(),
+                jobApiDto.getWorkingTimePercentageFrom(),
+                jobApiDto.getWorkingTimePercentageTo()
+        );
+    }
     private Employment toEmployment(EmploymentDto employmentDto) {
         if (employmentDto != null) {
             return new Employment(
@@ -363,7 +380,24 @@ public class JobAdvertisementApplicationService {
                     contactDto.getFirstName(),
                     contactDto.getLastName(),
                     contactDto.getPhone(),
-                    contactDto.getEmail()
+                    contactDto.getEmail(),
+                    new Locale(contactDto.getLanguageIsoCode())
+            );
+        }
+        return null;
+    }
+
+    private Location toLocation(CreateLocationDto createLocationDto) {
+        if (createLocationDto != null) {
+            return new Location(
+                    createLocationDto.getRemarks(),
+                    createLocationDto.getCity(),
+                    createLocationDto.getPostalCode(),
+                    null,
+                    null,
+                    null,
+                    createLocationDto.getCountryIsoCode(),
+                    null
             );
         }
         return null;
@@ -404,7 +438,7 @@ public class JobAdvertisementApplicationService {
                             languageSkillDto.getSpokenLevel(),
                             languageSkillDto.getWrittenLevel()
                     ))
-                    .collect(toList());
+                    .collect(Collectors.toList());
         }
         return null;
     }
