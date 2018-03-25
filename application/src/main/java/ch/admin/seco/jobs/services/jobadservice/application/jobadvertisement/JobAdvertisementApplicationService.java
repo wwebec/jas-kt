@@ -5,7 +5,12 @@ import static java.util.stream.Collectors.toList;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,7 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
@@ -49,20 +53,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
 
 @Service
 @Transactional(rollbackFor = {Exception.class})
@@ -74,8 +64,6 @@ public class JobAdvertisementApplicationService {
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
 
-    private final RavRegistrationService ravRegistrationService;
-
     private final ReportingObligationService reportingObligationService;
 
     private final LocationService locationService;
@@ -84,14 +72,12 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
-                                              JobAdvertisementFactory jobAdvertisementFactory,
-                                              RavRegistrationService ravRegistrationService,
-                                              ReportingObligationService reportingObligationService,
-                                              LocationService locationService,
-                                              ProfessionService professionSerivce) {
+            JobAdvertisementFactory jobAdvertisementFactory,
+            ReportingObligationService reportingObligationService,
+            LocationService locationService,
+            ProfessionService professionSerivce) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
-        this.ravRegistrationService = ravRegistrationService;
         this.reportingObligationService = reportingObligationService;
         this.locationService = locationService;
         this.professionSerivce = professionSerivce;
@@ -188,6 +174,7 @@ public class JobAdvertisementApplicationService {
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromAvam(
+                new Locale(createJobAdvertisementAvamDto.getLanguageIsoCode()),
                 createJobAdvertisementAvamDto.getStellennummerAvam(),
                 createJobAdvertisementAvamDto.getTitle(),
                 createJobAdvertisementAvamDto.getDescription(),
@@ -325,6 +312,7 @@ public class JobAdvertisementApplicationService {
                 jobApiDto.getWorkingTimePercentageTo()
         );
     }
+
     private Employment toEmployment(EmploymentDto employmentDto) {
         if (employmentDto != null) {
             return new Employment(

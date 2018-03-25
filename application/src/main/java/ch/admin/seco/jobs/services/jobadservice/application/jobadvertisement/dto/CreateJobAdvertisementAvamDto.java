@@ -2,8 +2,10 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 public class CreateJobAdvertisementAvamDto {
 
@@ -17,6 +19,10 @@ public class CreateJobAdvertisementAvamDto {
 
     @NotEmpty
     private String description;
+
+    @NotBlank
+    @Pattern(regexp = "[a-z]{2}")
+    private String languageIsoCode;
 
     @NotNull
     private EmploymentDto employment;
@@ -43,11 +49,12 @@ public class CreateJobAdvertisementAvamDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementAvamDto(String stellennummerAvam, boolean eures, String title, String description, String jobCenterCode, EmploymentDto employment, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementAvamDto(String stellennummerAvam, boolean eures, String title, String description, String languageIsoCode, String jobCenterCode, EmploymentDto employment, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
         this.stellennummerAvam = stellennummerAvam;
         this.eures = eures;
         this.title = title;
         this.description = description;
+        this.languageIsoCode = languageIsoCode;
         this.jobCenterCode = jobCenterCode;
         this.employment = employment;
         this.applyChannel = applyChannel;
@@ -88,6 +95,14 @@ public class CreateJobAdvertisementAvamDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getLanguageIsoCode() {
+        return languageIsoCode;
+    }
+
+    public void setLanguageIsoCode(String languageIsoCode) {
+        this.languageIsoCode = languageIsoCode;
     }
 
     public EmploymentDto getEmployment() {

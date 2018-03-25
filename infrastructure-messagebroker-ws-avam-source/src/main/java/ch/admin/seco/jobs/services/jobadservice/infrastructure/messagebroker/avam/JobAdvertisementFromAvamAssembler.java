@@ -70,6 +70,7 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.isEures() || avamJobAdvertisement.isEuresAnonym(), // FIXME is this correct?
                 avamJobAdvertisement.getBezeichnung(),
                 avamJobAdvertisement.getBeschreibung(),
+                "de", //TODO get correct value from Avam
                 avamJobAdvertisement.getArbeitsamtBereich(),
                 createEmploymentDto(avamJobAdvertisement),
                 createApplyChannelDto(avamJobAdvertisement),
@@ -96,7 +97,8 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.getKpVorname(),
                 avamJobAdvertisement.getKpName(),
                 sanitizePhoneNumber(avamJobAdvertisement.getKpTelefonNr(), avamJobAdvertisement),
-                sanitizeEmail(avamJobAdvertisement.getKpEmail(), avamJobAdvertisement));
+                sanitizeEmail(avamJobAdvertisement.getKpEmail(), avamJobAdvertisement),
+                "de"); // TODO how to match this value from avam?
     }
 
     private EmploymentDto createEmploymentDto(WSOsteEgov avamJobAdvertisement) {
