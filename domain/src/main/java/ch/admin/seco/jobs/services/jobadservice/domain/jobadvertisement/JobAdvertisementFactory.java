@@ -49,7 +49,7 @@ public class JobAdvertisementFactory {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setStatus(JobAdvertisementStatus.CREATED)
-                .setSourceSystem(SourceSystem.JOBROOM)
+                .setSourceSystem(SourceSystem.API)
                 .setStellennummerEgov(stellennummerEgovGenerator.nextStringValue())
                 .setReportingObligation(creator.isReportingObligation())
                 .setReportToAvam(creator.isReportToAvam())

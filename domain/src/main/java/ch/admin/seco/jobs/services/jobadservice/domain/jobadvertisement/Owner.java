@@ -1,7 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-
 import java.util.Objects;
 
 public class Owner {
