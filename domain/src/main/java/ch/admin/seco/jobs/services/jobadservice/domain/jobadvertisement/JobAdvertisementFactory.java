@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,27 +14,32 @@ public class JobAdvertisementFactory {
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final DataFieldMaxValueIncrementer stellennummerEgovGenerator;
+    private final AccessTokenGenerator accessTokenGenerator;
 
     @Autowired
     public JobAdvertisementFactory(JobAdvertisementRepository jobAdvertisementRepository,
+                                   AccessTokenGenerator accessTokenGenerator,
                                    DataFieldMaxValueIncrementer stellennummerEgovGenerator) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
+        this.accessTokenGenerator = accessTokenGenerator;
         this.stellennummerEgovGenerator = stellennummerEgovGenerator;
     }
 
-    public JobAdvertisement createFromWebForm(Locale language, String title, String description, JobAdvertisementUpdater updater) {
+    public JobAdvertisement createFromWebForm(JobAdvertisementCreator creator) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
-                .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.CREATED)
-                .setLanguage(language)
-                .setTitle(title)
-                .setDescription(description)
-                .setStellennummerEgov(this.stellennummerEgovGenerator.nextStringValue())
-                .setReportToRav(true)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStellennummerEgov(stellennummerEgovGenerator.nextStringValue())
+                .setReportingObligation(creator.isReportingObligation())
+                .setReportToAvam(true)
+                .setJobCenterCode(creator.getJobCenterCode())
+                .setJobContent(creator.getJobContent())
+                .setOwner(toOwner(creator.getAuditUser()))
+                .setContact(creator.getContact())
+                .setPublication(creator.getPublication())
                 .build();
 
-        jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
         DomainEventPublisher.publish(new JobAdvertisementCreatedEvent(newJobAdvertisement));
         return newJobAdvertisement;
@@ -48,7 +54,7 @@ public class JobAdvertisementFactory {
                 .setTitle(title)
                 .setDescription(description)
                 .setStellennummerEgov(this.stellennummerEgovGenerator.nextStringValue())
-                .setReportToRav(reportToRav)
+                .setReportToAvam(reportToRav)
                 .build();
 
         jobAdvertisement.init(updater);
@@ -66,7 +72,7 @@ public class JobAdvertisementFactory {
                 .setLanguage(language)
                 .setTitle(title)
                 .setDescription(description)
-                .setReportToRav(true)
+                .setReportToAvam(true)
                 .build();
 
         jobAdvertisement.init(updater);
@@ -84,7 +90,7 @@ public class JobAdvertisementFactory {
                 .setLanguage(language)
                 .setTitle(title)
                 .setDescription(description)
-                .setReportToRav(false)
+                .setReportToAvam(false)
                 .build();
 
         jobAdvertisement.init(updater);
@@ -92,4 +98,18 @@ public class JobAdvertisementFactory {
         DomainEventPublisher.publish(new JobAdvertisementPublishPublicEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
+
+    private Owner toOwner(AuditUser auditUser) {
+        if(auditUser != null) {
+            return new Owner.Builder()
+                    .setUserId(auditUser.getExternalId())
+                    .setAccessToken(accessTokenGenerator.generateToken())
+                    .build();
+        } else {
+            return new Owner.Builder()
+                    .setAccessToken(accessTokenGenerator.generateToken())
+                    .build();
+        }
+    }
+
 }

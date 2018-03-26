@@ -5,7 +5,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementApiDto;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
@@ -62,6 +61,7 @@ public class JobAdvertisementApplicationService {
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto) {
         LOG.debug("Create '{}' from Webform", createJobAdvertisementWebFormDto.getTitle());
+
         Location location = toLocation(createJobAdvertisementWebFormDto.getLocation());
         location = locationService.enrichCodes(location);
 
@@ -73,30 +73,30 @@ public class JobAdvertisementApplicationService {
                 location
         );
 
-        final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
-                .setLocation(location)
-                .setOccupations(Collections.singletonList(occupation))
-                .setReportingObligation(reportingObligation)
-                // FIXME eval eures if anonymous or not (User/Security)
-                .setEures(createJobAdvertisementWebFormDto.isEures(), true)
-                .setEmployment(toEmployment(createJobAdvertisementWebFormDto.getEmployment()))
-                .setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
-                .setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
+        String jobCenterCode = null;
+        JobContent jobContent = new JobContent.Builder()
+                // TODO fill the JobContent builder
                 .build();
 
-        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(
-                new Locale(createJobAdvertisementWebFormDto.getLanguageIsoCode()),
-                createJobAdvertisementWebFormDto.getTitle(),
-                createJobAdvertisementWebFormDto.getDescription(),
-                updater
-        );
+        Publication publication = new Publication.Builder()
+                .setEures(createJobAdvertisementWebFormDto.isEures())
+                .build();
+
+        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+                .setReportingObligation(reportingObligation)
+                .setJobCenterCode(jobCenterCode)
+                .setJobContent(jobContent)
+                .setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
+                .setPublication(publication)
+                .build();
+
+        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(creator);
         return jobAdvertisement.getId();
     }
 
     public JobAdvertisementId createFromApi(CreateJobAdvertisementApiDto createJobAdvertisementApiDto) {
         LOG.debug("Create '{}' from API", createJobAdvertisementApiDto.getJob().getTitle());
+
         Location location = toLocation(createJobAdvertisementApiDto.getJob().getLocation());
         location = locationService.enrichCodes(location);
 
@@ -258,6 +258,7 @@ public class JobAdvertisementApplicationService {
                 jobApiDto.getWorkingTimePercentageTo()
         );
     }
+
     private Employment toEmployment(EmploymentDto employmentDto) {
         if (employmentDto != null) {
             return new Employment(
@@ -308,14 +309,14 @@ public class JobAdvertisementApplicationService {
 
     private Contact toContact(ContactDto contactDto) {
         if (contactDto != null) {
-            return new Contact(
-                    contactDto.getSalutation(),
-                    contactDto.getFirstName(),
-                    contactDto.getLastName(),
-                    contactDto.getPhone(),
-                    contactDto.getEmail(),
-                    new Locale(contactDto.getLanguageIsoCode())
-            );
+            return new Contact.Builder()
+                    .setSalutation(contactDto.getSalutation())
+                    .setFirstName(contactDto.getFirstName())
+                    .setLastName(contactDto.getLastName())
+                    .setPhone(contactDto.getPhone())
+                    .setEmail(contactDto.getEmail())
+                    .setLanguage(new Locale(contactDto.getLanguageIsoCode()))
+                    .build();
         }
         return null;
     }

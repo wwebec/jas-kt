@@ -364,7 +364,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setRejectionReason(jobAdvertisement.getRejectionReason());
         jobAdvertisementDto.setCancellationDate(jobAdvertisement.getCancellationDate());
         jobAdvertisementDto.setCancellationCode(jobAdvertisement.getCancellationCode());
-        jobAdvertisementDto.setReportToRav(jobAdvertisement.isReportToRav());
+        jobAdvertisementDto.setReportToRav(jobAdvertisement.isReportToAvam());
         jobAdvertisementDto.setReportingObligation(jobAdvertisement.isReportingObligation());
         jobAdvertisementDto.setReportingObligationEndDate(jobAdvertisement.getReportingObligationEndDate());
         jobAdvertisementDto.setPublicationStartDate(jobAdvertisement.getPublicationStartDate());

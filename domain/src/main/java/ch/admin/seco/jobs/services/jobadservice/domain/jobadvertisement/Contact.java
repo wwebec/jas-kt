@@ -33,13 +33,13 @@ public class Contact implements ValueObject<Contact> {
         // For reflection libs
     }
 
-    public Contact(Salutation salutation, String firstName, String lastName, String phone, String email, Locale language) {
-        this.salutation = Condition.notNull(salutation, "Salutation can't be null");
-        this.firstName = Condition.notBlank(firstName, "First name can't be blank");
-        this.lastName = Condition.notBlank(lastName, "Last name can't be blank");
-        this.phone = Condition.notBlank(phone, "Phone can't be blank");
-        this.email = Condition.notBlank(email, "Email can't be blank");
-        this.language = Condition.notNull(language, "Language can't be null");
+    public Contact(Builder builder) {
+        this.salutation = Condition.notNull(builder.salutation, "Salutation can't be null");
+        this.firstName = Condition.notBlank(builder.firstName, "First name can't be blank");
+        this.lastName = Condition.notBlank(builder.lastName, "Last name can't be blank");
+        this.phone = Condition.notBlank(builder.phone, "Phone can't be blank");
+        this.email = Condition.notBlank(builder.email, "Email can't be blank");
+        this.language = Condition.notNull(builder.language, "Language can't be null");
     }
 
     public Salutation getSalutation() {
@@ -94,5 +94,51 @@ public class Contact implements ValueObject<Contact> {
                 ", email='" + email + '\'' +
                 ", language='" + language.getLanguage() + '\'' +
                 '}';
+    }
+
+    public static final class Builder {
+        private Salutation salutation;
+        private String firstName;
+        private String lastName;
+        private String phone;
+        private String email;
+        private Locale language;
+
+        public Builder() {
+        }
+
+        public Contact build() {
+            return new Contact(this);
+        }
+
+        public Builder setSalutation(Salutation salutation) {
+            this.salutation = salutation;
+            return this;
+        }
+
+        public Builder setFirstName(String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder setLastName(String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder setPhone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder setLanguage(Locale language) {
+            this.language = language;
+            return this;
+        }
     }
 }
