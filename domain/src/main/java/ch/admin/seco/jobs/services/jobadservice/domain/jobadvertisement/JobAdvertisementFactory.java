@@ -45,19 +45,21 @@ public class JobAdvertisementFactory {
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement createFromApi(Locale language, String title, String description, JobAdvertisementUpdater updater, boolean reportToRav) {
+    public JobAdvertisement createFromApi(JobAdvertisementCreator creator) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
-                .setSourceSystem(SourceSystem.API)
                 .setStatus(JobAdvertisementStatus.CREATED)
-                .setLanguage(language)
-                .setTitle(title)
-                .setDescription(description)
-                .setStellennummerEgov(this.stellennummerEgovGenerator.nextStringValue())
-                .setReportToAvam(reportToRav)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStellennummerEgov(stellennummerEgovGenerator.nextStringValue())
+                .setReportingObligation(creator.isReportingObligation())
+                .setReportToAvam(creator.isReportToAvam())
+                .setJobCenterCode(creator.getJobCenterCode())
+                .setJobContent(creator.getJobContent())
+                .setOwner(toOwner(creator.getAuditUser()))
+                .setContact(creator.getContact())
+                .setPublication(creator.getPublication())
                 .build();
 
-        jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
         DomainEventPublisher.publish(new JobAdvertisementCreatedEvent(newJobAdvertisement));
         return newJobAdvertisement;

@@ -79,14 +79,17 @@ public class JobAdvertisementApplicationService {
         JobContent jobContent = null;
         // TODO fill the JobContent builder
         //JobContent jobContent = new JobContent.Builder()
-                //.setLocation(location)
-                //.setOccupations(Collections.singletonList(occupation))
-                //.setEmployment(toEmployment(createJobAdvertisementWebFormDto.getJob()))
-                //.setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
-                //.setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
-                //.setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
-                //.setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
-                //.build();
+        //    new Locale(createJobAdvertisementWebFormDto.getLanguageIsoCode()),
+        //    createJobAdvertisementWebFormDto.getTitle(),
+        //    createJobAdvertisementWebFormDto.getDescription(),
+        //.setLocation(location)
+        //.setOccupations(Collections.singletonList(occupation))
+        //.setEmployment(toEmployment(createJobAdvertisementWebFormDto.getJob()))
+        //.setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
+        //.setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
+        //.setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
+        //.setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
+        //.build();
 
         Publication publication = new Publication.Builder()
                 .setEures(createJobAdvertisementWebFormDto.isEures())
@@ -118,24 +121,37 @@ public class JobAdvertisementApplicationService {
                 location
         );
 
-        final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
-                .setLocation(location)
-                .setOccupations(Collections.singletonList(occupation))
-                .setReportingObligation(reportingObligation)
-                .setEmployment(toEmployment(createJobAdvertisementApiDto.getJob()))
-                .setApplyChannel(toApplyChannel(createJobAdvertisementApiDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementApiDto.getCompany()))
-                .setContact(toContact(createJobAdvertisementApiDto.getContact()))
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementApiDto.getJob().getLanguageSkills()))
+        // TODO resolve jobCenterCode
+        String jobCenterCode = null;
+
+        JobContent jobContent = null;
+        // TODO fill the JobContent builder
+        //JobContent jobContent = new JobContent.Builder()
+        //    new Locale(createJobAdvertisementApiDto.getJob().getLanguageIsoCode()),
+        //    createJobAdvertisementApiDto.getJob().getTitle(),
+        //    createJobAdvertisementApiDto.getJob().getDescription(),
+        //.setLocation(location)
+        //.setOccupations(Collections.singletonList(occupation))
+        //.setEmployment(toEmployment(createJobAdvertisementWebFormDto.getJob()))
+        //.setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
+        //.setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
+        //.setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
+        //.setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
+        //.build();
+
+        Publication publication = new Publication.Builder()
+                .setEures(createJobAdvertisementApiDto.isEures())
                 .build();
 
-        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(
-                new Locale(createJobAdvertisementApiDto.getJob().getLanguageIsoCode()),
-                createJobAdvertisementApiDto.getJob().getTitle(),
-                createJobAdvertisementApiDto.getJob().getDescription(),
-                updater,
-                createJobAdvertisementApiDto.isReportToRav()
-        );
+        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+                .setReportingObligation(reportingObligation)
+                .setJobCenterCode(jobCenterCode)
+                .setJobContent(jobContent)
+                .setContact(toContact(createJobAdvertisementApiDto.getContact()))
+                .setPublication(publication)
+                .build();
+
+        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(creator);
         return jobAdvertisement.getId();
     }
 
