@@ -355,9 +355,9 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setFingerprint(jobAdvertisement.getFingerprint());
         jobAdvertisementDto.setSourceSystem(jobAdvertisement.getSourceSystem());
         jobAdvertisementDto.setSourceEntryId(jobAdvertisement.getSourceEntryId());
-        jobAdvertisementDto.setExternalUrl(jobAdvertisement.getExternalUrl());
+//        jobAdvertisementDto.setExternalUrl(jobAdvertisement.getExternalUrl());
         jobAdvertisementDto.setStatus(jobAdvertisement.getStatus());
-        jobAdvertisementDto.setRavRegistrationDate(jobAdvertisement.getRavRegistrationDate());
+//        jobAdvertisementDto.setRavRegistrationDate(jobAdvertisement.getRavRegistrationDate());
         jobAdvertisementDto.setApprovalDate(jobAdvertisement.getApprovalDate());
         jobAdvertisementDto.setRejectionDate(jobAdvertisement.getRejectionDate());
         jobAdvertisementDto.setRejectionCode(jobAdvertisement.getRejectionCode());
@@ -367,21 +367,21 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setReportToRav(jobAdvertisement.isReportToAvam());
         jobAdvertisementDto.setReportingObligation(jobAdvertisement.isReportingObligation());
         jobAdvertisementDto.setReportingObligationEndDate(jobAdvertisement.getReportingObligationEndDate());
-        jobAdvertisementDto.setPublicationStartDate(jobAdvertisement.getPublicationStartDate());
-        jobAdvertisementDto.setPublicationEndDate(jobAdvertisement.getPublicationEndDate());
-        jobAdvertisementDto.setEures(jobAdvertisement.isEures());
-        jobAdvertisementDto.setEuresAnonymous(jobAdvertisement.isEuresAnonymous());
-        jobAdvertisementDto.setLanguageIsoCode(jobAdvertisement.getLanguage().getLanguage());
-        jobAdvertisementDto.setTitle(jobAdvertisement.getTitle());
-        jobAdvertisementDto.setDescription(jobAdvertisement.getDescription());
-        jobAdvertisementDto.setEmployment(EmploymentDto.toDto(jobAdvertisement.getEmployment()));
+//        jobAdvertisementDto.setPublicationStartDate(jobAdvertisement.getPublicationStartDate());
+//        jobAdvertisementDto.setPublicationEndDate(jobAdvertisement.getPublicationEndDate());
+//        jobAdvertisementDto.setEures(jobAdvertisement.isEures());
+//        jobAdvertisementDto.setEuresAnonymous(jobAdvertisement.isEuresAnonymous());
+//        jobAdvertisementDto.setLanguageIsoCode(jobAdvertisement.getLanguage().getLanguage());
+//        jobAdvertisementDto.setTitle(jobAdvertisement.getTitle());
+//        jobAdvertisementDto.setDescription(jobAdvertisement.getDescription());
+//        jobAdvertisementDto.setEmployment(EmploymentDto.toDto(jobAdvertisement.getEmployment()));
         jobAdvertisementDto.setJobCenterCode(jobAdvertisement.getJobCenterCode());
-        jobAdvertisementDto.setApplyChannel(ApplyChannelDto.toDto(jobAdvertisement.getApplyChannel()));
-        jobAdvertisementDto.setCompany(CompanyDto.toDto(jobAdvertisement.getCompany()));
-        jobAdvertisementDto.setContact(ContactDto.toDto(jobAdvertisement.getContact()));
-        jobAdvertisementDto.setLocation(LocationDto.toDto(jobAdvertisement.getLocation()));
-        jobAdvertisementDto.setOccupations(OccupationDto.toDto(jobAdvertisement.getOccupations()));
-        jobAdvertisementDto.setLanguageSkills(LanguageSkillDto.toDto(jobAdvertisement.getLanguageSkills()));
+//        jobAdvertisementDto.setApplyChannel(ApplyChannelDto.toDto(jobAdvertisement.getApplyChannel()));
+//        jobAdvertisementDto.setCompany(CompanyDto.toDto(jobAdvertisement.getCompany()));
+//        jobAdvertisementDto.setContact(ContactDto.toDto(jobAdvertisement.getContact()));
+//        jobAdvertisementDto.setLocation(LocationDto.toDto(jobAdvertisement.getLocation()));
+//        jobAdvertisementDto.setOccupations(OccupationDto.toDto(jobAdvertisement.getOccupations()));
+//        jobAdvertisementDto.setLanguageSkills(LanguageSkillDto.toDto(jobAdvertisement.getLanguageSkills()));
         return jobAdvertisementDto;
     }
 }

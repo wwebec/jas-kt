@@ -30,11 +30,6 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         this.additionalInfo = additionalInfo;
     }
 
-    @Override
-    public boolean sameValueObjectAs(ApplyChannel other) {
-        return equals(other);
-    }
-
     public String getMailAddress() {
         return mailAddress;
     }

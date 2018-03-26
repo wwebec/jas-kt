@@ -45,11 +45,6 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
     }
 
     @Override
-    public boolean sameValueObjectAs(LanguageSkill other) {
-        return equals(other);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

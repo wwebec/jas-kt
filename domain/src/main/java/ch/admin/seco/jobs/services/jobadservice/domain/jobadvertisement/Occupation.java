@@ -84,11 +84,6 @@ public class Occupation implements ValueObject<Occupation> {
     }
 
     @Override
-    public boolean sameValueObjectAs(Occupation other) {
-        return equals(other);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(avamOccupationCode, sbn3Code, sbn5Code, bfsCode, label, workExperience, educationCode);
     }

@@ -2,7 +2,9 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.TestDataProvider;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,14 +29,18 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     }
 
     private JobAdvertisement createJob01() {
-        return new JobAdvertisement(
-                JOB_ADVERTISEMENT_ID_01,
-                SourceSystem.JOBROOM,
-                JobAdvertisementStatus.CREATED,
-                Locale.GERMAN,
-                "Job number 1",
-                "This is the job number 1 with the minimum of data"
-        );
+        List<JobDescription> jobDescriptions = Collections.singletonList(new JobDescription(
+                Locale.GERMAN, "Job number 1", "This is the job number 1 with the minimum of data"));
+        JobContent jobContent = new JobContent.Builder()
+                .setJobDescriptions(jobDescriptions)
+                .build();
+        return new JobAdvertisement.Builder()
+                .setId(JOB_ADVERTISEMENT_ID_01)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.CREATED)
+                .setJobContent(jobContent)
+                .build();
+
     }
 
 }

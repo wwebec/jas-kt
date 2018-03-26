@@ -76,21 +76,17 @@ public class JobAdvertisementApplicationService {
         // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
         String jobCenterCode = null;
 
-        JobContent jobContent = null;
-        // TODO fill the JobContent builder
-        //JobContent jobContent = new JobContent.Builder()
-        //    new Locale(createJobAdvertisementWebFormDto.getLanguageIsoCode()),
-        //    createJobAdvertisementWebFormDto.getTitle(),
-        //    createJobAdvertisementWebFormDto.getDescription(),
-        //.setLocation(location)
-        //.setOccupations(Collections.singletonList(occupation))
-        //.setEmployment(toEmployment(createJobAdvertisementWebFormDto.getJob()))
-        //.setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
-        //.setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
-        //.setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
-        //.setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
-        //.build();
+        JobContent jobContent = new JobContent.Builder()
+                .setLocation(location)
+                .setOccupations(Collections.singletonList(occupation))
+                .setEmployment(toEmployment(createJobAdvertisementWebFormDto.getEmployment()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
+                .setPublicContact(toPublicContact(createJobAdvertisementWebFormDto.getContact()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
+                .build();
 
+        //TODO What should be the EURES value?
         Publication publication = new Publication.Builder()
                 .setEures(createJobAdvertisementWebFormDto.isEures())
                 .build();
@@ -124,23 +120,17 @@ public class JobAdvertisementApplicationService {
         // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
         String jobCenterCode = null;
 
-        JobContent jobContent = null;
-        // TODO fill the JobContent builder
-        //JobContent jobContent = new JobContent.Builder()
-        //    new Locale(createJobAdvertisementApiDto.getJob().getLanguageIsoCode()),
-        //    createJobAdvertisementApiDto.getJob().getTitle(),
-        //    createJobAdvertisementApiDto.getJob().getDescription(),
-        //.setLocation(location)
-        //.setOccupations(Collections.singletonList(occupation))
-        //.setEmployment(toEmployment(createJobAdvertisementWebFormDto.getJob()))
-        //.setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
-        //.setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
-        //.setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
-        //.setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
-        //.build();
+        JobContent jobContent = new JobContent.Builder()
+                .setLocation(location)
+                .setOccupations(Collections.singletonList(occupation))
+                .setEmployment(toEmployment(createJobAdvertisementApiDto.getJob()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementApiDto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementApiDto.getCompany()))
+                .setPublicContact(toPublicContact(createJobAdvertisementApiDto.getContact()))
+                .build();
 
         Publication publication = new Publication.Builder()
-                .setEures(createJobAdvertisementApiDto.isEures())
+                .setEures(false)
                 .build();
 
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
@@ -244,7 +234,6 @@ public class JobAdvertisementApplicationService {
 
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
-        //Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findOne(jobAdvertisementId);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
     }
 
@@ -329,6 +318,15 @@ public class JobAdvertisementApplicationService {
                     .setEmail(companyDto.getEmail())
                     .setWebsite(companyDto.getWebsite())
                     .build();
+        }
+        return null;
+    }
+
+    private PublicContact toPublicContact(ContactDto contactDto) {
+        if (contactDto != null) {
+            return new PublicContact(contactDto.getSalutation(),
+                    contactDto.getFirstName(),
+                    contactDto.getLastName(), contactDto.getPhone(), contactDto.getEmail());
         }
         return null;
     }

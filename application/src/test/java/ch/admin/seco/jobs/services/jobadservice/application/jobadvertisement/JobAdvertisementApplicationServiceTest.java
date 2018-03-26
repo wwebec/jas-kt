@@ -114,7 +114,7 @@ public class JobAdvertisementApplicationServiceTest {
                 "ref",
                 "http://url",
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new JobApiDto("de","title", "descriptioin", 10, 90,
+                new JobApiDto("de", "title", "descriptioin", 10, 90,
                         LocalDate.of(2018, 1, 1),
                         LocalDate.of(2018, 12, 31), 30, true, true,
                         new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
@@ -175,9 +175,7 @@ public class JobAdvertisementApplicationServiceTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setLanguage(Locale.GERMAN)
-                .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
-                .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
+                .setJobContent(createJobContent(jobAdvertisementId))
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStatus(status)
                 .setReportingObligationEndDate(reportingObligationEndDate)
@@ -188,12 +186,21 @@ public class JobAdvertisementApplicationServiceTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setLanguage(Locale.GERMAN)
-                .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
-                .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
+                .setJobContent(createJobContent(jobAdvertisementId))
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStatus(status)
-                .setPublicationEndDate(publicationEndDate)
+                .setPublication(new Publication.Builder().setEndDate(publicationEndDate).build())
+                .build();
+    }
+
+    private JobContent createJobContent(JobAdvertisementId jobAdvertisementId) {
+        JobDescription jobDescription = new JobDescription(
+                Locale.GERMAN,
+                String.format("title-%s", jobAdvertisementId.getValue()),
+                String.format("description-%s", jobAdvertisementId.getValue())
+        );
+        return new JobContent.Builder()
+                .setJobDescriptions(Collections.singletonList(jobDescription))
                 .build();
     }
 

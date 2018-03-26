@@ -79,11 +79,6 @@ public class Location implements ValueObject<Location> {
     }
 
     @Override
-    public boolean sameValueObjectAs(Location other) {
-        return equals(other);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

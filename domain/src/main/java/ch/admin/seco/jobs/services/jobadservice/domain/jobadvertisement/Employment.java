@@ -64,11 +64,6 @@ public class Employment implements ValueObject<Employment> {
     }
 
     @Override
-    public boolean sameValueObjectAs(Employment other) {
-        return equals(other);
-    }
-
-    @Override
     public int hashCode() {
         return Objects.hash(startDate, endDate, durationInDays, immediately, permanent, workloadPercentageMin, workloadPercentageMax);
     }

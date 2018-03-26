@@ -57,7 +57,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String cancellationCode;
 
-    // TODO JPA-link Lazy-loading
+    @Embedded
     private JobContent jobContent;
 
     @Embedded
@@ -340,7 +340,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private boolean applyUpdates(JobAdvertisementUpdater updater) {
         boolean hasChangedAnything = false;
 
-        if (updater.hasAnyChangesIn(SECTION_SOURCE_ENTRY_ID) && hasChanged(this.sourceEntryId, updater.getSourceEntryId())) {
+        /*if (updater.hasAnyChangesIn(SECTION_SOURCE_ENTRY_ID) && hasChanged(this.sourceEntryId, updater.getSourceEntryId())) {
             this.sourceEntryId = updater.getSourceEntryId();
             hasChangedAnything = true;
         }
@@ -420,7 +420,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             // FIXME Auditor
             //applyUpdater(updater.getAuditUser());
         }
-
+*/
         return hasChangedAnything;
     }
 

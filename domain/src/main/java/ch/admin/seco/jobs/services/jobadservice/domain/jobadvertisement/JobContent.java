@@ -1,23 +1,16 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
-@Entity
+@Embeddable
 public class JobContent implements ValueObject<JobContent> {
-
-    @EmbeddedId
-    @AttributeOverride(name = "value", column = @Column(name = "ID"))
-    @Valid
-    private JobContentId id;
-
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "JOB_ADVERTISEMENT_ID"))
-    private JobAdvertisementId jobAdvertisementId;
-
     private String externalUrl;
 
     @ElementCollection
@@ -115,4 +108,220 @@ public class JobContent implements ValueObject<JobContent> {
     @Valid
     private PublicContact publicContact;
 
+
+    protected JobContent() {
+        // For reflection libs
+    }
+
+    public JobContent(Builder builder) {
+        this.externalUrl = builder.externalUrl;
+        this.company = builder.company;
+        this.employer = builder.employer;
+        this.jobDescriptions = builder.jobDescriptions;
+        this.company = builder.company;
+        this.languageSkills = builder.languageSkills;
+        this.employment = builder.employment;
+        this.publicContact = builder.publicContact;
+        this.applyChannel = builder.applyChannel;
+        this.location = builder.location;
+        this.occupations = builder.occupations;
+    }
+
+    public String getExternalUrl() {
+        return externalUrl;
+    }
+
+    public void setExternalUrl(String externalUrl) {
+        this.externalUrl = externalUrl;
+    }
+
+    public List<JobDescription> getJobDescriptions() {
+        return jobDescriptions;
+    }
+
+    public void setJobDescriptions(List<JobDescription> jobDescriptions) {
+        this.jobDescriptions = jobDescriptions;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Employer getEmployer() {
+        return employer;
+    }
+
+    public void setEmployer(Employer employer) {
+        this.employer = employer;
+    }
+
+    public Employment getEmployment() {
+        return employment;
+    }
+
+    public void setEmployment(Employment employment) {
+        this.employment = employment;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public List<Occupation> getOccupations() {
+        return occupations;
+    }
+
+    public void setOccupations(List<Occupation> occupations) {
+        this.occupations = occupations;
+    }
+
+    public List<LanguageSkill> getLanguageSkills() {
+        return languageSkills;
+    }
+
+    public void setLanguageSkills(List<LanguageSkill> languageSkills) {
+        this.languageSkills = languageSkills;
+    }
+
+    public ApplyChannel getApplyChannel() {
+        return applyChannel;
+    }
+
+    public void setApplyChannel(ApplyChannel applyChannel) {
+        this.applyChannel = applyChannel;
+    }
+
+    public PublicContact getPublicContact() {
+        return publicContact;
+    }
+
+    public void setPublicContact(PublicContact publicContact) {
+        this.publicContact = publicContact;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        JobContent that = (JobContent) o;
+        return Objects.equals(externalUrl, that.externalUrl) &&
+                Objects.equals(jobDescriptions, that.jobDescriptions) &&
+                Objects.equals(company, that.company) &&
+                Objects.equals(employer, that.employer) &&
+                Objects.equals(employment, that.employment) &&
+                Objects.equals(location, that.location) &&
+                Objects.equals(occupations, that.occupations) &&
+                Objects.equals(languageSkills, that.languageSkills) &&
+                Objects.equals(applyChannel, that.applyChannel) &&
+                Objects.equals(publicContact, that.publicContact);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(externalUrl, jobDescriptions, company, employer, employment, location, occupations, languageSkills, applyChannel, publicContact);
+    }
+
+    @Override
+    public String toString() {
+        return "JobContent{" +
+                "externalwithUrl='" + externalUrl + '\'' +
+                ", jobDescriptions=" + jobDescriptions +
+                ", company=" + company +
+                ", employer=" + employer +
+                ", employment=" + employment +
+                ", location=" + location +
+                ", occupations=" + occupations +
+                ", languageSkills=" + languageSkills +
+                ", applyChannel=" + applyChannel +
+                ", publicContact=" + publicContact +
+                '}';
+    }
+
+
+    public static final class Builder<T> {
+        private T parentBuilder;
+        private String externalUrl;
+        private List<JobDescription> jobDescriptions = new LinkedList<>();
+        private Company company;
+        private Employer employer;
+        private Employment employment;
+        private Location location;
+        private List<Occupation> occupations = new LinkedList<>();
+        private List<LanguageSkill> languageSkills = new LinkedList<>();
+        private ApplyChannel applyChannel;
+        private PublicContact publicContact;
+
+        public Builder() {
+        }
+
+        public Builder(T parentBuilder) {
+            this.parentBuilder = parentBuilder;
+        }
+
+        public T end() {
+            return Condition.notNull(parentBuilder, "No parentBuilder has been set");
+        }
+
+        public Builder<T> setExternalUrl(String externalUrl) {
+            this.externalUrl = externalUrl;
+            return this;
+        }
+
+        public Builder<T> setJobDescriptions(List<JobDescription> jobDescriptions) {
+            this.jobDescriptions = jobDescriptions;
+            return this;
+        }
+
+        public Builder<T> setCompany(Company company) {
+            this.company = company;
+            return this;
+        }
+
+        public Builder<T> setEmployer(Employer employer) {
+            this.employer = employer;
+            return this;
+        }
+
+        public Builder<T> setEmployment(Employment employment) {
+            this.employment = employment;
+            return this;
+        }
+
+        public Builder<T> setLocation(Location location) {
+            this.location = location;
+            return this;
+        }
+
+        public Builder<T> setOccupations(List<Occupation> occupations) {
+            this.occupations = occupations;
+            return this;
+        }
+
+        public Builder<T> setLanguageSkills(List<LanguageSkill> languageSkills) {
+            this.languageSkills = languageSkills;
+            return this;
+        }
+
+        public Builder<T> setApplyChannel(ApplyChannel applyChannel) {
+            this.applyChannel = applyChannel;
+            return this;
+        }
+
+        public Builder<T> setPublicContact(PublicContact publicContact) {
+            this.publicContact = publicContact;
+            return this;
+        }
+
+        public JobContent build() {
+            return new JobContent(this);
+        }
+    }
 }
