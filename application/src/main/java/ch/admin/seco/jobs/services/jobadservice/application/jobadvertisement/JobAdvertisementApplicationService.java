@@ -73,10 +73,20 @@ public class JobAdvertisementApplicationService {
                 location
         );
 
+        // TODO resolve jobCenterCode
         String jobCenterCode = null;
-        JobContent jobContent = new JobContent.Builder()
-                // TODO fill the JobContent builder
-                .build();
+
+        JobContent jobContent = null;
+        // TODO fill the JobContent builder
+        //JobContent jobContent = new JobContent.Builder()
+                //.setLocation(location)
+                //.setOccupations(Collections.singletonList(occupation))
+                //.setEmployment(toEmployment(createJobAdvertisementWebFormDto.getJob()))
+                //.setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
+                //.setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
+                //.setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
+                //.setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
+                //.build();
 
         Publication publication = new Publication.Builder()
                 .setEures(createJobAdvertisementWebFormDto.isEures())
