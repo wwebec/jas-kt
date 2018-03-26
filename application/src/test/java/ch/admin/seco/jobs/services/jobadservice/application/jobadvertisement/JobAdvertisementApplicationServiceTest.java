@@ -173,58 +173,28 @@ public class JobAdvertisementApplicationServiceTest {
 
     private JobAdvertisement createJobWithStatusAndReportingObligationEndDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate reportingObligationEndDate) {
         return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setContact(createContact(jobAdvertisementId))
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
                 .setJobContent(createJobContent(jobAdvertisementId))
+                .setPublication(new Publication.Builder().build())
+                .setSourceSystem(SourceSystem.JOBROOM)
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStatus(status)
                 .setReportingObligationEndDate(reportingObligationEndDate)
-                .setPublication(new Publication.Builder().build())
                 .build();
     }
 
     private JobAdvertisement createJobWithStatusAndPublicationEndDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate publicationEndDate) {
         return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setContact(createContact(jobAdvertisementId))
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
                 .setJobContent(createJobContent(jobAdvertisementId))
+                .setPublication(new Publication.Builder().setEndDate(publicationEndDate).build())
+                .setSourceSystem(SourceSystem.JOBROOM)
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStatus(status)
-                .setPublication(new Publication.Builder().setEndDate(publicationEndDate).build())
-                .build();
-    }
-
-    private Contact createContact(JobAdvertisementId jobAdvertisementId) {
-        return new Contact.Builder()
-                .setLanguage(Locale.GERMAN)
-                .setSalutation(Salutation.MR)
-                .setEmail(String.format("mail-%s@mail.com", jobAdvertisementId.getValue()))
-                .setPhone(String.format("+41 %s", jobAdvertisementId.getValue()))
-                .setFirstName(String.format("first-name-%s", jobAdvertisementId.getValue()))
-                .setLastName(String.format("last-name-%s", jobAdvertisementId.getValue()))
-                .build();
-    }
-
-    private Owner createOwner(JobAdvertisementId jobAdvertisementId) {
-        return new Owner.Builder()
-                .setAccessToken(String.format("access-token-%s", jobAdvertisementId.getValue()))
-                .setAvgId(String.format("avg-id-%s", jobAdvertisementId.getValue()))
-                .setUserId(String.format("user-id-%s", jobAdvertisementId.getValue()))
-                .build();
-    }
-
-    private JobContent createJobContent(JobAdvertisementId jobAdvertisementId) {
-        JobDescription jobDescription = new JobDescription(
-                Locale.GERMAN,
-                String.format("title-%s", jobAdvertisementId.getValue()),
-                String.format("description-%s", jobAdvertisementId.getValue())
-        );
-        return new JobContent.Builder()
-                .setJobDescriptions(Collections.singletonList(jobDescription))
                 .build();
     }
 

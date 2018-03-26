@@ -43,4 +43,34 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
 
     }
 
+    public static Contact createContact(JobAdvertisementId jobAdvertisementId) {
+        return new Contact.Builder()
+                .setLanguage(Locale.GERMAN)
+                .setSalutation(Salutation.MR)
+                .setEmail(String.format("mail-%s@mail.com", jobAdvertisementId.getValue()))
+                .setPhone(String.format("+41 %s", jobAdvertisementId.getValue()))
+                .setFirstName(String.format("first-name-%s", jobAdvertisementId.getValue()))
+                .setLastName(String.format("last-name-%s", jobAdvertisementId.getValue()))
+                .build();
+    }
+
+    public static Owner createOwner(JobAdvertisementId jobAdvertisementId) {
+        return new Owner.Builder()
+                .setAccessToken(String.format("access-token-%s", jobAdvertisementId.getValue()))
+                .setAvgId(String.format("avg-id-%s", jobAdvertisementId.getValue()))
+                .setUserId(String.format("user-id-%s", jobAdvertisementId.getValue()))
+                .build();
+    }
+
+    public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId) {
+        JobDescription jobDescription = new JobDescription(
+                Locale.GERMAN,
+                String.format("title-%s", jobAdvertisementId.getValue()),
+                String.format("description-%s", jobAdvertisementId.getValue())
+        );
+        return new JobContent.Builder()
+                .setJobDescriptions(Collections.singletonList(jobDescription))
+                .build();
+    }
+
 }
