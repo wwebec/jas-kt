@@ -1,17 +1,17 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-
 import javax.validation.constraints.NotNull;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 
 public class CompanyDto {
 
     @NotNull
     private String name;
-    @NotNull
+    //    @NotNull // TODO X28 delivers only company name
     private String street;
     private String houseNumber;
-    @NotNull
+    //    @NotNull
     private String postalCode;
     private String city;
     private String countryIsoCode;

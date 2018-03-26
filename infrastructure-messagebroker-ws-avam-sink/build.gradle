@@ -16,19 +16,9 @@ dependencies {
     compile 'com.fasterxml.jackson.module:jackson-module-afterburner'
 
     testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
-    optional "org.springframework.boot:spring-boot-configuration-processor"
-}
 
-bootJar {
-    mainClassName = 'ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceApplication'
+    optional "org.springframework.boot:spring-boot-configuration-processor"
 }
 
 compileJava.dependsOn(processResources)
 
-publishing {
-    publications {
-        bootJava(MavenPublication) {
-            artifact bootJar
-        }
-    }
-}

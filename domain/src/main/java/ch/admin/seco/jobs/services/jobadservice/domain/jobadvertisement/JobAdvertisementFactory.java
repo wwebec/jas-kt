@@ -1,12 +1,17 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*;
+import java.util.Locale;
+
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.stereotype.Component;
 
-import java.util.Locale;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 
@@ -18,7 +23,7 @@ public class JobAdvertisementFactory {
 
     @Autowired
     public JobAdvertisementFactory(JobAdvertisementRepository jobAdvertisementRepository,
-                                   DataFieldMaxValueIncrementer stellennummerEgovGenerator) {
+            DataFieldMaxValueIncrementer stellennummerEgovGenerator) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.stellennummerEgovGenerator = stellennummerEgovGenerator;
     }
@@ -82,19 +87,32 @@ public class JobAdvertisementFactory {
 
     public JobAdvertisement createFromExtern(Locale language, String title, String description, JobAdvertisementUpdater updater) {
         // TODO Tbd which data are passed to create the JobAdvertisement Object
-        JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
-                .setId(new JobAdvertisementId())
-                .setSourceSystem(SourceSystem.EXTERN)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setLanguage(language)
-                .setTitle(title)
-                .setDescription(description)
-                .setReportToRav(false)
-                .build();
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByFingerprint(updater.getFingerprint())
+                .orElseGet(() ->
+                        new JobAdvertisement.Builder()
+                                .setId(new JobAdvertisementId())
+                                .setSourceSystem(SourceSystem.EXTERN)
+                                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                                .setLanguage(language)
+                                .setTitle(title)
+                                .setDescription(description)
+                                .setReportToRav(false)
+                                .build());
 
         jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
         DomainEventPublisher.publish(new JobAdvertisementPublishPublicEvent(newJobAdvertisement));
         return newJobAdvertisement;
+    }
+
+    public JobAdvertisement updateFromX28(String stellennummerEgov, JobAdvertisementUpdater updater) {
+        return jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
+                .map(jobAdvertisement -> {
+
+                    // TODO update x28 code
+                    jobAdvertisement.init(updater);
+                    return jobAdvertisementRepository.save(jobAdvertisement);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
     }
 }

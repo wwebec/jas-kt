@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
+import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
@@ -27,15 +27,16 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementApiDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementWebFormDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobApiDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
@@ -64,6 +65,8 @@ public class JobAdvertisementApplicationService {
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
 
+    private final RavRegistrationService ravRegistrationService;
+
     private final ReportingObligationService reportingObligationService;
 
     private final LocationService locationService;
@@ -72,12 +75,14 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
-            JobAdvertisementFactory jobAdvertisementFactory,
-            ReportingObligationService reportingObligationService,
-            LocationService locationService,
-            ProfessionService professionSerivce) {
+                                              JobAdvertisementFactory jobAdvertisementFactory,
+                                              RavRegistrationService ravRegistrationService,
+                                              ReportingObligationService reportingObligationService,
+                                              LocationService locationService,
+                                              ProfessionService professionSerivce) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
+        this.ravRegistrationService = ravRegistrationService;
         this.reportingObligationService = reportingObligationService;
         this.locationService = locationService;
         this.professionSerivce = professionSerivce;
@@ -185,7 +190,7 @@ public class JobAdvertisementApplicationService {
 
     public List<JobAdvertisementDto> findAll() {
         List<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findAll();
-        return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(Collectors.toList());
+        return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(toList());
     }
 
     public JobAdvertisementDto findById(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
@@ -268,6 +273,44 @@ public class JobAdvertisementApplicationService {
         LOG.debug("Starting archive for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.archive();
+    }
+
+    public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
+        LOG.debug("Create '{}' from X28", createJobAdvertisementFromX28Dto.getTitle());
+        Location location = toLocation(createJobAdvertisementFromX28Dto.getLocation());
+        location = locationService.enrichCodes(location);
+
+        List<Occupation> occupations = createJobAdvertisementFromX28Dto.getOccupations().stream()
+                .map(this::toOccupation)
+                .map(this::enrichOccupationWithProfessionCodes)
+                .collect(toList());
+
+        final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+                .setLocation(location)
+                .setOccupations(occupations)
+                .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementFromX28Dto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
+                .build();
+
+        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromExtern(
+                Locale.GERMAN,
+                createJobAdvertisementFromX28Dto.getTitle(),
+                createJobAdvertisementFromX28Dto.getDescription(),
+                updater
+        );
+        return jobAdvertisement.getId();
+    }
+
+    public void updateFromX28(UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto) {
+
+        final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+                .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint())
+                // TODO set x28 code
+                .build();
+
+        jobAdvertisementFactory.updateFromX28(updateJobAdvertisementFromX28Dto.getStellennummerEgov(), updater);
+
     }
 
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
@@ -426,7 +469,7 @@ public class JobAdvertisementApplicationService {
                             languageSkillDto.getSpokenLevel(),
                             languageSkillDto.getWrittenLevel()
                     ))
-                    .collect(Collectors.toList());
+                    .collect(toList());
         }
         return null;
     }

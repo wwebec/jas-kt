@@ -14,14 +14,13 @@ buildscript {
 
 plugins {
     id 'org.sonarqube' version '2.6.1'
-    id 'net.ltgt.apt-idea' version '0.13'
-    id 'net.ltgt.apt' version '0.13'
+    id "net.ltgt.apt-idea" version "0.13"
+    id "net.ltgt.apt" version "0.13"
     id 'io.spring.dependency-management' version '1.0.4.RELEASE'
     id 'com.gorylenko.gradle-git-properties' version '1.4.17'
     id 'com.avast.gradle.docker-compose' version '0.7.1'
 }
 
-//apply from: "${rootProject.rootDir}/gradle/docker.gradle"
 apply from: "gradle/docker.gradle"
 
 allprojects {
@@ -34,7 +33,6 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'propdeps'
-    //apply from: "${rootProject.rootDir}/gradle/checkstyle.gradle"
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8

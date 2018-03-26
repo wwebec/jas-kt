@@ -43,9 +43,15 @@
             <column name="ID" type="varchar(36)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="STELLENNUMMER_EGOV" type="varchar(11)"/>
-            <column name="STELLENNUMMER_AVAM" type="varchar(11)"/>
-            <column name="FINGERPRINT" type="varchar(100)"/>
+            <column name="STELLENNUMMER_EGOV" type="varchar(11)">
+                <constraints unique="true" nullable="true"/>
+            </column>
+            <column name="STELLENNUMMER_AVAM" type="varchar(11)">
+                <constraints unique="true" nullable="true"/>
+            </column>
+            <column name="FINGERPRINT" type="varchar(100)">
+                <constraints unique="true" nullable="true"/>
+            </column>
             <column name="SOURCE_SYSTEM" type="varchar(12)"/>
             <column name="SOURCE_ENTRY_ID" type="varchar(255)"/>
             <column name="EXTERNAL_URL" type="varchar(1024)"/>
@@ -140,5 +146,6 @@
             <column name="SPOKEN_LEVEL" type="varchar(64)"/>
             <column name="WRITTEN_LEVEL" type="varchar(64)"/>
         </createTable>
+
     </changeSet>
 </databaseChangeLog>

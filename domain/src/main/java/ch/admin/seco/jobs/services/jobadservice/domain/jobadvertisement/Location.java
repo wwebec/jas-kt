@@ -35,6 +35,19 @@ public class Location implements ValueObject<Location> {
         // For reflection libs
     }
 
+    public Location(Builder builder) {
+        this(
+             builder.remarks,
+             builder.city,
+             builder.postalCode,
+             builder.communalCode,
+             builder.regionCode,
+             builder.cantonCode,
+             builder.countryIsoCode,
+             builder.coordinates
+        );
+    }
+
     public Location(String remarks, String city, String postalCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint coordinates) {
         this.remarks = remarks;
         this.city = city;
@@ -44,6 +57,60 @@ public class Location implements ValueObject<Location> {
         this.cantonCode = cantonCode;
         this.countryIsoCode = countryIsoCode;
         this.coordinates = coordinates;
+    }
+
+    public static class Builder {
+        private String remarks;
+
+        private String city;
+
+        private String postalCode;
+
+        private String communalCode;
+
+        private String regionCode;
+
+        private String cantonCode;
+
+        private String countryIsoCode;
+
+        private GeoPoint coordinates;
+
+        public void setCoordinates(GeoPoint coordinates) {
+            this.coordinates = coordinates;
+        }
+
+        public void setRemarks(String remarks) {
+            this.remarks = remarks;
+        }
+
+        public void setCity(String city) {
+            this.city = city;
+        }
+
+        public void setPostalCode(String postalCode) {
+            this.postalCode = postalCode;
+        }
+
+        public void setCommunalCode(String communalCode) {
+            this.communalCode = communalCode;
+        }
+
+        public void setRegionCode(String regionCode) {
+            this.regionCode = regionCode;
+        }
+
+        public void setCantonCode(String cantonCode) {
+            this.cantonCode = cantonCode;
+        }
+
+        public void setCountryIsoCode(String countryIsoCode) {
+            this.countryIsoCode = countryIsoCode;
+        }
+
+        public Location build() {
+            return new Location(this);
+        }
     }
 
     public String getRemarks() {
