@@ -73,7 +73,7 @@ public class JobAdvertisementApplicationService {
                 location
         );
 
-        // TODO resolve jobCenterCode
+        // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
         String jobCenterCode = null;
 
         JobContent jobContent = null;
@@ -121,7 +121,7 @@ public class JobAdvertisementApplicationService {
                 location
         );
 
-        // TODO resolve jobCenterCode
+        // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
         String jobCenterCode = null;
 
         JobContent jobContent = null;
