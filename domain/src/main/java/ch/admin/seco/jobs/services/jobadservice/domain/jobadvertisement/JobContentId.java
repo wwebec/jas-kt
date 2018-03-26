@@ -1,30 +1,27 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import java.util.Objects;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.IdGenerator;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateId;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.IdGenerator;
+import java.util.Objects;
 
 @Embeddable
 @Access(AccessType.FIELD)
-public class JobAdvertisementId implements AggregateId<JobAdvertisementId> {
+public class JobContentId {
 
     private final String value;
 
-    public JobAdvertisementId() {
+    public JobContentId() {
         this(IdGenerator.timeBasedUUID().toString());
     }
 
-    public JobAdvertisementId(String value) {
+    public JobContentId(String value) {
         this.value = Condition.notBlank(value);
     }
 
-    @Override
     public String getValue() {
         return value;
     }
@@ -33,7 +30,7 @@ public class JobAdvertisementId implements AggregateId<JobAdvertisementId> {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        JobAdvertisementId that = (JobAdvertisementId) o;
+        JobContentId that = (JobContentId) o;
         return Objects.equals(value, that.value);
     }
 
@@ -44,7 +41,7 @@ public class JobAdvertisementId implements AggregateId<JobAdvertisementId> {
 
     @Override
     public String toString() {
-        return "JobAdvertisementId{" +
+        return "JobContentId{" +
                 "value='" + value + '\'' +
                 '}';
     }

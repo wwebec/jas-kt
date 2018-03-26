@@ -25,23 +25,27 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Valid
     private JobAdvertisementId id;
 
-    private String stellennummerEgov;
-
-    private String stellennummerAvam;
-
-    private String fingerprint;
+    @Enumerated(EnumType.STRING)
+    private JobAdvertisementStatus status;
 
     @Enumerated(EnumType.STRING)
     private SourceSystem sourceSystem;
 
     private String sourceEntryId;
 
-    private String externalUrl;
+    private String stellennummerEgov;
 
-    @Enumerated(EnumType.STRING)
-    private JobAdvertisementStatus status;
+    private String stellennummerAvam;
 
-    private LocalDate ravRegistrationDate;
+    private String fingerprint;
+
+    private boolean reportingObligation;
+
+    private LocalDate reportingObligationEndDate;
+
+    private boolean reportToRav;
+
+    private String jobCenterCode;
 
     private LocalDate approvalDate;
 
@@ -55,69 +59,17 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private String cancellationCode;
 
-    private boolean reportToRav;
-
-    private boolean reportingObligation;
-
-    private LocalDate reportingObligationEndDate;
-
-    private LocalDate publicationStartDate;
-
-    private LocalDate publicationEndDate;
-
-    private boolean eures;
-
-    private boolean euresAnonymous;
-
-    private Locale language;
-
-    private String title;
-
-    private String description;
+    // TODO JPA-link Lazy-loading
+    private JobContent jobContent;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "startDate", column = @Column(name = "EMPLOYMENT_START_DATE")),
-            @AttributeOverride(name = "endDate", column = @Column(name = "EMPLOYMENT_END_DATE")),
-            @AttributeOverride(name = "durationInDays", column = @Column(name = "EMPLOYMENT_DURATION_IN_DAYS")),
-            @AttributeOverride(name = "immediately", column = @Column(name = "EMPLOYMENT_IMMEDIATELY")),
-            @AttributeOverride(name = "permanent", column = @Column(name = "EMPLOYMENT_PERMANENT")),
-            @AttributeOverride(name = "workloadPercentageMin", column = @Column(name = "EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN")),
-            @AttributeOverride(name = "workloadPercentageMax", column = @Column(name = "EMPLOYMENT_WORKLOAD_PERCENTAGE_MAX"))
+            @AttributeOverride(name = "userId", column = @Column(name = "OWNER_USER_ID")),
+            @AttributeOverride(name = "avgId", column = @Column(name = "OWNER_AVG_ID")),
+            @AttributeOverride(name = "accessToken", column = @Column(name = "OWNER_ACCESS_TOKEN"))
     })
     @Valid
-    private Employment employment;
-
-    private String jobCenterCode;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "mailAddress", column = @Column(name = "APPLY_CHANNEL_MAIL_ADDRESS")),
-            @AttributeOverride(name = "emailAddress", column = @Column(name = "APPLY_CHANNEL_EMAIL_ADDRESS")),
-            @AttributeOverride(name = "phoneNumber", column = @Column(name = "APPLY_CHANNEL_PHONE_NUMBER")),
-            @AttributeOverride(name = "formUrl", column = @Column(name = "APPLY_CHANNEL_FORM_URL")),
-            @AttributeOverride(name = "additionalInfo", column = @Column(name = "APPLY_CHANNEL_ADDITIONAL_INFO"))
-    })
-    @Valid
-    private ApplyChannel applyChannel;
-
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "name", column = @Column(name = "COMPANY_NAME")),
-            @AttributeOverride(name = "street", column = @Column(name = "COMPANY_STREET")),
-            @AttributeOverride(name = "houseNumber", column = @Column(name = "COMPANY_HOUSE_NUMBER")),
-            @AttributeOverride(name = "postalCode", column = @Column(name = "COMPANY_POSTAL_CODE")),
-            @AttributeOverride(name = "city", column = @Column(name = "COMPANY_CITY")),
-            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "COMPANY_COUNTRY_ISO_CODE")),
-            @AttributeOverride(name = "postOfficeBoxNumber", column = @Column(name = "COMPANY_POST_OFFICE_BOX_NUMBER")),
-            @AttributeOverride(name = "postOfficeBoxPostalCode", column = @Column(name = "COMPANY_POST_OFFICE_BOX_POSTAL_CODE")),
-            @AttributeOverride(name = "postOfficeBoxCity", column = @Column(name = "COMPANY_POST_OFFICE_BOX_CITY")),
-            @AttributeOverride(name = "phone", column = @Column(name = "COMPANY_PHONE")),
-            @AttributeOverride(name = "email", column = @Column(name = "COMPANY_EMAIL")),
-            @AttributeOverride(name = "website", column = @Column(name = "COMPANY_WEBSITE"))
-    })
-    @Valid
-    private Company company;
+    private Owner owner;
 
     @Embedded
     @AttributeOverrides({
@@ -133,28 +85,17 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "remarks", column = @Column(name = "LOCATION_REMARKS")),
-            @AttributeOverride(name = "city", column = @Column(name = "LOCATION_CITY")),
-            @AttributeOverride(name = "postalCode", column = @Column(name = "LOCATION_POSTAL_CODE")),
-            @AttributeOverride(name = "communalCode", column = @Column(name = "LOCATION_COMMUNAL_CODE")),
-            @AttributeOverride(name = "regionCode", column = @Column(name = "LOCATION_REGION_CODE")),
-            @AttributeOverride(name = "cantonCode", column = @Column(name = "LOCATION_CANTON_CODE")),
-            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "LOCATION_COUNTRY_ISO_CODE")),
-            @AttributeOverride(name = "coordinates.longitude", column = @Column(name = "LOCATION_LONGITUDE")),
-            @AttributeOverride(name = "coordinates.latitude", column = @Column(name = "LOCATION_LATITUDE"))
+            @AttributeOverride(name = "startDate", column = @Column(name = "PUBLICATION_START_DATE")),
+            @AttributeOverride(name = "endDate", column = @Column(name = "PUBLICATION_END_DATE")),
+            @AttributeOverride(name = "eures", column = @Column(name = "PUBLICATION_EURES")),
+            @AttributeOverride(name = "euresAnonymous", column = @Column(name = "PUBLICATION_EURES_ANONYMOUS")),
+            @AttributeOverride(name = "publicDisplay", column = @Column(name = "PUBLICATION_PUBLIC_DISPLAY")),
+            @AttributeOverride(name = "publicAnonynomous", column = @Column(name = "PUBLICATION_PUBLIC_ANONYNOMOU")),
+            @AttributeOverride(name = "restrictedDisplay", column = @Column(name = "PUBLICATION_RESTRICTED_DISPLAY")),
+            @AttributeOverride(name = "restrictedAnonymous", column = @Column(name = "PUBLICATION_RESTRICTED_ANONYMOUS"))
     })
     @Valid
-    private Location location;
-
-    @ElementCollection
-    @CollectionTable(name = "JOB_ADVERTISEMENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
-    @Valid
-    private List<Occupation> occupations;
-
-    @ElementCollection
-    @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
-    @Valid
-    private List<LanguageSkill> languageSkills;
+    private Publication publication;
 
     protected JobAdvertisement() {
         // For reflection libs
@@ -196,14 +137,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.id = Condition.notNull(id, "Id can't be null");
         this.sourceSystem = Condition.notNull(sourceSystem, "Source system can't be null");
         this.status = Condition.notNull(status, "Status can't be null");
-        this.language = Condition.notNull(language, "Language can't be null");
-        this.title = Condition.notBlank(title, "Title can't be blank");
-        this.description = Condition.notBlank(description, "Description can't be blank");
-    }
-
-    @Override
-    public boolean sameAggregateAs(JobAdvertisement other) {
-        return (other != null) && id.sameValueObjectAs(other.id);
     }
 
     public JobAdvertisementId getId() {
