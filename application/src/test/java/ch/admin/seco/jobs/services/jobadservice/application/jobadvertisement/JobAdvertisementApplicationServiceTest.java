@@ -86,7 +86,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
                 new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
+                new CreateLocationDto("remarks", "ctiy", "postalCode", "CH", "ZH"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
         );
@@ -117,7 +117,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new JobApiDto("de","title", "descriptioin", 10, 90,
                         LocalDate.of(2018, 1, 1),
                         LocalDate.of(2018, 12, 31), 30, true, true,
-                        new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
+                        new CreateLocationDto("remarks", "ctiy", "postalCode", "CH", "ZH"),
                         Collections.emptyList()),
                 new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),

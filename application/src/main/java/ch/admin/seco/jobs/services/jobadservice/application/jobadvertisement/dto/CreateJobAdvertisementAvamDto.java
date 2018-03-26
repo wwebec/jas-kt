@@ -1,15 +1,16 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
-public class CreateJobAdvertisementAvamDto {
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
-    private boolean eures;
+public class CreateJobAdvertisementAvamDto {
 
     @NotEmpty
     private String stellennummerAvam;
@@ -45,13 +46,21 @@ public class CreateJobAdvertisementAvamDto {
 
     private List<LanguageSkillDto> languageSkills;
 
+    @NotNull
+    private PublicationDto publication;
+
+    private Set<WorkForm> workForm;
+
     protected CreateJobAdvertisementAvamDto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementAvamDto(String stellennummerAvam, boolean eures, String title, String description, String languageIsoCode, String jobCenterCode, EmploymentDto employment, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location, List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills) {
+    public CreateJobAdvertisementAvamDto(String stellennummerAvam, String title,
+            String description, String languageIsoCode, String jobCenterCode, EmploymentDto employment,
+            ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
+            List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication,
+            Set<WorkForm> workForm) {
         this.stellennummerAvam = stellennummerAvam;
-        this.eures = eures;
         this.title = title;
         this.description = description;
         this.languageIsoCode = languageIsoCode;
@@ -63,6 +72,8 @@ public class CreateJobAdvertisementAvamDto {
         this.location = location;
         this.occupations = occupations;
         this.languageSkills = languageSkills;
+        this.publication = publication;
+        this.workForm = workForm;
     }
 
     public String getStellennummerAvam() {
@@ -71,14 +82,6 @@ public class CreateJobAdvertisementAvamDto {
 
     public void setStellennummerAvam(String stellennummerAvam) {
         this.stellennummerAvam = stellennummerAvam;
-    }
-
-    public boolean isEures() {
-        return eures;
-    }
-
-    public void setEures(boolean eures) {
-        this.eures = eures;
     }
 
     public String getTitle() {
@@ -169,4 +172,19 @@ public class CreateJobAdvertisementAvamDto {
         this.languageSkills = languageSkills;
     }
 
+    public PublicationDto getPublication() {
+        return publication;
+    }
+
+    public void setPublication(PublicationDto publication) {
+        this.publication = publication;
+    }
+
+    public Set<WorkForm> getWorkForm() {
+        return workForm;
+    }
+
+    public void setWorkForm(Set<WorkForm> workForm) {
+        this.workForm = workForm;
+    }
 }

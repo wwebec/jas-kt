@@ -9,16 +9,19 @@ public class CreateLocationDto {
     @NotEmpty
     private String postalCode;
     private String countryIsoCode;
+    private String communalCode;
 
     protected CreateLocationDto() {
         // For reflection libs
     }
 
-    public CreateLocationDto(String remarks, String city, String postalCode, String countryIsoCode) {
+    public CreateLocationDto(String remarks, String city, String postalCode, String countryIsoCode,
+            String communalCode) {
         this.remarks = remarks;
         this.city = city;
         this.postalCode = postalCode;
         this.countryIsoCode = countryIsoCode;
+        this.communalCode = communalCode;
     }
 
     public String getRemarks() {
@@ -51,5 +54,13 @@ public class CreateLocationDto {
 
     public void setCountryIsoCode(String countryIsoCode) {
         this.countryIsoCode = countryIsoCode;
+    }
+
+    public String getCommunalCode() {
+        return communalCode;
+    }
+
+    public void setCommunalCode(String communalCode) {
+        this.communalCode = communalCode;
     }
 }

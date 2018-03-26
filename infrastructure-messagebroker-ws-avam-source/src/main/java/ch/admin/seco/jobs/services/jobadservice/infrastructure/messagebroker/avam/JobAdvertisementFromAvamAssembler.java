@@ -12,8 +12,10 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -35,7 +37,9 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSOsteEgov;
 
 public class JobAdvertisementFromAvamAssembler {
@@ -67,7 +71,6 @@ public class JobAdvertisementFromAvamAssembler {
     CreateJobAdvertisementAvamDto createCreateJobAdvertisementAvamDto(WSOsteEgov avamJobAdvertisement) {
         return new CreateJobAdvertisementAvamDto(
                 avamJobAdvertisement.getStellennummerAvam(),
-                avamJobAdvertisement.isEures() || avamJobAdvertisement.isEuresAnonym(), // FIXME is this correct?
                 avamJobAdvertisement.getBezeichnung(),
                 avamJobAdvertisement.getBeschreibung(),
                 "de", //TODO get correct value from Avam
@@ -78,7 +81,9 @@ public class JobAdvertisementFromAvamAssembler {
                 createContactDto(avamJobAdvertisement),
                 createCreateLocationDto(avamJobAdvertisement),
                 createOccupationDtos(avamJobAdvertisement),
-                createLanguageDtos(avamJobAdvertisement)
+                createLanguageDtos(avamJobAdvertisement),
+                createPublicationDto(avamJobAdvertisement),
+                createWorkForms(avamJobAdvertisement)
         );
     }
 
@@ -118,7 +123,8 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.getArbeitsOrtText(),
                 avamJobAdvertisement.getArbeitsOrtOrt(),
                 avamJobAdvertisement.getArbeitsOrtPlz(),
-                avamJobAdvertisement.getArbeitsOrtLand());
+                avamJobAdvertisement.getArbeitsOrtLand(),
+                avamJobAdvertisement.getArbeitsOrtGemeinde());
     }
 
     private CompanyDto createCompanyDto(WSOsteEgov avamJobAdvertisement) {
@@ -183,6 +189,21 @@ public class JobAdvertisementFromAvamAssembler {
             );
         }
         return null;
+    }
+
+    private PublicationDto createPublicationDto(WSOsteEgov avamJobAdvertisement) {
+        return new PublicationDto(avamJobAdvertisement.isEures(),
+                avamJobAdvertisement.isEuresAnonym(),
+                avamJobAdvertisement.isAnonym(),
+                avamJobAdvertisement.isPublikation(),
+                false, //TODO: Set from AVAM
+                false //TODO: Set from AVAM
+        );
+    }
+
+    private Set<WorkForm> createWorkForms(WSOsteEgov avamJobAdvertisement) {
+        //TODO: Set from AVAM
+        return Collections.emptySet();
     }
 
     private boolean safeBoolean(Boolean value) {
