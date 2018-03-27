@@ -80,7 +80,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), 365, true, false, 80, 100),
                 "drivingLicenseLevel",
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
                 new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
@@ -115,7 +115,7 @@ public class JobAdvertisementApplicationServiceTest {
                         LocalDate.of(2018, 12, 31), 30, true, true,
                         new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                         Collections.emptyList()),
-                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")
         );

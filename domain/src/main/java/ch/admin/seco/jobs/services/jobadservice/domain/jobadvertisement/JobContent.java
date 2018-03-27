@@ -14,7 +14,7 @@ public class JobContent implements ValueObject<JobContent> {
     private String externalUrl;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_CONTENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_CONTENT_ID"))
+    @CollectionTable(name = "JOB_CONTENT_DESCRIPTION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<JobDescription> jobDescriptions;
 
@@ -31,7 +31,8 @@ public class JobContent implements ValueObject<JobContent> {
             @AttributeOverride(name = "postOfficeBoxCity", column = @Column(name = "COMPANY_POST_OFFICE_BOX_CITY")),
             @AttributeOverride(name = "phone", column = @Column(name = "COMPANY_PHONE")),
             @AttributeOverride(name = "email", column = @Column(name = "COMPANY_EMAIL")),
-            @AttributeOverride(name = "website", column = @Column(name = "COMPANY_WEBSITE"))
+            @AttributeOverride(name = "website", column = @Column(name = "COMPANY_WEBSITE")),
+            @AttributeOverride(name = "surrogate", column = @Column(name = "COMPANY_SURROGATE"))
     })
     @Valid
     private Company company;
@@ -77,12 +78,12 @@ public class JobContent implements ValueObject<JobContent> {
     private Location location;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_CONTENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_CONTENT_ID"))
+    @CollectionTable(name = "JOB_CONTENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<Occupation> occupations;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_CONTENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_CONTENT_ID"))
+    @CollectionTable(name = "JOB_CONTENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<LanguageSkill> languageSkills;
 

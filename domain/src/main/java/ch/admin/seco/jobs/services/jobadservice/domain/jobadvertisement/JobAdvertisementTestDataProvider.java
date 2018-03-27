@@ -62,6 +62,17 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
                 .build();
     }
 
+    public static Company createCompany(JobAdvertisementId jobAdvertisementId) {
+        return new Company.Builder()
+                .setName(String.format("name-%s", jobAdvertisementId.getValue()))
+                .setStreet("street")
+                .setPostalCode("postalCode")
+                .setCity("city")
+                .setCountryIsoCode("ch")
+                .setSurrogate(false)
+                .build();
+    }
+
     public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId) {
         JobDescription jobDescription = new JobDescription(
                 Locale.GERMAN,
@@ -70,6 +81,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
         );
         return new JobContent.Builder()
                 .setJobDescriptions(Collections.singletonList(jobDescription))
+                .setCompany(createCompany(jobAdvertisementId))
                 .build();
     }
 

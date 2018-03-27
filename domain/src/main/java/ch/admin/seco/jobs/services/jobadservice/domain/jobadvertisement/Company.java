@@ -25,6 +25,7 @@ public class Company implements ValueObject<Company> {
     private String phone;
     private String email;
     private String website;
+    private boolean surrogate;
 
     protected Company() {
         // For reflection libs
@@ -43,6 +44,7 @@ public class Company implements ValueObject<Company> {
         this.phone = builder.phone;
         this.email = builder.email;
         this.website = builder.website;
+        this.surrogate = builder.surrogate;
     }
 
     public String getName() {
@@ -93,6 +95,10 @@ public class Company implements ValueObject<Company> {
         return website;
     }
 
+    public boolean isSurrogate() {
+        return surrogate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,12 +115,13 @@ public class Company implements ValueObject<Company> {
                 Objects.equals(postOfficeBoxCity, company.postOfficeBoxCity) &&
                 Objects.equals(phone, company.phone) &&
                 Objects.equals(email, company.email) &&
-                Objects.equals(website, company.website);
+                Objects.equals(website, company.website) &&
+                Objects.equals(surrogate, company.surrogate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, street, houseNumber, postalCode, city, countryIsoCode, postOfficeBoxNumber, postOfficeBoxPostalCode, postOfficeBoxCity, phone, email, website);
+        return Objects.hash(name, street, houseNumber, postalCode, city, countryIsoCode, postOfficeBoxNumber, postOfficeBoxPostalCode, postOfficeBoxCity, phone, email, website, surrogate);
     }
 
     @Override
@@ -132,6 +139,7 @@ public class Company implements ValueObject<Company> {
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
                 ", website='" + website + '\'' +
+                ", surrogate='" + surrogate + '\'' +
                 '}';
     }
 
@@ -149,6 +157,7 @@ public class Company implements ValueObject<Company> {
         private String phone;
         private String email;
         private String website;
+        private boolean surrogate;
 
         public Builder(T parentBuilder) {
             this.parentBuilder = parentBuilder;
@@ -222,6 +231,11 @@ public class Company implements ValueObject<Company> {
 
         public Builder<T> setWebsite(String website) {
             this.website = website;
+            return this;
+        }
+
+        public Builder<T> setSurrogate(boolean surrogate) {
+            this.surrogate = surrogate;
             return this;
         }
     }

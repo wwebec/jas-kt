@@ -21,12 +21,13 @@ public class CompanyDto {
     private String phone;
     private String email;
     private String website;
+    private boolean surrogate;
 
     protected CompanyDto() {
         // For reflection libs
     }
 
-    public CompanyDto(String name, String street, String houseNumber, String postalCode, String city, String countryIsoCode, String postOfficeBoxNumber, String postOfficeBoxPostalCode, String postOfficeBoxCity, String phone, String email, String website) {
+    public CompanyDto(String name, String street, String houseNumber, String postalCode, String city, String countryIsoCode, String postOfficeBoxNumber, String postOfficeBoxPostalCode, String postOfficeBoxCity, String phone, String email, String website, boolean surrogate) {
         this.name = name;
         this.street = street;
         this.houseNumber = houseNumber;
@@ -39,6 +40,7 @@ public class CompanyDto {
         this.phone = phone;
         this.email = email;
         this.website = website;
+        this.surrogate = surrogate;
     }
 
     public String getName() {
@@ -137,6 +139,14 @@ public class CompanyDto {
         this.website = website;
     }
 
+    public boolean isSurrogate() {
+        return surrogate;
+    }
+
+    public void setSurrogate(boolean surrogate) {
+        this.surrogate = surrogate;
+    }
+
     public static CompanyDto toDto(Company company) {
         CompanyDto companyDto = new CompanyDto();
         companyDto.setName(company.getName());
@@ -151,6 +161,7 @@ public class CompanyDto {
         companyDto.setPhone(company.getPhone());
         companyDto.setEmail(company.getEmail());
         companyDto.setWebsite(company.getWebsite());
+        companyDto.setSurrogate(company.isSurrogate());
         return companyDto;
     }
 }

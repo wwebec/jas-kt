@@ -58,6 +58,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private String cancellationCode;
 
     @Embedded
+    @Valid
     private JobContent jobContent;
 
     @Embedded
