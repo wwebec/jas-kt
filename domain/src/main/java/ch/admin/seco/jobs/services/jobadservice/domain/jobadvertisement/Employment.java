@@ -25,14 +25,14 @@ public class Employment implements ValueObject<Employment> {
         // For reflection libs
     }
 
-    public Employment(LocalDate startDate, LocalDate endDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax) {
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.durationInDays = durationInDays;
-        this.immediately = immediately;
-        this.permanent = permanent;
-        this.workloadPercentageMin = workloadPercentageMin;
-        this.workloadPercentageMax = workloadPercentageMax;
+    public Employment(Builder builder) {
+        this.startDate = builder.startDate;
+        this.endDate = builder.endDate;
+        this.durationInDays = builder.durationInDays;
+        this.immediately = builder.immediately;
+        this.permanent = builder.permanent;
+        this.workloadPercentageMin = builder.workloadPercentageMin;
+        this.workloadPercentageMax = builder.workloadPercentageMax;
     }
 
     public LocalDate getStartDate() {
@@ -93,5 +93,57 @@ public class Employment implements ValueObject<Employment> {
                 ", workloadPercentageMin=" + workloadPercentageMin +
                 ", workloadPercentageMax=" + workloadPercentageMax +
                 '}';
+    }
+
+    public static final class Builder {
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private Integer durationInDays;
+        private Boolean immediately;
+        private Boolean permanent;
+        private int workloadPercentageMin;
+        private int workloadPercentageMax;
+
+        public Builder() {
+        }
+
+        public Employment build() {
+            return new Employment(this);
+        }
+
+        public Builder setStartDate(LocalDate startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        public Builder setEndDate(LocalDate endDate) {
+            this.endDate = endDate;
+            return this;
+        }
+
+        public Builder setDurationInDays(Integer durationInDays) {
+            this.durationInDays = durationInDays;
+            return this;
+        }
+
+        public Builder setImmediately(Boolean immediately) {
+            this.immediately = immediately;
+            return this;
+        }
+
+        public Builder setPermanent(Boolean permanent) {
+            this.permanent = permanent;
+            return this;
+        }
+
+        public Builder setWorkloadPercentageMin(int workloadPercentageMin) {
+            this.workloadPercentageMin = workloadPercentageMin;
+            return this;
+        }
+
+        public Builder setWorkloadPercentageMax(int workloadPercentageMax) {
+            this.workloadPercentageMax = workloadPercentageMax;
+            return this;
+        }
     }
 }

@@ -26,6 +26,10 @@ public class Condition {
         throw new ConditionException(message, arguments);
     }
 
+    public static <T extends Collection> T notEmpty(T value) {
+        return notEmpty(value, "Given collection can't be null or empty!");
+    }
+
     public static <T extends Collection> T notEmpty(T value, String message, Object... arguments) {
         if ((value != null) && !value.isEmpty()) {
             return value;

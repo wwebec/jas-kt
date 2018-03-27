@@ -1,14 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import java.util.Objects;
-
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+
+import javax.persistence.*;
+import java.util.Objects;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -26,10 +22,10 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
         // For reflection libs
     }
 
-    public LanguageSkill(String languageIsoCode, LanguageLevel spokenLevel, LanguageLevel writtenLevel) {
-        this.languageIsoCode = languageIsoCode;
-        this.spokenLevel = spokenLevel;
-        this.writtenLevel = writtenLevel;
+    public LanguageSkill(Builder builder) {
+        this.languageIsoCode = Condition.notBlank(builder.languageIsoCode);
+        this.spokenLevel = builder.spokenLevel;
+        this.writtenLevel = builder.writtenLevel;
     }
 
     public String getLanguageIsoCode() {
@@ -66,5 +62,33 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
                 ", spokenLevel=" + spokenLevel +
                 ", writtenLevel=" + writtenLevel +
                 '}';
+    }
+
+    public static final class Builder {
+        private String languageIsoCode;
+        private LanguageLevel spokenLevel;
+        private LanguageLevel writtenLevel;
+
+        public Builder() {
+        }
+
+        public LanguageSkill build() {
+            return new LanguageSkill(this);
+        }
+
+        public Builder setLanguageIsoCode(String languageIsoCode) {
+            this.languageIsoCode = languageIsoCode;
+            return this;
+        }
+
+        public Builder setSpokenLevel(LanguageLevel spokenLevel) {
+            this.spokenLevel = spokenLevel;
+            return this;
+        }
+
+        public Builder setWrittenLevel(LanguageLevel writtenLevel) {
+            this.writtenLevel = writtenLevel;
+            return this;
+        }
     }
 }

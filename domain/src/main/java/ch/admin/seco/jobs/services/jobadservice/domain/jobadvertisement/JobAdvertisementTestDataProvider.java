@@ -1,8 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.TestDataProvider;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,8 +29,11 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     }
 
     private JobAdvertisement createJob01() {
-        List<JobDescription> jobDescriptions = Collections.singletonList(new JobDescription(
-                Locale.GERMAN, "Job number 1", "This is the job number 1 with the minimum of data"));
+        List<JobDescription> jobDescriptions = Collections.singletonList(new JobDescription.Builder()
+                .setLanguage(Locale.GERMAN)
+                .setTitle("Job number 1")
+                .setDescription("This is the job number 1 with the minimum of data")
+                .build());
         JobContent jobContent = new JobContent.Builder()
                 .setJobDescriptions(jobDescriptions)
                 .build();
@@ -74,14 +77,67 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     }
 
     public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId) {
-        JobDescription jobDescription = new JobDescription(
-                Locale.GERMAN,
-                String.format("title-%s", jobAdvertisementId.getValue()),
-                String.format("description-%s", jobAdvertisementId.getValue())
-        );
+        JobDescription jobDescription = new JobDescription.Builder()
+                .setLanguage(Locale.GERMAN)
+                .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
+                .build();
+
+        LanguageSkill languageSkill = new LanguageSkill.Builder()
+                .setLanguageIsoCode("de")
+                .setSpokenLevel(LanguageLevel.PROFICIENT)
+                .setWrittenLevel(LanguageLevel.INTERMEDIATE)
+                .build();
+
+        Employment employment = new Employment.Builder()
+                .setStartDate(TimeMachine.now().toLocalDate())
+                .setEndDate(TimeMachine.now().plusDays(31).toLocalDate())
+                .setDurationInDays(31)
+                .setImmediately(true)
+                .setPermanent(false)
+                .setWorkloadPercentageMin(80)
+                .setWorkloadPercentageMax(100)
+                .build();
+
+        PublicContact publicContact = new PublicContact.Builder()
+                .setSalutation(Salutation.MR)
+                .setEmail(String.format("mail-%s@mail.com", jobAdvertisementId.getValue()))
+                .setPhone(String.format("+41 %s", jobAdvertisementId.getValue()))
+                .setFirstName(String.format("first-name-%s", jobAdvertisementId.getValue()))
+                .setLastName(String.format("last-name-%s", jobAdvertisementId.getValue()))
+                .build();
+
+        ApplyChannel applyChannel = new ApplyChannel.Builder()
+                .setAdditionalInfo("additionalInfo")
+                .setMailAddress("mailAddress")
+                .setFormUrl("formUrl")
+                .setEmailAddress("emailAddress")
+                .setPhoneNumber("phoneNumber")
+                .build();
+
+        Location location = new Location.Builder()
+                .setRemarks("remarks")
+                .setCity("city")
+                .setPostalCode("postalCode")
+                .setCommunalCode("communalCode")
+                .setRegionCode("regionCode")
+                .setCantonCode("cantonCode")
+                .setCountryIsoCode("ch")
+                .build();
+
+        Occupation occupation = new Occupation.Builder()
+                .setAvamOccupationCode("avamOccupationCode")
+                .build();
+
         return new JobContent.Builder()
                 .setJobDescriptions(Collections.singletonList(jobDescription))
                 .setCompany(createCompany(jobAdvertisementId))
+                .setLanguageSkills(Collections.singletonList(languageSkill))
+                .setEmployment(employment)
+                .setPublicContact(publicContact)
+                .setApplyChannel(applyChannel)
+                .setLocation(location)
+                .setOccupations(Collections.singletonList(occupation))
                 .build();
     }
 

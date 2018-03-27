@@ -23,10 +23,10 @@ public class JobDescription implements ValueObject<JobDescription> {
         // For reflection libs
     }
 
-    public JobDescription(Locale language, String title, String description) {
-        this.language = Condition.notNull(language, "Language can't be null");
-        this.title = Condition.notBlank(title, "Title can't be blank");
-        this.description = Condition.notBlank(description, "Description can't be blank");
+    public JobDescription(Builder builder) {
+        this.language = Condition.notNull(builder.language, "Language can't be null");
+        this.title = Condition.notBlank(builder.title, "Title can't be blank");
+        this.description = Condition.notBlank(builder.description, "Description can't be blank");
     }
 
     public Locale getLanguage() {
@@ -63,5 +63,33 @@ public class JobDescription implements ValueObject<JobDescription> {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 '}';
+    }
+
+    public static final class Builder {
+        private Locale language;
+        private String title;
+        private String description;
+
+        public Builder() {
+        }
+
+        public JobDescription build() {
+            return new JobDescription(this);
+        }
+
+        public Builder setLanguage(Locale language) {
+            this.language = language;
+            return this;
+        }
+
+        public Builder setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
     }
 }

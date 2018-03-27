@@ -72,6 +72,13 @@ public class JobAdvertisementApplicationService {
         String jobCenterCode = null;
 
         JobContent jobContent = new JobContent.Builder()
+                .setJobDescriptions(Collections.singletonList(
+                        new JobDescription.Builder()
+                                .setLanguage(new Locale(createJobAdvertisementWebFormDto.getLanguageIsoCode()))
+                                .setTitle(createJobAdvertisementWebFormDto.getTitle())
+                                .setDescription(createJobAdvertisementWebFormDto.getDescription())
+                                .build()
+                ))
                 .setLocation(location)
                 .setOccupations(Collections.singletonList(occupation))
                 .setEmployment(toEmployment(createJobAdvertisementWebFormDto.getEmployment()))
@@ -116,12 +123,20 @@ public class JobAdvertisementApplicationService {
         String jobCenterCode = null;
 
         JobContent jobContent = new JobContent.Builder()
+                .setJobDescriptions(Collections.singletonList(
+                        new JobDescription.Builder()
+                                .setLanguage(new Locale(createJobAdvertisementApiDto.getJob().getLanguageIsoCode()))
+                                .setTitle(createJobAdvertisementApiDto.getJob().getTitle())
+                                .setDescription(createJobAdvertisementApiDto.getJob().getDescription())
+                                .build()
+                ))
                 .setLocation(location)
                 .setOccupations(Collections.singletonList(occupation))
                 .setEmployment(toEmployment(createJobAdvertisementApiDto.getJob()))
                 .setApplyChannel(toApplyChannel(createJobAdvertisementApiDto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementApiDto.getCompany()))
                 .setPublicContact(toPublicContact(createJobAdvertisementApiDto.getContact()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementApiDto.getJob().getLanguageSkills()))
                 .build();
 
         Publication publication = new Publication.Builder()
@@ -234,15 +249,15 @@ public class JobAdvertisementApplicationService {
         Condition.notNull(occupation, "Occupation can't be null");
         Profession profession = professionSerivce.findByAvamCode(occupation.getAvamOccupationCode());
         if (profession != null) {
-            return new Occupation(
-                    occupation.getAvamOccupationCode(),
-                    profession.getSbn3Code(),
-                    profession.getSbn5Code(),
-                    profession.getBfsCode(),
-                    profession.getLabel(),
-                    occupation.getWorkExperience(),
-                    occupation.getEducationCode()
-            );
+            return new Occupation.Builder()
+                    .setAvamOccupationCode(occupation.getAvamOccupationCode())
+                    .setSbn3Code(profession.getSbn3Code())
+                    .setSbn5Code(profession.getSbn5Code())
+                    .setBfsCode(profession.getBfsCode())
+                    .setLabel(profession.getLabel())
+                    .setWorkExperience(occupation.getWorkExperience())
+                    .setEducationCode(occupation.getEducationCode())
+                    .build();
         }
         return occupation;
     }
@@ -256,41 +271,41 @@ public class JobAdvertisementApplicationService {
     }
 
     private Employment toEmployment(JobApiDto jobApiDto) {
-        return new Employment(
-                jobApiDto.getStartDate(),
-                jobApiDto.getEndDate(),
-                jobApiDto.getDurationInDays(),
-                jobApiDto.getStartsImmediately(),
-                jobApiDto.getPermanent(),
-                jobApiDto.getWorkingTimePercentageFrom(),
-                jobApiDto.getWorkingTimePercentageTo()
-        );
+        return new Employment.Builder()
+                .setStartDate(jobApiDto.getStartDate())
+                .setEndDate(jobApiDto.getEndDate())
+                .setDurationInDays(jobApiDto.getDurationInDays())
+                .setImmediately(jobApiDto.getStartsImmediately())
+                .setPermanent(jobApiDto.getPermanent())
+                .setWorkloadPercentageMin(jobApiDto.getWorkingTimePercentageFrom())
+                .setWorkloadPercentageMax(jobApiDto.getWorkingTimePercentageTo())
+                .build();
     }
 
     private Employment toEmployment(EmploymentDto employmentDto) {
         if (employmentDto != null) {
-            return new Employment(
-                    employmentDto.getStartDate(),
-                    employmentDto.getEndDate(),
-                    employmentDto.getDurationInDays(),
-                    employmentDto.getImmediately(),
-                    employmentDto.getPermanent(),
-                    employmentDto.getWorkloadPercentageMin(),
-                    employmentDto.getWorkloadPercentageMax()
-            );
+            return new Employment.Builder()
+                    .setStartDate(employmentDto.getStartDate())
+                    .setEndDate(employmentDto.getEndDate())
+                    .setDurationInDays(employmentDto.getDurationInDays())
+                    .setImmediately(employmentDto.getImmediately())
+                    .setPermanent(employmentDto.getPermanent())
+                    .setWorkloadPercentageMin(employmentDto.getWorkloadPercentageMin())
+                    .setWorkloadPercentageMax(employmentDto.getWorkloadPercentageMax())
+                    .build();
         }
         return null;
     }
 
     private ApplyChannel toApplyChannel(ApplyChannelDto applyChannelDto) {
         if (applyChannelDto != null) {
-            return new ApplyChannel(
-                    applyChannelDto.getMailAddress(),
-                    applyChannelDto.getEmailAddress(),
-                    applyChannelDto.getPhoneNumber(),
-                    applyChannelDto.getFormUrl(),
-                    applyChannelDto.getAdditionalInfo()
-            );
+            return new ApplyChannel.Builder()
+                    .setMailAddress(applyChannelDto.getMailAddress())
+                    .setEmailAddress(applyChannelDto.getEmailAddress())
+                    .setPhoneNumber(applyChannelDto.getPhoneNumber())
+                    .setFormUrl(applyChannelDto.getFormUrl())
+                    .setAdditionalInfo(applyChannelDto.getAdditionalInfo())
+                    .build();
         }
         return null;
     }
@@ -317,9 +332,13 @@ public class JobAdvertisementApplicationService {
 
     private PublicContact toPublicContact(ContactDto contactDto) {
         if (contactDto != null) {
-            return new PublicContact(contactDto.getSalutation(),
-                    contactDto.getFirstName(),
-                    contactDto.getLastName(), contactDto.getPhone(), contactDto.getEmail());
+            return new PublicContact.Builder()
+                    .setSalutation(contactDto.getSalutation())
+                    .setFirstName(contactDto.getFirstName())
+                    .setLastName(contactDto.getLastName())
+                    .setPhone(contactDto.getPhone())
+                    .setEmail(contactDto.getEmail())
+                    .build();
         }
         return null;
     }
@@ -340,27 +359,23 @@ public class JobAdvertisementApplicationService {
 
     private Location toLocation(CreateLocationDto createLocationDto) {
         if (createLocationDto != null) {
-            return new Location(
-                    createLocationDto.getRemarks(),
-                    createLocationDto.getCity(),
-                    createLocationDto.getPostalCode(),
-                    null,
-                    null,
-                    null,
-                    createLocationDto.getCountryIsoCode(),
-                    null
-            );
+            return new Location.Builder()
+                    .setRemarks(createLocationDto.getRemarks())
+                    .setCity(createLocationDto.getCity())
+                    .setPostalCode(createLocationDto.getPostalCode())
+                    .setCountryIsoCode(createLocationDto.getCountryIsoCode())
+                    .build();
         }
         return null;
     }
 
     private Occupation toOccupation(OccupationDto occupationDto) {
         if (occupationDto != null) {
-            return new Occupation(
-                    occupationDto.getAvamOccupationCode(),
-                    occupationDto.getWorkExperience(),
-                    occupationDto.getEducationCode()
-            );
+            return new Occupation.Builder()
+                    .setAvamOccupationCode(occupationDto.getAvamOccupationCode())
+                    .setWorkExperience(occupationDto.getWorkExperience())
+                    .setEducationCode(occupationDto.getEducationCode())
+                    .build();
         }
         return null;
     }
@@ -368,11 +383,12 @@ public class JobAdvertisementApplicationService {
     private List<LanguageSkill> toLanguageSkills(List<LanguageSkillDto> languageSkillDtos) {
         if (languageSkillDtos != null) {
             return languageSkillDtos.stream()
-                    .map(languageSkillDto -> new LanguageSkill(
-                            languageSkillDto.getLanguageIsoCode(),
-                            languageSkillDto.getSpokenLevel(),
-                            languageSkillDto.getWrittenLevel()
-                    ))
+                    .map(languageSkillDto -> new LanguageSkill.Builder()
+                            .setLanguageIsoCode(languageSkillDto.getLanguageIsoCode())
+                            .setSpokenLevel(languageSkillDto.getSpokenLevel())
+                            .setWrittenLevel(languageSkillDto.getWrittenLevel())
+                            .build()
+                    )
                     .collect(Collectors.toList());
         }
         return null;

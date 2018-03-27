@@ -5,7 +5,6 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -116,16 +115,15 @@ public class JobContent implements ValueObject<JobContent> {
 
     public JobContent(Builder builder) {
         this.externalUrl = builder.externalUrl;
-        this.company = builder.company;
+        this.company = Condition.notNull(builder.company, "Company can't be null");
         this.employer = builder.employer;
-        this.jobDescriptions = builder.jobDescriptions;
-        this.company = builder.company;
+        this.jobDescriptions = Condition.notEmpty(builder.jobDescriptions, "Job descriptions can't be null or empty");
         this.languageSkills = builder.languageSkills;
-        this.employment = builder.employment;
-        this.publicContact = builder.publicContact;
+        this.employment = Condition.notNull(builder.employment, "Employment can't be null");
+        this.publicContact = Condition.notNull(builder.publicContact, "Public contact can't be null");
         this.applyChannel = builder.applyChannel;
-        this.location = builder.location;
-        this.occupations = builder.occupations;
+        this.location = Condition.notNull(builder.location, "Location can't be null");
+        this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
     }
 
     public String getExternalUrl() {
@@ -250,13 +248,13 @@ public class JobContent implements ValueObject<JobContent> {
     public static final class Builder<T> {
         private T parentBuilder;
         private String externalUrl;
-        private List<JobDescription> jobDescriptions = new LinkedList<>();
+        private List<JobDescription> jobDescriptions;
         private Company company;
         private Employer employer;
         private Employment employment;
         private Location location;
-        private List<Occupation> occupations = new LinkedList<>();
-        private List<LanguageSkill> languageSkills = new LinkedList<>();
+        private List<Occupation> occupations;
+        private List<LanguageSkill> languageSkills;
         private ApplyChannel applyChannel;
         private PublicContact publicContact;
 

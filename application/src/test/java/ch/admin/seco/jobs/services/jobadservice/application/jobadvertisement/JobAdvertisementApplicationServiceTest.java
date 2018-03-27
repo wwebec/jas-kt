@@ -21,7 +21,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Locale;
 
 import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
@@ -60,7 +59,15 @@ public class JobAdvertisementApplicationServiceTest {
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
 
-        when(locationService.enrichCodes(any())).thenReturn(new Location("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null));
+        when(locationService.enrichCodes(any())).thenReturn(
+                new Location.Builder()
+                        .setRemarks("remarks")
+                        .setCity("ctiy")
+                        .setPostalCode("postalCode")
+                        .setCantonCode("BE")
+                        .setCountryIsoCode("CH")
+                        .build()
+        );
         when(egovNumberGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
     }
 
