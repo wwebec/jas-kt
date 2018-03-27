@@ -13,8 +13,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.J
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
-
 @Component
 public class JobAdvertisementFactory {
 
@@ -66,18 +64,16 @@ public class JobAdvertisementFactory {
 
     public JobAdvertisement createFromAvam(Locale language, String stellennummerAvam, String title, String description, JobAdvertisementUpdater updater) {
         // TODO Tbd which data are passed to create the JobAdvertisement Object
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam)
-                .orElseGet(() ->
-                        new JobAdvertisement.Builder()
-                                .setId(new JobAdvertisementId())
-                                .setStellennummerAvam(stellennummerAvam)
-                                .setSourceSystem(SourceSystem.RAV)
-                                .setStatus(JobAdvertisementStatus.REFINING)
-                                .setLanguage(language)
-                                .setTitle(title)
-                                .setDescription(description)
-                                .setReportToRav(true)
-                                .build());
+        JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
+                .setId(new JobAdvertisementId())
+                .setStellennummerAvam(stellennummerAvam)
+                .setSourceSystem(SourceSystem.RAV)
+                .setStatus(JobAdvertisementStatus.REFINING)
+                .setLanguage(language)
+                .setTitle(title)
+                .setDescription(description)
+                .setReportToRav(true)
+                .build();
 
         jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);

@@ -4,11 +4,11 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebro
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.CANCEL;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.CREATE_FROM_AVAM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.REJECT;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageHeaders.ACTION;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageHeaders.SOURCE_SYSTEM;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageHeaders.TARGET_SYSTEM;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageSystem.AVAM;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageSystem.JOB_AD_SERVICE;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.ACTION;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.SOURCE_SYSTEM;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.TARGET_SYSTEM;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.AVAM;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.JOB_AD_SERVICE;
 
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Source;

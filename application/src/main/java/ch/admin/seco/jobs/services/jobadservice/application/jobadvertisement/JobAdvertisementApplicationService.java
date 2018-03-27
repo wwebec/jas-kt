@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
@@ -34,11 +33,13 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobApiDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
@@ -52,6 +53,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 
@@ -65,8 +67,6 @@ public class JobAdvertisementApplicationService {
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
 
-    private final RavRegistrationService ravRegistrationService;
-
     private final ReportingObligationService reportingObligationService;
 
     private final LocationService locationService;
@@ -75,17 +75,15 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
-                                              JobAdvertisementFactory jobAdvertisementFactory,
-                                              RavRegistrationService ravRegistrationService,
-                                              ReportingObligationService reportingObligationService,
-                                              LocationService locationService,
-                                              ProfessionService professionSerivce) {
+            JobAdvertisementFactory jobAdvertisementFactory,
+            ReportingObligationService reportingObligationService,
+            LocationService locationService,
+            ProfessionService professionService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
-        this.ravRegistrationService = ravRegistrationService;
         this.reportingObligationService = reportingObligationService;
         this.locationService = locationService;
-        this.professionSerivce = professionSerivce;
+        this.professionSerivce = professionService;
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto) {
@@ -157,8 +155,8 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.getId();
     }
 
-    public JobAdvertisementId createFromAvam(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
-        LOG.debug("Create '{}' from AVAM", createJobAdvertisementAvamDto.getTitle());
+    public JobAdvertisementId createOrUpdateFromAvam(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
+        LOG.debug("Create or update '{}' from AVAM", createJobAdvertisementAvamDto.getTitle());
         Location location = toLocation(createJobAdvertisementAvamDto.getLocation());
         location = locationService.enrichCodes(location);
 
@@ -176,15 +174,26 @@ public class JobAdvertisementApplicationService {
                 .setContact(toContact(createJobAdvertisementAvamDto.getContact()))
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementAvamDto.getLanguageSkills()))
                 .setJobCenterCode(createJobAdvertisementAvamDto.getJobCenterCode())
+                .setWorkForms(createJobAdvertisementAvamDto.getWorkForm())
+                .setPublicAnonymous(createJobAdvertisementAvamDto.getPublication().isPublicAnonymous())
+                .setPublicPublication(createJobAdvertisementAvamDto.getPublication().isPublicPublication())
+                .setRestrictedAnonymous(createJobAdvertisementAvamDto.getPublication().isRestrictedAnonymous())
+                .setRestrictedPublication(createJobAdvertisementAvamDto.getPublication().isRestrictedPublication())
                 .build();
 
-        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromAvam(
-                new Locale(createJobAdvertisementAvamDto.getLanguageIsoCode()),
-                createJobAdvertisementAvamDto.getStellennummerAvam(),
-                createJobAdvertisementAvamDto.getTitle(),
-                createJobAdvertisementAvamDto.getDescription(),
-                updater
-        );
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(createJobAdvertisementAvamDto.getStellennummerAvam())
+                .map(savedJobAdvertisement -> {
+                    savedJobAdvertisement.init(updater);
+                    final JobAdvertisement updatedJobAdvertisement = jobAdvertisementRepository.save(savedJobAdvertisement);
+                    DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(updatedJobAdvertisement));
+                    return updatedJobAdvertisement;
+                })
+                .orElseGet(() -> jobAdvertisementFactory.createFromAvam(
+                        new Locale(createJobAdvertisementAvamDto.getLanguageIsoCode()),
+                        createJobAdvertisementAvamDto.getStellennummerAvam(),
+                        createJobAdvertisementAvamDto.getTitle(),
+                        createJobAdvertisementAvamDto.getDescription(),
+                        updater));
         return jobAdvertisement.getId();
     }
 
@@ -424,7 +433,7 @@ public class JobAdvertisementApplicationService {
                     createLocationDto.getRemarks(),
                     createLocationDto.getCity(),
                     createLocationDto.getPostalCode(),
-                    null,
+                    createLocationDto.getCommunalCode(),
                     null,
                     null,
                     createLocationDto.getCountryIsoCode(),

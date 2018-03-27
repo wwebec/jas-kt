@@ -72,9 +72,9 @@ class ActionDtoFactory {
 
     private CreateLocationDto createCreateLocationDto(Oste x28JobAdvertisement) {
         if (LICHTENSTEIN_ISO_CODE.equals(x28JobAdvertisement.getArbeitsortKanton())) {
-            return new CreateLocationDto(null, x28JobAdvertisement.getArbeitsortText(), x28JobAdvertisement.getArbeitsortPlz(), LICHTENSTEIN_ISO_CODE);
+            return new CreateLocationDto(null, x28JobAdvertisement.getArbeitsortText(), x28JobAdvertisement.getArbeitsortPlz(), LICHTENSTEIN_ISO_CODE, null);
         }
-        return new CreateLocationDto(null, x28JobAdvertisement.getArbeitsortText(), x28JobAdvertisement.getArbeitsortPlz(), SWISS_ISO_CODE);
+        return new CreateLocationDto(null, x28JobAdvertisement.getArbeitsortText(), x28JobAdvertisement.getArbeitsortPlz(), SWISS_ISO_CODE, null);
     }
 
     private CompanyDto createCompanyDto(Oste x28JobAdvertisement) {

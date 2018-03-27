@@ -121,6 +121,10 @@
             <column name="LOCATION_COUNTRY_ISO_CODE" type="varchar(2)"/>
             <column name="LOCATION_LONGITUDE" type="double"/>
             <column name="LOCATION_LATITUDE" type="double"/>
+            <column name="PUBLIC_ANONYMOUS" type="boolean"/>
+            <column name="PUBLIC_PUBLICATION" type="boolean"/>
+            <column name="RESTRICTED_ANONYMOUS" type="boolean"/>
+            <column name="RESTRICTED_PUBLICATION" type="boolean"/>
         </createTable>
 
         <createTable tableName="JOB_ADVERTISEMENT_OCCUPATION">
@@ -145,6 +149,13 @@
             <column name="LANGUAGE_ISO_CODE" type="varchar(5)"/>
             <column name="SPOKEN_LEVEL" type="varchar(64)"/>
             <column name="WRITTEN_LEVEL" type="varchar(64)"/>
+        </createTable>
+
+        <createTable tableName="JOB_ADVERTISEMENT_WORK_FORM">
+            <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORK_FORM" type="varchar(20)"/>
         </createTable>
 
     </changeSet>

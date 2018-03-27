@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
 import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
@@ -156,6 +157,19 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Valid
     private List<LanguageSkill> languageSkills;
 
+    @ElementCollection
+    @CollectionTable(name = "JOB_ADVERTISEMENT_WORK_FORM", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @Enumerated(EnumType.STRING)
+    private Set<WorkForm> workForms;
+
+    private boolean publicAnonymous;
+
+    private boolean publicPublication;
+
+    private boolean restrictedAnonymous;
+
+    private boolean restrictedPublication;
+
     protected JobAdvertisement() {
         // For reflection libs
     }
@@ -189,6 +203,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.location = builder.location;
         this.occupations = builder.occupations;
         this.languageSkills = builder.languageSkills;
+        this.workForms = builder.workForms;
+        this.publicAnonymous = builder.publicAnonymous;
+        this.publicPublication = builder.publicPublication;
+        this.restrictedAnonymous = builder.restrictedAnonymous;
+        this.restrictedPublication = builder.restrictedPublication;
     }
 
     public JobAdvertisement(JobAdvertisementId id, SourceSystem sourceSystem, JobAdvertisementStatus status,
@@ -336,6 +355,26 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public List<LanguageSkill> getLanguageSkills() {
         return languageSkills;
+    }
+
+    public Set<WorkForm> getWorkForms() {
+        return workForms;
+    }
+
+    public boolean isPublicAnonymous() {
+        return publicAnonymous;
+    }
+
+    public boolean isPublicPublication() {
+        return publicPublication;
+    }
+
+    public boolean isRestrictedAnonymous() {
+        return restrictedAnonymous;
+    }
+
+    public boolean isRestrictedPublication() {
+        return restrictedPublication;
     }
 
     public void init(JobAdvertisementUpdater updater) {
@@ -564,6 +603,31 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
+        if (updater.hasAnyChangesIn(SECTION_WORK_FORMS) && hasChangedContent(this.workForms, updater.getWorkForms())) {
+            this.workForms = updater.getWorkForms();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_PUBLIC_ANONYMOUS) && hasChanged(this.publicAnonymous, updater.isPublicAnonymous())) {
+            this.publicAnonymous = updater.isPublicAnonymous();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_PUBLIC_PUBLICATION) && hasChanged(this.publicPublication, updater.isPublicPublication())) {
+            this.publicPublication = updater.isPublicPublication();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_RESTRICTED_ANONYMOUS) && hasChanged(this.restrictedAnonymous, updater.isRestrictedAnonymous())) {
+            this.restrictedAnonymous = updater.isRestrictedAnonymous();
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_RESTRICTED_PUBLICATION) && hasChanged(this.restrictedPublication, updater.isRestrictedPublication())) {
+            this.restrictedPublication = updater.isRestrictedPublication();
+            hasChangedAnything = true;
+        }
+
         if (hasChangedAnything) {
             // FIXME Auditor
             //applyUpdater(updater.getAuditUser());
@@ -606,6 +670,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private Location location;
         private List<Occupation> occupations;
         private List<LanguageSkill> languageSkills;
+        private Set<WorkForm> workForms;
+        private boolean publicAnonymous;
+        private boolean publicPublication;
+        private boolean restrictedAnonymous;
+        private boolean restrictedPublication;
 
         public Builder() {
         }
@@ -772,6 +841,31 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
         public Builder setLanguageSkills(List<LanguageSkill> languageSkills) {
             this.languageSkills = languageSkills;
+            return this;
+        }
+
+        public Builder setWorkForms(Set<WorkForm> workForms) {
+            this.workForms = workForms;
+            return this;
+        }
+
+        public Builder setPublicAnonymous(boolean publicAnonymous) {
+            this.publicAnonymous = publicAnonymous;
+            return this;
+        }
+
+        public Builder setPublicPublication(boolean publicPublication) {
+            this.publicPublication = publicPublication;
+            return this;
+        }
+
+        public Builder setRestrictedAnonymous(boolean restrictedAnonymous) {
+            this.restrictedAnonymous = restrictedAnonymous;
+            return this;
+        }
+
+        public Builder setRestrictedPublication(boolean restrictedPublication) {
+            this.restrictedPublication = restrictedPublication;
             return this;
         }
 

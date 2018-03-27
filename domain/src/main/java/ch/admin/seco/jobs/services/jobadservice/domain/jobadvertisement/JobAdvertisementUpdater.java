@@ -23,6 +23,11 @@ public class JobAdvertisementUpdater {
     static final String SECTION_LOCATION = "SECTION_LOCATION";
     static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
     static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
+    static final String SECTION_WORK_FORMS = "SECTION_WORK_FORMS";
+    static final String SECTION_PUBLIC_ANONYMOUS = "SECTION_PUBLIC_ANONYMOUS";
+    static final String SECTION_PUBLIC_PUBLICATION = "SECTION_PUBLIC_PUBLICATION";
+    static final String SECTION_RESTRICTED_ANONYMOUS = "SECTION_RESTRICTED_ANONYMOUS";
+    static final String SECTION_RESTRICTED_PUBLICATION = "SECTION_RESTRICTED_PUBLICATION";
 
     private Set<String> changedSections;
 
@@ -60,6 +65,16 @@ public class JobAdvertisementUpdater {
 
     private List<LanguageSkill> languageSkills;
 
+    private Set<WorkForm> workForms;
+
+    private boolean publicAnonymous;
+
+    private boolean publicPublication;
+
+    private boolean restrictedAnonymous;
+
+    private boolean restrictedPublication;
+
     public JobAdvertisementUpdater(Builder builder) {
         this.changedSections = builder.changedSections;
         this.auditUser = builder.auditUser;
@@ -79,6 +94,7 @@ public class JobAdvertisementUpdater {
         this.location = builder.location;
         this.occupations = builder.occupations;
         this.languageSkills = builder.languageSkills;
+        this.workForms = builder.workForms;
     }
 
     public boolean hasAnyChangesIn(String section) {
@@ -153,6 +169,26 @@ public class JobAdvertisementUpdater {
         return languageSkills;
     }
 
+    public Set<WorkForm> getWorkForms() {
+        return workForms;
+    }
+
+    public boolean isPublicAnonymous() {
+        return publicAnonymous;
+    }
+
+    public boolean isPublicPublication() {
+        return publicPublication;
+    }
+
+    public boolean isRestrictedAnonymous() {
+        return restrictedAnonymous;
+    }
+
+    public boolean isRestrictedPublication() {
+        return restrictedPublication;
+    }
+
     public static class Builder {
 
         private Set<String> changedSections = new HashSet<>();
@@ -173,6 +209,11 @@ public class JobAdvertisementUpdater {
         private Location location;
         private List<Occupation> occupations;
         private List<LanguageSkill> languageSkills;
+        private Set<WorkForm> workForms;
+        private boolean publicAnonymous;
+        private boolean publicPublication;
+        private boolean restrictedAnonymous;
+        private boolean restrictedPublication;
 
         public Builder(AuditUser auditUser) {
             this.auditUser = auditUser;
@@ -265,6 +306,36 @@ public class JobAdvertisementUpdater {
         public Builder setLanguageSkills(List<LanguageSkill> languageSkills) {
             this.changedSections.add(SECTION_LANGUAGE_SKILLS);
             this.languageSkills = languageSkills;
+            return this;
+        }
+
+        public Builder setWorkForms(Set<WorkForm> workForms) {
+            this.changedSections.add(SECTION_WORK_FORMS);
+            this.workForms = workForms;
+            return this;
+        }
+
+        public Builder setPublicAnonymous(boolean publicAnonymous) {
+            this.changedSections.add(SECTION_PUBLIC_ANONYMOUS);
+            this.publicAnonymous = publicAnonymous;
+            return this;
+        }
+
+        public Builder setPublicPublication(boolean publicPublication) {
+            this.changedSections.add(SECTION_PUBLIC_PUBLICATION);
+            this.publicPublication = publicPublication;
+            return this;
+        }
+
+        public Builder setRestrictedAnonymous(boolean restrictedAnonymous) {
+            this.changedSections.add(SECTION_RESTRICTED_ANONYMOUS);
+            this.restrictedAnonymous = restrictedAnonymous;
+            return this;
+        }
+
+        public Builder setRestrictedPublication(boolean restrictedPublication) {
+            this.changedSections.add(SECTION_RESTRICTED_PUBLICATION);
+            this.restrictedPublication = restrictedPublication;
             return this;
         }
     }
