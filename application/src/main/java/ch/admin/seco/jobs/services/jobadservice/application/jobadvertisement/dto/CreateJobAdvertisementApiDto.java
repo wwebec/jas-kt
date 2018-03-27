@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 public class CreateJobAdvertisementApiDto {
 
-    private boolean reportToRav;
+    private boolean reportToAvam;
 
     @NotNull
     private LocalDate publicationStartDate;
@@ -35,7 +35,7 @@ public class CreateJobAdvertisementApiDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementApiDto(boolean reportToRav,
+    public CreateJobAdvertisementApiDto(boolean reportToAvam,
                                         LocalDate publicationStartDate,
                                         LocalDate publicationEndDate,
                                         String reference,
@@ -45,7 +45,7 @@ public class CreateJobAdvertisementApiDto {
                                         CompanyDto company,
                                         ContactDto contact,
                                         OccupationDto occupation) {
-        this.reportToRav = reportToRav;
+        this.reportToAvam = reportToAvam;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
         this.reference = reference;
@@ -57,12 +57,12 @@ public class CreateJobAdvertisementApiDto {
         this.occupation = occupation;
     }
 
-    public boolean isReportToRav() {
-        return reportToRav;
+    public boolean isReportToAvam() {
+        return reportToAvam;
     }
 
-    public void setReportToRav(boolean reportToRav) {
-        this.reportToRav = reportToRav;
+    public void setReportToAvam(boolean reportToAvam) {
+        this.reportToAvam = reportToAvam;
     }
 
     public LocalDate getPublicationStartDate() {

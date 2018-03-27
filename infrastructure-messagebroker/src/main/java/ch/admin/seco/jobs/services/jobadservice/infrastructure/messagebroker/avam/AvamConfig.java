@@ -19,8 +19,8 @@ public class AvamConfig {
     static class MockedAvamConfig {
 
         @Bean
-        public DefaultAvamService ravRegistrationService(DomainEventPublisher domainEventPublisher) {
-            return new DefaultAvamService(domainEventPublisher, outputChannel());
+        public AvamService ravRegistrationService(DomainEventPublisher domainEventPublisher) {
+            return new AvamService(domainEventPublisher, outputChannel());
         }
 
         @Bean
@@ -37,8 +37,8 @@ public class AvamConfig {
     static class DefaultAvamConfig {
 
         @Bean
-        public DefaultAvamService ravRegistrationService(DomainEventPublisher domainEventPublisher, MessageChannel output) {
-            return new DefaultAvamService(domainEventPublisher, output);
+        public AvamService ravRegistrationService(DomainEventPublisher domainEventPublisher, MessageChannel output) {
+            return new AvamService(domainEventPublisher, output);
         }
     }
 }

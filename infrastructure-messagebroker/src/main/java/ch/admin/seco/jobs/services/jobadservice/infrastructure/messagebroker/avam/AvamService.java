@@ -1,6 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
@@ -17,20 +16,19 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebro
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.MessageSystem.AVAM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.MessageSystem.JOB_AD_SERVICE;
 
-public class DefaultAvamService implements RavRegistrationService {
+public class AvamService {
 
-    private final Logger LOG = LoggerFactory.getLogger(DefaultAvamService.class);
+    private final Logger LOG = LoggerFactory.getLogger(AvamService.class);
 
     private final DomainEventPublisher domainEventPublisher;
 
     private final MessageChannel output;
 
-    public DefaultAvamService(DomainEventPublisher domainEventPublisher, MessageChannel output) {
+    public AvamService(DomainEventPublisher domainEventPublisher, MessageChannel output) {
         this.domainEventPublisher = domainEventPublisher;
         this.output = output;
     }
 
-    @Override
     public void register(JobAdvertisement jobAdvertisement) {
         LOG.debug("Send through the message broker for action: REGISTER, JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         output.send(MessageBuilder
@@ -41,7 +39,6 @@ public class DefaultAvamService implements RavRegistrationService {
                 .build());
     }
 
-    @Override
     public void deregister(JobAdvertisement jobAdvertisement) {
         LOG.debug("Send through the message broker for action: DEREGISTER, JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         output.send(MessageBuilder

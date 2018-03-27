@@ -2,7 +2,6 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
@@ -38,9 +37,6 @@ public class JobAdvertisementApplicationServiceTest {
     private static final String TEST_STELLEN_NUMMER_EGOV = "1000000";
 
     private DomainEventMockUtils domainEventMockUtils;
-
-    @MockBean
-    private RavRegistrationService ravRegistrationService;
 
     @MockBean
     private ReportingObligationService reportingObligationService;

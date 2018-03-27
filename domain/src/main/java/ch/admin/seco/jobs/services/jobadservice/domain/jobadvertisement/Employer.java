@@ -16,7 +16,7 @@ public class Employer implements ValueObject<Employer> {
     private String houseNumber;
     private String postalCode;
     private String city;
-    private String coutnryCode;
+    private String countryIsoCode;
 
     protected Employer() {
         // For reflection libs
@@ -62,12 +62,12 @@ public class Employer implements ValueObject<Employer> {
         this.city = city;
     }
 
-    public String getCoutnryCode() {
-        return coutnryCode;
+    public String getCountryIsoCode() {
+        return countryIsoCode;
     }
 
-    public void setCoutnryCode(String coutnryCode) {
-        this.coutnryCode = coutnryCode;
+    public void setCountryIsoCode(String countryIsoCode) {
+        this.countryIsoCode = countryIsoCode;
     }
 
     @Override
@@ -78,7 +78,7 @@ public class Employer implements ValueObject<Employer> {
                 ", houseNumber='" + houseNumber + '\'' +
                 ", postalCode='" + postalCode + '\'' +
                 ", city='" + city + '\'' +
-                ", coutnryCode='" + coutnryCode + '\'' +
+                ", countryIsoCode='" + countryIsoCode + '\'' +
                 '}';
     }
 
@@ -92,11 +92,11 @@ public class Employer implements ValueObject<Employer> {
                 Objects.equals(houseNumber, employer.houseNumber) &&
                 Objects.equals(postalCode, employer.postalCode) &&
                 Objects.equals(city, employer.city) &&
-                Objects.equals(coutnryCode, employer.coutnryCode);
+                Objects.equals(countryIsoCode, employer.countryIsoCode);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, street, houseNumber, postalCode, city, coutnryCode);
+        return Objects.hash(name, street, houseNumber, postalCode, city, countryIsoCode);
     }
 }

@@ -2,7 +2,6 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
@@ -36,8 +35,6 @@ public class JobAdvertisementApplicationService {
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
 
-    private final RavRegistrationService ravRegistrationService;
-
     private final ReportingObligationService reportingObligationService;
 
     private final LocationService locationService;
@@ -47,13 +44,11 @@ public class JobAdvertisementApplicationService {
     @Autowired
     public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
                                               JobAdvertisementFactory jobAdvertisementFactory,
-                                              RavRegistrationService ravRegistrationService,
                                               ReportingObligationService reportingObligationService,
                                               LocationService locationService,
                                               ProfessionService professionSerivce) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
-        this.ravRegistrationService = ravRegistrationService;
         this.reportingObligationService = reportingObligationService;
         this.locationService = locationService;
         this.professionSerivce = professionSerivce;
@@ -160,8 +155,6 @@ public class JobAdvertisementApplicationService {
         LOG.debug("Starting inspect for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.inspect();
-        // FIXME Registration should be called by JOB_ADVERTISEMENT_INSPECTING (Create event listener in package messagebroker)
-        //ravRegistrationService.registrate(jobAdvertisement);
     }
 
     public void approve(ApprovalDto approvalDto) {
