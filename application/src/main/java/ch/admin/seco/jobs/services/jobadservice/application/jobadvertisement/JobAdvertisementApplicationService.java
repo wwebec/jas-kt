@@ -3,11 +3,17 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
 import static java.util.stream.Collectors.toList;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
+import javax.persistence.EntityNotFoundException;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,13 +278,23 @@ public class JobAdvertisementApplicationService {
 
     public void updateFromX28(UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto) {
 
-        final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
-                .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint())
-                // TODO set x28 code
-                .build();
+        final JobAdvertisementUpdater.Builder updaterBuilder = new JobAdvertisementUpdater.Builder(null)
+                .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint());
 
-        jobAdvertisementFactory.updateFromX28(updateJobAdvertisementFromX28Dto.getStellennummerEgov(), updater);
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(updateJobAdvertisementFromX28Dto.getStellennummerEgov())
+                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: "
+                        + updateJobAdvertisementFromX28Dto.getStellennummerEgov()));
 
+        Set<Occupation> occupations = new HashSet<>();
+        if (jobAdvertisement.getOccupations() != null) {
+            occupations.addAll(jobAdvertisement.getOccupations());
+        }
+        if (StringUtils.isNotBlank(updateJobAdvertisementFromX28Dto.getX28OccupationCode())) {
+            occupations.add(new Occupation(updateJobAdvertisementFromX28Dto.getX28OccupationCode()));
+        }
+        updaterBuilder.setOccupations(new ArrayList<>(occupations));
+
+        jobAdvertisement.update(updaterBuilder.build());
     }
 
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {

@@ -2,8 +2,6 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import java.util.Locale;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.stereotype.Component;
@@ -98,16 +96,5 @@ public class JobAdvertisementFactory {
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
         DomainEventPublisher.publish(new JobAdvertisementPublishPublicEvent(newJobAdvertisement));
         return newJobAdvertisement;
-    }
-
-    public JobAdvertisement updateFromX28(String stellennummerEgov, JobAdvertisementUpdater updater) {
-        return jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
-                .map(jobAdvertisement -> {
-
-                    // TODO update x28 code
-                    jobAdvertisement.init(updater);
-                    return jobAdvertisementRepository.save(jobAdvertisement);
-                })
-                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
     }
 }
