@@ -35,9 +35,12 @@ public class Company implements ValueObject<Company> {
         this.name = Condition.notBlank(builder.name, "Name of a company can't be null");
         this.street = builder.street;
         this.houseNumber = builder.houseNumber;
-        this.postalCode = Condition.notBlank(builder.postalCode, "Postal code of a company can't be null");
-        this.city = Condition.notBlank(builder.city, "City of a company can't be null");
-        this.countryIsoCode = Condition.notBlank(builder.countryIsoCode, "Country of a company can't be null");
+        this.postalCode = builder.postalCode;
+        this.city = builder.city;
+//        this.postalCode = Condition.notBlank(builder.postalCode, "Postal code of a company can't be null");
+//        this.city = Condition.notBlank(builder.city, "City of a company can't be null");
+        this.countryIsoCode = builder.countryIsoCode;
+//        this.countryIsoCode = Condition.notBlank(builder.countryIsoCode, "Country of a company can't be null");
         this.postOfficeBoxNumber = builder.postOfficeBoxNumber;
         this.postOfficeBoxPostalCode = builder.postOfficeBoxPostalCode;
         this.postOfficeBoxCity = builder.postOfficeBoxCity;

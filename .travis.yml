@@ -24,26 +24,28 @@ script:
 - "./gradlew clean check"
 after_success:
 - bash <(curl -s https://codecov.io/bash)
+
 deploy:
 - provider: script
   skip_cleanup: true
-  script: "./gradlew bootJar publish -Pprod -Pzipkin -Pversion=${TRAVIS_JOB_NUMBER}-SNAPSHOT
-    -x test --stacktrace && curl https://dev.job-room.ch:8443/deploy/jr2 --insecure"
+  script: "./gradlew bootJar publish -Pprod -Pzipkin -x test  -Pversion=${TRAVIS_JOB_NUMBER}-SNAPSHOT --stacktrace
+    && curl https://dev.job-room.ch:8443/deploy/jr2 --insecure"
   on:
     branch: master
 - provider: script
   skip_cleanup: true
-  script: "./gradlew bootJar publish -Pprod -Pzipkin -Pversion=${TRAVIS_JOB_NUMBER}-SNAPSHOT
-    -x test --stacktrace && curl https://dev.job-room.ch:8443/deploy/jr2 --insecure"
+  script: "./gradlew bootJar publish -Pprod -Pzipkin -x test -Pversion=`echo ${TRAVIS_BRANCH} | cut -c9-`
+    && curl https://dev.job-room.ch:8443/deploy/jr2 --insecure"
   on:
     all_branches: true
     condition: "$TRAVIS_BRANCH =~ ^release.*$"
+
 - provider: script
   skip_cleanup: true
-  script: "./gradlew bootJar publish -Pprod -Pzipkin -Pversion=${TRAVIS_TAG} -x test
-    --stacktrace"
+  script: "./gradlew bootJar publish -Pprod -Pzipkin -x test -Pversion=${TRAVIS_TAG}"
   on:
     tags: true
+
 notifications:
   webhooks:
     on_success: change

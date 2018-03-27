@@ -182,5 +182,6 @@
             <column name="SPOKEN_LEVEL" type="varchar(64)"/>
             <column name="WRITTEN_LEVEL" type="varchar(64)"/>
         </createTable>
+
     </changeSet>
 </databaseChangeLog>

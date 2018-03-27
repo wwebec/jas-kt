@@ -54,12 +54,9 @@ dependencies {
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.security:spring-security-test'
 
-//    optional('org.springframework.boot:spring-boot-configuration-processor') {
-//        exclude group: 'com.vaadin.external.google', module: 'android-json'
-//    }
+    optional 'org.springframework.boot:spring-boot-configuration-processor'
 }
 
-apply from: "${rootProject.rootDir}/gradle/maven-publish.gradle"
 if (project.hasProperty('prod')) {
     apply from: "${rootProject.rootDir}/gradle/profile_prod.gradle"
 } else {
@@ -89,32 +86,3 @@ task cleanResources(type: Delete) {
 compileJava.dependsOn processResources
 processResources.dependsOn cleanResources, bootBuildInfo
 bootBuildInfo.mustRunAfter cleanResources
-
-def repo = Grgit.open(dir: rootDir)
-afterEvaluate {
-    bootJar {
-        manifest {
-            attributes(
-                    (java.util.jar.Attributes.Name.IMPLEMENTATION_TITLE.toString()): project.name,
-                    (java.util.jar.Attributes.Name.IMPLEMENTATION_VERSION.toString()): project.version,
-                    (java.util.jar.Attributes.Name.IMPLEMENTATION_VENDOR.toString()): 'mimacom ag',
-                    'Created-By': System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
-                    'Build-Time': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                    'Built-With': "gradle-${project.getGradle().getGradleVersion()}, groovy-${GroovySystem.getVersion()}",
-                    'Built-By': System.getProperty('user.name'),
-                    'Built-On': "${InetAddress.localHost.hostName}/${InetAddress.localHost.hostAddress}",
-                    'Spring-Version': org.springframework.core.SpringVersion.getVersion(),
-                    'Git-Commit': repo.head().getAbbreviatedId(8),
-                    'Git-Branch': repo.branch.getCurrent().getName()
-            )
-        }
-    }
-}
-
-publishing {
-    publications {
-        bootJava(MavenPublication) {
-            artifact bootJar
-        }
-    }
-}
