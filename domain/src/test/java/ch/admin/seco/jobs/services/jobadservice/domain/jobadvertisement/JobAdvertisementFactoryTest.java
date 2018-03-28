@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
@@ -8,8 +9,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 
-import java.util.Locale;
-
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createContact;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createJobContent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -26,9 +28,11 @@ public class JobAdvertisementFactoryTest {
         domainEventMockUtils = new DomainEventMockUtils();
         JobAdvertisementRepository jobAdvertisementRepository = spy(TestJobAdvertisementRepository.class);
         DataFieldMaxValueIncrementer stellennummerEgovGenerator = spy(DataFieldMaxValueIncrementer.class);
+        AccessTokenGenerator accessTokenGenerator = spy(AccessTokenGenerator.class);
+
         when(stellennummerEgovGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
 
-        jobAdvertisementFactory = new JobAdvertisementFactory(jobAdvertisementRepository, stellennummerEgovGenerator);
+        jobAdvertisementFactory = new JobAdvertisementFactory(jobAdvertisementRepository, accessTokenGenerator, stellennummerEgovGenerator);
     }
 
     @After
@@ -39,14 +43,14 @@ public class JobAdvertisementFactoryTest {
     @Test
     public void testCreateFromWebForm() {
         //Prepare
+        JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(createAuditUser())
+                .setContact(createContact(JOB_ADVERTISEMENT_ID_01))
+                .setJobContent(createJobContent(JOB_ADVERTISEMENT_ID_01))
+                .setPublication(new Publication.Builder().build())
+                .build();
 
         //Execute
-        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(
-                Locale.GERMAN,
-                "title",
-                "description",
-                new JobAdvertisementUpdater.Builder(null).build()
-        );
+        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(creator);
 
         //Validate
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
@@ -60,15 +64,14 @@ public class JobAdvertisementFactoryTest {
     @Test
     public void createFromApi() {
         //Prepare
+        JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(createAuditUser())
+                .setContact(createContact(JOB_ADVERTISEMENT_ID_01))
+                .setJobContent(createJobContent(JOB_ADVERTISEMENT_ID_01))
+                .setPublication(new Publication.Builder().build())
+                .build();
 
         //Execute
-        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(
-                Locale.GERMAN,
-                "title",
-                "description",
-                new JobAdvertisementUpdater.Builder(null).build(),
-                false
-        );
+        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(creator);
 
         //Validate
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
@@ -88,4 +91,7 @@ public class JobAdvertisementFactoryTest {
         }
     }
 
+    private AuditUser createAuditUser() {
+        return new AuditUser("intern-1", "extern-1", "My", "User", "my.user@example.org");
+    }
 }

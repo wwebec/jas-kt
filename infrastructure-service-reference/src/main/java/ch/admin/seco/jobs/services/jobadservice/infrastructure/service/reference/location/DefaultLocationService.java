@@ -30,16 +30,16 @@ public class DefaultLocationService implements LocationService {
                         .filter(locationResource -> locationResource.getCity().equalsIgnoreCase(location.getCity()))
                         .findFirst().orElse(null);
                 if (matchingLocationResource != null) {
-                    return new Location(
-                            location.getRemarks(),
-                            location.getCity(),
-                            location.getPostalCode(),
-                            matchingLocationResource.getCommunalCode(),
-                            matchingLocationResource.getRegionCode(),
-                            matchingLocationResource.getCantonCode(),
-                            location.getCountryIsoCode(),
-                            new GeoPoint(matchingLocationResource.getGeoPoint().getLongitude(), matchingLocationResource.getGeoPoint().getLatitude())
-                    );
+                    return new Location.Builder()
+                            .setRemarks(location.getRemarks())
+                            .setCity(location.getCity())
+                            .setPostalCode(location.getPostalCode())
+                            .setCommunalCode(matchingLocationResource.getCommunalCode())
+                            .setRegionCode(matchingLocationResource.getRegionCode())
+                            .setCantonCode(matchingLocationResource.getCantonCode())
+                            .setCountryIsoCode(location.getCountryIsoCode())
+                            .setCoordinates(new GeoPoint(matchingLocationResource.getGeoPoint().getLongitude(), matchingLocationResource.getGeoPoint().getLatitude()))
+                            .build();
                 }
             }
         }

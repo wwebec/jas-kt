@@ -1,114 +1,122 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import java.util.Locale;
-
-import javax.persistence.EntityNotFoundException;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
-import org.springframework.stereotype.Component;
-
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JobAdvertisementFactory {
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
+    private final AccessTokenGenerator accessTokenGenerator;
     private final DataFieldMaxValueIncrementer stellennummerEgovGenerator;
 
     @Autowired
     public JobAdvertisementFactory(JobAdvertisementRepository jobAdvertisementRepository,
-            DataFieldMaxValueIncrementer stellennummerEgovGenerator) {
+                                   AccessTokenGenerator accessTokenGenerator,
+                                   DataFieldMaxValueIncrementer stellennummerEgovGenerator) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
+        this.accessTokenGenerator = accessTokenGenerator;
         this.stellennummerEgovGenerator = stellennummerEgovGenerator;
     }
 
-    public JobAdvertisement createFromWebForm(Locale language, String title, String description, JobAdvertisementUpdater updater) {
+    public JobAdvertisement createFromWebForm(JobAdvertisementCreator creator) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
+                .setStatus(JobAdvertisementStatus.CREATED)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
-                .setLanguage(language)
-                .setTitle(title)
-                .setDescription(description)
-                .setStellennummerEgov(this.stellennummerEgovGenerator.nextStringValue())
-                .setReportToRav(true)
+                .setStellennummerEgov(stellennummerEgovGenerator.nextStringValue())
+                .setReportingObligation(creator.isReportingObligation())
+                .setReportToAvam(true)
+                .setJobCenterCode(creator.getJobCenterCode())
+                .setJobContent(creator.getJobContent())
+                .setOwner(toOwner(creator.getAuditUser()))
+                .setContact(creator.getContact())
+                .setPublication(creator.getPublication())
                 .build();
 
-        jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
         DomainEventPublisher.publish(new JobAdvertisementCreatedEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement createFromApi(Locale language, String title, String description, JobAdvertisementUpdater updater, boolean reportToRav) {
+    public JobAdvertisement createFromApi(JobAdvertisementCreator creator) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
-                .setSourceSystem(SourceSystem.API)
                 .setStatus(JobAdvertisementStatus.CREATED)
-                .setLanguage(language)
-                .setTitle(title)
-                .setDescription(description)
-                .setStellennummerEgov(this.stellennummerEgovGenerator.nextStringValue())
-                .setReportToRav(reportToRav)
+                .setSourceSystem(SourceSystem.API)
+                .setStellennummerEgov(stellennummerEgovGenerator.nextStringValue())
+                .setReportingObligation(creator.isReportingObligation())
+                .setReportToAvam(creator.isReportToAvam())
+                .setJobCenterCode(creator.getJobCenterCode())
+                .setJobContent(creator.getJobContent())
+                .setOwner(toOwner(creator.getAuditUser()))
+                .setContact(creator.getContact())
+                .setPublication(creator.getPublication())
                 .build();
 
-        jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
         DomainEventPublisher.publish(new JobAdvertisementCreatedEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement createFromAvam(Locale language, String stellennummerAvam, String title, String description, JobAdvertisementUpdater updater) {
+    public JobAdvertisement createFromAvam(JobAdvertisementCreator creator) {
         // TODO Tbd which data are passed to create the JobAdvertisement Object
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
-                .setStellennummerAvam(stellennummerAvam)
-                .setSourceSystem(SourceSystem.RAV)
                 .setStatus(JobAdvertisementStatus.REFINING)
-                .setLanguage(language)
-                .setTitle(title)
-                .setDescription(description)
-                .setReportToRav(true)
+                .setSourceSystem(SourceSystem.RAV)
+                .setStellennummerAvam(creator.getStellennummerAvam())
+                .setReportingObligation(creator.isReportingObligation())
+                .setReportingObligationEndDate(creator.getReportingObligationEndDate())
+                .setReportToAvam(true)
+                .setJobCenterCode(creator.getJobCenterCode())
+                .setJobContent(creator.getJobContent())
+                .setOwner(toOwner(creator.getAuditUser()))
+                .setContact(creator.getContact())
+                .setPublication(creator.getPublication())
                 .build();
 
-        jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
         DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement createFromExtern(Locale language, String title, String description, JobAdvertisementUpdater updater) {
+    public JobAdvertisement createFromExtern(JobAdvertisementCreator creator) {
         // TODO Tbd which data are passed to create the JobAdvertisement Object
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByFingerprint(updater.getFingerprint())
-                .orElseGet(() ->
-                        new JobAdvertisement.Builder()
-                                .setId(new JobAdvertisementId())
-                                .setSourceSystem(SourceSystem.EXTERN)
-                                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                                .setLanguage(language)
-                                .setTitle(title)
-                                .setDescription(description)
-                                .setReportToRav(false)
-                                .build());
+        JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
+                .setId(new JobAdvertisementId())
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setSourceSystem(SourceSystem.EXTERN)
+                .setFingerprint(creator.getFingerprint())
+                .setReportToAvam(false)
+                .setJobContent(creator.getJobContent())
+                .setOwner(toOwner(creator.getAuditUser()))
+                .setContact(creator.getContact())
+                .setPublication(creator.getPublication())
+                .build();
 
-        jobAdvertisement.init(updater);
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
         DomainEventPublisher.publish(new JobAdvertisementPublishPublicEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 
-    public JobAdvertisement updateFromX28(String stellennummerEgov, JobAdvertisementUpdater updater) {
-        return jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
-                .map(jobAdvertisement -> {
-
-                    // TODO update x28 code
-                    jobAdvertisement.init(updater);
-                    return jobAdvertisementRepository.save(jobAdvertisement);
-                })
-                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
+    private Owner toOwner(AuditUser auditUser) {
+        if(auditUser != null) {
+            return new Owner.Builder()
+                    .setUserId(auditUser.getExternalId())
+                    .setAccessToken(accessTokenGenerator.generateToken())
+                    .build();
+        } else {
+            return new Owner.Builder()
+                    .setAccessToken(accessTokenGenerator.generateToken())
+                    .build();
+        }
     }
+
 }

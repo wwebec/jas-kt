@@ -36,81 +36,14 @@ public class Location implements ValueObject<Location> {
     }
 
     public Location(Builder builder) {
-        this(
-             builder.remarks,
-             builder.city,
-             builder.postalCode,
-             builder.communalCode,
-             builder.regionCode,
-             builder.cantonCode,
-             builder.countryIsoCode,
-             builder.coordinates
-        );
-    }
-
-    public Location(String remarks, String city, String postalCode, String communalCode, String regionCode, String cantonCode, String countryIsoCode, GeoPoint coordinates) {
-        this.remarks = remarks;
-        this.city = city;
-        this.postalCode = postalCode;
-        this.communalCode = communalCode;
-        this.regionCode = regionCode;
-        this.cantonCode = cantonCode;
-        this.countryIsoCode = countryIsoCode;
-        this.coordinates = coordinates;
-    }
-
-    public static class Builder {
-        private String remarks;
-
-        private String city;
-
-        private String postalCode;
-
-        private String communalCode;
-
-        private String regionCode;
-
-        private String cantonCode;
-
-        private String countryIsoCode;
-
-        private GeoPoint coordinates;
-
-        public void setCoordinates(GeoPoint coordinates) {
-            this.coordinates = coordinates;
-        }
-
-        public void setRemarks(String remarks) {
-            this.remarks = remarks;
-        }
-
-        public void setCity(String city) {
-            this.city = city;
-        }
-
-        public void setPostalCode(String postalCode) {
-            this.postalCode = postalCode;
-        }
-
-        public void setCommunalCode(String communalCode) {
-            this.communalCode = communalCode;
-        }
-
-        public void setRegionCode(String regionCode) {
-            this.regionCode = regionCode;
-        }
-
-        public void setCantonCode(String cantonCode) {
-            this.cantonCode = cantonCode;
-        }
-
-        public void setCountryIsoCode(String countryIsoCode) {
-            this.countryIsoCode = countryIsoCode;
-        }
-
-        public Location build() {
-            return new Location(this);
-        }
+        this.remarks = builder.remarks;
+        this.city = builder.city;
+        this.postalCode = builder.postalCode;
+        this.communalCode = builder.communalCode;
+        this.regionCode = builder.regionCode;
+        this.cantonCode = builder.cantonCode;
+        this.countryIsoCode = builder.countryIsoCode;
+        this.coordinates = builder.coordinates;
     }
 
     public String getRemarks() {
@@ -146,11 +79,6 @@ public class Location implements ValueObject<Location> {
     }
 
     @Override
-    public boolean sameValueObjectAs(Location other) {
-        return equals(other);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -182,5 +110,63 @@ public class Location implements ValueObject<Location> {
                 ", countryIsoCode='" + countryIsoCode + '\'' +
                 ", coordinates=" + coordinates +
                 '}';
+    }
+
+    public static final class Builder {
+        private String remarks;
+        private String city;
+        private String postalCode;
+        private String communalCode;
+        private String regionCode;
+        private String cantonCode;
+        private String countryIsoCode;
+        private GeoPoint coordinates;
+
+        public Builder() {
+        }
+
+        public Location build() {
+            return new Location(this);
+        }
+
+        public Builder setRemarks(String remarks) {
+            this.remarks = remarks;
+            return this;
+        }
+
+        public Builder setCity(String city) {
+            this.city = city;
+            return this;
+        }
+
+        public Builder setPostalCode(String postalCode) {
+            this.postalCode = postalCode;
+            return this;
+        }
+
+        public Builder setCommunalCode(String communalCode) {
+            this.communalCode = communalCode;
+            return this;
+        }
+
+        public Builder setRegionCode(String regionCode) {
+            this.regionCode = regionCode;
+            return this;
+        }
+
+        public Builder setCantonCode(String cantonCode) {
+            this.cantonCode = cantonCode;
+            return this;
+        }
+
+        public Builder setCountryIsoCode(String countryIsoCode) {
+            this.countryIsoCode = countryIsoCode;
+            return this;
+        }
+
+        public Builder setCoordinates(GeoPoint coordinates) {
+            this.coordinates = coordinates;
+            return this;
+        }
     }
 }

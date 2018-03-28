@@ -3,7 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamAction;
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.sink.DeliverOste;
@@ -58,7 +57,7 @@ public class AvamWebServiceClient {
     void handleResponse(JobAdvertisementId jobAdvertisementId, AvamAction action, DeliverOsteResponse response) {
         String returnCode = response.getDeliverOsteReturn();
         if (!AVAM_RESPONSE_OK.equals(returnCode)) {
-            throw new RavRegistrationException(jobAdvertisementId, action.name());
+            throw new AvamException(jobAdvertisementId, action.name());
         }
     }
 }

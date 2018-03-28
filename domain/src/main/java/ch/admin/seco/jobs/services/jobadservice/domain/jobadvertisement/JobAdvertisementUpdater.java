@@ -10,6 +10,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 public class JobAdvertisementUpdater {
 
     static final String SECTION_FINGERPRINT = "SECTION_FINGERPRINT";
+    static final String SECTION_X28_OCCUPATION_CODES = "SECTION_X28_OCCUPATION_CODES";
     static final String SECTION_SOURCE_ENTRY_ID = "SECTION_SOURCE_ENTRY_ID";
     static final String SECTION_EXTERNAL_URL = "SECTION_EXTERNAL_URL";
     static final String SECTION_REPORTING_OBLIGATION = "SECTION_REPORTING_OBLIGATION";
@@ -34,6 +35,8 @@ public class JobAdvertisementUpdater {
     private AuditUser auditUser;
 
     private String fingerprint;
+
+    private String x28OccupationCodes;
 
     private String sourceEntryId;
 
@@ -79,6 +82,7 @@ public class JobAdvertisementUpdater {
         this.changedSections = builder.changedSections;
         this.auditUser = builder.auditUser;
         this.fingerprint = builder.fingerprint;
+        this.x28OccupationCodes = builder.x28OccupationCodes;
         this.sourceEntryId = builder.sourceEntryId;
         this.externalUrl = builder.externalUrl;
         this.reportingObligation = builder.reportingObligation;
@@ -107,6 +111,10 @@ public class JobAdvertisementUpdater {
 
     public String getFingerprint() {
         return fingerprint;
+    }
+
+    public String getX28OccupationCodes() {
+        return x28OccupationCodes;
     }
 
     public String getSourceEntryId() {
@@ -194,6 +202,7 @@ public class JobAdvertisementUpdater {
         private Set<String> changedSections = new HashSet<>();
         private AuditUser auditUser;
         private String fingerprint;
+        private String x28OccupationCodes;
         private String sourceEntryId;
         private String externalUrl;
         private boolean reportingObligation;
@@ -226,6 +235,12 @@ public class JobAdvertisementUpdater {
         public Builder setFingerprint(String fingerprint) {
             this.changedSections.add(SECTION_FINGERPRINT);
             this.fingerprint = fingerprint;
+            return this;
+        }
+
+        public Builder setX28OccupationCodes(String x28OccupationCodes) {
+            this.changedSections.add(SECTION_X28_OCCUPATION_CODES);
+            this.x28OccupationCodes = x28OccupationCodes;
             return this;
         }
 
