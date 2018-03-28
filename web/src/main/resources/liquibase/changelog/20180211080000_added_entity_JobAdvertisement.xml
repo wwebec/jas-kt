@@ -91,6 +91,7 @@
             <!-- JOB_CONTENT -->
 
             <column name="EXTERNAL_URL" type="varchar(1024)"/>
+            <column name="X28_OCCUPATION_CODES" type="varchar(255)"/>
 
             <column name="COMPANY_NAME" type="varchar(255)"/>
             <column name="COMPANY_STREET" type="varchar(50)"/>

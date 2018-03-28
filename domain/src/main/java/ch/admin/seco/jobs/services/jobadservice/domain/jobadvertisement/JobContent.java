@@ -11,6 +11,7 @@ import java.util.Objects;
 @Embeddable
 public class JobContent implements ValueObject<JobContent> {
     private String externalUrl;
+    @Column(name = "X28_OCCUPATION_CODES")
     private String x28OccupationCodes;
 
     @ElementCollection
