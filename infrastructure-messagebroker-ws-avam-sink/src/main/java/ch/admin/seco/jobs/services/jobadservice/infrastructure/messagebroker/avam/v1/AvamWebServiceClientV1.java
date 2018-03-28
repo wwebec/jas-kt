@@ -2,11 +2,10 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationException;
-import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamAction;
 import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamAction;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamException;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceClient;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.DeliverOste;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.DeliverOsteResponse;
@@ -15,8 +14,7 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.WSCred
 
 public class AvamWebServiceClientV1 implements AvamWebServiceClient {
 
-    static final String AVAM_RESPONSE_OK = "NK_AVAM: OK";
-    static final String AVAM_RESPONSE_ERROR = "NK_AVAM: ERROR";
+    private static final String AVAM_RESPONSE_OK = "NK_AVAM: OK";
 
     private final AvamJobAdvertisementAssemblerV1 assembler;
     private final WebServiceTemplate webserviceTemplate;
