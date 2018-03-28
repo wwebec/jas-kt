@@ -341,16 +341,24 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private boolean applyUpdates(JobAdvertisementUpdater updater) {
         boolean hasChangedAnything = false;
 
-        /*if (updater.hasAnyChangesIn(SECTION_SOURCE_ENTRY_ID) && hasChanged(this.sourceEntryId, updater.getSourceEntryId())) {
+        /*
+        if (updater.hasAnyChangesIn(SECTION_SOURCE_ENTRY_ID) && hasChanged(this.sourceEntryId, updater.getSourceEntryId())) {
             this.sourceEntryId = updater.getSourceEntryId();
             hasChangedAnything = true;
         }
+        */
 
-        if (updater.hasAnyChangesIn(SECTION_FINGERPRINT) && hasChanged(this.fingerprint, updater.getFingerprint())) {
-            this.fingerprint = updater.getFingerprint();
+        if (updater.hasAnyChangesIn(SECTION_FINGERPRINT) && hasChanged(fingerprint, updater.getFingerprint())) {
+            fingerprint = updater.getFingerprint();
             hasChangedAnything = true;
         }
 
+        if (updater.hasAnyChangesIn(SECTION_X28_OCCUPATION_CODES) && hasChanged(getJobContent().getX28OccupationCodes(), updater.getX28OccupationCodes())) {
+            getJobContent().setX28OccupationCodes(updater.getX28OccupationCodes());
+            hasChangedAnything = true;
+        }
+
+        /*
         if (updater.hasAnyChangesIn(SECTION_EXTERNAL_URL) && hasChanged(this.externalUrl, updater.getExternalUrl())) {
             this.externalUrl = updater.getExternalUrl();
             hasChangedAnything = true;
@@ -416,12 +424,12 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             this.languageSkills = updater.getLanguageSkills();
             hasChangedAnything = true;
         }
+        */
 
         if (hasChangedAnything) {
             // FIXME Auditor
             //applyUpdater(updater.getAuditUser());
         }
-*/
         return hasChangedAnything;
     }
 

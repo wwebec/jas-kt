@@ -11,6 +11,7 @@ import java.util.Objects;
 @Embeddable
 public class JobContent implements ValueObject<JobContent> {
     private String externalUrl;
+    private String x28OccupationCodes;
 
     @ElementCollection
     @CollectionTable(name = "JOB_CONTENT_DESCRIPTION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
@@ -115,6 +116,7 @@ public class JobContent implements ValueObject<JobContent> {
 
     public JobContent(Builder builder) {
         this.externalUrl = builder.externalUrl;
+        this.x28OccupationCodes = builder.x28OccupationCodes;
         this.company = Condition.notNull(builder.company, "Company can't be null");
         this.employer = builder.employer;
         this.jobDescriptions = Condition.notEmpty(builder.jobDescriptions, "Job descriptions can't be null or empty");
@@ -130,15 +132,23 @@ public class JobContent implements ValueObject<JobContent> {
         return externalUrl;
     }
 
-    public void setExternalUrl(String externalUrl) {
+    void setExternalUrl(String externalUrl) {
         this.externalUrl = externalUrl;
+    }
+
+    public String getX28OccupationCodes() {
+        return x28OccupationCodes;
+    }
+
+    void setX28OccupationCodes(String x28OccupationCodes) {
+        this.x28OccupationCodes = x28OccupationCodes;
     }
 
     public List<JobDescription> getJobDescriptions() {
         return jobDescriptions;
     }
 
-    public void setJobDescriptions(List<JobDescription> jobDescriptions) {
+    void setJobDescriptions(List<JobDescription> jobDescriptions) {
         this.jobDescriptions = jobDescriptions;
     }
 
@@ -146,7 +156,7 @@ public class JobContent implements ValueObject<JobContent> {
         return company;
     }
 
-    public void setCompany(Company company) {
+    void setCompany(Company company) {
         this.company = company;
     }
 
@@ -154,7 +164,7 @@ public class JobContent implements ValueObject<JobContent> {
         return employer;
     }
 
-    public void setEmployer(Employer employer) {
+    void setEmployer(Employer employer) {
         this.employer = employer;
     }
 
@@ -162,7 +172,7 @@ public class JobContent implements ValueObject<JobContent> {
         return employment;
     }
 
-    public void setEmployment(Employment employment) {
+    void setEmployment(Employment employment) {
         this.employment = employment;
     }
 
@@ -170,7 +180,7 @@ public class JobContent implements ValueObject<JobContent> {
         return location;
     }
 
-    public void setLocation(Location location) {
+    void setLocation(Location location) {
         this.location = location;
     }
 
@@ -178,7 +188,7 @@ public class JobContent implements ValueObject<JobContent> {
         return occupations;
     }
 
-    public void setOccupations(List<Occupation> occupations) {
+    void setOccupations(List<Occupation> occupations) {
         this.occupations = occupations;
     }
 
@@ -186,7 +196,7 @@ public class JobContent implements ValueObject<JobContent> {
         return languageSkills;
     }
 
-    public void setLanguageSkills(List<LanguageSkill> languageSkills) {
+    void setLanguageSkills(List<LanguageSkill> languageSkills) {
         this.languageSkills = languageSkills;
     }
 
@@ -194,7 +204,7 @@ public class JobContent implements ValueObject<JobContent> {
         return applyChannel;
     }
 
-    public void setApplyChannel(ApplyChannel applyChannel) {
+    void setApplyChannel(ApplyChannel applyChannel) {
         this.applyChannel = applyChannel;
     }
 
@@ -202,7 +212,7 @@ public class JobContent implements ValueObject<JobContent> {
         return publicContact;
     }
 
-    public void setPublicContact(PublicContact publicContact) {
+    void setPublicContact(PublicContact publicContact) {
         this.publicContact = publicContact;
     }
 
@@ -212,6 +222,7 @@ public class JobContent implements ValueObject<JobContent> {
         if (o == null || getClass() != o.getClass()) return false;
         JobContent that = (JobContent) o;
         return Objects.equals(externalUrl, that.externalUrl) &&
+                Objects.equals(x28OccupationCodes, that.x28OccupationCodes) &&
                 Objects.equals(jobDescriptions, that.jobDescriptions) &&
                 Objects.equals(company, that.company) &&
                 Objects.equals(employer, that.employer) &&
@@ -225,13 +236,14 @@ public class JobContent implements ValueObject<JobContent> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(externalUrl, jobDescriptions, company, employer, employment, location, occupations, languageSkills, applyChannel, publicContact);
+        return Objects.hash(externalUrl, x28OccupationCodes, jobDescriptions, company, employer, employment, location, occupations, languageSkills, applyChannel, publicContact);
     }
 
     @Override
     public String toString() {
         return "JobContent{" +
                 "externalwithUrl='" + externalUrl + '\'' +
+                ", x28OccupationCodes=" + x28OccupationCodes +
                 ", jobDescriptions=" + jobDescriptions +
                 ", company=" + company +
                 ", employer=" + employer +
@@ -248,6 +260,7 @@ public class JobContent implements ValueObject<JobContent> {
     public static final class Builder<T> {
         private T parentBuilder;
         private String externalUrl;
+        private String x28OccupationCodes;
         private List<JobDescription> jobDescriptions;
         private Company company;
         private Employer employer;
@@ -271,6 +284,11 @@ public class JobContent implements ValueObject<JobContent> {
 
         public Builder<T> setExternalUrl(String externalUrl) {
             this.externalUrl = externalUrl;
+            return this;
+        }
+
+        public Builder<T> setX28OccupationCodes(String x28OccupationCodes) {
+            this.x28OccupationCodes = x28OccupationCodes;
             return this;
         }
 

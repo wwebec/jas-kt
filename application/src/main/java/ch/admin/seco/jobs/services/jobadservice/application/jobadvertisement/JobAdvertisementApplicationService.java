@@ -1,27 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
-import static java.util.stream.Collectors.toList;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.Set;
-
-import javax.persistence.EntityNotFoundException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
@@ -29,25 +7,28 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementFactory;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityNotFoundException;
+import java.util.*;
+
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Transactional(rollbackFor = {Exception.class})
 public class JobAdvertisementApplicationService {
 
+    public static final int X28_PUBLICATION_MAX_DAYS = 60;
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
@@ -175,6 +156,58 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.getId();
     }
 
+    public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
+        LOG.debug("Create '{}' from X28", createJobAdvertisementFromX28Dto.getTitle());
+
+        Location location = toLocation(createJobAdvertisementFromX28Dto.getLocation());
+        location = locationService.enrichCodes(location);
+
+        List<Occupation> occupations = createJobAdvertisementFromX28Dto.getOccupations().stream()
+                .map(this::toOccupation)
+                .map(this::enrichOccupationWithProfessionCodes)
+                .collect(toList());
+
+        JobContent jobContent = new JobContent.Builder()
+                .setJobDescriptions(Collections.singletonList(
+                        new JobDescription.Builder()
+                                .setLanguage(Locale.GERMAN)
+                                .setTitle(createJobAdvertisementFromX28Dto.getTitle())
+                                .setDescription(createJobAdvertisementFromX28Dto.getDescription())
+                                .build()
+                ))
+                .setLocation(location)
+                .setOccupations(occupations)
+                .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementFromX28Dto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
+                .build();
+
+        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+                .setJobContent(jobContent)
+                .setPublication(
+                        new Publication.Builder()
+                                .setEndDate(TimeMachine.now().plusDays(X28_PUBLICATION_MAX_DAYS).toLocalDate())
+                                .build()
+                )
+                .build();
+
+        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromExtern(creator);
+        return jobAdvertisement.getId();
+    }
+
+    public void updateFromX28(UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto) {
+        final String stellennummerEgov = updateJobAdvertisementFromX28Dto.getStellennummerEgov();
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
+                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
+
+        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+                .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint())
+                .setX28OccupationCodes(updateJobAdvertisementFromX28Dto.getX28OccupationCodes())
+                .build();
+
+        jobAdvertisement.update(updater);
+    }
+
     public List<JobAdvertisementDto> findAll() {
         List<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findAll();
         return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(toList());
@@ -258,54 +291,6 @@ public class JobAdvertisementApplicationService {
         LOG.debug("Starting archive for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.archive();
-    }
-
-    public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
-        LOG.debug("Create '{}' from X28", createJobAdvertisementFromX28Dto.getTitle());
-        Location location = toLocation(createJobAdvertisementFromX28Dto.getLocation());
-        location = locationService.enrichCodes(location);
-
-        List<Occupation> occupations = createJobAdvertisementFromX28Dto.getOccupations().stream()
-                .map(this::toOccupation)
-                .map(this::enrichOccupationWithProfessionCodes)
-                .collect(toList());
-
-        final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
-                .setLocation(location)
-                .setOccupations(occupations)
-                .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
-                .setApplyChannel(toApplyChannel(createJobAdvertisementFromX28Dto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
-                .build();
-
-        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromExtern(
-                Locale.GERMAN,
-                createJobAdvertisementFromX28Dto.getTitle(),
-                createJobAdvertisementFromX28Dto.getDescription(),
-                updater
-        );
-        return jobAdvertisement.getId();
-    }
-
-    public void updateFromX28(UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto) {
-
-        final JobAdvertisementUpdater.Builder updaterBuilder = new JobAdvertisementUpdater.Builder(null)
-                .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint());
-
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(updateJobAdvertisementFromX28Dto.getStellennummerEgov())
-                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: "
-                        + updateJobAdvertisementFromX28Dto.getStellennummerEgov()));
-
-        Set<Occupation> occupations = new HashSet<>();
-        if (jobAdvertisement.getOccupations() != null) {
-            occupations.addAll(jobAdvertisement.getOccupations());
-        }
-        if (StringUtils.isNotBlank(updateJobAdvertisementFromX28Dto.getX28OccupationCode())) {
-            occupations.add(new Occupation(updateJobAdvertisementFromX28Dto.getX28OccupationCode()));
-        }
-        updaterBuilder.setOccupations(new ArrayList<>(occupations));
-
-        jobAdvertisement.update(updaterBuilder.build());
     }
 
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {

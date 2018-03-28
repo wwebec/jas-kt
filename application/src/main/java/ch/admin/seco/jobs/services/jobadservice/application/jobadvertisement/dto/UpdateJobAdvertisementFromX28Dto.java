@@ -10,15 +10,15 @@ public class UpdateJobAdvertisementFromX28Dto {
     @NotBlank
     private String fingerprint;
 
-    private String x28OccupationCode;
+    private String x28OccupationCodes;
 
     protected UpdateJobAdvertisementFromX28Dto() {
     }
 
-    public UpdateJobAdvertisementFromX28Dto(@NotBlank String stellennummerEgov, @NotBlank String fingerprint, @NotBlank String x28OccupationCode) {
+    public UpdateJobAdvertisementFromX28Dto(@NotBlank String stellennummerEgov, @NotBlank String fingerprint, @NotBlank String x28OccupationCodes) {
         this.stellennummerEgov = stellennummerEgov;
         this.fingerprint = fingerprint;
-        this.x28OccupationCode = x28OccupationCode;
+        this.x28OccupationCodes = x28OccupationCodes;
     }
 
     public String getStellennummerEgov() {
@@ -29,7 +29,7 @@ public class UpdateJobAdvertisementFromX28Dto {
         return fingerprint;
     }
 
-    public String getX28OccupationCode() {
-        return x28OccupationCode;
+    public String getX28OccupationCodes() {
+        return x28OccupationCodes;
     }
 }
