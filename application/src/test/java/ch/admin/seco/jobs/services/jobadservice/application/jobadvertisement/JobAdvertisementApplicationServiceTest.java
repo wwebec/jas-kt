@@ -2,7 +2,6 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
@@ -22,7 +21,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Locale;
 
 import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
@@ -38,9 +36,6 @@ public class JobAdvertisementApplicationServiceTest {
     private static final String TEST_STELLEN_NUMMER_EGOV = "1000000";
 
     private DomainEventMockUtils domainEventMockUtils;
-
-    @MockBean
-    private RavRegistrationService ravRegistrationService;
 
     @MockBean
     private ReportingObligationService reportingObligationService;
@@ -64,7 +59,15 @@ public class JobAdvertisementApplicationServiceTest {
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
 
-        when(locationService.enrichCodes(any())).thenReturn(new Location("remarks", "ctiy", "postalCode", null, null, "BE", "CH", null));
+        when(locationService.enrichCodes(any())).thenReturn(
+                new Location.Builder()
+                        .setRemarks("remarks")
+                        .setCity("ctiy")
+                        .setPostalCode("postalCode")
+                        .setCantonCode("BE")
+                        .setCountryIsoCode("CH")
+                        .build()
+        );
         when(egovNumberGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
     }
 
@@ -84,7 +87,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), 365, true, false, 80, 100),
                 "drivingLicenseLevel",
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
                 new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
@@ -114,12 +117,12 @@ public class JobAdvertisementApplicationServiceTest {
                 "ref",
                 "http://url",
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new JobApiDto("de","title", "descriptioin", 10, 90,
+                new JobApiDto("de", "title", "descriptioin", 10, 90,
                         LocalDate.of(2018, 1, 1),
                         LocalDate.of(2018, 12, 31), 30, true, true,
                         new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                         Collections.emptyList()),
-                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website"),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")
         );
@@ -174,10 +177,11 @@ public class JobAdvertisementApplicationServiceTest {
     private JobAdvertisement createJobWithStatusAndReportingObligationEndDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate reportingObligationEndDate) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setContact(createContact(jobAdvertisementId))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setPublication(new Publication.Builder().build())
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setLanguage(Locale.GERMAN)
-                .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
-                .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStatus(status)
                 .setReportingObligationEndDate(reportingObligationEndDate)
@@ -187,13 +191,13 @@ public class JobAdvertisementApplicationServiceTest {
     private JobAdvertisement createJobWithStatusAndPublicationEndDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate publicationEndDate) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setContact(createContact(jobAdvertisementId))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setPublication(new Publication.Builder().setEndDate(publicationEndDate).build())
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setLanguage(Locale.GERMAN)
-                .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
-                .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStatus(status)
-                .setPublicationEndDate(publicationEndDate)
                 .build();
     }
 

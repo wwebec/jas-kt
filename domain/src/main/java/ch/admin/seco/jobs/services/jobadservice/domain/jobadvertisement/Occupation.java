@@ -37,22 +37,14 @@ public class Occupation implements ValueObject<Occupation> {
         // For reflection libs
     }
 
-    public Occupation(String avamOccupationCode) {
-        this.avamOccupationCode = Condition.notBlank(avamOccupationCode);
-    }
-
-    public Occupation(String avamOccupationCode, WorkExperience workExperience, String educationCode) {
-        this(avamOccupationCode);
-        this.workExperience = workExperience;
-        this.educationCode = educationCode;
-    }
-
-    public Occupation(String avamOccupationCode, String sbn3Code, String sbn5Code, String bfsCode, String label, WorkExperience workExperience, String educationCode) {
-        this(avamOccupationCode, workExperience, educationCode);
-        this.sbn3Code = sbn3Code;
-        this.sbn5Code = sbn5Code;
-        this.bfsCode = bfsCode;
-        this.label = label;
+    public Occupation(Builder builder) {
+        this.avamOccupationCode = Condition.notBlank(builder.avamOccupationCode);
+        this.sbn3Code = builder.sbn3Code;
+        this.sbn5Code = builder.sbn5Code;
+        this.bfsCode = builder.bfsCode;
+        this.label = builder.label;
+        this.workExperience = builder.workExperience;
+        this.educationCode = builder.educationCode;
     }
 
     public String getAvamOccupationCode() {
@@ -81,11 +73,6 @@ public class Occupation implements ValueObject<Occupation> {
 
     public String getEducationCode() {
         return educationCode;
-    }
-
-    @Override
-    public boolean sameValueObjectAs(Occupation other) {
-        return equals(other);
     }
 
     @Override
@@ -118,5 +105,57 @@ public class Occupation implements ValueObject<Occupation> {
                 ", workExperience=" + workExperience +
                 ", educationCode='" + educationCode + '\'' +
                 '}';
+    }
+
+    public static final class Builder {
+        private String avamOccupationCode;
+        private String sbn3Code;
+        private String sbn5Code;
+        private String bfsCode;
+        private String label;
+        private WorkExperience workExperience;
+        private String educationCode;
+
+        public Builder() {
+        }
+
+        public Occupation build() {
+            return new Occupation(this);
+        }
+
+        public Builder setAvamOccupationCode(String avamOccupationCode) {
+            this.avamOccupationCode = avamOccupationCode;
+            return this;
+        }
+
+        public Builder setSbn3Code(String sbn3Code) {
+            this.sbn3Code = sbn3Code;
+            return this;
+        }
+
+        public Builder setSbn5Code(String sbn5Code) {
+            this.sbn5Code = sbn5Code;
+            return this;
+        }
+
+        public Builder setBfsCode(String bfsCode) {
+            this.bfsCode = bfsCode;
+            return this;
+        }
+
+        public Builder setLabel(String label) {
+            this.label = label;
+            return this;
+        }
+
+        public Builder setWorkExperience(WorkExperience workExperience) {
+            this.workExperience = workExperience;
+            return this;
+        }
+
+        public Builder setEducationCode(String educationCode) {
+            this.educationCode = educationCode;
+            return this;
+        }
     }
 }

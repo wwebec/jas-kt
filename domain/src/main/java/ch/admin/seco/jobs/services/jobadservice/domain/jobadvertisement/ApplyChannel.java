@@ -22,17 +22,12 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         // For reflection libs
     }
 
-    public ApplyChannel(String mailAddress, String emailAddress, String phoneNumber, String formUrl, String additionalInfo) {
-        this.mailAddress = mailAddress;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
-        this.formUrl = formUrl;
-        this.additionalInfo = additionalInfo;
-    }
-
-    @Override
-    public boolean sameValueObjectAs(ApplyChannel other) {
-        return equals(other);
+    public ApplyChannel(Builder builder) {
+        this.mailAddress = builder.mailAddress;
+        this.emailAddress = builder.emailAddress;
+        this.phoneNumber = builder.phoneNumber;
+        this.formUrl = builder.formUrl;
+        this.additionalInfo = builder.additionalInfo;
     }
 
     public String getMailAddress() {
@@ -81,5 +76,45 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
                 ", formUrl='" + formUrl + '\'' +
                 ", additionalInfo='" + additionalInfo + '\'' +
                 '}';
+    }
+
+    public static final class Builder {
+        private String mailAddress;
+        private String emailAddress;
+        private String phoneNumber;
+        private String formUrl;
+        private String additionalInfo;
+
+        public Builder() {
+        }
+
+        public ApplyChannel build() {
+            return new ApplyChannel(this);
+        }
+
+        public Builder setMailAddress(String mailAddress) {
+            this.mailAddress = mailAddress;
+            return this;
+        }
+
+        public Builder setEmailAddress(String emailAddress) {
+            this.emailAddress = emailAddress;
+            return this;
+        }
+
+        public Builder setPhoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        public Builder setFormUrl(String formUrl) {
+            this.formUrl = formUrl;
+            return this;
+        }
+
+        public Builder setAdditionalInfo(String additionalInfo) {
+            this.additionalInfo = additionalInfo;
+            return this;
+        }
     }
 }

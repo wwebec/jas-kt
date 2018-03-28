@@ -30,16 +30,11 @@ public class JobAdvertisementId implements AggregateId<JobAdvertisementId> {
     }
 
     @Override
-    public boolean sameValueObjectAs(JobAdvertisementId other) {
-        return (other != null) && this.value.equals(other.value);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         JobAdvertisementId that = (JobAdvertisementId) o;
-        return sameValueObjectAs(that);
+        return Objects.equals(value, that.value);
     }
 
     @Override

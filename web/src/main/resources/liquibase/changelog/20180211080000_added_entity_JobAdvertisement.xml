@@ -40,60 +40,59 @@
         </createTable>
 
         <createTable tableName="JOB_ADVERTISEMENT">
+
+            <!-- JOB_ADVERTISEMENT -->
+
             <column name="ID" type="varchar(36)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="STELLENNUMMER_EGOV" type="varchar(11)">
-                <constraints unique="true" nullable="true"/>
-            </column>
-            <column name="STELLENNUMMER_AVAM" type="varchar(11)">
-                <constraints unique="true" nullable="true"/>
-            </column>
-            <column name="FINGERPRINT" type="varchar(100)">
-                <constraints unique="true" nullable="true"/>
-            </column>
-            <column name="SOURCE_SYSTEM" type="varchar(12)"/>
-            <column name="SOURCE_ENTRY_ID" type="varchar(255)"/>
-            <column name="EXTERNAL_URL" type="varchar(1024)"/>
             <column name="STATUS" type="varchar(64)">
                 <constraints nullable="false"/>
             </column>
-            <column name="RAV_REGISTRATION_DATE" type="date"/>
+            <column name="SOURCE_SYSTEM" type="varchar(12)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SOURCE_ENTRY_ID" type="varchar(255)"/>
+            <column name="STELLENNUMMER_EGOV" type="varchar(11)"/>
+            <column name="STELLENNUMMER_AVAM" type="varchar(11)"/>
+            <column name="FINGERPRINT" type="varchar(100)"/>
+
+            <column name="REPORTING_OBLIGATION" type="boolean"/>
+            <column name="REPORTING_OBLIGATION_END_DATE" type="date"/>
+            <column name="REPORT_TO_AVAM" type="boolean"/>
+            <column name="JOB_CENTER_CODE" type="varchar(5)"/>
             <column name="APPROVAL_DATE" type="date"/>
             <column name="REJECTION_DATE" type="date"/>
             <column name="REJECTION_CODE" type="varchar(10)"/>
             <column name="REJECTION_REASON" type="varchar(800)"/>
             <column name="CANCELLATION_DATE" type="date"/>
             <column name="CANCELLATION_CODE" type="varchar(10)"/>
-            <column name="REPORT_TO_RAV" type="boolean"/>
-            <column name="REPORTING_OBLIGATION" type="boolean"/>
-            <column name="REPORTING_OBLIGATION_END_DATE" type="date"/>
+
+            <column name="OWNER_USER_ID" type="varchar(64)"/>
+            <column name="OWNER_AVG_ID" type="varchar(64)"/>
+            <column name="OWNER_ACCESS_TOKEN" type="varchar(64)"/>
+
+            <column name="CONTACT_SALUTATION" type="varchar(3)"/>
+            <column name="CONTACT_FIRST_NAME" type="varchar(50)"/>
+            <column name="CONTACT_LAST_NAME" type="varchar(50)"/>
+            <column name="CONTACT_PHONE" type="varchar(20)"/>
+            <column name="CONTACT_EMAIL" type="varchar(50)"/>
+            <column name="CONTACT_LANGUAGE" type="varchar(5)"/>
+
             <column name="PUBLICATION_START_DATE" type="date"/>
             <column name="PUBLICATION_END_DATE" type="date"/>
-            <column name="EURES" type="boolean"/>
-            <column name="EURES_ANONYMOUS" type="boolean"/>
-            <column name="LANGUAGE" type="varchar(5)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="TITLE" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="DESCRIPTION" type="longvarchar">
-                <constraints nullable="false"/>
-            </column>
-            <column name="EMPLOYMENT_START_DATE" type="date"/>
-            <column name="EMPLOYMENT_END_DATE" type="date"/>
-            <column name="EMPLOYMENT_DURATION_IN_DAYS" type="integer"/>
-            <column name="EMPLOYMENT_IMMEDIATELY" type="boolean"/>
-            <column name="EMPLOYMENT_PERMANENT" type="boolean"/>
-            <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN" type="integer"/>
-            <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MAX" type="integer"/>
-            <column name="JOB_CENTER_CODE" type="varchar(5)"/>
-            <column name="APPLY_CHANNEL_MAIL_ADDRESS" type="varchar(255)"/>
-            <column name="APPLY_CHANNEL_EMAIL_ADDRESS" type="varchar(255)"/>
-            <column name="APPLY_CHANNEL_PHONE_NUMBER" type="varchar(20)"/>
-            <column name="APPLY_CHANNEL_FORM_URL" type="varchar(1024)"/>
-            <column name="APPLY_CHANNEL_ADDITIONAL_INFO" type="varchar(255)"/>
+            <column name="PUBLICATION_EURES" type="boolean"/>
+            <column name="PUBLICATION_EURES_ANONYMOUS" type="boolean"/>
+            <column name="PUBLICATION_PUBLIC_DISPLAY" type="boolean"/>
+            <column name="PUBLICATION_PUBLIC_ANONYNOMOU" type="boolean"/>
+            <column name="PUBLICATION_RESTRICTED_DISPLAY" type="boolean"/>
+            <column name="PUBLICATION_RESTRICTED_ANONYMOUS" type="boolean"/>
+
+            <!-- JOB_CONTENT -->
+
+            <column name="EXTERNAL_URL" type="varchar(1024)"/>
+            <column name="X28_OCCUPATION_CODES" type="varchar(255)"/>
+
             <column name="COMPANY_NAME" type="varchar(255)"/>
             <column name="COMPANY_STREET" type="varchar(50)"/>
             <column name="COMPANY_HOUSE_NUMBER" type="varchar(10)"/>
@@ -106,12 +105,23 @@
             <column name="COMPANY_PHONE" type="varchar(20)"/>
             <column name="COMPANY_EMAIL" type="varchar(255)"/>
             <column name="COMPANY_WEBSITE" type="varchar(255)"/>
-            <column name="CONTACT_SALUTATION" type="varchar(3)"/>
-            <column name="CONTACT_FIRST_NAME" type="varchar(50)"/>
-            <column name="CONTACT_LAST_NAME" type="varchar(50)"/>
-            <column name="CONTACT_PHONE" type="varchar(20)"/>
-            <column name="CONTACT_EMAIL" type="varchar(50)"/>
-            <column name="CONTACT_LANGUAGE" type="varchar(5)"/>
+            <column name="COMPANY_SURROGATE" type="boolean"/>
+
+            <column name="EMPLOYER_NAME" type="varchar(255)"/>
+            <column name="EMPLOYER_STREET" type="varchar(50)"/>
+            <column name="EMPLOYER_HOUSE_NUMBER" type="varchar(10)"/>
+            <column name="EMPLOYER_POSTAL_CODE" type="varchar(10)"/>
+            <column name="EMPLOYER_CITY" type="varchar(50)"/>
+            <column name="EMPLOYER_COUNTRY_ISO_CODE" type="varchar(2)"/>
+
+            <column name="EMPLOYMENT_START_DATE" type="date"/>
+            <column name="EMPLOYMENT_END_DATE" type="date"/>
+            <column name="EMPLOYMENT_DURATION_IN_DAYS" type="integer"/>
+            <column name="EMPLOYMENT_IMMEDIATELY" type="boolean"/>
+            <column name="EMPLOYMENT_PERMANENT" type="boolean"/>
+            <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN" type="integer"/>
+            <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MAX" type="integer"/>
+
             <column name="LOCATION_REMARKS" type="varchar(255)"/>
             <column name="LOCATION_CITY" type="varchar(50)"/>
             <column name="LOCATION_POSTAL_CODE" type="varchar(10)"/>
@@ -121,6 +131,33 @@
             <column name="LOCATION_COUNTRY_ISO_CODE" type="varchar(2)"/>
             <column name="LOCATION_LONGITUDE" type="double"/>
             <column name="LOCATION_LATITUDE" type="double"/>
+
+            <column name="APPLY_CHANNEL_MAIL_ADDRESS" type="varchar(255)"/>
+            <column name="APPLY_CHANNEL_EMAIL_ADDRESS" type="varchar(255)"/>
+            <column name="APPLY_CHANNEL_PHONE_NUMBER" type="varchar(20)"/>
+            <column name="APPLY_CHANNEL_FORM_URL" type="varchar(1024)"/>
+            <column name="APPLY_CHANNEL_ADDITIONAL_INFO" type="varchar(255)"/>
+
+            <column name="PUBLIC_CONTACT_SALUTATION" type="varchar(3)"/>
+            <column name="PUBLIC_CONTACT_FIRST_NAME" type="varchar(50)"/>
+            <column name="PUBLIC_CONTACT_LAST_NAME" type="varchar(50)"/>
+            <column name="PUBLIC_CONTACT_PHONE" type="varchar(20)"/>
+            <column name="PUBLIC_CONTACT_EMAIL" type="varchar(50)"/>
+        </createTable>
+
+        <createTable tableName="JOB_CONTENT_DESCRIPTION">
+            <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LANGUAGE" type="varchar(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TITLE" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DESCRIPTION" type="longvarchar">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
 
         <createTable tableName="JOB_ADVERTISEMENT_OCCUPATION">

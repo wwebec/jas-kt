@@ -29,16 +29,11 @@ public class AvamTaskId implements AggregateId<AvamTaskId> {
     }
 
     @Override
-    public boolean sameValueObjectAs(AvamTaskId other) {
-        return (other != null) && this.value.equals(other.value);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AvamTaskId that = (AvamTaskId) o;
-        return sameValueObjectAs(that);
+        return Objects.equals(value, that.value);
     }
 
     @Override

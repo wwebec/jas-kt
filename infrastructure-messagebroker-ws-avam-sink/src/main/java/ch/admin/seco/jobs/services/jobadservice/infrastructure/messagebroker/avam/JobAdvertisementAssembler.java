@@ -9,6 +9,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.TOsteEgov;
+import org.springframework.util.Assert;
 
 public class JobAdvertisementAssembler {
 
@@ -42,21 +43,38 @@ public class JobAdvertisementAssembler {
             tOsteEgov.setAbmeldeDatum(formatLocalDate(jobAdvertisement.getCancellationDate()));
             tOsteEgov.setAbmeldeGrundCode(jobAdvertisement.getCancellationCode());
         }
-        tOsteEgov.setGueltigkeit(formatLocalDate(jobAdvertisement.getPublicationEndDate()));
 
-        tOsteEgov.setEures(jobAdvertisement.isEures());
-        tOsteEgov.setEuresAnonym(jobAdvertisement.isEuresAnonymous());
+        final Publication publication = jobAdvertisement.getPublication();
+        //TODO: Review if we need to check nullability
+        Assert.notNull(publication, "jobAdvertisement.getPublication can not be null");
 
-        tOsteEgov.setBezeichnung(jobAdvertisement.getTitle());
-        tOsteEgov.setBeschreibung(jobAdvertisement.getDescription());
+        tOsteEgov.setGueltigkeit(formatLocalDate(publication.getEndDate()));
 
-        fillEmployment(tOsteEgov, jobAdvertisement.getEmployment());
-        fillApplyChannel(tOsteEgov, jobAdvertisement.getApplyChannel());
-        fillCompany(tOsteEgov, jobAdvertisement.getCompany());
+        tOsteEgov.setEures(publication.isEures());
+        tOsteEgov.setEuresAnonym(publication.isEuresAnonymous());
+
+        final JobContent jobContent = jobAdvertisement.getJobContent();
+        //TODO: Review if we need to check nullability
+        Assert.notNull(jobContent, "jobAdvertisement.getJobContent can not be null");
+
+        //TODO: Check which description has to be use
+        final JobDescription defaultJobDescription = jobContent.getJobDescriptions().stream()
+                .findFirst()
+                .orElse(null);
+
+        //TODO: Review if we need to check nullability
+        Assert.notNull(defaultJobDescription, "jobContent.getJobDescriptions can not be empty");
+
+        tOsteEgov.setBezeichnung(defaultJobDescription.getTitle());
+        tOsteEgov.setBeschreibung(defaultJobDescription.getDescription());
+
+        fillEmployment(tOsteEgov, jobContent.getEmployment());
+        fillApplyChannel(tOsteEgov, jobContent.getApplyChannel());
+        fillCompany(tOsteEgov, jobContent.getCompany());
         fillContact(tOsteEgov, jobAdvertisement.getContact());
-        fillLocation(tOsteEgov, jobAdvertisement.getLocation());
-        fillOccupation(tOsteEgov, jobAdvertisement.getOccupations());
-        fillLangaugeSkills(tOsteEgov, jobAdvertisement.getLanguageSkills());
+        fillLocation(tOsteEgov, jobContent.getLocation());
+        fillOccupation(tOsteEgov, jobContent.getOccupations());
+        fillLangaugeSkills(tOsteEgov, jobContent.getLanguageSkills());
 
         return tOsteEgov;
     }

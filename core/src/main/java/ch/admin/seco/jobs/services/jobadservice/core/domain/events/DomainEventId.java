@@ -28,16 +28,11 @@ public class DomainEventId implements AggregateId<DomainEventId> {
     }
 
     @Override
-    public boolean sameValueObjectAs(DomainEventId other) {
-        return (other != null) && this.value.equals(other.value);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof DomainEventId)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
         DomainEventId that = (DomainEventId) o;
-        return sameValueObjectAs(that);
+        return Objects.equals(value, that.value);
     }
 
     @Override

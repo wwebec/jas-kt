@@ -18,26 +18,24 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 
-public class DefaultAvamService implements RavRegistrationService {
+public class AvamService {
 
-    private final Logger LOG = LoggerFactory.getLogger(DefaultAvamService.class);
+    private final Logger LOG = LoggerFactory.getLogger(AvamService.class);
 
     private final DomainEventPublisher domainEventPublisher;
 
     private final MessageChannel jobAdEventChannel;
 
-    public DefaultAvamService(DomainEventPublisher domainEventPublisher, MessageChannel jobAdEventChannel) {
+    public AvamService(DomainEventPublisher domainEventPublisher, MessageChannel jobAdEventChannel) {
         this.domainEventPublisher = domainEventPublisher;
         this.jobAdEventChannel = jobAdEventChannel;
     }
 
-    @Override
     public void register(JobAdvertisement jobAdvertisement) {
         LOG.debug("Send through the message broker for action: REGISTER, JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         jobAdEventChannel.send(MessageBuilder
@@ -48,7 +46,6 @@ public class DefaultAvamService implements RavRegistrationService {
                 .build());
     }
 
-    @Override
     public void deregister(JobAdvertisement jobAdvertisement) {
         LOG.debug("Send through the message broker for action: DEREGISTER, JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         jobAdEventChannel.send(MessageBuilder

@@ -29,21 +29,15 @@ public class ProfessionId implements AggregateId<ProfessionId> {
     }
 
     @Override
-    public boolean sameValueObjectAs(ProfessionId other) {
-        return (other != null) && this.value.equals(other.value);
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ProfessionId that = (ProfessionId) o;
-        return sameValueObjectAs(that);
+        return Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(value);
     }
-
 }

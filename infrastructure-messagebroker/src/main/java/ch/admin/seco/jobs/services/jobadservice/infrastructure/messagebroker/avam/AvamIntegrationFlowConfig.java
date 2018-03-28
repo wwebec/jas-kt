@@ -1,6 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationService;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
 import org.slf4j.Logger;
@@ -21,14 +20,14 @@ public class AvamIntegrationFlowConfig {
 
     private final Logger LOG = LoggerFactory.getLogger(AvamIntegrationFlowConfig.class);
 
-    private final RavRegistrationService ravRegistrationService;
+    private final AvamService avamService;
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
 
     private final EntityManagerFactory entityManagerFactory;
 
-    public AvamIntegrationFlowConfig(RavRegistrationService ravRegistrationService, JobAdvertisementRepository jobAdvertisementRepository, EntityManagerFactory entityManagerFactory) {
-        this.ravRegistrationService = ravRegistrationService;
+    public AvamIntegrationFlowConfig(AvamService avamService, JobAdvertisementRepository jobAdvertisementRepository, EntityManagerFactory entityManagerFactory) {
+        this.avamService = avamService;
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.entityManagerFactory = entityManagerFactory;
     }
@@ -52,10 +51,10 @@ public class AvamIntegrationFlowConfig {
         if (jobAdvertisement.isPresent()) {
             switch (avamTask.getType()) {
                 case REGISTER:
-                    ravRegistrationService.register(jobAdvertisement.get());
+                    avamService.register(jobAdvertisement.get());
                     break;
                 case DEREGISTER:
-                    ravRegistrationService.deregister(jobAdvertisement.get());
+                    avamService.deregister(jobAdvertisement.get());
                     break;
                 default:
                     throw new UnsupportedOperationException(avamTask.getType() + " unknown");

@@ -1,29 +1,22 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import static java.util.Objects.nonNull;
-import static org.springframework.util.StringUtils.hasText;
-import static org.springframework.util.StringUtils.isEmpty;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
-
-import org.springframework.util.StringUtils;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.UpdateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.util.StringUtils.isEmpty;
 
 class ActionDtoFactory {
     private static final String SWISS_ISO_CODE = "CH";
@@ -44,11 +37,19 @@ class ActionDtoFactory {
     }
 
     UpdateJobAdvertisementFromX28Dto updateFromX28(Oste x28JobAdvertisement) {
-        return new UpdateJobAdvertisementFromX28Dto(x28JobAdvertisement.getStellennummerEGov(),
+        List<Integer> berufsBezeichnungen = x28JobAdvertisement.getBerufsBezeichnungen();
+        String x28OccupationCodes = null;
+        if (!berufsBezeichnungen.isEmpty()) {
+            x28OccupationCodes = berufsBezeichnungen.stream()
+                    .map(String::valueOf)
+                    .collect(Collectors.joining(","));
+        }
+
+        return new UpdateJobAdvertisementFromX28Dto(
+                x28JobAdvertisement.getStellennummerEGov(),
                 x28JobAdvertisement.getFingerprint(),
-                x28JobAdvertisement.getBerufsBezeichnungen().stream().findFirst()
-                        .map(String::valueOf)
-                        .orElse(null));
+                x28OccupationCodes
+        );
 
     }
 
@@ -78,7 +79,7 @@ class ActionDtoFactory {
     }
 
     private CompanyDto createCompanyDto(Oste x28JobAdvertisement) {
-        return new CompanyDto(x28JobAdvertisement.getUntName(), null, null, null, null, null, null, null, null, null, null, null);
+        return new CompanyDto(x28JobAdvertisement.getUntName(), null, null, null, null, null, null, null, null, null, null, null, false);
     }
 
     private ApplyChannelDto createApplyChannelDto(Oste x28JobAdvertisement) {

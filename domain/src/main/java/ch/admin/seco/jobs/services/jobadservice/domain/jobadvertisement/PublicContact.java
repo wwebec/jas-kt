@@ -1,20 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import java.util.Locale;
-import java.util.Objects;
-
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Embeddable;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
+import javax.persistence.*;
+import java.util.Locale;
+import java.util.Objects;
+
 @Embeddable
 @Access(AccessType.FIELD)
-public class Contact implements ValueObject<Contact> {
+public class PublicContact implements ValueObject<PublicContact> {
 
     @Enumerated(EnumType.STRING)
     private Salutation salutation;
@@ -27,19 +22,16 @@ public class Contact implements ValueObject<Contact> {
 
     private String email;
 
-    private Locale language;
-
-    protected Contact() {
+    protected PublicContact() {
         // For reflection libs
     }
 
-    public Contact(Builder builder) {
+    public PublicContact(Builder builder) {
         this.salutation = Condition.notNull(builder.salutation, "Salutation can't be null");
         this.firstName = Condition.notBlank(builder.firstName, "First name can't be blank");
         this.lastName = Condition.notBlank(builder.lastName, "Last name can't be blank");
         this.phone = Condition.notBlank(builder.phone, "Phone can't be blank");
         this.email = Condition.notBlank(builder.email, "Email can't be blank");
-        this.language = Condition.notNull(builder.language, "Language can't be null");
     }
 
     public Salutation getSalutation() {
@@ -62,37 +54,31 @@ public class Contact implements ValueObject<Contact> {
         return email;
     }
 
-    public Locale getLanguage() {
-        return language;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Contact contact = (Contact) o;
+        PublicContact contact = (PublicContact) o;
         return salutation == contact.salutation &&
                 Objects.equals(firstName, contact.firstName) &&
                 Objects.equals(lastName, contact.lastName) &&
                 Objects.equals(phone, contact.phone) &&
-                Objects.equals(email, contact.email) &&
-                Objects.equals(language, contact.language);
+                Objects.equals(email, contact.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(salutation, firstName, lastName, phone, email, language);
+        return Objects.hash(salutation, firstName, lastName, phone, email);
     }
 
     @Override
     public String toString() {
-        return "Contact{" +
+        return "PublicContact{" +
                 "salutation=" + salutation +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", phone='" + phone + '\'' +
                 ", email='" + email + '\'' +
-                ", language='" + language.getLanguage() + '\'' +
                 '}';
     }
 
@@ -107,8 +93,8 @@ public class Contact implements ValueObject<Contact> {
         public Builder() {
         }
 
-        public Contact build() {
-            return new Contact(this);
+        public PublicContact build() {
+            return new PublicContact(this);
         }
 
         public Builder setSalutation(Salutation salutation) {
@@ -133,11 +119,6 @@ public class Contact implements ValueObject<Contact> {
 
         public Builder setEmail(String email) {
             this.email = email;
-            return this;
-        }
-
-        public Builder setLanguage(Locale language) {
-            this.language = language;
             return this;
         }
     }
