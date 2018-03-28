@@ -117,4 +117,4 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
             return this;
         }
     }
-    }
+}
