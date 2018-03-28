@@ -13,7 +13,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPu
 public class AvamConfig {
 
     @Bean
-    public AvamService ravRegistrationService(
+    public AvamService avamService(
             DomainEventPublisher domainEventPublisher,
             @Qualifier(JOB_AD_EVENT_CHANNEL) MessageChannel jobAdEventChannel) {
         return new AvamService(domainEventPublisher, jobAdEventChannel);
