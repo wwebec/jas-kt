@@ -9,19 +9,19 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 @EnableBinding(Sink.class)
 public class AvamWebServiceSink {
 
-    private final AvamWebService avamWebService;
+    private final AvamWebServiceClient avamWebServiceClient;
 
-    public AvamWebServiceSink(AvamWebService avamWebService) {
-        this.avamWebService = avamWebService;
+    public AvamWebServiceSink(AvamWebServiceClient avamWebServiceClient) {
+        this.avamWebServiceClient = avamWebServiceClient;
     }
 
     @StreamListener(target = Sink.INPUT, condition = "header[event]=='JOB_ADVERTISEMENT_INSPECTING'")
     public void register(JobAdvertisement jobAdvertisement) {
-        avamWebService.register(jobAdvertisement);
+        avamWebServiceClient.register(jobAdvertisement);
     }
 
     @StreamListener(target = Sink.INPUT, condition = "header[event]=='JOB_ADVERTISEMENT_CANCELLED'")
     public void deregister(JobAdvertisement jobAdvertisement) {
-        avamWebService.deregister(jobAdvertisement);
+        avamWebServiceClient.deregister(jobAdvertisement);
     }
 }
