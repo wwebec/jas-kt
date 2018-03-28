@@ -1,27 +1,29 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
 
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+import ch.admin.seco.jobs.services.jobadservice.application.RavRegistrationException;
 import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamAction;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOste;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOsteResponse;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.TOsteEgov;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.WSCredentials;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceClient;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.DeliverOste;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.DeliverOsteResponse;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.TOsteEgov;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.WSCredentials;
 
-public class AvamWebService {
+public class AvamWebServiceClientV2 implements AvamWebServiceClient {
 
     static final String AVAM_RESPONSE_OK = "NK_AVAM: OK";
     static final String AVAM_RESPONSE_ERROR = "NK_AVAM: ERROR";
 
-    private final JobAdvertisementAssembler assembler;
+    private final AvamJobAdvertisementAssemblerV2 assembler;
     private final WebServiceTemplate webserviceTemplate;
     private final String username;
     private final String password;
 
-    public AvamWebService(WebServiceTemplate webserviceTemplate, String username, String password) {
-        this.assembler = new JobAdvertisementAssembler();
+    public AvamWebServiceClientV2(WebServiceTemplate webserviceTemplate, String username, String password) {
+        this.assembler = new AvamJobAdvertisementAssemblerV2();
         this.webserviceTemplate = webserviceTemplate;
         this.username = username;
         this.password = password;
@@ -57,7 +59,7 @@ public class AvamWebService {
     void handleResponse(JobAdvertisementId jobAdvertisementId, AvamAction action, DeliverOsteResponse response) {
         String returnCode = response.getDeliverOsteReturn();
         if (!AVAM_RESPONSE_OK.equals(returnCode)) {
-            throw new AvamException(jobAdvertisementId, action.name());
+            throw new RavRegistrationException(jobAdvertisementId, action.name());
         }
     }
 

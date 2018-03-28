@@ -1,4 +1,6 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
+
+import static java.util.Objects.nonNull;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -6,29 +8,22 @@ import java.util.List;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamAction;
 import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.TOsteEgov;
-import org.springframework.util.Assert;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.TOsteEgov;
 
-public class JobAdvertisementAssembler {
+public class AvamJobAdvertisementAssemblerV2 {
 
-    private static final DateTimeFormatter AVAM_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
-    private static boolean safeBoolean(Boolean value) {
-        return (value != null) ? value : false;
-    }
-
-    private static String safeToString(Object value) {
-        return (value != null) ? value.toString() : null;
-    }
-
-    private static boolean isNotNull(Object value) {
-        return (value != null);
-    }
+    private static final DateTimeFormatter AVAM_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyy-MM-dd-00.00.00.000000");
 
     public static String formatLocalDate(LocalDate localDate) {
-        return (localDate != null) ? localDate.format(AVAM_DATE_FORMATTER) : null;
+        return nonNull(localDate) ? localDate.format(AVAM_DATE_FORMATTER) : null;
     }
 
     public TOsteEgov toOsteEgov(JobAdvertisement jobAdvertisement, AvamAction action) {
@@ -43,38 +38,25 @@ public class JobAdvertisementAssembler {
             tOsteEgov.setAbmeldeDatum(formatLocalDate(jobAdvertisement.getCancellationDate()));
             tOsteEgov.setAbmeldeGrundCode(jobAdvertisement.getCancellationCode());
         }
+        tOsteEgov.setGueltigkeit(formatLocalDate(jobAdvertisement.getPublicationEndDate()));
 
-        final Publication publication = jobAdvertisement.getPublication();
-        //TODO: Review if we need to check nullability
-        Assert.notNull(publication, "jobAdvertisement.getPublication can not be null");
+        tOsteEgov.setEures(jobAdvertisement.isEures());
+        tOsteEgov.setEuresAnonym(jobAdvertisement.isEuresAnonymous());
 
-        tOsteEgov.setGueltigkeit(formatLocalDate(publication.getEndDate()));
+        tOsteEgov.setBezeichnung(jobAdvertisement.getTitle());
+        tOsteEgov.setBeschreibung(jobAdvertisement.getDescription());
 
-        tOsteEgov.setEures(publication.isEures());
-        tOsteEgov.setEuresAnonym(publication.isEuresAnonymous());
-
-        final JobContent jobContent = jobAdvertisement.getJobContent();
-        //TODO: Review if we need to check nullability
-        Assert.notNull(jobContent, "jobAdvertisement.getJobContent can not be null");
-
-        //TODO: Check which description has to be use
-        final JobDescription defaultJobDescription = jobContent.getJobDescriptions().stream()
-                .findFirst()
-                .orElse(null);
-
-        //TODO: Review if we need to check nullability
-        Assert.notNull(defaultJobDescription, "jobContent.getJobDescriptions can not be empty");
-
-        tOsteEgov.setBezeichnung(defaultJobDescription.getTitle());
-        tOsteEgov.setBeschreibung(defaultJobDescription.getDescription());
-
-        fillEmployment(tOsteEgov, jobContent.getEmployment());
-        fillApplyChannel(tOsteEgov, jobContent.getApplyChannel());
-        fillCompany(tOsteEgov, jobContent.getCompany());
+        fillEmployment(tOsteEgov, jobAdvertisement.getEmployment());
+        fillApplyChannel(tOsteEgov, jobAdvertisement.getApplyChannel());
+        fillCompany(tOsteEgov, jobAdvertisement.getCompany());
         fillContact(tOsteEgov, jobAdvertisement.getContact());
-        fillLocation(tOsteEgov, jobContent.getLocation());
-        fillOccupation(tOsteEgov, jobContent.getOccupations());
-        fillLangaugeSkills(tOsteEgov, jobContent.getLanguageSkills());
+        fillLocation(tOsteEgov, jobAdvertisement.getLocation());
+        fillOccupation(tOsteEgov, jobAdvertisement.getOccupations());
+        fillLangaugeSkills(tOsteEgov, jobAdvertisement.getLanguageSkills());
+
+        tOsteEgov.setMeldepflicht(jobAdvertisement.isReportingObligation());
+        tOsteEgov.setSperrfrist(formatLocalDate(jobAdvertisement.getReportingObligationEndDate()));
+        tOsteEgov.setQuelleCode(jobAdvertisement.getSourceSystem().name());
 
         return tOsteEgov;
     }
@@ -101,11 +83,11 @@ public class JobAdvertisementAssembler {
         if (applyChannel == null) {
             return;
         }
-        tOsteEgov.setBewerSchriftlich(isNotNull(applyChannel.getMailAddress()));
-        tOsteEgov.setBewerElektronisch(isNotNull(applyChannel.getEmailAddress()));
+        tOsteEgov.setBewerSchriftlich(nonNull(applyChannel.getMailAddress()));
+        tOsteEgov.setBewerElektronisch(nonNull(applyChannel.getEmailAddress()));
         tOsteEgov.setUntEmail(applyChannel.getEmailAddress());
         tOsteEgov.setUntUrl(applyChannel.getFormUrl()); // actually used for 'Online Bewerbung' instead 'home page'
-        tOsteEgov.setBewerTelefonisch(isNotNull(applyChannel.getPhoneNumber()));
+        tOsteEgov.setBewerTelefonisch(nonNull(applyChannel.getPhoneNumber()));
         tOsteEgov.setUntTelefon(applyChannel.getPhoneNumber());
         tOsteEgov.setBewerAngaben(applyChannel.getAdditionalInfo());
     }
@@ -207,5 +189,9 @@ public class JobAdvertisementAssembler {
             tOsteEgov.setSk5MuendlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
             tOsteEgov.setSk5SchriftlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
         }
+    }
+
+    private boolean safeBoolean(Boolean value) {
+        return nonNull(value) ? value : false;
     }
 }

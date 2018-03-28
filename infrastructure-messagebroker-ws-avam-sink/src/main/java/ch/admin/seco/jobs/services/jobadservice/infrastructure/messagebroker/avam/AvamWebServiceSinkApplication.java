@@ -7,9 +7,9 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-public class AvamWebServiceApplication {
+public class AvamWebServiceSinkApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AvamWebServiceApplication.class, args);
+        SpringApplication.run(AvamWebServiceSinkApplication.class, args);
     }
 }
