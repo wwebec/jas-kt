@@ -1,13 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Objects;
-
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Embeddable;
-
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import java.util.Set;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -20,6 +18,10 @@ public class Employment implements ValueObject<Employment> {
     private Boolean permanent;
     private int workloadPercentageMin;
     private int workloadPercentageMax;
+    @ElementCollection
+    @CollectionTable(name = "JOB_ADVERTISEMENT_WORK_FORM", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @Enumerated(EnumType.STRING)
+    private Set<WorkForm> workForms;
 
     protected Employment() {
         // For reflection libs
@@ -33,45 +35,86 @@ public class Employment implements ValueObject<Employment> {
         this.permanent = builder.permanent;
         this.workloadPercentageMin = builder.workloadPercentageMin;
         this.workloadPercentageMax = builder.workloadPercentageMax;
+        this.workForms = builder.workForms;
     }
 
     public LocalDate getStartDate() {
         return startDate;
     }
 
+    void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     public Integer getDurationInDays() {
         return durationInDays;
     }
 
+    void setDurationInDays(Integer durationInDays) {
+        this.durationInDays = durationInDays;
+    }
+
     public Boolean getImmediately() {
         return immediately;
+    }
+
+    void setImmediately(Boolean immediately) {
+        this.immediately = immediately;
     }
 
     public Boolean getPermanent() {
         return permanent;
     }
 
+    void setPermanent(Boolean permanent) {
+        this.permanent = permanent;
+    }
+
     public int getWorkloadPercentageMin() {
         return workloadPercentageMin;
+    }
+
+    void setWorkloadPercentageMin(int workloadPercentageMin) {
+        this.workloadPercentageMin = workloadPercentageMin;
     }
 
     public int getWorkloadPercentageMax() {
         return workloadPercentageMax;
     }
 
+    void setWorkloadPercentageMax(int workloadPercentageMax) {
+        this.workloadPercentageMax = workloadPercentageMax;
+    }
+
+    public Set<WorkForm> getWorkForms() {
+        return workForms;
+    }
+
+    void setWorkForms(Set<WorkForm> workForms) {
+        this.workForms = workForms;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, endDate, durationInDays, immediately, permanent, workloadPercentageMin, workloadPercentageMax);
+        return Objects.hash(startDate, endDate, durationInDays, immediately, permanent, workloadPercentageMin, workloadPercentageMax, workForms);
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Employment that = (Employment) o;
         return workloadPercentageMin == that.workloadPercentageMin &&
                 workloadPercentageMax == that.workloadPercentageMax &&
@@ -79,7 +122,8 @@ public class Employment implements ValueObject<Employment> {
                 Objects.equals(endDate, that.endDate) &&
                 Objects.equals(durationInDays, that.durationInDays) &&
                 Objects.equals(immediately, that.immediately) &&
-                Objects.equals(permanent, that.permanent);
+                Objects.equals(permanent, that.permanent) &&
+                Objects.equals(workForms, that.workForms);
     }
 
     @Override
@@ -92,6 +136,7 @@ public class Employment implements ValueObject<Employment> {
                 ", permanent=" + permanent +
                 ", workloadPercentageMin=" + workloadPercentageMin +
                 ", workloadPercentageMax=" + workloadPercentageMax +
+                ", workForms=" + workForms +
                 '}';
     }
 
@@ -103,6 +148,7 @@ public class Employment implements ValueObject<Employment> {
         private Boolean permanent;
         private int workloadPercentageMin;
         private int workloadPercentageMax;
+        private Set<WorkForm> workForms;
 
         public Builder() {
         }
@@ -143,6 +189,11 @@ public class Employment implements ValueObject<Employment> {
 
         public Builder setWorkloadPercentageMax(int workloadPercentageMax) {
             this.workloadPercentageMax = workloadPercentageMax;
+            return this;
+        }
+
+        public Builder setWorkForms(Set<WorkForm> workForms) {
+            this.workForms = workForms;
             return this;
         }
     }

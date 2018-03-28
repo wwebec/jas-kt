@@ -1,13 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.EXPERIENCES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.LANGUAGES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.LANGUAGE_LEVEL;
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.SALUTATIONS;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.parseToLocalDate;
-import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.util.StringUtils.hasText;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSOsteEgov;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.math.BigInteger;
 import java.net.MalformedURLException;
@@ -19,29 +21,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.util.StringUtils;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CancellationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementAvamDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSOsteEgov;
+import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.*;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.parseToLocalDate;
+import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 
 public class JobAdvertisementFromAvamAssembler {
 
@@ -63,9 +47,9 @@ public class JobAdvertisementFromAvamAssembler {
                 null,
                 avamJobAdvertisement.getStellennummerEgov(),
                 avamJobAdvertisement.getStellennummerAvam(),
-                LocalDate.now(),
-                avamJobAdvertisement.getAbmeldeGrundCode(),
-                avamJobAdvertisement.getDetailangabenCode()
+                parseToLocalDate(avamJobAdvertisement.getAbmeldeDatum()), // TODO set value from AVAM
+                avamJobAdvertisement.getAbmeldeGrundCode(), // TODO set value from AVAM
+                avamJobAdvertisement.getDetailangabenCode() // TODO set value from AVAM
         );
     }
 
@@ -94,7 +78,8 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.getStellennummerEgov(),
                 avamJobAdvertisement.getStellennummerAvam(),
                 parseToLocalDate(avamJobAdvertisement.getAbmeldeDatum()),
-                avamJobAdvertisement.getAbmeldeGrundCode());
+                avamJobAdvertisement.getAbmeldeGrundCode()
+        );
     }
 
     private ContactDto createContactDto(WSOsteEgov avamJobAdvertisement) {
@@ -104,7 +89,8 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.getKpName(),
                 sanitizePhoneNumber(avamJobAdvertisement.getKpTelefonNr(), avamJobAdvertisement),
                 sanitizeEmail(avamJobAdvertisement.getKpEmail(), avamJobAdvertisement),
-                "de"); // TODO how to match this value from avam?
+                "de" // TODO how to match this value from avam?
+        );
     }
 
     private EmploymentDto createEmploymentDto(WSOsteEgov avamJobAdvertisement) {
@@ -115,7 +101,8 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.isAbSofort(),
                 avamJobAdvertisement.isUnbefristet(),
                 nonNull(avamJobAdvertisement.getPensumVon()) ? avamJobAdvertisement.getPensumVon().intValue() : 100,
-                nonNull(avamJobAdvertisement.getPensumBis()) ? avamJobAdvertisement.getPensumBis().intValue() : 100
+                nonNull(avamJobAdvertisement.getPensumBis()) ? avamJobAdvertisement.getPensumBis().intValue() : 100,
+                null
         );
     }
 
@@ -125,11 +112,13 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.getArbeitsOrtOrt(),
                 avamJobAdvertisement.getArbeitsOrtPlz(),
                 avamJobAdvertisement.getArbeitsOrtLand(),
-                avamJobAdvertisement.getArbeitsOrtGemeinde());
+                avamJobAdvertisement.getArbeitsOrtGemeinde()
+        );
     }
 
     private CompanyDto createCompanyDto(WSOsteEgov avamJobAdvertisement) {
-        return new CompanyDto(avamJobAdvertisement.getUntName(),
+        return new CompanyDto(
+                avamJobAdvertisement.getUntName(),
                 avamJobAdvertisement.getUntStrasse(),
                 avamJobAdvertisement.getUntHausNr(),
                 avamJobAdvertisement.getUntPlz(),
@@ -138,7 +127,11 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.getUntPostfach(),
                 avamJobAdvertisement.getUntPostfachPlz(),
                 avamJobAdvertisement.getUntPostfachOrt(),
-                null, null, null);
+                null,
+                null,
+                null,
+                false
+        );
     }
 
     private ApplyChannelDto createApplyChannelDto(WSOsteEgov avamJobAdvertisement) {
@@ -147,7 +140,8 @@ public class JobAdvertisementFromAvamAssembler {
                 sanitizeEmail(avamJobAdvertisement.getUntEmail(), avamJobAdvertisement),
                 sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement),
                 sanitizeUrl(avamJobAdvertisement.getUntUrl(), avamJobAdvertisement),
-                avamJobAdvertisement.getBewerAngaben());
+                avamJobAdvertisement.getBewerAngaben()
+        );
     }
 
     private List<OccupationDto> createOccupationDtos(WSOsteEgov avamJobAdvertisement) {
@@ -193,7 +187,10 @@ public class JobAdvertisementFromAvamAssembler {
     }
 
     private PublicationDto createPublicationDto(WSOsteEgov avamJobAdvertisement) {
-        return new PublicationDto(avamJobAdvertisement.isEures(),
+        return new PublicationDto(
+                null,
+                parseToLocalDate(avamJobAdvertisement.getGueltigkeit()),
+                avamJobAdvertisement.isEures(),
                 avamJobAdvertisement.isEuresAnonym(),
                 avamJobAdvertisement.isAnonym(),
                 avamJobAdvertisement.isPublikation(),

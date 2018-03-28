@@ -1,8 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
 public class EmploymentDto {
 
@@ -13,12 +15,13 @@ public class EmploymentDto {
     private Boolean permanent;
     private int workloadPercentageMin;
     private int workloadPercentageMax;
+    private Set<WorkForm> workForms;
 
     protected EmploymentDto() {
         // For reflection libs
     }
 
-    public EmploymentDto(LocalDate startDate, LocalDate endDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax) {
+    public EmploymentDto(LocalDate startDate, LocalDate endDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Set<WorkForm> workForms) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.durationInDays = durationInDays;
@@ -26,6 +29,7 @@ public class EmploymentDto {
         this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
         this.workloadPercentageMax = workloadPercentageMax;
+        this.workForms = workForms;
     }
 
     public static EmploymentDto toDto(Employment employment) {
@@ -37,6 +41,7 @@ public class EmploymentDto {
         employmentDto.setPermanent(employment.getPermanent());
         employmentDto.setWorkloadPercentageMin(employment.getWorkloadPercentageMin());
         employmentDto.setWorkloadPercentageMax(employment.getWorkloadPercentageMax());
+        employmentDto.setWorkForms(employment.getWorkForms());
         return employmentDto;
     }
 
@@ -94,5 +99,13 @@ public class EmploymentDto {
 
     public void setWorkloadPercentageMax(int workloadPercentageMax) {
         this.workloadPercentageMax = workloadPercentageMax;
+    }
+
+    public Set<WorkForm> getWorkForms() {
+        return workForms;
+    }
+
+    public void setWorkForms(Set<WorkForm> workForms) {
+        this.workForms = workForms;
     }
 }

@@ -22,52 +22,37 @@ public class Employer implements ValueObject<Employer> {
         // For reflection libs
     }
 
-    public String getName() {
-        return name;
+    public Employer(Builder builder) {
+        this.name = builder.name;
+        this.street = builder.street;
+        this.houseNumber = builder.houseNumber;
+        this.postalCode = builder.postalCode;
+        this.city = builder.city;
+        this.countryIsoCode = builder.countryIsoCode;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getName() {
+        return name;
     }
 
     public String getStreet() {
         return street;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
     public String getHouseNumber() {
         return houseNumber;
-    }
-
-    public void setHouseNumber(String houseNumber) {
-        this.houseNumber = houseNumber;
     }
 
     public String getPostalCode() {
         return postalCode;
     }
 
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     public String getCountryIsoCode() {
         return countryIsoCode;
-    }
-
-    public void setCountryIsoCode(String countryIsoCode) {
-        this.countryIsoCode = countryIsoCode;
     }
 
     @Override
@@ -98,5 +83,51 @@ public class Employer implements ValueObject<Employer> {
     @Override
     public int hashCode() {
         return Objects.hash(name, street, houseNumber, postalCode, city, countryIsoCode);
+    }
+
+    public static final class Builder {
+        private String name;
+        private String street;
+        private String houseNumber;
+        private String postalCode;
+        private String city;
+        private String countryIsoCode;
+
+        public Builder() {
+        }
+
+        public Employer build() {
+            return new Employer(this);
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setStreet(String street) {
+            this.street = street;
+            return this;
+        }
+
+        public Builder setHouseNumber(String houseNumber) {
+            this.houseNumber = houseNumber;
+            return this;
+        }
+
+        public Builder setPostalCode(String postalCode) {
+            this.postalCode = postalCode;
+            return this;
+        }
+
+        public Builder setCity(String city) {
+            this.city = city;
+            return this;
+        }
+
+        public Builder setCountryIsoCode(String countryIsoCode) {
+            this.countryIsoCode = countryIsoCode;
+            return this;
+        }
     }
 }

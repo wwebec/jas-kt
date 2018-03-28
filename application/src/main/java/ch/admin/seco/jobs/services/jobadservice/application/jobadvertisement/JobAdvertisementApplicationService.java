@@ -10,7 +10,6 @@ import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +90,7 @@ public class JobAdvertisementApplicationService {
 
         //TODO What should be the EURES value?
         Publication publication = new Publication.Builder()
+                // TODO Add fields of publication
                 .setEures(createJobAdvertisementWebFormDto.isEures())
                 .build();
 
@@ -141,6 +141,7 @@ public class JobAdvertisementApplicationService {
                 .build();
 
         Publication publication = new Publication.Builder()
+                // TODO Add fields of publication
                 .setEures(false)
                 .build();
 
@@ -154,6 +155,67 @@ public class JobAdvertisementApplicationService {
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(creator);
         return jobAdvertisement.getId();
+    }
+
+    public JobAdvertisementId createOrUpdateFromAvam(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
+        LOG.debug("Create or update '{}' from AVAM", createJobAdvertisementAvamDto.getTitle());
+
+        Location location = toLocation(createJobAdvertisementAvamDto.getLocation());
+        location = locationService.enrichCodes(location);
+
+        List<Occupation> occupations = createJobAdvertisementAvamDto.getOccupations().stream()
+                .map(this::toOccupation)
+                .map(this::enrichOccupationWithProfessionCodes)
+                .collect(toList());
+
+        JobContent jobContent = new JobContent.Builder()
+                .setJobDescriptions(Collections.singletonList(
+                        new JobDescription.Builder()
+                                .setLanguage(Locale.GERMAN)
+                                .setTitle(createJobAdvertisementAvamDto.getTitle())
+                                .setDescription(createJobAdvertisementAvamDto.getDescription())
+                                .build()
+                ))
+                .setLocation(location)
+                .setOccupations(occupations)
+                .setEmployment(toEmployment(createJobAdvertisementAvamDto.getEmployment()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementAvamDto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementAvamDto.getCompany()))
+                .setPublicContact(toPublicContact(createJobAdvertisementAvamDto.getContact()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementAvamDto.getLanguageSkills()))
+                .build();
+
+        Publication publication = new Publication.Builder()
+                .setEures(createJobAdvertisementAvamDto.getPublication().isEures())
+                .setEuresAnonymous(createJobAdvertisementAvamDto.getPublication().isEuresAnonymous())
+                .setPublicDisplay(createJobAdvertisementAvamDto.getPublication().isPublicDisplay())
+                .setPublicAnonynomous(createJobAdvertisementAvamDto.getPublication().isPublicAnonynomous())
+                .setRestrictedDisplay(createJobAdvertisementAvamDto.getPublication().isRestrictedDisplay())
+                .setRestrictedAnonymous(createJobAdvertisementAvamDto.getPublication().isRestrictedAnonymous())
+                .build();
+
+        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+                // FIXME .setReportingObligation(createJobAdvertisementAvamDto.getReportingObligation())
+                .setJobCenterCode(createJobAdvertisementAvamDto.getJobCenterCode())
+                .setJobContent(jobContent)
+                .setContact(toContact(createJobAdvertisementAvamDto.getContact()))
+                .setPublication(publication)
+                .build();
+
+        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromAvam(creator);
+        return jobAdvertisement.getId();
+    }
+
+    public void updateFromAvam(UpdateJobAdvertisementFromAvamDto updateJobAdvertisementFromAvamDto) {
+        final String stellennummerAvam = updateJobAdvertisementFromAvamDto.getStellennummerAvam();
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam)
+                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerAvam: " + stellennummerAvam));
+
+        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+                // TODO TBD what can be updated from AVAM
+                .build();
+
+        jobAdvertisement.update(updater);
     }
 
     public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
@@ -192,50 +254,6 @@ public class JobAdvertisementApplicationService {
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromExtern(creator);
-        return jobAdvertisement.getId();
-    }
-
-    public JobAdvertisementId createOrUpdateFromAvam(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
-        LOG.debug("Create or update '{}' from AVAM", createJobAdvertisementAvamDto.getTitle());
-
-        // FIXME Refactore
-        Location location = toLocation(createJobAdvertisementAvamDto.getLocation());
-        location = locationService.enrichCodes(location);
-
-        List<Occupation> occupations = createJobAdvertisementAvamDto.getOccupations().stream()
-                .map(this::toOccupation)
-                .map(this::enrichOccupationWithProfessionCodes)
-                .collect(toList());
-
-        final JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
-                .setLocation(location)
-                .setOccupations(occupations)
-                .setEmployment(toEmployment(createJobAdvertisementAvamDto.getEmployment()))
-                .setApplyChannel(toApplyChannel(createJobAdvertisementAvamDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementAvamDto.getCompany()))
-                .setContact(toContact(createJobAdvertisementAvamDto.getContact()))
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementAvamDto.getLanguageSkills()))
-                .setJobCenterCode(createJobAdvertisementAvamDto.getJobCenterCode())
-                .setWorkForms(createJobAdvertisementAvamDto.getWorkForm())
-                .setPublicAnonymous(createJobAdvertisementAvamDto.getPublication().isPublicAnonymous())
-                .setPublicPublication(createJobAdvertisementAvamDto.getPublication().isPublicPublication())
-                .setRestrictedAnonymous(createJobAdvertisementAvamDto.getPublication().isRestrictedAnonymous())
-                .setRestrictedPublication(createJobAdvertisementAvamDto.getPublication().isRestrictedPublication())
-                .build();
-
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(createJobAdvertisementAvamDto.getStellennummerAvam())
-                .map(savedJobAdvertisement -> {
-                    savedJobAdvertisement.init(updater);
-                    final JobAdvertisement updatedJobAdvertisement = jobAdvertisementRepository.save(savedJobAdvertisement);
-                    DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(updatedJobAdvertisement));
-                    return updatedJobAdvertisement;
-                })
-                .orElseGet(() -> jobAdvertisementFactory.createFromAvam(
-                        new Locale(createJobAdvertisementAvamDto.getLanguageIsoCode()),
-                        createJobAdvertisementAvamDto.getStellennummerAvam(),
-                        createJobAdvertisementAvamDto.getTitle(),
-                        createJobAdvertisementAvamDto.getDescription(),
-                        updater));
         return jobAdvertisement.getId();
     }
 
@@ -376,6 +394,7 @@ public class JobAdvertisementApplicationService {
                 .setPermanent(jobApiDto.getPermanent())
                 .setWorkloadPercentageMin(jobApiDto.getWorkingTimePercentageFrom())
                 .setWorkloadPercentageMax(jobApiDto.getWorkingTimePercentageTo())
+                // FIXME .setWorkForms(jobApiDto.getWorkForms())
                 .build();
     }
 
@@ -389,6 +408,7 @@ public class JobAdvertisementApplicationService {
                     .setPermanent(employmentDto.getPermanent())
                     .setWorkloadPercentageMin(employmentDto.getWorkloadPercentageMin())
                     .setWorkloadPercentageMax(employmentDto.getWorkloadPercentageMax())
+                    .setWorkForms(employmentDto.getWorkForms())
                     .build();
         }
         return null;

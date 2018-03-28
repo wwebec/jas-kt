@@ -95,7 +95,8 @@ class ActionDtoFactory {
                 null,
                 x28JobAdvertisement.isUnbefristet(),
                 nonNull(x28JobAdvertisement.getPensumVon()) ? x28JobAdvertisement.getPensumVon().intValue() : 100,
-                nonNull(x28JobAdvertisement.getPensumBis()) ? x28JobAdvertisement.getPensumBis().intValue() : 100
+                nonNull(x28JobAdvertisement.getPensumBis()) ? x28JobAdvertisement.getPensumBis().intValue() : 100,
+                null
         );
     }
 

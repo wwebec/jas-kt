@@ -46,7 +46,7 @@ public class AvamEndpoint {
         try {
             if (isRejected(avamJobAdvertisement)) {
                 avamSource.reject(jobAdvertisementFromAvamAssembler.createRejectionDto(avamJobAdvertisement));
-            } else if (isCanceled(avamJobAdvertisement)) {
+            } else if (isCancelled(avamJobAdvertisement)) {
                 avamSource.cancel(jobAdvertisementFromAvamAssembler.createCancellationDto(avamJobAdvertisement));
             } else if (isApproved(avamJobAdvertisement)) {
                 avamSource.approve(jobAdvertisementFromAvamAssembler.createApprovaldDto(avamJobAdvertisement));
@@ -82,10 +82,10 @@ public class AvamEndpoint {
     }
 
     private boolean isCreatedFromAvam(WSOsteEgov avamJobAdvertisement) {
-        return !isCanceled(avamJobAdvertisement);
+        return !isCancelled(avamJobAdvertisement);
     }
 
-    private boolean isCanceled(WSOsteEgov avamJobAdvertisement) {
+    private boolean isCancelled(WSOsteEgov avamJobAdvertisement) {
         return hasText(avamJobAdvertisement.getAbmeldeGrundCode());
     }
 
