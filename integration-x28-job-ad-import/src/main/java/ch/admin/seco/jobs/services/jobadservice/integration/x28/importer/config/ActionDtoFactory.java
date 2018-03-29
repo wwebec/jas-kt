@@ -91,10 +91,10 @@ class ActionDtoFactory {
         return new EmploymentDto(
                 startDate,
                 startDate.plusDays(60), // default lifetime of a JobAdvertisement is 60 days
-                null,
+                false,
                 null,
                 x28JobAdvertisement.isUnbefristet(),
-                nonNull(x28JobAdvertisement.getPensumVon()) ? x28JobAdvertisement.getPensumVon().intValue() : 100,
+                nonNull(x28JobAdvertisement.getPensumVon()) ? x28JobAdvertisement.getPensumVon().intValue() : 0,
                 nonNull(x28JobAdvertisement.getPensumBis()) ? x28JobAdvertisement.getPensumBis().intValue() : 100,
                 null
         );

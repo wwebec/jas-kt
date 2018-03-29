@@ -36,6 +36,7 @@ public class AggregateNotFoundException extends RuntimeException {
     }
 
     public enum IndentifierType {
-        ID
+        ID,
+        EXTERNAL_ID
     }
 }

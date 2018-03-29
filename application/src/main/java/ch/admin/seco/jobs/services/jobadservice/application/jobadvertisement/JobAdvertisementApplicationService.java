@@ -289,19 +289,24 @@ public class JobAdvertisementApplicationService {
 
     public void approve(ApprovalDto approvalDto) {
         // TODO tbd where/when the data updates has to be done (over ApprovalDto --> JobAdUpdater?)
-        Condition.notNull(approvalDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
-        LOG.debug("Starting approve for JobAdvertisementId: '{}'", approvalDto.getJobAdvertisementId());
-        JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(approvalDto.getJobAdvertisementId());
-        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        Condition.notNull(approvalDto.getStellennummerAvam(), "StellennummerAvam can't be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(approvalDto.getStellennummerAvam());
+        LOG.debug("Starting approve for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
     }
 
     public void reject(RejectionDto rejectionDto) {
-        Condition.notNull(rejectionDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
-        LOG.debug("Starting reject for JobAdvertisementId: '{}'", rejectionDto.getJobAdvertisementId());
-        JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(rejectionDto.getJobAdvertisementId());
-        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        Condition.notNull(rejectionDto.getStellennummerAvam(), "StellennummerAvam can't be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(rejectionDto.getStellennummerAvam());
+        LOG.debug("Starting reject for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
+    }
+
+    public void cancel(CancellationDto cancellationDto) {
+        Condition.notNull(cancellationDto.getStellennummerAvam(), "StellennummerAvam can't be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(cancellationDto.getStellennummerAvam());
+        LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
+        jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
     }
 
     public void refining(JobAdvertisementId jobAdvertisementId) {
@@ -340,14 +345,6 @@ public class JobAdvertisementApplicationService {
         }
     }
 
-    public void cancel(CancellationDto cancellationDto) {
-        Condition.notNull(cancellationDto.getJobAdvertisementId(), "JobAdvertisementId can't be null");
-        LOG.debug("Starting cancel for JobAdvertisementId: '{}'", cancellationDto.getJobAdvertisementId());
-        JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(cancellationDto.getJobAdvertisementId());
-        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
-        jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
-    }
-
     public void archive(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         LOG.debug("Starting archive for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
@@ -358,6 +355,11 @@ public class JobAdvertisementApplicationService {
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
+    }
+
+    private JobAdvertisement getJobAdvertisementByStellennummerAvam(String stellennummerAvam) throws AggregateNotFoundException {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam);
+        return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.EXTERNAL_ID, stellennummerAvam));
     }
 
     private Occupation enrichOccupationWithProfessionCodes(Occupation occupation) {
@@ -389,7 +391,7 @@ public class JobAdvertisementApplicationService {
         return new Employment.Builder()
                 .setStartDate(jobApiDto.getStartDate())
                 .setEndDate(jobApiDto.getEndDate())
-                .setShortEmployment(jobApiDto.getDurationInDays())
+                .setShortEmployment(jobApiDto.getShortEmployment())
                 .setImmediately(jobApiDto.getStartsImmediately())
                 .setPermanent(jobApiDto.getPermanent())
                 .setWorkloadPercentageMin(jobApiDto.getWorkingTimePercentageFrom())

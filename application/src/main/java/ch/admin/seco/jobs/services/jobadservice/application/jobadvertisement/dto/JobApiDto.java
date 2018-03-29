@@ -31,7 +31,7 @@ public class JobApiDto {
 
     private LocalDate endDate;
 
-    private Integer durationInDays;
+    private boolean shortEmployment;
 
     @NotNull
     private Boolean startsImmediately;
@@ -56,7 +56,7 @@ public class JobApiDto {
                      Integer workingTimePercentageTo,
                      LocalDate startDate,
                      LocalDate endDate,
-                     Integer durationInDays,
+                     boolean shortEmployment,
                      Boolean startsImmediately,
                      Boolean permanent,
                      CreateLocationDto location,
@@ -68,7 +68,7 @@ public class JobApiDto {
         this.workingTimePercentageTo = workingTimePercentageTo;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.durationInDays = durationInDays;
+        this.shortEmployment = shortEmployment;
         this.startsImmediately = startsImmediately;
         this.permanent = permanent;
         this.location = location;
@@ -163,11 +163,11 @@ public class JobApiDto {
         this.languageSkills = languageSkills;
     }
 
-    public Integer getDurationInDays() {
-        return durationInDays;
+    public boolean getShortEmployment() {
+        return shortEmployment;
     }
 
-    public void setDurationInDays(Integer durationInDays) {
-        this.durationInDays = durationInDays;
+    public void setShortEmployment(boolean shortEmployment) {
+        this.shortEmployment = shortEmployment;
     }
 }

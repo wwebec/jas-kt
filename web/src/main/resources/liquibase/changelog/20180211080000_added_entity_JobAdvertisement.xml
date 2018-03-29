@@ -116,7 +116,7 @@
 
             <column name="EMPLOYMENT_START_DATE" type="date"/>
             <column name="EMPLOYMENT_END_DATE" type="date"/>
-            <column name="EMPLOYMENT_DURATION_IN_DAYS" type="integer"/>
+            <column name="EMPLOYMENT_SHORT_EMPLOYMENT" type="boolean"/>
             <column name="EMPLOYMENT_IMMEDIATELY" type="boolean"/>
             <column name="EMPLOYMENT_PERMANENT" type="boolean"/>
             <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN" type="integer"/>
