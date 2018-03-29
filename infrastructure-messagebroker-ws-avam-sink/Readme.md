@@ -1,10 +1,10 @@
-# AVAM Web Service Integration
+# AVAM Export Web Service Integration
 
 This app listens on message queue `jobad.event` for events (_JOB_ADVERTISEMENT_INSPECTING_ and _JOB_ADVERTISEMENT_CANCELLING_) and sends them via web service to AVAM.
 
-Spring Profiles:
-- v1: AVAM Web Service Version 1 (Jobroom 1) (**default**) 
-- v2: AVAM Web Service Version 2 (Jobroom 2, with reportingObligation)
+### Spring Profiles:
+- avam-wsdl-v1: AVAM Web Service Version 1 (Jobroom 1) (**default**) 
+- avam-wsdl-v2: AVAM Web Service Version 2 (Jobroom 2, with reportingObligation)
 
 ### Deployment to Spring Cloud DataFlow
 
@@ -18,7 +18,7 @@ curl 'http://dev.job-room.ch:9393/apps/sink/ws-avam' -i -X POST -d 'uri=maven%3A
 curl http://dev.job-room.ch:9393/streams/definitions/ws-avam-export -i -X DELETE
 
 # Create stream and deploy
-curl http://dev.job-room.ch:9393/streams/definitions -X POST -d 'name=ws-avam-export&deploy=true&definition=:jobad.event > ws-avam-export: ws-avam --end-point-url=http://dev.job-room.ch:9180/AVAM_Web/services/EgovService --password=dummy --username=dummy --spring.profiles.active=v1'
+curl http://dev.job-room.ch:9393/streams/definitions -X POST -d 'name=ws-avam-export&deploy=true&definition=:jobad.event > ws-avam-export: ws-avam --end-point-url=http://dev.job-room.ch:9180/AVAM_Web/services/EgovService --password=dummy --username=dummy --spring.profiles.active=avam-wsdl-v1'
 ```
 
 ##### Dashboard
@@ -48,7 +48,7 @@ Run **ws-avam-sink** as seperate task from command-line:
 curl https://alvch.jfrog.io/alvch/global/ch/admin/seco/jobs/services/jobadservice/infrastructure-messagebroker-ws-avam-sink/<version>/infrastructure-messagebroker-ws-avam-sink-<version>.jar
 
 java -jar infrastructure-messagebroker-ws-avam-sink-<version>.jar \
-  --spring.profiles.active=<avam-interface-version: v1,v2>
+  --spring.profiles.active=<avam-interface-version: avam-wsdl-v1,avam-wsdl-v2>
   --spring.cloud.dataflow.stream.app.label=ws-avam \
   --spring.cloud.dataflow.stream.name=ws-avam-export \
   --spring.cloud.stream.bindings.input.destination=jobad.event \ 
@@ -59,7 +59,7 @@ java -jar infrastructure-messagebroker-ws-avam-sink-<version>.jar \
   --jobroom.ws.avam.endPointUrl=https://<avam-webservice-hostname>/AVAM_Web/services/EgovService \
   --jobroom.ws.avam.username=<username> \
   --jobroom.ws.avam.password=<password>
-  --server.port=20001  
+  --server.port=0  
 ```
 
 
@@ -69,7 +69,7 @@ java -jar infrastructure-messagebroker-ws-avam-sink-<version>.jar \
 curl https://alvch.jfrog.io/alvch/global/ch/admin/seco/jobs/services/jobadservice/infrastructure-messagebroker-ws-avam-sink/<version>/infrastructure-messagebroker-ws-avam-sink-<version>.jar
 
 java -jar infrastructure-messagebroker-ws-avam-sink-<version>.jar \
-  --spring.profiles.active=v2 \
+  --spring.profiles.active=avam-wsdl-v1 \
   --spring.cloud.dataflow.stream.app.label=ws-avam \
   --spring.cloud.dataflow.stream.name=ws-avam-export \
   --spring.cloud.stream.bindings.input.destination=jobad.event \ 
@@ -80,5 +80,5 @@ java -jar infrastructure-messagebroker-ws-avam-sink-<version>.jar \
   --jobroom.ws.avam.endPointUrl=http://dev.job-room.ch:9180/AVAM_Web/services/EgovService \
   --jobroom.ws.avam.username=dummy \
   --jobroom.ws.avam.password=dummy \  
-  --server.port=20001
+  --server.port=0
 ```
