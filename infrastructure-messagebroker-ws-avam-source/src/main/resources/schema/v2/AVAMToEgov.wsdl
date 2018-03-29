@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><definitions targetNamespace="http://ws.web.egov.avam.bit.admin.ch" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ws.web.egov.avam.bit.admin.ch" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="http://valueobjects.common.avam.bit.admin.ch">
+
+	<documentation>
+		Schnittstelle zu SECO eGov
+		==========================
+
+		Die Schnittstelle wurde möglichst einfach gestaltet. Es gibt auf beiden
+		Seiten der Schnittstelle einen Service, der die verschiedenen Operationen
+		implementiert.
+		Es wurde besonders darauf geachtet, dass die WSDL-Dateien kompatibel zu AJAX2 sind, 
+		da eGov seine WS-Clients und -Services mit AJAX implementieren will.
+
+		Sicherheit
+		==========
+
+		Die Verbindungen zwischen eGov und AVAM werden über HTTPS abgewickelt.
+		Die entsprechenden Zertifikate müssen in beiden Systemen installiert sein.
+		Der Anfrageteil (HTTP-POST) wird zudem mit einem technischen User und
+		einem Passwort innerhalb der SOAP-Nachricht gesichert.
+
+		Operationen
+		===========
+
+		- STES suchen in eGov
+		- Oste einfügen in eGov
+	</documentation>
+
+	<types>
+		<xs:schema elementFormDefault="unqualified">
+			<xs:import namespace="http://valueobjects.common.avam.bit.admin.ch" schemaLocation="AVAMToEgov.xsd"/>
+		</xs:schema>
+	</types>
+
+	<!-- 
+		Nachrichten Deklaration
+	 -->
+	<message name="searchStesRequest">
+		<part element="xsd1:searchStes" name="parameters"/>
+	</message>
+	<message name="searchStesResponse">
+		<part element="xsd1:searchStesResponse" name="parameters"/>
+	</message>
+	<message name="insertOsteRequest">
+		<part element="xsd1:insertOste" name="parameters"/>
+	</message>
+	<message name="insertOsteResponse">
+		<part element="xsd1:insertOsteResponse" name="parameters">
+		</part>
+	</message>
+
+	<!-- 
+		Port Deklaration
+	 -->
+	<portType name="SecoEgovWS">
+		<operation name="searchStes">
+			<input message="tns:searchStesRequest" name="searchStesRequest">
+			</input>
+			<output message="tns:searchStesResponse" name="searchStesResponse">
+			</output>
+		</operation>
+		<operation name="insertOste">
+			<input message="tns:insertOsteRequest" name="insertOsteRequest">
+			</input>
+			<output message="tns:insertOsteResponse" name="insertOsteResponse">
+			</output>
+		</operation>
+	</portType>
+
+	<!-- 
+		Port Binding
+	 -->
+	<binding name="SecoEgovWSSoapBinding" type="tns:SecoEgovWS">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="searchStes">
+			<soap:operation/>
+			<input name="searchStesRequest">
+				<soap:body use="literal"/>
+			</input>
+			<output name="searchStesResponse">
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="insertOste">
+			<soap:operation/>
+			<input name="insertOsteRequest">
+				<soap:body use="literal"/>
+			</input>
+			<output name="insertOsteResponse">
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+	</binding>
+
+	<!-- 
+		Service Deklaration
+	 -->
+	<service name="SecoEgovService">
+		<port binding="tns:SecoEgovWSSoapBinding" name="SecoEgovWS">
+			<soap:address location="https://localhost:9443/MyTestWeb5/services/SecoEgovWS"/>
+		</port>
+	</service>
+
+</definitions>

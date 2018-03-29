@@ -157,7 +157,7 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.getId();
     }
 
-    public JobAdvertisementId createOrUpdateFromAvam(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
+    public JobAdvertisementId createFromAvam(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
         LOG.debug("Create or update '{}' from AVAM", createJobAdvertisementAvamDto.getTitle());
 
         Location location = toLocation(createJobAdvertisementAvamDto.getLocation());
@@ -389,7 +389,7 @@ public class JobAdvertisementApplicationService {
         return new Employment.Builder()
                 .setStartDate(jobApiDto.getStartDate())
                 .setEndDate(jobApiDto.getEndDate())
-                .setDurationInDays(jobApiDto.getDurationInDays())
+                .setShortEmployment(jobApiDto.getDurationInDays())
                 .setImmediately(jobApiDto.getStartsImmediately())
                 .setPermanent(jobApiDto.getPermanent())
                 .setWorkloadPercentageMin(jobApiDto.getWorkingTimePercentageFrom())
@@ -403,7 +403,7 @@ public class JobAdvertisementApplicationService {
             return new Employment.Builder()
                     .setStartDate(employmentDto.getStartDate())
                     .setEndDate(employmentDto.getEndDate())
-                    .setDurationInDays(employmentDto.getDurationInDays())
+                    .setShortEmployment(employmentDto.getShortEmployment())
                     .setImmediately(employmentDto.getImmediately())
                     .setPermanent(employmentDto.getPermanent())
                     .setWorkloadPercentageMin(employmentDto.getWorkloadPercentageMin())

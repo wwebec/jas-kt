@@ -6,8 +6,6 @@ import javax.validation.constraints.NotNull;
 
 public class ApprovalDto {
 
-    private String jobAdvertisementId;
-
     @NotNull
     private String stellennummerEgov;
 
@@ -25,21 +23,12 @@ public class ApprovalDto {
         // For reflection libs
     }
 
-    public ApprovalDto(String jobAdvertisementId, String stellennummerEgov, String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
-        this.jobAdvertisementId = jobAdvertisementId;
+    public ApprovalDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.date = date;
         this.reportingObligation = reportingObligation;
         this.reportingObligationEndDate = reportingObligationEndDate;
-    }
-
-    public String getJobAdvertisementId() {
-        return jobAdvertisementId;
-    }
-
-    public void setJobAdvertisementId(String jobAdvertisementId) {
-        this.jobAdvertisementId = jobAdvertisementId;
     }
 
     public String getStellennummerEgov() {

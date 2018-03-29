@@ -39,7 +39,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AvamSourceApplication.class)
-public class AvamEndpointTest {
+public class AvamEndpointV2Test {
 
     private MockWebServiceClient mockWebServiceClient;
 
@@ -60,7 +60,7 @@ public class AvamEndpointTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Value("classpath:/schema/SecoEgovService.xsd")
+    @Value("classpath:/schema/v1/AVAMToEgov.xsd")
     private Resource secoEgovServiceXsdResource;
 
     @Before

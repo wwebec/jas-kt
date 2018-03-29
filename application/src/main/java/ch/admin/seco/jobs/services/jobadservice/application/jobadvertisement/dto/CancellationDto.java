@@ -6,8 +6,6 @@ import javax.validation.constraints.NotNull;
 
 public class CancellationDto {
 
-    private String jobAdvertisementId;
-
     private String stellennummerEgov;
 
     @NotNull
@@ -21,20 +19,11 @@ public class CancellationDto {
         // For reflection libs
     }
 
-    public CancellationDto(String jobAdvertisementId, String stellennummerEgov, String stellennummerAvam, LocalDate date, String code) {
-        this.jobAdvertisementId = jobAdvertisementId;
+    public CancellationDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, String code) {
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.date = date;
         this.code = code;
-    }
-
-    public String getJobAdvertisementId() {
-        return jobAdvertisementId;
-    }
-
-    public void setJobAdvertisementId(String jobAdvertisementId) {
-        this.jobAdvertisementId = jobAdvertisementId;
     }
 
     public String getStellennummerEgov() {

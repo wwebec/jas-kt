@@ -1,5 +1,6 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
 
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1.JobAdvertisementFromAvamAssemblerV1;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +16,7 @@ import org.springframework.xml.xsd.XsdSchema;
 
 @EnableWs
 @Configuration
-public class WebServiceConfig extends WsConfigurerAdapter {
+public class AvamEndpointV1Config extends WsConfigurerAdapter {
     @Bean
     public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
@@ -27,17 +28,17 @@ public class WebServiceConfig extends WsConfigurerAdapter {
     @Bean(name = "SecoEgovService")
     public Wsdl11Definition secoEgovServiceWsdl11Definition() {
         SimpleWsdl11Definition wsdl11Definition = new SimpleWsdl11Definition();
-        wsdl11Definition.setWsdl(new ClassPathResource("/schema/SecoEgovService.wsdl")); //your schema location
+        wsdl11Definition.setWsdl(new ClassPathResource("/schema/v1/AVAMToEgov.wsdl")); //your schema location
         return wsdl11Definition;
     }
 
     @Bean(name = "SecoEgovServiceXsd")
     public XsdSchema secoEgovSchema() {
-        return new SimpleXsdSchema(new ClassPathResource("/schema/SecoEgovService.xsd"));
+        return new SimpleXsdSchema(new ClassPathResource("/schema/v1/AVAMToEgov.xsd"));
     }
 
     @Bean
-    public JobAdvertisementFromAvamAssembler jobAdvertisementFromAvamAssembler() {
-        return new JobAdvertisementFromAvamAssembler();
+    public JobAdvertisementFromAvamAssemblerV1 jobAdvertisementFromAvamAssembler() {
+        return new JobAdvertisementFromAvamAssemblerV1();
     }
 }

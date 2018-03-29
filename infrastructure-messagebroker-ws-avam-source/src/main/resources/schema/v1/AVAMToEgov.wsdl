@@ -33,7 +33,7 @@
     <types>
         <xs:schema elementFormDefault="unqualified">
             <xs:import namespace="http://valueobjects.common.avam.bit.admin.ch"
-                       schemaLocation="SecoEgovService.xsd"/>
+                       schemaLocation="AVAMToEgov.xsd"/>
         </xs:schema>
     </types>
     <message name="insertOsteRequest">

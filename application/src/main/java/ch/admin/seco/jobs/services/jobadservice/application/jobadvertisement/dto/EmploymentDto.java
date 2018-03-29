@@ -10,7 +10,7 @@ public class EmploymentDto {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private Integer durationInDays;
+    private boolean shortEmployment;
     private Boolean immediately;
     private Boolean permanent;
     private int workloadPercentageMin;
@@ -21,10 +21,10 @@ public class EmploymentDto {
         // For reflection libs
     }
 
-    public EmploymentDto(LocalDate startDate, LocalDate endDate, Integer durationInDays, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Set<WorkForm> workForms) {
+    public EmploymentDto(LocalDate startDate, LocalDate endDate, boolean shortEmployment, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Set<WorkForm> workForms) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.durationInDays = durationInDays;
+        this.shortEmployment = shortEmployment;
         this.immediately = immediately;
         this.permanent = permanent;
         this.workloadPercentageMin = workloadPercentageMin;
@@ -36,7 +36,7 @@ public class EmploymentDto {
         EmploymentDto employmentDto = new EmploymentDto();
         employmentDto.setStartDate(employment.getStartDate());
         employmentDto.setEndDate(employment.getEndDate());
-        employmentDto.setDurationInDays(employment.getDurationInDays());
+        employmentDto.setShortEmployment(employment.getShortEmployment());
         employmentDto.setImmediately(employment.getImmediately());
         employmentDto.setPermanent(employment.getPermanent());
         employmentDto.setWorkloadPercentageMin(employment.getWorkloadPercentageMin());
@@ -61,12 +61,12 @@ public class EmploymentDto {
         this.endDate = endDate;
     }
 
-    public Integer getDurationInDays() {
-        return durationInDays;
+    public boolean getShortEmployment() {
+        return shortEmployment;
     }
 
-    public void setDurationInDays(Integer durationInDays) {
-        this.durationInDays = durationInDays;
+    public void setShortEmployment(boolean shortEmployment) {
+        this.shortEmployment = shortEmployment;
     }
 
     public Boolean getImmediately() {

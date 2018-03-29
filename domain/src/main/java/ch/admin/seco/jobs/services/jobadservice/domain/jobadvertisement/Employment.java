@@ -13,7 +13,7 @@ public class Employment implements ValueObject<Employment> {
 
     private LocalDate startDate;
     private LocalDate endDate;
-    private Integer durationInDays;
+    private boolean shortEmployment;
     private Boolean immediately;
     private Boolean permanent;
     private int workloadPercentageMin;
@@ -30,7 +30,7 @@ public class Employment implements ValueObject<Employment> {
     public Employment(Builder builder) {
         this.startDate = builder.startDate;
         this.endDate = builder.endDate;
-        this.durationInDays = builder.durationInDays;
+        this.shortEmployment = builder.shortEmployment;
         this.immediately = builder.immediately;
         this.permanent = builder.permanent;
         this.workloadPercentageMin = builder.workloadPercentageMin;
@@ -54,12 +54,12 @@ public class Employment implements ValueObject<Employment> {
         this.endDate = endDate;
     }
 
-    public Integer getDurationInDays() {
-        return durationInDays;
+    public boolean getShortEmployment() {
+        return shortEmployment;
     }
 
-    void setDurationInDays(Integer durationInDays) {
-        this.durationInDays = durationInDays;
+    void setShortEmployment(boolean shortEmployment) {
+        this.shortEmployment = shortEmployment;
     }
 
     public Boolean getImmediately() {
@@ -104,7 +104,7 @@ public class Employment implements ValueObject<Employment> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, endDate, durationInDays, immediately, permanent, workloadPercentageMin, workloadPercentageMax, workForms);
+        return Objects.hash(startDate, endDate, shortEmployment, immediately, permanent, workloadPercentageMin, workloadPercentageMax, workForms);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class Employment implements ValueObject<Employment> {
                 workloadPercentageMax == that.workloadPercentageMax &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(endDate, that.endDate) &&
-                Objects.equals(durationInDays, that.durationInDays) &&
+                Objects.equals(shortEmployment, that.shortEmployment) &&
                 Objects.equals(immediately, that.immediately) &&
                 Objects.equals(permanent, that.permanent) &&
                 Objects.equals(workForms, that.workForms);
@@ -131,7 +131,7 @@ public class Employment implements ValueObject<Employment> {
         return "Employment{" +
                 "startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", durationInDays=" + durationInDays +
+                ", shortEmployment=" + shortEmployment +
                 ", immediately=" + immediately +
                 ", permanent=" + permanent +
                 ", workloadPercentageMin=" + workloadPercentageMin +
@@ -143,7 +143,7 @@ public class Employment implements ValueObject<Employment> {
     public static final class Builder {
         private LocalDate startDate;
         private LocalDate endDate;
-        private Integer durationInDays;
+        private boolean shortEmployment;
         private Boolean immediately;
         private Boolean permanent;
         private int workloadPercentageMin;
@@ -167,8 +167,8 @@ public class Employment implements ValueObject<Employment> {
             return this;
         }
 
-        public Builder setDurationInDays(Integer durationInDays) {
-            this.durationInDays = durationInDays;
+        public Builder setShortEmployment(boolean shortEmployment) {
+            this.shortEmployment = shortEmployment;
             return this;
         }
 

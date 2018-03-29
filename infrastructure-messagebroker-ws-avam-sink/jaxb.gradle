@@ -17,6 +17,7 @@ task genJaxb {
         project.ant {
             taskdef name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.jaxb.asPath
             mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
 
             xjc(destdir: sourcesDir, package: 'ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1') {
                 schema(dir: schemaDir, includes: 'v1/*.wsdl')
