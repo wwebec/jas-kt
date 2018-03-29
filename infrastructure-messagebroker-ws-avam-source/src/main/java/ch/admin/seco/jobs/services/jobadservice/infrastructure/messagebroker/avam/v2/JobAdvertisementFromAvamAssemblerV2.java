@@ -93,7 +93,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
         return new EmploymentDto(
                 parseToLocalDate(avamJobAdvertisement.getStellenantritt()),
                 parseToLocalDate(avamJobAdvertisement.getVertragsdauer()),
-                avamJobAdvertisement.isKurzeinsatz(),
+                safeBoolean(avamJobAdvertisement.isKurzeinsatz(), false),
                 avamJobAdvertisement.isAbSofort(),
                 avamJobAdvertisement.isUnbefristet(),
                 nonNull(avamJobAdvertisement.getPensumVon()) ? avamJobAdvertisement.getPensumVon().intValue() : 0,
@@ -252,5 +252,9 @@ public class JobAdvertisementFromAvamAssemblerV2 {
             }
         }
         return null;
+    }
+
+    private static boolean safeBoolean(Boolean value, boolean defaultValue) {
+        return (value != null) ? value.booleanValue() : defaultValue;
     }
 }

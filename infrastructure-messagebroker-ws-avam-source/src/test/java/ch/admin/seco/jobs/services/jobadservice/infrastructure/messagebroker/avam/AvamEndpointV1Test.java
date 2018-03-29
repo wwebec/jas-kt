@@ -1,24 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.APPROVE;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.CANCEL;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.CREATE_FROM_AVAM;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.REJECT;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.ACTION;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.ws.test.server.RequestCreators.withPayload;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CancellationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.json.JacksonTester;
@@ -34,15 +25,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ws.test.server.MockWebServiceClient;
 import org.springframework.ws.test.server.ResponseMatchers;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CancellationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementAvamDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.*;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.ACTION;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.ws.test.server.RequestCreators.withPayload;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AvamSourceApplication.class)
-@ActiveProfiles(ProfileRegistry.AVAM_WSDL_V2)
-public class AvamEndpointV2Test {
+@ActiveProfiles(ProfileRegistry.AVAM_WSDL_V1)
+public class AvamEndpointV1Test {
 
     private MockWebServiceClient mockWebServiceClient;
 
@@ -63,7 +58,7 @@ public class AvamEndpointV2Test {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Value("classpath:/schema/v2/AVAMToEgov.xsd")
+    @Value("classpath:/schema/v1/AVAMToEgov.xsd")
     private Resource secoEgovServiceXsdResource;
 
     @Before
@@ -107,9 +102,6 @@ public class AvamEndpointV2Test {
         RejectionDto rejectionDto = rejectionDtoJacksonTester.parse(received.getPayload()).getObject();
         assertThat(rejectionDto.getStellennummerEgov()).isEqualTo("EGOV-0002");
         assertThat(rejectionDto.getStellennummerAvam()).isEqualTo("AVAM-0002");
-        assertThat(rejectionDto.getDate()).isEqualTo("2018-03-03");
-        assertThat(rejectionDto.getCode()).isEqualTo("REJECT-CODE");
-        assertThat(rejectionDto.getReason()).isEqualTo("REJECT-REASON");
     }
 
     @Test

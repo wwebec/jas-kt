@@ -7,6 +7,9 @@
         <osteEgovId>900000</osteEgovId>
         <abSofort>1</abSofort>
         <abgelehnt>1</abgelehnt>
+        <ablehnungDatum>03.03.2018</ablehnungDatum>
+        <ablehnungGrund>REJECT-REASON</ablehnungGrund>
+        <ablehnungGrundCode>REJECT-CODE</ablehnungGrundCode>
         <abmeldeDatum></abmeldeDatum>
         <abmeldeGrundCode></abmeldeGrundCode>
         <alterBis>50</alterBis>
