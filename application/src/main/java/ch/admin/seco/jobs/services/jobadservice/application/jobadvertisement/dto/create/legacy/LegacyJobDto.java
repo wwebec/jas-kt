@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

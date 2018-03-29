@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
 import javax.validation.constraints.NotEmpty;
 

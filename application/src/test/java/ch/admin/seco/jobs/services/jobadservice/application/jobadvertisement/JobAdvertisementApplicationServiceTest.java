@@ -4,6 +4,8 @@ import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
@@ -79,23 +81,24 @@ public class JobAdvertisementApplicationServiceTest {
     @Test
     public void createFromWebForm() {
         //Prepare
-        CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto = new CreateJobAdvertisementWebFormDto(
+        CreateJobAdvertisementDto createJobAdvertisementDto = new CreateJobAdvertisementDto(
                 true,
-                "de",
-                "title",
-                "description",
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, true, false, 80, 100, null),
-                "drivingLicenseLevel",
-                new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
+                null,
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
+                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false),
+                Collections.singletonList(new JobDescriptionDto("de", "title", "description")),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
+                null,
+                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, true, false, 80, 100, null),
                 new CreateLocationDto("remarks", "ctiy", "postalCode", "CH", "ZH"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
-                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
+                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
+                new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
+                new PublicContactDto(Salutation.MR, "firstName", "lastName", "phone", "email")
         );
 
         //Execute
-        JobAdvertisementId jobAdvertisementId = sut.createFromWebForm(createJobAdvertisementWebFormDto);
+        JobAdvertisementId jobAdvertisementId = sut.createFromWebForm(createJobAdvertisementDto);
 
         //Validate
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
@@ -110,34 +113,24 @@ public class JobAdvertisementApplicationServiceTest {
     @Test
     public void createFromApi() {
         //Prepare
-        CreateJobAdvertisementApiDto jobAdvertisementApiDto = new CreateJobAdvertisementApiDto(
+        CreateJobAdvertisementDto createJobAdvertisementDto = new CreateJobAdvertisementDto(
                 false,
-                LocalDate.of(2018, 1, 1),
-                LocalDate.of(2018, 12, 31),
-                "ref",
-                "http://url",
-                new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new JobApiDto(
-                        "de",
-                        "title",
-                        "descriptioin",
-                        10,
-                        90,
-                        LocalDate.of(2018, 1, 1),
-                        LocalDate.of(2018, 12, 31),
-                        false,
-                        true,
-                        true,
-                        new CreateLocationDto("remarks", "ctiy", "postalCode", "CH", "ZH"),
-                        Collections.emptyList()
-                ),
-                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
+                null,
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")
+                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false),
+                Collections.singletonList(new JobDescriptionDto("de", "title", "description")),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
+                null,
+                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, true, false, 80, 100, null),
+                new CreateLocationDto("remarks", "ctiy", "postalCode", "CH", "ZH"),
+                new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
+                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
+                new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
+                new PublicContactDto(Salutation.MR, "firstName", "lastName", "phone", "email")
         );
 
         //Execute
-        JobAdvertisementId jobAdvertisementId = sut.createFromApi(jobAdvertisementApiDto);
+        JobAdvertisementId jobAdvertisementId = sut.createFromApi(createJobAdvertisementDto);
 
         //Validate
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);

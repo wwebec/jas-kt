@@ -1,10 +1,10 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Locale;
 
-public class LegacyJobAdvertisementApiDto {
+public class LegacyJobAdvertisementDto {
 
     @Valid
     private LegacyJobDto job;
@@ -19,11 +19,11 @@ public class LegacyJobAdvertisementApiDto {
     @NotNull
     private Locale locale;
 
-    protected LegacyJobAdvertisementApiDto() {
+    protected LegacyJobAdvertisementDto() {
         // For reflection libs
     }
 
-    public LegacyJobAdvertisementApiDto(
+    public LegacyJobAdvertisementDto(
             LegacyJobDto job,
             LegacyCompanyDto company,
             LegacyContactDto contact,

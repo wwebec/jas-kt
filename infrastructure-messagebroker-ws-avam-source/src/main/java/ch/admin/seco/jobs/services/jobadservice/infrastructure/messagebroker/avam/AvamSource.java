@@ -10,15 +10,15 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebro
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.AVAM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.JOB_AD_SERVICE;
 
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CancellationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementAvamDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 
 @EnableBinding(Source.class)
 public class AvamSource {
@@ -47,9 +47,9 @@ public class AvamSource {
                 .build());
     }
 
-    public void create(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
+    public void create(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
         output.send(MessageBuilder
-                .withPayload(createJobAdvertisementAvamDto)
+                .withPayload(createJobAdvertisementFromAvamDto)
                 .setHeader(ACTION, CREATE_FROM_AVAM.name())
                 .setHeader(SOURCE_SYSTEM, AVAM.name())
                 .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE.name())

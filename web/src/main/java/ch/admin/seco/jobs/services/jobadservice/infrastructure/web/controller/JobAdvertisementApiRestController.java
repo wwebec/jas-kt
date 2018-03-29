@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
 import javax.validation.Valid;
 
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy.LegacyJobAdvertisementDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementApiDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 
 @RestController
-@RequestMapping("/api/jobAdvertisement/api")
+@RequestMapping("/api/jobAdvertisement")
 public class JobAdvertisementApiRestController {
 
 	private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
@@ -28,13 +29,19 @@ public class JobAdvertisementApiRestController {
 		this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
 	}
 
-	@PostMapping
-	public JobAdvertisementDto createFromApi(@RequestBody @Valid CreateJobAdvertisementApiDto createJobAdvertisementApiDto) throws AggregateNotFoundException {
-		JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementApiDto);
+	@PostMapping(path = "/api")
+	public JobAdvertisementDto createFromApi(@RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
+		JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementDto);
 		return jobAdvertisementApplicationService.findById(jobAdvertisementId);
 	}
 
-	@PostMapping(path = "/{id}/cancel")
+	@PostMapping(path = "/api-legacy")
+	public JobAdvertisementDto createFromLegacyApi(@RequestBody @Valid LegacyJobAdvertisementDto legacyJobAdvertisementDto) throws AggregateNotFoundException {
+		CreateJobAdvertisementDto createJobAdvertisementDto = null; //ConvertLegacyToJobAdvertisement.convert(legacyJobAdvertisementDto)
+		return createFromApi(createJobAdvertisementDto);
+	}
+
+	@PostMapping(path = "/api/{id}/cancel")
 	public ResponseEntity<?> cancelFromApi(@PathVariable Integer id) {
 		// TODO: implement
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);

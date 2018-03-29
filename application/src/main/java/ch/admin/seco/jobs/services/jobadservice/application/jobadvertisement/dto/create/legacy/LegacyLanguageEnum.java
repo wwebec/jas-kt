@@ -1,6 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
-
-import com.google.common.collect.ImmutableBiMap;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy;
 
 /**
  * The language codes rely on the ISO 639-1 norm, with an exception for swiss german (de-ch).

@@ -1,10 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
 import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CancellationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementAvamDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,8 +27,6 @@ import org.springframework.ws.test.server.MockWebServiceClient;
 import org.springframework.ws.test.server.ResponseMatchers;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.*;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.ACTION;
@@ -45,7 +43,7 @@ public class AvamEndpointV1Test {
 
     private JacksonTester<ApprovalDto> approvalDtoJacksonTester;
     private JacksonTester<RejectionDto> rejectionDtoJacksonTester;
-    private JacksonTester<CreateJobAdvertisementAvamDto> createJobAdvertisementAvamDtoJacksonTester;
+    private JacksonTester<CreateJobAdvertisementFromAvamDto> createJobAdvertisementAvamDtoJacksonTester;
     private JacksonTester<CancellationDto> cancellationDtoJacksonTester;
 
     @Autowired
@@ -119,10 +117,10 @@ public class AvamEndpointV1Test {
         assertThat(received).isNotNull();
         assertThat(received.getHeaders().get(ACTION)).isEqualTo(CREATE_FROM_AVAM.name());
 
-        CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto = createJobAdvertisementAvamDtoJacksonTester.parse(received.getPayload()).getObject();
-        assertThat(createJobAdvertisementAvamDto.getStellennummerAvam()).isEqualTo("AVAM-0003");
-        assertThat(createJobAdvertisementAvamDto.getTitle()).isEqualTo("Test Title");
-        assertThat(createJobAdvertisementAvamDto.getDescription()).isEqualTo("Test Description");
+        CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto = createJobAdvertisementAvamDtoJacksonTester.parse(received.getPayload()).getObject();
+        assertThat(createJobAdvertisementFromAvamDto.getStellennummerAvam()).isEqualTo("AVAM-0003");
+        assertThat(createJobAdvertisementFromAvamDto.getTitle()).isEqualTo("Test Title");
+        assertThat(createJobAdvertisementFromAvamDto.getDescription()).isEqualTo("Test Description");
     }
 
     @Test

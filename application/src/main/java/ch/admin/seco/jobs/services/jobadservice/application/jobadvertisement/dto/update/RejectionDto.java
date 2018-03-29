@@ -1,29 +1,34 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update;
 
 import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
 
-public class CancellationDto {
-
-    private String stellennummerEgov;
+public class RejectionDto {
 
     @NotNull
+    private String stellennummerEgov;
+
     private String stellennummerAvam;
 
+    @NotNull
     private LocalDate date;
 
+    @NotNull
     private String code;
 
-    protected CancellationDto() {
+    private String reason;
+
+    protected RejectionDto() {
         // For reflection libs
     }
 
-    public CancellationDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, String code) {
+    public RejectionDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, String code, String reason) {
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.date = date;
         this.code = code;
+        this.reason = reason;
     }
 
     public String getStellennummerEgov() {
@@ -56,5 +61,13 @@ public class CancellationDto {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
     }
 }

@@ -1,6 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v1.WSOsteEgov;
 import com.google.i18n.phonenumbers.NumberParseException;
@@ -31,12 +36,14 @@ public class JobAdvertisementFromAvamAssemblerV1 {
     private static final Logger LOG = LoggerFactory.getLogger(JobAdvertisementFromAvamAssemblerV1.class);
     private static final EmailValidator emailValidator = new EmailValidator();
 
-    CreateJobAdvertisementAvamDto createCreateJobAdvertisementAvamDto(WSOsteEgov avamJobAdvertisement) {
-        return new CreateJobAdvertisementAvamDto(
+    CreateJobAdvertisementFromAvamDto createCreateJobAdvertisementAvamDto(WSOsteEgov avamJobAdvertisement) {
+        return new CreateJobAdvertisementFromAvamDto(
                 avamJobAdvertisement.getStellennummerAvam(),
                 avamJobAdvertisement.getBezeichnung(),
                 avamJobAdvertisement.getBeschreibung(),
                 "de", // Not defined in this AVAM version
+                false,
+                null,
                 avamJobAdvertisement.getArbeitsamtBereich(),
                 createEmploymentDto(avamJobAdvertisement),
                 createApplyChannelDto(avamJobAdvertisement),
