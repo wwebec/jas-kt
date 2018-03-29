@@ -27,13 +27,13 @@ public class AvamEndpointV2Config extends WsConfigurerAdapter {
     @Bean(name = "SecoEgovService")
     public Wsdl11Definition secoEgovServiceWsdl11Definition() {
         SimpleWsdl11Definition wsdl11Definition = new SimpleWsdl11Definition();
-        wsdl11Definition.setWsdl(new ClassPathResource("/schema/v1/AVAMToEgov.wsdl")); //your schema location
+        wsdl11Definition.setWsdl(new ClassPathResource("/schema/v2/AVAMToEgov.wsdl")); //your schema location
         return wsdl11Definition;
     }
 
     @Bean(name = "SecoEgovServiceXsd")
     public XsdSchema secoEgovSchema() {
-        return new SimpleXsdSchema(new ClassPathResource("/schema/v1/AVAMToEgov.xsd"));
+        return new SimpleXsdSchema(new ClassPathResource("/schema/v2/AVAMToEgov.xsd"));
     }
 
     @Bean
