@@ -97,9 +97,10 @@ public class X28JobAdImportTaskConfig {
                 return RepeatStatus.FINISHED;
             }
 
-            File xmlFile = unzip(x28JobAdDataFileMessage.getPayload());
-            if (!xmlFile.equals(x28JobAdDataFileMessage.getPayload())) {
-                Files.delete(x28JobAdDataFileMessage.getPayload().toPath());
+            File originFile = x28JobAdDataFileMessage.getPayload();
+            File xmlFile = unzip(originFile);
+            if (!xmlFile.equals(originFile)) {
+                delete(originFile.toPath());
             }
 
             ExecutionContext executionContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
@@ -134,17 +135,28 @@ public class X28JobAdImportTaskConfig {
         return new X28JobAdWriter(messageBrokerOutputChannel);
     }
 
-    private File unzip(File originalFile) throws IOException {
-        if (originalFile.getName().endsWith(".zip")) {
-            ZipFile zipFile = new ZipFile(originalFile);
+    private void delete(Path filePath) {
+        if (Files.isWritable(filePath)) {
+            try {
+                Files.delete(filePath);
+            } catch (IOException e) {
+                filePath.toFile().deleteOnExit();
+                LOG.error("Failed to delete file {}", filePath.toAbsolutePath().toUri());
+            }
+        }
+    }
+
+    private File unzip(File originFile) throws IOException {
+        if (originFile.getName().endsWith(".zip")) {
+            ZipFile zipFile = new ZipFile(originFile);
             ZipEntry zipEntry = zipFile.entries().nextElement();
 
-            File targetFile = Files.createTempFile(null, null).toFile();
+            File targetFile = Files.createTempFile(originFile.toPath().getParent(), null, null).toFile();
             ZipUtil.unpackEntry(zipFile, zipEntry.getName(), targetFile);
             targetFile.setLastModified(zipEntry.getLastModifiedTime().toMillis());
             return targetFile;
         } else {
-            return originalFile;
+            return originFile;
         }
     }
 
@@ -162,13 +174,7 @@ public class X28JobAdImportTaskConfig {
             if (jobExecution.getExecutionContext().containsKey(PARAMETER_XML_FILE_PATH)) {
 
                 Path xmlFilePath = Paths.get(jobExecution.getExecutionContext().getString(PARAMETER_XML_FILE_PATH));
-                try {
-                    if (Files.exists(xmlFilePath)) {
-                        Files.delete(xmlFilePath);
-                    }
-                } catch (IOException e) {
-                    LOG.error("Failed to delete xml file", e);
-                }
+                delete(xmlFilePath);
             }
         }
     }
