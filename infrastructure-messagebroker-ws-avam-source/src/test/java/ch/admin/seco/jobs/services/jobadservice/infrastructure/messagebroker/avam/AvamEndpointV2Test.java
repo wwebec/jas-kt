@@ -28,6 +28,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.messaging.Message;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -42,6 +43,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AvamSourceApplication.class)
 @ActiveProfiles(ProfileRegistry.AVAM_WSDL_V2)
+@DirtiesContext
 public class AvamEndpointV2Test {
 
     private MockWebServiceClient mockWebServiceClient;

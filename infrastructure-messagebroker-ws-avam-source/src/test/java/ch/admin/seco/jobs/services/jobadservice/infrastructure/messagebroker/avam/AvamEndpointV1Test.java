@@ -19,6 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.messaging.Message;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -37,6 +38,7 @@ import static org.springframework.ws.test.server.RequestCreators.withPayload;
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AvamSourceApplication.class)
 @ActiveProfiles(ProfileRegistry.AVAM_WSDL_V1)
+@DirtiesContext
 public class AvamEndpointV1Test {
 
     private MockWebServiceClient mockWebServiceClient;
