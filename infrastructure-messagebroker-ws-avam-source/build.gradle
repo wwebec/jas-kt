@@ -1,0 +1,29 @@
+apply plugin: 'org.springframework.boot'
+apply from: 'jaxb.gradle'
+apply from: 'docker.gradle'
+apply from: "${rootProject.rootDir}/gradle/maven-publish.gradle"
+
+dependencies {
+    compile project(':infrastructure-messagebroker-shared')
+
+    compile 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+    compile 'org.springframework.boot:spring-boot-starter-web-services'
+    compile 'org.springframework.boot:spring-boot-starter-undertow'
+    compile 'wsdl4j:wsdl4j:1.6.1'
+
+    compile 'org.codehaus.jackson:jackson-core-asl'
+    compile 'com.fasterxml.jackson.core:jackson-annotations'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+    compile 'com.fasterxml.jackson.module:jackson-module-afterburner'
+
+    compile 'com.googlecode.libphonenumber:libphonenumber'
+    
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
+    testCompile 'org.springframework.ws:spring-ws-test'
+
+    optional "org.springframework.boot:spring-boot-configuration-processor"
+}
+
+compileJava.dependsOn(processResources)

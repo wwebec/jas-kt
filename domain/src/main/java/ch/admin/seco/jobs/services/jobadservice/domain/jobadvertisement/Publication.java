@@ -22,7 +22,7 @@ public class Publication implements ValueObject<Publication> {
 
     private boolean publicDisplay;
 
-    private boolean publicAnonynomous;
+    private boolean publicAnonymous;
 
     private boolean restrictedDisplay;
 
@@ -38,7 +38,7 @@ public class Publication implements ValueObject<Publication> {
         this.eures = builder.eures;
         this.euresAnonymous = builder.euresAnonymous;
         this.publicDisplay = builder.publicDisplay;
-        this.publicAnonynomous = builder.publicAnonynomous;
+        this.publicAnonymous = builder.publicAnonynomous;
         this.restrictedDisplay = builder.restrictedDisplay;
         this.restrictedAnonymous = builder.restrictedAnonymous;
     }
@@ -47,32 +47,64 @@ public class Publication implements ValueObject<Publication> {
         return startDate;
     }
 
+    void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+    }
+
     public LocalDate getEndDate() {
         return endDate;
+    }
+
+    void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
     }
 
     public boolean isEures() {
         return eures;
     }
 
+    void setEures(boolean eures) {
+        this.eures = eures;
+    }
+
     public boolean isEuresAnonymous() {
         return euresAnonymous;
+    }
+
+    void setEuresAnonymous(boolean euresAnonymous) {
+        this.euresAnonymous = euresAnonymous;
     }
 
     public boolean isPublicDisplay() {
         return publicDisplay;
     }
 
-    public boolean isPublicAnonynomous() {
-        return publicAnonynomous;
+    void setPublicDisplay(boolean publicDisplay) {
+        this.publicDisplay = publicDisplay;
+    }
+
+    public boolean isPublicAnonymous() {
+        return publicAnonymous;
+    }
+
+    void setPublicAnonymous(boolean publicAnonymous) {
+        this.publicAnonymous = publicAnonymous;
     }
 
     public boolean isRestrictedDisplay() {
         return restrictedDisplay;
     }
 
+    void setRestrictedDisplay(boolean restrictedDisplay) {
+        this.restrictedDisplay = restrictedDisplay;
+    }
+
     public boolean isRestrictedAnonymous() {
         return restrictedAnonymous;
+    }
+
+    void setRestrictedAnonymous(boolean restrictedAnonymous) {
+        this.restrictedAnonymous = restrictedAnonymous;
     }
 
     @Override
@@ -83,7 +115,7 @@ public class Publication implements ValueObject<Publication> {
         return eures == that.eures &&
                 euresAnonymous == that.euresAnonymous &&
                 publicDisplay == that.publicDisplay &&
-                publicAnonynomous == that.publicAnonynomous &&
+                publicAnonymous == that.publicAnonymous &&
                 restrictedDisplay == that.restrictedDisplay &&
                 restrictedAnonymous == that.restrictedAnonymous &&
                 Objects.equals(startDate, that.startDate) &&
@@ -92,7 +124,7 @@ public class Publication implements ValueObject<Publication> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, endDate, eures, euresAnonymous, publicDisplay, publicAnonynomous, restrictedDisplay, restrictedAnonymous);
+        return Objects.hash(startDate, endDate, eures, euresAnonymous, publicDisplay, publicAnonymous, restrictedDisplay, restrictedAnonymous);
     }
 
     @Override
@@ -103,7 +135,7 @@ public class Publication implements ValueObject<Publication> {
                 ", eures=" + eures +
                 ", euresAnonymous=" + euresAnonymous +
                 ", publicDisplay=" + publicDisplay +
-                ", publicAnonynomous=" + publicAnonynomous +
+                ", publicAnonymous=" + publicAnonymous +
                 ", restrictedDisplay=" + restrictedDisplay +
                 ", restrictedAnonymous=" + restrictedAnonymous +
                 '}';

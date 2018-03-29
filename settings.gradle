@@ -9,6 +9,7 @@ include ':infrastructure-service-reference'
 include ':infrastructure-messagebroker'
 include ':infrastructure-messagebroker-shared'
 include ':infrastructure-messagebroker-ws-avam-sink'
+include ':infrastructure-messagebroker-ws-avam-source'
 include ':integration-x28-job-ad-import'
 include ':web'
 

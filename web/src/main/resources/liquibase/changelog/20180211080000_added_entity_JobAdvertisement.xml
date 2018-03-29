@@ -116,7 +116,7 @@
 
             <column name="EMPLOYMENT_START_DATE" type="date"/>
             <column name="EMPLOYMENT_END_DATE" type="date"/>
-            <column name="EMPLOYMENT_DURATION_IN_DAYS" type="integer"/>
+            <column name="EMPLOYMENT_SHORT_EMPLOYMENT" type="boolean"/>
             <column name="EMPLOYMENT_IMMEDIATELY" type="boolean"/>
             <column name="EMPLOYMENT_PERMANENT" type="boolean"/>
             <column name="EMPLOYMENT_WORKLOAD_PERCENTAGE_MIN" type="integer"/>
@@ -182,6 +182,13 @@
             <column name="LANGUAGE_ISO_CODE" type="varchar(5)"/>
             <column name="SPOKEN_LEVEL" type="varchar(64)"/>
             <column name="WRITTEN_LEVEL" type="varchar(64)"/>
+        </createTable>
+
+        <createTable tableName="JOB_ADVERTISEMENT_WORK_FORM">
+            <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="WORK_FORM" type="varchar(20)"/>
         </createTable>
 
     </changeSet>

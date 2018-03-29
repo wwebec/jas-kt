@@ -8,10 +8,8 @@ public class CompanyDto {
 
     @NotNull
     private String name;
-    //    @NotNull // TODO X28 delivers only company name
     private String street;
     private String houseNumber;
-    //    @NotNull
     private String postalCode;
     private String city;
     private String countryIsoCode;

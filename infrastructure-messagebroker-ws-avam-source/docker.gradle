@@ -1,0 +1,6 @@
+apply plugin: 'docker-compose'
+
+dockerCompose {
+    dockerComposeWorkingDirectory = "${project.rootProject.rootDir}/docker"
+    useComposeFiles = ["${project.rootProject.rootDir}/docker/spring-data-flow.yml", "${project.rootProject.rootDir}/docker/kafka.yml"]
+}

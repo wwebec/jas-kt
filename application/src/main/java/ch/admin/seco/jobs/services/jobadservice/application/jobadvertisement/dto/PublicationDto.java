@@ -101,7 +101,7 @@ public class PublicationDto {
         publicationDto.setEures(publication.isEures());
         publicationDto.setEuresAnonymous(publication.isEuresAnonymous());
         publicationDto.setPublicDisplay(publication.isPublicDisplay());
-        publicationDto.setPublicAnonynomous(publication.isPublicAnonynomous());
+        publicationDto.setPublicAnonynomous(publication.isPublicAnonymous());
         publicationDto.setRestrictedDisplay(publication.isRestrictedDisplay());
         publicationDto.setRestrictedAnonymous(publication.isRestrictedAnonymous());
         return publicationDto;

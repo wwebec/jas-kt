@@ -4,6 +4,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.utils.MappingBuilder;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
 /**
  * Mapping AVAM codes with the value of the application
@@ -78,4 +79,10 @@ public class AvamCodeResolver {
             .put("4", LanguageLevel.NONE)
             .toImmutable();
 
+    public static final MappingBuilder<String, WorkForm> WORK_FORMS = new MappingBuilder<String, WorkForm>()
+            .put("1", WorkForm.SUNDAY_AND_HOLIDAYS)
+            .put("2", WorkForm.SHIFT_WORK)
+            .put("3", WorkForm.HOME_WORK)
+            .put("4", WorkForm.NIGHT_WORK)
+            .toImmutable();
 }

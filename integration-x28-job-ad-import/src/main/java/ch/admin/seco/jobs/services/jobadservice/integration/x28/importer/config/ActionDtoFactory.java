@@ -73,9 +73,9 @@ class ActionDtoFactory {
 
     private CreateLocationDto createCreateLocationDto(Oste x28JobAdvertisement) {
         if (LICHTENSTEIN_ISO_CODE.equals(x28JobAdvertisement.getArbeitsortKanton())) {
-            return new CreateLocationDto(null, x28JobAdvertisement.getArbeitsortText(), x28JobAdvertisement.getArbeitsortPlz(), LICHTENSTEIN_ISO_CODE);
+            return new CreateLocationDto(null, x28JobAdvertisement.getArbeitsortText(), x28JobAdvertisement.getArbeitsortPlz(), LICHTENSTEIN_ISO_CODE, null);
         }
-        return new CreateLocationDto(null, x28JobAdvertisement.getArbeitsortText(), x28JobAdvertisement.getArbeitsortPlz(), SWISS_ISO_CODE);
+        return new CreateLocationDto(null, x28JobAdvertisement.getArbeitsortText(), x28JobAdvertisement.getArbeitsortPlz(), SWISS_ISO_CODE, null);
     }
 
     private CompanyDto createCompanyDto(Oste x28JobAdvertisement) {
@@ -91,11 +91,12 @@ class ActionDtoFactory {
         return new EmploymentDto(
                 startDate,
                 startDate.plusDays(60), // default lifetime of a JobAdvertisement is 60 days
-                null,
+                false,
                 null,
                 x28JobAdvertisement.isUnbefristet(),
-                nonNull(x28JobAdvertisement.getPensumVon()) ? x28JobAdvertisement.getPensumVon().intValue() : 100,
-                nonNull(x28JobAdvertisement.getPensumBis()) ? x28JobAdvertisement.getPensumBis().intValue() : 100
+                nonNull(x28JobAdvertisement.getPensumVon()) ? x28JobAdvertisement.getPensumVon().intValue() : 0,
+                nonNull(x28JobAdvertisement.getPensumBis()) ? x28JobAdvertisement.getPensumBis().intValue() : 100,
+                null
         );
     }
 

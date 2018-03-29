@@ -1,12 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+
+import javax.validation.constraints.NotNull;
 
 public class ApprovalDto {
 
     @NotNull
-    private String jobAdvertisementId;
+    private String stellennummerEgov;
 
     @NotNull
     private String stellennummerAvam;
@@ -22,20 +23,20 @@ public class ApprovalDto {
         // For reflection libs
     }
 
-    public ApprovalDto(String jobAdvertisementId, String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
-        this.jobAdvertisementId = jobAdvertisementId;
+    public ApprovalDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
+        this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.date = date;
         this.reportingObligation = reportingObligation;
         this.reportingObligationEndDate = reportingObligationEndDate;
     }
 
-    public String getJobAdvertisementId() {
-        return jobAdvertisementId;
+    public String getStellennummerEgov() {
+        return stellennummerEgov;
     }
 
-    public void setJobAdvertisementId(String jobAdvertisementId) {
-        this.jobAdvertisementId = jobAdvertisementId;
+    public void setStellennummerEgov(String stellennummerEgov) {
+        this.stellennummerEgov = stellennummerEgov;
     }
 
     public String getStellennummerAvam() {

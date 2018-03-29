@@ -369,22 +369,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_PUBLICATION_DATES) && (
-                hasChanged(this.publicationStartDate, updater.getPublicationStartDate()) ||
-                        hasChanged(this.publicationEndDate, updater.getPublicationEndDate()))) {
-            this.publicationStartDate = updater.getPublicationStartDate();
-            this.publicationEndDate = updater.getPublicationEndDate();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_EURES) && (
-                hasChanged(this.eures, updater.isEures()) ||
-                        hasChanged(this.euresAnonymous, updater.isEuresAnonymous()))) {
-            this.eures = updater.isEures();
-            this.euresAnonymous = updater.isEuresAnonymous();
-            hasChangedAnything = true;
-        }
-
         if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && hasChanged(this.employment, updater.getEmployment())) {
             this.employment = updater.getEmployment();
             hasChangedAnything = true;
@@ -425,6 +409,47 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
         */
+
+        if (updater.hasAnyChangesIn(SECTION_WORK_FORMS) && hasChangedContent(jobContent.getEmployment().getWorkForms(), updater.getWorkForms())) {
+            jobContent.getEmployment().setWorkForms(updater.getWorkForms());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_PUBLICATION_DATES) && (
+                hasChanged(publication.getStartDate(), updater.getPublicationStartDate()) ||
+                        hasChanged(publication.getEndDate(), updater.getPublicationEndDate()))) {
+            publication.setStartDate(updater.getPublicationStartDate());
+            publication.setEndDate(updater.getPublicationEndDate());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_EURES) && (
+                hasChanged(publication.isEures(), updater.isEures()) ||
+                        hasChanged(publication.isEuresAnonymous(), updater.isEuresAnonymous()))) {
+            publication.setEures(updater.isEures());
+            publication.setEuresAnonymous(updater.isEuresAnonymous());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_PUBLIC_DISPLAY) && hasChanged(publication.isPublicDisplay(), updater.isPublicDisplay())) {
+            publication.setPublicDisplay(updater.isPublicDisplay());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_PUBLIC_ANONYMOUS) && hasChanged(publication.isPublicAnonymous(), updater.isPublicAnonymous())) {
+            publication.setPublicAnonymous(updater.isPublicAnonymous());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_RESTRICTED_DISPLAY) && hasChanged(publication.isRestrictedDisplay(), updater.isRestrictedDisplay())) {
+            publication.setRestrictedDisplay(updater.isRestrictedDisplay());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_RESTRICTED_ANONYMOUS) && hasChanged(publication.isRestrictedAnonymous(), updater.isRestrictedAnonymous())) {
+            publication.setRestrictedAnonymous(updater.isRestrictedAnonymous());
+            hasChangedAnything = true;
+        }
 
         if (hasChangedAnything) {
             // FIXME Auditor

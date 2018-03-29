@@ -13,6 +13,7 @@ public class UpdateJobAdvertisementFromX28Dto {
     private String x28OccupationCodes;
 
     protected UpdateJobAdvertisementFromX28Dto() {
+        // For reflection libs
     }
 
     public UpdateJobAdvertisementFromX28Dto(@NotBlank String stellennummerEgov, @NotBlank String fingerprint, @NotBlank String x28OccupationCodes) {

@@ -2,28 +2,44 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import java.time.LocalDate;
 
+import javax.validation.constraints.NotNull;
+
 public class CancellationDto {
 
-    private String jobAdvertisementId;
+    private String stellennummerEgov;
+
+    @NotNull
+    private String stellennummerAvam;
+
     private LocalDate date;
+
     private String code;
 
     protected CancellationDto() {
         // For reflection libs
     }
 
-    public CancellationDto(String jobAdvertisementId, LocalDate date, String code) {
-        this.jobAdvertisementId = jobAdvertisementId;
+    public CancellationDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, String code) {
+        this.stellennummerEgov = stellennummerEgov;
+        this.stellennummerAvam = stellennummerAvam;
         this.date = date;
         this.code = code;
     }
 
-    public String getJobAdvertisementId() {
-        return jobAdvertisementId;
+    public String getStellennummerEgov() {
+        return stellennummerEgov;
     }
 
-    public void setJobAdvertisementId(String jobAdvertisementId) {
-        this.jobAdvertisementId = jobAdvertisementId;
+    public void setStellennummerEgov(String stellennummerEgov) {
+        this.stellennummerEgov = stellennummerEgov;
+    }
+
+    public String getStellennummerAvam() {
+        return stellennummerAvam;
+    }
+
+    public void setStellennummerAvam(String stellennummerAvam) {
+        this.stellennummerAvam = stellennummerAvam;
     }
 
     public LocalDate getDate() {
