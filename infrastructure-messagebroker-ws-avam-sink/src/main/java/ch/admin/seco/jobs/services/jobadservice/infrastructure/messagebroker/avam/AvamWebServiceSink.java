@@ -7,7 +7,7 @@ import org.springframework.cloud.stream.messaging.Sink;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 
 @EnableBinding(Sink.class)
-public class AvamSink {
+public class AvamWebServiceSink {
 
     private final AvamWebServiceClient avamWebServiceClient;
 
