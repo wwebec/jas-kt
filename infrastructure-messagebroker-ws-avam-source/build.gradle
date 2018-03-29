@@ -4,7 +4,6 @@ apply from: 'docker.gradle'
 apply from: "${rootProject.rootDir}/gradle/maven-publish.gradle"
 
 dependencies {
-    compile project(':domain')
     compile project(':infrastructure-messagebroker-shared')
 
     compile 'org.springframework.cloud:spring-cloud-starter-stream-kafka'

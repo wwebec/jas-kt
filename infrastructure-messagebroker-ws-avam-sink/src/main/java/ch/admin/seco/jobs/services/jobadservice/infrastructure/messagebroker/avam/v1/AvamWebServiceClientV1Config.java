@@ -1,17 +1,17 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
 
+import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamProperties;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceClient;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.DeliverOste;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamProperties;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceClient;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.DeliverOste;
-
-@Profile("!v2")
 @Configuration
+@Profile(ProfileRegistry.AVAM_WSDL_V1)
 public class AvamWebServiceClientV1Config {
     private final AvamProperties avamProperties;
 

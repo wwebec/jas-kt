@@ -31,7 +31,7 @@ deploy:
   script: "./gradlew bootJar publish -Pprod -Pzipkin -x test  -Pversion=${TRAVIS_JOB_NUMBER}-SNAPSHOT --stacktrace
     && curl https://dev.job-room.ch:8443/deploy/jr2 --insecure"
   on:
-    branch: develop
+    branch: master
 
 - provider: script
   skip_cleanup: true

@@ -158,7 +158,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromAvam(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
-        LOG.debug("Create or update '{}' from AVAM", createJobAdvertisementAvamDto.getTitle());
+        LOG.debug("Create '{}' from AVAM", createJobAdvertisementAvamDto.getTitle());
 
         Location location = toLocation(createJobAdvertisementAvamDto.getLocation());
         location = locationService.enrichCodes(location);
@@ -207,6 +207,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public void updateFromAvam(UpdateJobAdvertisementFromAvamDto updateJobAdvertisementFromAvamDto) {
+        LOG.debug("Update StellennummerAvam '{}' from AVAM", updateJobAdvertisementFromAvamDto.getStellennummerAvam());
         final String stellennummerAvam = updateJobAdvertisementFromAvamDto.getStellennummerAvam();
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam)
                 .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerAvam: " + stellennummerAvam));
@@ -258,6 +259,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public void updateFromX28(UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto) {
+        LOG.debug("Update StellennummerEgov '{}' from X28", updateJobAdvertisementFromX28Dto.getStellennummerEgov());
         final String stellennummerEgov = updateJobAdvertisementFromX28Dto.getStellennummerEgov();
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
                 .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
