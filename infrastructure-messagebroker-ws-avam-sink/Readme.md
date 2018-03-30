@@ -12,7 +12,7 @@ This app listens on message queue `jobad.event` for events (_JOB_ADVERTISEMENT_I
 
 ```bash
 # Register 'App'
-curl 'http://dev.job-room.ch:9393/apps/sink/ws-avam' -i -X POST -d 'uri=maven%3A%2F%2Fch.admin.seco.jobs.services.jobadservice%3Ainfrastructure-messagebroker-ws-avam-sink%3A<version>'
+curl 'http://dev.job-room.ch:9393/apps/sink/ws-avam' -i -X POST -d 'force=true&uri=maven%3A%2F%2Fch.admin.seco.jobs.services.jobadservice%3Ainfrastructure-messagebroker-ws-avam-sink%3A<version>'
 
 # Delete existing stream
 curl http://dev.job-room.ch:9393/streams/definitions/ws-avam-export -i -X DELETE
