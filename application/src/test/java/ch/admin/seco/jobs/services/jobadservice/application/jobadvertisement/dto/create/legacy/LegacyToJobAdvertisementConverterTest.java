@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Locale;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
@@ -15,13 +14,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutati
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
 public class LegacyToJobAdvertisementConverterTest {
-
-	private LegacyToJobAdvertisementConverter testedObject;
-
-	@Before
-	public void setUp() {
-		testedObject = new LegacyToJobAdvertisementConverter();
-	}
 
 	@Test
 	public void shouldConvertLegacyDto() {
@@ -55,7 +47,7 @@ public class LegacyToJobAdvertisementConverterTest {
 				Locale.GERMAN);
 
 		// WHEN
-		CreateJobAdvertisementDto convertedDto = testedObject.convert(legacyJobAdvertisementDto);
+		CreateJobAdvertisementDto convertedDto = LegacyToJobAdvertisementConverter.convert(legacyJobAdvertisementDto);
 
 		// THEN
 		assertThat(convertedDto).isNotNull();

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy.LegacyToJobAdvertisementConverter;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 
@@ -37,7 +38,7 @@ public class JobAdvertisementApiRestController {
 
 	@PostMapping(path = "/api-legacy")
 	public JobAdvertisementDto createFromLegacyApi(@RequestBody @Valid LegacyJobAdvertisementDto legacyJobAdvertisementDto) throws AggregateNotFoundException {
-		CreateJobAdvertisementDto createJobAdvertisementDto = null; //ConvertLegacyToJobAdvertisement.convert(legacyJobAdvertisementDto)
+		CreateJobAdvertisementDto createJobAdvertisementDto = LegacyToJobAdvertisementConverter.convert(legacyJobAdvertisementDto);
 		return createFromApi(createJobAdvertisementDto);
 	}
 

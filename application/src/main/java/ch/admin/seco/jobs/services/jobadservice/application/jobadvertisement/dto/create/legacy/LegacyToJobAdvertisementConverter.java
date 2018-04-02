@@ -36,7 +36,7 @@ public class LegacyToJobAdvertisementConverter {
 			.put(LegacyLanguageLevelEnum.PROFICIENT, LanguageLevel.PROFICIENT)
 			.toImmutable();
 
-	public CreateJobAdvertisementDto convert(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
+	public static CreateJobAdvertisementDto convert(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
 		String language = legacyJobAdvertisementDto.getLocale().getLanguage();
 		return new CreateJobAdvertisementDto(
 				false,
@@ -55,7 +55,7 @@ public class LegacyToJobAdvertisementConverter {
 		);
 	}
 
-	private PublicContactDto convertPublicContactDto(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
+	private static PublicContactDto convertPublicContactDto(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
 		LegacyContactDto contact = legacyJobAdvertisementDto.getContact();
 		return new PublicContactDto(
 				contact.getSalutation(),
@@ -66,7 +66,7 @@ public class LegacyToJobAdvertisementConverter {
 		);
 	}
 
-	private ApplyChannelDto convertApplyChannelDto(LegacyApplicationDto application) {
+	private static ApplyChannelDto convertApplyChannelDto(LegacyApplicationDto application) {
 		return new ApplyChannelDto(
 				null,
 				application.getEmail(),
@@ -76,7 +76,7 @@ public class LegacyToJobAdvertisementConverter {
 		);
 	}
 
-	private List<LanguageSkillDto> convertLanguageSkills(List<LegacyLanguageSkillDto> languageSkills) {
+	private static List<LanguageSkillDto> convertLanguageSkills(List<LegacyLanguageSkillDto> languageSkills) {
 		return languageSkills.stream()
 				.map(legacyLanguageSkillDto -> new LanguageSkillDto(
 						legacyLanguageSkillDto.getCode().name(),
@@ -86,7 +86,7 @@ public class LegacyToJobAdvertisementConverter {
 				.collect(toList());
 	}
 
-	private OccupationDto convertOccupationDto(LegacyOccupationDto occupation) {
+	private static OccupationDto convertOccupationDto(LegacyOccupationDto occupation) {
 		return new OccupationDto(
 				occupation.getAvamOccupation(),
 				EXPERIENCE_MAPPING.getRight(occupation.getExperience()),
@@ -94,7 +94,7 @@ public class LegacyToJobAdvertisementConverter {
 		);
 	}
 
-	private CreateLocationDto convertLocationDto(LegacyLocationDto legacyLocationDto) {
+	private static CreateLocationDto convertLocationDto(LegacyLocationDto legacyLocationDto) {
 		return new CreateLocationDto(
 				legacyLocationDto.getAdditionalDetails(),
 				legacyLocationDto.getCity(),
@@ -104,7 +104,7 @@ public class LegacyToJobAdvertisementConverter {
 		);
 	}
 
-	private EmploymentDto convertEmploymentDto(LegacyJobDto legacyJobDto) {
+	private static EmploymentDto convertEmploymentDto(LegacyJobDto legacyJobDto) {
 		return new EmploymentDto(
 				legacyJobDto.getStartDate(),
 				legacyJobDto.getEndDate(),
@@ -117,7 +117,7 @@ public class LegacyToJobAdvertisementConverter {
 		);
 	}
 
-	private CompanyDto convertCompanyDto(LegacyCompanyDto company) {
+	private static CompanyDto convertCompanyDto(LegacyCompanyDto company) {
 		return new CompanyDto(
 				company.getName(),
 				company.getStreet(),
@@ -135,13 +135,13 @@ public class LegacyToJobAdvertisementConverter {
 		);
 	}
 
-	private List<JobDescriptionDto> convertJobDescriptions(LegacyJobAdvertisementDto legacyJobAdvertisementDto, String language) {
+	private static List<JobDescriptionDto> convertJobDescriptions(LegacyJobAdvertisementDto legacyJobAdvertisementDto, String language) {
 		return Arrays.asList(new JobDescriptionDto(language,
 				legacyJobAdvertisementDto.getJob().getTitle(),
 				legacyJobAdvertisementDto.getJob().getDescription()));
 	}
 
-	private PublicationDto convertPublicationDto(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
+	private static PublicationDto convertPublicationDto(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
 		return new PublicationDto(
 				legacyJobAdvertisementDto.getJob().getStartDate(),
 				legacyJobAdvertisementDto.getJob().getEndDate(),
@@ -154,7 +154,7 @@ public class LegacyToJobAdvertisementConverter {
 		);
 	}
 
-	private ContactDto convertContactDto(LegacyContactDto contact, String language) {
+	private static ContactDto convertContactDto(LegacyContactDto contact, String language) {
 		return new ContactDto(
 				contact.getSalutation(),
 				contact.getFirstName(),
