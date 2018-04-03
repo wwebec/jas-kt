@@ -1,10 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
+import static java.util.Objects.nonNull;
+
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 
 @EnableBinding(Sink.class)
 public class AvamWebServiceSink {
@@ -22,6 +25,15 @@ public class AvamWebServiceSink {
 
     @StreamListener(target = Sink.INPUT, condition = "header[event]=='JOB_ADVERTISEMENT_CANCELLED'")
     public void deregister(JobAdvertisement jobAdvertisement) {
-        avamWebServiceClient.deregister(jobAdvertisement);
+        if (mustSendDeregistratonNotification(jobAdvertisement)) {
+            avamWebServiceClient.deregister(jobAdvertisement);
+        }
+    }
+
+    private boolean mustSendDeregistratonNotification(JobAdvertisement jobAdvertisement) {
+        // send deregistration message only for JobAds registered by JOBROOM or API.
+        return (nonNull(jobAdvertisement.getStellennummerAvam()) &&
+                (SourceSystem.JOBROOM.equals(jobAdvertisement.getSourceSystem())
+                        || SourceSystem.API.equals(jobAdvertisement.getSourceSystem())));
     }
 }
