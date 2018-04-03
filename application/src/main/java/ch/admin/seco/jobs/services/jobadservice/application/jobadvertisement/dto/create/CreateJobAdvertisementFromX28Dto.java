@@ -1,15 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-
 import java.util.Collection;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 
 public class CreateJobAdvertisementFromX28Dto {
 
@@ -22,10 +21,10 @@ public class CreateJobAdvertisementFromX28Dto {
     @NotBlank
     private String fingerprint;
 
+    private String externalUrl;
+
     @NotNull
     private EmploymentDto employment;
-
-    private ApplyChannelDto applyChannel;
 
     @NotNull
     private CompanyDto company;
@@ -40,12 +39,12 @@ public class CreateJobAdvertisementFromX28Dto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromX28Dto(String title, String description, String fingerprint, EmploymentDto employment, ApplyChannelDto applyChannel, CompanyDto company, CreateLocationDto location, Collection<OccupationDto> occupations) {
+    public CreateJobAdvertisementFromX28Dto(String title, String description, String fingerprint, String externalUrl, EmploymentDto employment, CompanyDto company, CreateLocationDto location, Collection<OccupationDto> occupations) {
         this.title = title;
         this.description = description;
         this.fingerprint = fingerprint;
+        this.externalUrl = externalUrl;
         this.employment = employment;
-        this.applyChannel = applyChannel;
         this.company = company;
         this.location = location;
         this.occupations = occupations;
@@ -75,20 +74,20 @@ public class CreateJobAdvertisementFromX28Dto {
         this.fingerprint = fingerprint;
     }
 
+    public String getExternalUrl() {
+        return externalUrl;
+    }
+
+    public void setExternalUrl(String externalUrl) {
+        this.externalUrl = externalUrl;
+    }
+
     public EmploymentDto getEmployment() {
         return employment;
     }
 
     public void setEmployment(EmploymentDto employment) {
         this.employment = employment;
-    }
-
-    public ApplyChannelDto getApplyChannel() {
-        return applyChannel;
-    }
-
-    public void setApplyChannel(ApplyChannelDto applyChannel) {
-        this.applyChannel = applyChannel;
     }
 
     public CompanyDto getCompany() {

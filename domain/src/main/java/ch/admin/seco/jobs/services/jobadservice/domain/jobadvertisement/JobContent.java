@@ -123,7 +123,7 @@ public class JobContent implements ValueObject<JobContent> {
         this.jobDescriptions = Condition.notEmpty(builder.jobDescriptions, "Job descriptions can't be null or empty");
         this.languageSkills = builder.languageSkills;
         this.employment = Condition.notNull(builder.employment, "Employment can't be null");
-        this.publicContact = Condition.notNull(builder.publicContact, "Public contact can't be null");
+        this.publicContact = builder.publicContact;
         this.applyChannel = builder.applyChannel;
         this.location = Condition.notNull(builder.location, "Location can't be null");
         // TODO reinsert occupation condition, when the legacy API is deleted

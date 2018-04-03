@@ -1,19 +1,46 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EURES;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_FINGERPRINT;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLICATION_DATES;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLIC_ANONYMOUS;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLIC_DISPLAY;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_RESTRICTED_ANONYMOUS;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_RESTRICTED_DISPLAY;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_WORK_FORMS;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_X28_OCCUPATION_CODES;
+
+import java.time.LocalDate;
+import java.util.Objects;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.Valid;
+
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*;
-
-import javax.persistence.*;
-import javax.validation.Valid;
-import java.time.LocalDate;
-import java.util.Objects;
-
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementApprovedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementArchivedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementBlackoutExpiredEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCancelledEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementInspectingEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishExpiredEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishRestrictedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRejectedEvent;
 
 @Entity
 public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertisementId> {
@@ -120,7 +147,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.cancellationCode = builder.cancellationCode;
         this.jobContent = Condition.notNull(builder.jobContent);
         this.owner = Condition.notNull(builder.owner);
-        this.contact = Condition.notNull(builder.contact);
+        this.contact = builder.contact;
         this.publication = Condition.notNull(builder.publication);
     }
 

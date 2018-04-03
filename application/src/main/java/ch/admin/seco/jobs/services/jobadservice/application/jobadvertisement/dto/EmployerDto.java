@@ -1,9 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employer;
-
-import javax.validation.constraints.NotNull;
 
 public class EmployerDto {
 
@@ -76,6 +73,9 @@ public class EmployerDto {
     }
 
     public static EmployerDto toDto(Employer employer) {
+        if (employer == null) {
+            return null;
+        }
         EmployerDto employerDto = new EmployerDto();
         employerDto.setName(employer.getName());
         employerDto.setStreet(employer.getStreet());

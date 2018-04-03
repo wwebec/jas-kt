@@ -1,12 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.PublicContact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.PublicContact;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 
 public class PublicContactDto {
 
@@ -35,6 +33,19 @@ public class PublicContactDto {
         this.lastName = lastName;
         this.phone = phone;
         this.email = email;
+    }
+
+    public static PublicContactDto toDto(PublicContact publicContact) {
+        if (publicContact == null) {
+            return null;
+        }
+        PublicContactDto publicContactDto = new PublicContactDto();
+        publicContactDto.setSalutation(publicContact.getSalutation());
+        publicContactDto.setFirstName(publicContact.getFirstName());
+        publicContactDto.setLastName(publicContact.getLastName());
+        publicContactDto.setPhone(publicContact.getPhone());
+        publicContactDto.setEmail(publicContact.getEmail());
+        return publicContactDto;
     }
 
     public Salutation getSalutation() {
@@ -75,15 +86,5 @@ public class PublicContactDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public static PublicContactDto toDto(PublicContact publicContact) {
-        PublicContactDto publicContactDto = new PublicContactDto();
-        publicContactDto.setSalutation(publicContact.getSalutation());
-        publicContactDto.setFirstName(publicContact.getFirstName());
-        publicContactDto.setLastName(publicContact.getLastName());
-        publicContactDto.setPhone(publicContact.getPhone());
-        publicContactDto.setEmail(publicContact.getEmail());
-        return publicContactDto;
     }
 }

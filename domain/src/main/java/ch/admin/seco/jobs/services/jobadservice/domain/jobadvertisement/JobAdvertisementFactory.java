@@ -1,13 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.stereotype.Component;
+
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
-import org.springframework.stereotype.Component;
 
 @Component
 public class JobAdvertisementFactory {

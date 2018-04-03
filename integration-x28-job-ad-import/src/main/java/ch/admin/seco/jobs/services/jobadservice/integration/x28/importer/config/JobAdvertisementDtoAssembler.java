@@ -1,14 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
-import org.springframework.util.StringUtils;
+import static java.util.Objects.nonNull;
+import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,11 +11,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Objects.nonNull;
-import static org.springframework.util.StringUtils.hasText;
-import static org.springframework.util.StringUtils.isEmpty;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
 
-class ActionDtoFactory {
+import org.springframework.util.StringUtils;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+
+class JobAdvertisementDtoAssembler {
     private static final String SWISS_ISO_CODE = "CH";
     private static final String LICHTENSTEIN_ISO_CODE = "LI";
     private static final String ORACLE_DATE_FORMAT = "yyyy-MM-dd-HH.mm.ss.SSSSSS";
@@ -32,8 +36,8 @@ class ActionDtoFactory {
                 sanitize(x28JobAdvertisement.getBezeichnung()),
                 sanitize(x28JobAdvertisement.getBeschreibung()),
                 x28JobAdvertisement.getFingerprint(),
+                x28JobAdvertisement.getUrl(),
                 createEmploymentDto(x28JobAdvertisement),
-                createApplyChannelDto(x28JobAdvertisement),
                 createCompanyDto(x28JobAdvertisement),
                 createCreateLocationDto(x28JobAdvertisement),
                 createOccupationDtos(x28JobAdvertisement));
@@ -83,10 +87,6 @@ class ActionDtoFactory {
 
     private CompanyDto createCompanyDto(Oste x28JobAdvertisement) {
         return new CompanyDto(x28JobAdvertisement.getUntName(), null, null, null, null, null, null, null, null, null, null, null, false);
-    }
-
-    private ApplyChannelDto createApplyChannelDto(Oste x28JobAdvertisement) {
-        return new ApplyChannelDto(null, null, null, x28JobAdvertisement.getUrl(), null);
     }
 
     private EmploymentDto createEmploymentDto(Oste x28JobAdvertisement) {

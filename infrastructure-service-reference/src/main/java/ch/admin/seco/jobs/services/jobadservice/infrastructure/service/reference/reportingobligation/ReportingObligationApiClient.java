@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 
-@FeignClient(name = "reporting-obligations", fallback = ReportingObligationApiClientFallback.class, decode404 = true)
+@FeignClient(name = "referenceservice", fallback = ReportingObligationApiClientFallback.class, decode404 = true)
 public interface ReportingObligationApiClient {
 
     @GetMapping(value = "/reporting-obligations/check-by-canton/{codeType}/{code}", consumes = "application/json")

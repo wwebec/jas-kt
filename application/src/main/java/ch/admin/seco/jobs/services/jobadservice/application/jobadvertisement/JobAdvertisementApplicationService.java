@@ -1,35 +1,67 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
-import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.*;
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
+import static java.util.stream.Collectors.toList;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
-import static java.util.stream.Collectors.toList;
+import javax.persistence.EntityNotFoundException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
+import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementCreator;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementFactory;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobContent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.PublicContact;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 
 @Service
 @Transactional(rollbackFor = {Exception.class})
@@ -50,11 +82,11 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
-                                              JobAdvertisementFactory jobAdvertisementFactory,
+            JobAdvertisementFactory jobAdvertisementFactory,
 
-                                              ReportingObligationService reportingObligationService,
-                                              LocationService locationService,
-                                              ProfessionService professionService) {
+            ReportingObligationService reportingObligationService,
+            LocationService locationService,
+            ProfessionService professionService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.reportingObligationService = reportingObligationService;
@@ -78,46 +110,8 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.getId();
     }
 
-    private JobAdvertisementCreator getJobAdvertisementCreatorFromInternal(CreateJobAdvertisementDto createJobAdvertisementDto) {
-        Location location = toLocation(createJobAdvertisementDto.getLocation());
-        location = locationService.enrichCodes(location);
-
-        Occupation occupation = toOccupation(createJobAdvertisementDto.getOccupation());
-        // TODO remove this if, when the legacy API is deleted
-        boolean reportingObligation = false;
-        if (occupation != null) {
-            occupation = enrichOccupationWithProfessionCodes(occupation);
-            reportingObligation = checkReportingObligation(
-                    occupation,
-                    location
-            );
-        }
-
-        // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
-        String jobCenterCode = null;
-
-        JobContent jobContent = new JobContent.Builder()
-                .setJobDescriptions(toJobDescriptions(createJobAdvertisementDto.getJobDescriptions()))
-                .setLocation(location)
-                .setOccupations(Collections.singletonList(occupation))
-                .setEmployment(toEmployment(createJobAdvertisementDto.getEmployment()))
-                .setApplyChannel(toApplyChannel(createJobAdvertisementDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementDto.getCompany()))
-                .setPublicContact(toPublicContact(createJobAdvertisementDto.getContact()))
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementDto.getLanguageSkills()))
-                .build();
-
-        // TODO Add auditUser
-        return new JobAdvertisementCreator.Builder(null)
-                .setReportingObligation(reportingObligation)
-                .setJobCenterCode(jobCenterCode)
-                .setJobContent(jobContent)
-                .setContact(toContact(createJobAdvertisementDto.getContact()))
-                .setPublication(toPublication(createJobAdvertisementDto.getPublication()))
-                .build();
-    }
-
     public JobAdvertisementId createFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+        checkifJobAdvertisementAlreadExists(createJobAdvertisementFromAvamDto);
         LOG.debug("Create '{}' from AVAM", createJobAdvertisementFromAvamDto.getTitle());
 
         Location location = toLocation(createJobAdvertisementFromAvamDto.getLocation());
@@ -174,8 +168,9 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
-        LOG.debug("Create '{}' from X28", createJobAdvertisementFromX28Dto.getTitle());
+        checkifJobAdvertisementAlreadExists(createJobAdvertisementFromX28Dto);
 
+        LOG.debug("Create '{}' from X28", createJobAdvertisementFromX28Dto.getTitle());
         Location location = toLocation(createJobAdvertisementFromX28Dto.getLocation());
         location = locationService.enrichCodes(location);
 
@@ -192,15 +187,16 @@ public class JobAdvertisementApplicationService {
                                 .setDescription(createJobAdvertisementFromX28Dto.getDescription())
                                 .build()
                 ))
+                .setExternalUrl(createJobAdvertisementFromX28Dto.getExternalUrl())
                 .setLocation(location)
                 .setOccupations(occupations)
                 .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
-                .setApplyChannel(toApplyChannel(createJobAdvertisementFromX28Dto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
                 .build();
 
         // TODO Add auditUser
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+                .setFingerprint(createJobAdvertisementFromX28Dto.getFingerprint())
                 .setJobContent(jobContent)
                 .setPublication(
                         new Publication.Builder()
@@ -251,15 +247,15 @@ public class JobAdvertisementApplicationService {
 
     public void approve(ApprovalDto approvalDto) {
         // TODO tbd where/when the data updates has to be done (over ApprovalDto --> JobAdUpdater?)
-        Condition.notNull(approvalDto.getStellennummerAvam(), "StellennummerAvam can't be null");
-        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(approvalDto.getStellennummerAvam());
+        Condition.notNull(approvalDto.getStellennummerEgov(), "StellennummerEgov can't be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(approvalDto.getStellennummerEgov());
         LOG.debug("Starting approve for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
     }
 
     public void reject(RejectionDto rejectionDto) {
-        Condition.notNull(rejectionDto.getStellennummerAvam(), "StellennummerAvam can't be null");
-        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(rejectionDto.getStellennummerAvam());
+        Condition.notNull(rejectionDto.getStellennummerEgov(), "StellennummerEgov can't be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(rejectionDto.getStellennummerEgov());
         LOG.debug("Starting reject for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
     }
@@ -314,9 +310,74 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.archive();
     }
 
+    private void checkifJobAdvertisementAlreadExists(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByFingerprint(createJobAdvertisementFromX28Dto.getFingerprint());
+        jobAdvertisement.ifPresent(jobAd -> {
+            String message = String.format("JobAdvertisement '%s' with fingerprint '%s' already exists", jobAd.getId().getValue(), jobAd.getFingerprint());
+            throw new JobAdvertisementAlreadyExistsException(message);
+        });
+    }
+
+    private void checkifJobAdvertisementAlreadExists(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(createJobAdvertisementFromAvamDto.getStellennummerAvam());
+        jobAdvertisement.ifPresent(jobAd -> {
+            String message = String.format("JobAdvertisement '%s' with stellennummerAvam '%s' already exists", jobAd.getId().getValue(), jobAd.getStellennummerAvam());
+            throw new JobAdvertisementAlreadyExistsException(message);
+        });
+    }
+
+    private JobAdvertisementCreator getJobAdvertisementCreatorFromInternal(CreateJobAdvertisementDto createJobAdvertisementDto) {
+        Location location = toLocation(createJobAdvertisementDto.getLocation());
+        location = locationService.enrichCodes(location);
+
+        // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
+        String jobCenterCode = null;
+
+        List<Occupation> occupations = null;
+        boolean reportingObligation = false;
+
+        if (createJobAdvertisementDto.getOccupation() == null) {
+            Occupation occupation = toOccupation(createJobAdvertisementDto.getOccupation());
+            // TODO remove this if, when the legacy API is deleted
+            if (occupation != null) {
+                occupation = enrichOccupationWithProfessionCodes(occupation);
+                reportingObligation = checkReportingObligation(
+                        occupation,
+                        location
+                );
+            }
+            occupations = Collections.singletonList(occupation);
+        }
+
+        JobContent jobContent = new JobContent.Builder()
+                .setJobDescriptions(toJobDescriptions(createJobAdvertisementDto.getJobDescriptions()))
+                .setLocation(location)
+                .setOccupations(occupations)
+                .setEmployment(toEmployment(createJobAdvertisementDto.getEmployment()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementDto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementDto.getCompany()))
+                .setPublicContact(toPublicContact(createJobAdvertisementDto.getContact()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementDto.getLanguageSkills()))
+                .build();
+
+        // TODO Add auditUser
+        return new JobAdvertisementCreator.Builder(null)
+                .setReportingObligation(reportingObligation)
+                .setJobCenterCode(jobCenterCode)
+                .setJobContent(jobContent)
+                .setContact(toContact(createJobAdvertisementDto.getContact()))
+                .setPublication(toPublication(createJobAdvertisementDto.getPublication()))
+                .build();
+    }
+
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
+    }
+
+    private JobAdvertisement getJobAdvertisementByStellennummerEgov(String stellennummerEgov) throws AggregateNotFoundException {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov);
+        return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.EXTERNAL_ID, stellennummerEgov));
     }
 
     private JobAdvertisement getJobAdvertisementByStellennummerAvam(String stellennummerAvam) throws AggregateNotFoundException {

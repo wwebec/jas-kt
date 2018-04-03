@@ -7,15 +7,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.MessageChannel;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 
 @Configuration
 public class AvamConfig {
 
     @Bean
     public AvamService avamService(
-            DomainEventPublisher domainEventPublisher,
+            JobAdvertisementApplicationService jobAdvertisementApplicationService,
             @Qualifier(JOB_AD_EVENT_CHANNEL) MessageChannel jobAdEventChannel) {
-        return new AvamService(domainEventPublisher, jobAdEventChannel);
+        return new AvamService(jobAdvertisementApplicationService, jobAdEventChannel);
     }
 }
