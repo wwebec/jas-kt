@@ -31,7 +31,8 @@ public class CreateJobAdvertisementDto {
     @NotNull
     private CreateLocationDto location;
 
-    @NotNull
+    // TODO add the NotNull, when the legacy API is deleted
+    //@NotNull
     private OccupationDto occupation;
 
     @NotNull
