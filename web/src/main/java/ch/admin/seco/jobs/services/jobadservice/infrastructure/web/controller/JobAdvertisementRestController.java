@@ -2,8 +2,11 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,9 +14,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CancellationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CreateJobAdvertisementWebFormDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
@@ -50,6 +55,12 @@ public class JobAdvertisementRestController {
     public JobAdvertisementDto createFromWebform(@RequestBody CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromWebForm(createJobAdvertisementWebFormDto);
         return jobAdvertisementApplicationService.findById(jobAdvertisementId);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping(path = "/cancel")
+    public void cancelFromApi(@RequestBody @Valid CancellationDto cancellationDto) {
+        jobAdvertisementApplicationService.cancel(cancellationDto);
     }
 
     @GetMapping("/{id}")
