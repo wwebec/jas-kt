@@ -4,8 +4,8 @@ import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.*;
@@ -83,14 +83,15 @@ public class JobAdvertisementApplicationService {
         location = locationService.enrichCodes(location);
 
         Occupation occupation = toOccupation(createJobAdvertisementDto.getOccupation());
-        // FIXME occupation can be null (until old api is removed)
-        occupation = enrichOccupationWithProfessionCodes(occupation);
-
-        // FIXME occupation can be null (until old api is removed)
-        boolean reportingObligation = checkReportingObligation(
-                occupation,
-                location
-        );
+        // TODO remove this if, when the legacy API is deleted
+        boolean reportingObligation = false;
+        if (occupation != null) {
+            occupation = enrichOccupationWithProfessionCodes(occupation);
+            reportingObligation = checkReportingObligation(
+                    occupation,
+                    location
+            );
+        }
 
         // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
         String jobCenterCode = null;
