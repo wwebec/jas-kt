@@ -1,44 +1,42 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
-
 public class LegacyLanguageSkillDto {
 
-    private LegacyLanguageEnum code;
-    private LanguageLevel spokenLevel;
-    private LanguageLevel writtenLevel;
+    private String language;
+    private LegacyLanguageLevelEnum spokenLevel;
+    private LegacyLanguageLevelEnum writtenLevel;
 
     protected LegacyLanguageSkillDto() {
         // For reflection libs
     }
 
-    public LegacyLanguageSkillDto(LegacyLanguageEnum code, LanguageLevel spokenLevel, LanguageLevel writtenLevel) {
-        this.code = code;
+    public LegacyLanguageSkillDto(String language, LegacyLanguageLevelEnum spokenLevel, LegacyLanguageLevelEnum writtenLevel) {
+        this.language = language;
         this.spokenLevel = spokenLevel;
         this.writtenLevel = writtenLevel;
     }
 
-    public LegacyLanguageEnum getCode() {
-        return code;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setCode(LegacyLanguageEnum code) {
-        this.code = code;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public LanguageLevel getSpokenLevel() {
+    public LegacyLanguageLevelEnum getSpokenLevel() {
         return spokenLevel;
     }
 
-    public void setSpokenLevel(LanguageLevel spokenLevel) {
+    public void setSpokenLevel(LegacyLanguageLevelEnum spokenLevel) {
         this.spokenLevel = spokenLevel;
     }
 
-    public LanguageLevel getWrittenLevel() {
+    public LegacyLanguageLevelEnum getWrittenLevel() {
         return writtenLevel;
     }
 
-    public void setWrittenLevel(LanguageLevel writtenLevel) {
+    public void setWrittenLevel(LegacyLanguageLevelEnum writtenLevel) {
         this.writtenLevel = writtenLevel;
     }
 

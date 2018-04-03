@@ -2,41 +2,76 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Locale;
+import java.time.LocalDate;
 
 public class LegacyJobAdvertisementDto {
 
+    @NotNull
+    private LocalDate publicationStartDate;
+    private LocalDate publicationEndDate;
+    private String reference;
+    private String url;
+    private String applicationUrl;
     @Valid
     private LegacyJobDto job;
     @Valid
     private LegacyCompanyDto company;
     @Valid
     private LegacyContactDto contact;
-    @Valid
-    private LegacyApplicationDto application;
-    @Valid
-    private LegacyPublicationDto publication;
-    @NotNull
-    private Locale locale;
 
     protected LegacyJobAdvertisementDto() {
         // For reflection libs
     }
 
-    public LegacyJobAdvertisementDto(
-            LegacyJobDto job,
-            LegacyCompanyDto company,
-            LegacyContactDto contact,
-            LegacyApplicationDto application,
-            LegacyPublicationDto publication,
-            Locale locale
-    ) {
+    public LegacyJobAdvertisementDto(LocalDate publicationStartDate, LocalDate publicationEndDate, String reference, String url, String applicationUrl, LegacyJobDto job, LegacyCompanyDto company, LegacyContactDto contact) {
+        this.publicationStartDate = publicationStartDate;
+        this.publicationEndDate = publicationEndDate;
+        this.reference = reference;
+        this.url = url;
+        this.applicationUrl = applicationUrl;
         this.job = job;
         this.company = company;
         this.contact = contact;
-        this.application = application;
-        this.publication = publication;
-        this.locale = locale;
+    }
+
+    public LocalDate getPublicationStartDate() {
+        return publicationStartDate;
+    }
+
+    public void setPublicationStartDate(LocalDate publicationStartDate) {
+        this.publicationStartDate = publicationStartDate;
+    }
+
+    public LocalDate getPublicationEndDate() {
+        return publicationEndDate;
+    }
+
+    public void setPublicationEndDate(LocalDate publicationEndDate) {
+        this.publicationEndDate = publicationEndDate;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getApplicationUrl() {
+        return applicationUrl;
+    }
+
+    public void setApplicationUrl(String applicationUrl) {
+        this.applicationUrl = applicationUrl;
     }
 
     public LegacyJobDto getJob() {
@@ -63,27 +98,4 @@ public class LegacyJobAdvertisementDto {
         this.contact = contact;
     }
 
-    public LegacyApplicationDto getApplication() {
-        return application;
-    }
-
-    public void setApplication(LegacyApplicationDto application) {
-        this.application = application;
-    }
-
-    public LegacyPublicationDto getPublication() {
-        return publication;
-    }
-
-    public void setPublication(LegacyPublicationDto publication) {
-        this.publication = publication;
-    }
-
-    public Locale getLocale() {
-        return locale;
-    }
-
-    public void setLocale(Locale locale) {
-        this.locale = locale;
-    }
 }

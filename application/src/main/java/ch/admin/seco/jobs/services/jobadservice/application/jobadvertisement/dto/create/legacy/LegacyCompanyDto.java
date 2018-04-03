@@ -6,33 +6,32 @@ public class LegacyCompanyDto {
 
     @NotNull
     private String name;
-    @NotNull
     private String street;
     private String houseNumber;
-    @NotNull
-    private String zipCode;
-    @NotNull
-    private String city;
-    private String postboxNumber;
-    private String postboxZipCode;
-    private String postboxCity;
+    private String postalCode;
+    private String locality;
+    private LegacyPostboxDto postbox;
     @NotNull
     private String countryCode;
+    private String phoneNumber;
+    private String email;
+    private String website;
 
     protected LegacyCompanyDto() {
         // For reflection libs
     }
 
-    public LegacyCompanyDto(String name, String street, String houseNumber, String zipCode, String city, String postboxNumber, String postboxZipCode, String postboxCity, String countryCode) {
+    public LegacyCompanyDto(String name, String street, String houseNumber, String postalCode, String locality, LegacyPostboxDto postbox, String countryCode, String phoneNumber, String email, String website) {
         this.name = name;
         this.street = street;
         this.houseNumber = houseNumber;
-        this.zipCode = zipCode;
-        this.city = city;
-        this.postboxNumber = postboxNumber;
-        this.postboxZipCode = postboxZipCode;
-        this.postboxCity = postboxCity;
+        this.postalCode = postalCode;
+        this.locality = locality;
+        this.postbox = postbox;
         this.countryCode = countryCode;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.website = website;
     }
 
     public String getName() {
@@ -59,44 +58,28 @@ public class LegacyCompanyDto {
         this.houseNumber = houseNumber;
     }
 
-    public String getZipCode() {
-        return zipCode;
+    public String getPostalCode() {
+        return postalCode;
     }
 
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
     }
 
-    public String getCity() {
-        return city;
+    public String getLocality() {
+        return locality;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 
-    public String getPostboxNumber() {
-        return postboxNumber;
+    public LegacyPostboxDto getPostbox() {
+        return postbox;
     }
 
-    public void setPostboxNumber(String postboxNumber) {
-        this.postboxNumber = postboxNumber;
-    }
-
-    public String getPostboxZipCode() {
-        return postboxZipCode;
-    }
-
-    public void setPostboxZipCode(String postboxZipCode) {
-        this.postboxZipCode = postboxZipCode;
-    }
-
-    public String getPostboxCity() {
-        return postboxCity;
-    }
-
-    public void setPostboxCity(String postboxCity) {
-        this.postboxCity = postboxCity;
+    public void setPostbox(LegacyPostboxDto postbox) {
+        this.postbox = postbox;
     }
 
     public String getCountryCode() {
@@ -107,4 +90,27 @@ public class LegacyCompanyDto {
         this.countryCode = countryCode;
     }
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getWebsite() {
+        return website;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
 }

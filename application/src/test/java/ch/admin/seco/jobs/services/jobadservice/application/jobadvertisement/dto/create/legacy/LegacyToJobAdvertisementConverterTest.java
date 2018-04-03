@@ -4,8 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Locale;
+import java.util.List;
 
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import org.junit.Test;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
@@ -18,79 +20,126 @@ public class LegacyToJobAdvertisementConverterTest {
 	@Test
 	public void shouldConvertLegacyDto() {
 		// GIVEN
-		LegacyLocationDto legacyLocationDto = new LegacyLocationDto("CH", "1234", "2222", "Bern", "details");
-		LegacyLanguageSkillDto legacyLanguageSkillDto = new LegacyLanguageSkillDto(LegacyLanguageEnum.DE, LanguageLevel.BASIC, LanguageLevel.BASIC);
+		LegacyLocationDto legacyLocationDto = new LegacyLocationDto("locationPostalCode", "locationCity", "locationCountryCode", "locationAdditionalDetails");
+		LegacyLanguageSkillDto legacyLanguageSkillDto = new LegacyLanguageSkillDto("de", LegacyLanguageLevelEnum.BASIC_KNOWLEDGE, LegacyLanguageLevelEnum.BASIC_KNOWLEDGE);
 		LegacyJobDto legacyJobDto = new LegacyJobDto(
 				"title",
-				new LegacyOccupationDto("avam", LegacyDegreeEnum.PRIMAR_OBLIGATORISCHE_SCHULE, LegacyExperienceEnum.BETWEEN_1_AND_3_YEARS),
 				"description",
 				10,
 				100,
 				true,
-				LocalDate.of(2018, 4, 1),
+				LocalDate.of(2018, 3, 1),
 				true,
-				LocalDate.of(2018, 5, 1),
-				LegacyDrivingLicenseLevelEnum.A,
+				LocalDate.of(2018, 4, 1),
 				Collections.singletonList(legacyLanguageSkillDto),
 				legacyLocationDto
 		);
-		LegacyCompanyDto legacyCompanyDto = new LegacyCompanyDto("company", "street", "12", "1234", "Bern", "11", "12", "Bern", "CH");
-		LegacyContactDto legacyContactDto = new LegacyContactDto(Salutation.MR, "firstName", "lastName", "+41234512346", "email@email.com");
-		LegacyApplicationDto legacyApplicationDto = new LegacyApplicationDto(true, true, "email@email.com", "http://asdf.com", true, "+41234512346", "info");
-		LegacyPublicationDto legacyPublicationDto = new LegacyPublicationDto(true, true);
+		LegacyCompanyDto legacyCompanyDto = new LegacyCompanyDto("companyName", "companyStreet", "companyHouseNumber", "companyPostalCode", "companyCity", new LegacyPostboxDto("postboxNumber", "postboxCity", "postboxPostalCode"), "companyCountryCode", "companyPhoneNumber", "companyEmail", "companyWebsite");
+		LegacyContactDto legacyContactDto = new LegacyContactDto(LegacyTitleEnum.MISTER, "contactFirstName", "contactLastName", "contactPhoneNumber", "contactEmail");
 		LegacyJobAdvertisementDto legacyJobAdvertisementDto = new LegacyJobAdvertisementDto(
+				LocalDate.of(2018, 1, 1),
+				LocalDate.of(2018, 2, 1),
+				"reference",
+				"url",
+				"applicationUrl",
 				legacyJobDto,
 				legacyCompanyDto,
-				legacyContactDto,
-				legacyApplicationDto,
-				legacyPublicationDto,
-				Locale.GERMAN);
+				legacyContactDto
+		);
 
 		// WHEN
 		CreateJobAdvertisementDto convertedDto = LegacyToJobAdvertisementConverter.convert(legacyJobAdvertisementDto);
 
 		// THEN
 		assertThat(convertedDto).isNotNull();
-		assertThat(convertedDto.getContact().getSalutation()).isEqualTo(Salutation.MR);
-		assertThat(convertedDto.getContact().getFirstName()).isEqualTo("firstName");
-		assertThat(convertedDto.getContact().getLastName()).isEqualTo("lastName");
-		assertThat(convertedDto.getContact().getPhone()).isEqualTo("+41234512346");
-		assertThat(convertedDto.getContact().getEmail()).isEqualTo("email@email.com");
-		assertThat(convertedDto.getContact().getLanguageIsoCode()).isEqualTo("de");
-		assertThat(convertedDto.getPublicContact().getSalutation()).isEqualTo(Salutation.MR);
-		assertThat(convertedDto.getPublicContact().getFirstName()).isEqualTo("firstName");
-		assertThat(convertedDto.getPublicContact().getLastName()).isEqualTo("lastName");
-		assertThat(convertedDto.getPublicContact().getPhone()).isEqualTo("+41234512346");
-		assertThat(convertedDto.getPublicContact().getEmail()).isEqualTo("email@email.com");
-		assertThat(convertedDto.getJobDescriptions().get(0).getDescription()).isEqualTo("description");
-		assertThat(convertedDto.getJobDescriptions().get(0).getTitle()).isEqualTo("title");
-		assertThat(convertedDto.getJobDescriptions().get(0).getLanguageIsoCode()).isEqualTo("de");
-		assertThat(convertedDto.getCompany().getName()).isEqualTo("company");
-		assertThat(convertedDto.getCompany().getCity()).isEqualTo("Bern");
-		assertThat(convertedDto.getCompany().getCountryIsoCode()).isEqualTo("CH");
-		assertThat(convertedDto.getCompany().getHouseNumber()).isEqualTo("12");
-		assertThat(convertedDto.getCompany().getStreet()).isEqualTo("street");
-		assertThat(convertedDto.getCompany().getPostalCode()).isEqualTo("1234");
-		assertThat(convertedDto.getCompany().getPostOfficeBoxCity()).isEqualTo("Bern");
-		assertThat(convertedDto.getCompany().getPostOfficeBoxNumber()).isEqualTo("11");
-		assertThat(convertedDto.getCompany().getPostOfficeBoxPostalCode()).isEqualTo("12");
-		assertThat(convertedDto.getLocation().getCity()).isEqualTo("Bern");
-		assertThat(convertedDto.getLocation().getRemarks()).isEqualTo("details");
-		assertThat(convertedDto.getLocation().getCommunalCode()).isEqualTo("2222");
-		assertThat(convertedDto.getLocation().getPostalCode()).isEqualTo("1234");
-		assertThat(convertedDto.getLocation().getCountryIsoCode()).isEqualTo("CH");
-		assertThat(convertedDto.getLocation().getCountryIsoCode()).isEqualTo("CH");
-		assertThat(convertedDto.getEmployment().getStartDate()).isEqualTo(LocalDate.of(2018, 4, 1));
-		assertThat(convertedDto.getEmployment().getEndDate()).isEqualTo(LocalDate.of(2018, 5, 1));
-		assertThat(convertedDto.getEmployment().getImmediately()).isTrue();
-		assertThat(convertedDto.getEmployment().getPermanent()).isTrue();
-		assertThat(convertedDto.getEmployment().getWorkloadPercentageMin()).isEqualTo(10);
-		assertThat(convertedDto.getEmployment().getWorkloadPercentageMax()).isEqualTo(100);
-		assertThat(convertedDto.getOccupation().getAvamOccupationCode()).isEqualTo("avam");
-		assertThat(convertedDto.getOccupation().getEducationCode()).isEqualTo("PRIMAR_OBLIGATORISCHE_SCHULE");
-		assertThat(convertedDto.getOccupation().getWorkExperience()).isEqualTo(WorkExperience.MORE_THAN_1_YEAR);
-		assertThat(convertedDto.getLanguageSkills().get(0).getLanguageIsoCode()).isEqualTo("DE");
-		assertThat(convertedDto.getLanguageSkills().get(0).getSpokenLevel()).isEqualTo(LanguageLevel.BASIC);
-		assertThat(convertedDto.getLanguageSkills().get(0).getWrittenLevel()).isEqualTo(LanguageLevel.BASIC);
+		assertThat(convertedDto.isReportToAvam()).isFalse();
+		assertThat(convertedDto.getExternalUrl()).isEqualTo("url");
+
+		ContactDto contact = convertedDto.getContact();
+		assertThat(contact).isNotNull();
+		assertThat(contact.getSalutation()).isEqualTo(Salutation.MR);
+		assertThat(contact.getFirstName()).isEqualTo("contactFirstName");
+		assertThat(contact.getLastName()).isEqualTo("contactLastName");
+		assertThat(contact.getPhone()).isEqualTo("contactPhoneNumber");
+		assertThat(contact.getEmail()).isEqualTo("contactEmail");
+		assertThat(contact.getLanguageIsoCode()).isEqualTo("de");
+
+		PublicationDto publication = convertedDto.getPublication();
+		assertThat(publication).isNotNull();
+		assertThat(publication.getStartDate()).isEqualTo(LocalDate.of(2018, 1, 1));
+		assertThat(publication.getEndDate()).isEqualTo(LocalDate.of(2018, 2, 1));
+		assertThat(publication.isEures()).isFalse();
+		assertThat(publication.isEuresAnonymous()).isFalse();
+		assertThat(publication.isPublicDisplay()).isTrue();
+		assertThat(publication.isPublicAnonynomous()).isFalse();
+		assertThat(publication.isRestrictedDisplay()).isTrue();
+		assertThat(publication.isRestrictedAnonymous()).isFalse();
+
+		ApplyChannelDto applyChannel = convertedDto.getApplyChannel();
+		assertThat(applyChannel).isNotNull();
+		assertThat(applyChannel.getMailAddress()).isNull();
+		assertThat(applyChannel.getEmailAddress()).isEqualTo("companyEmail");
+		assertThat(applyChannel.getPhoneNumber()).isEqualTo("companyPhoneNumber");
+		assertThat(applyChannel.getFormUrl()).isEqualTo("applicationUrl");
+		assertThat(applyChannel.getAdditionalInfo()).isNull();
+
+		List<JobDescriptionDto> jobDescriptions = convertedDto.getJobDescriptions();
+		assertThat(jobDescriptions).isNotNull();
+		assertThat(jobDescriptions).isNotEmpty();
+		JobDescriptionDto jobDescription = jobDescriptions.get(0);
+		assertThat(jobDescription).isNotNull();
+		assertThat(jobDescription.getDescription()).isEqualTo("description");
+		assertThat(jobDescription.getTitle()).isEqualTo("title");
+		assertThat(jobDescription.getLanguageIsoCode()).isEqualTo("de");
+
+		PublicContactDto publicContact = convertedDto.getPublicContact();
+		assertThat(publicContact).isNotNull();
+		assertThat(publicContact.getSalutation()).isEqualTo(Salutation.MR);
+		assertThat(publicContact.getFirstName()).isEqualTo("contactFirstName");
+		assertThat(publicContact.getLastName()).isEqualTo("contactLastName");
+		assertThat(publicContact.getPhone()).isEqualTo("contactPhoneNumber");
+		assertThat(publicContact.getEmail()).isEqualTo("contactEmail");
+
+		CompanyDto companyDto = convertedDto.getCompany();
+		assertThat(companyDto).isNotNull();
+		assertThat(companyDto.getName()).isEqualTo("companyName");
+		assertThat(companyDto.getStreet()).isEqualTo("companyStreet");
+		assertThat(companyDto.getHouseNumber()).isEqualTo("companyHouseNumber");
+		assertThat(companyDto.getPostalCode()).isEqualTo("companyPostalCode");
+		assertThat(companyDto.getCity()).isEqualTo("companyCity");
+		assertThat(companyDto.getPostOfficeBoxNumber()).isEqualTo("postboxNumber");
+		assertThat(companyDto.getPostOfficeBoxCity()).isEqualTo("postboxCity");
+		assertThat(companyDto.getPostOfficeBoxPostalCode()).isEqualTo("postboxPostalCode");
+		assertThat(companyDto.getCountryIsoCode()).isEqualTo("companyCountryCode");
+		assertThat(companyDto.getPhone()).isEqualTo("companyPhoneNumber");
+		assertThat(companyDto.getEmail()).isEqualTo("companyEmail");
+		assertThat(companyDto.getWebsite()).isEqualTo("companyWebsite");
+
+		CreateLocationDto location = convertedDto.getLocation();
+		assertThat(location).isNotNull();
+		assertThat(location.getPostalCode()).isEqualTo("locationPostalCode");
+		assertThat(location.getCity()).isEqualTo("locationCity");
+		assertThat(location.getCountryIsoCode()).isEqualTo("locationCountryCode");
+		assertThat(location.getRemarks()).isEqualTo("locationAdditionalDetails");
+
+		EmploymentDto employment = convertedDto.getEmployment();
+		assertThat(employment).isNotNull();
+		assertThat(employment.getStartDate()).isEqualTo(LocalDate.of(2018, 3, 1));
+		assertThat(employment.getEndDate()).isEqualTo(LocalDate.of(2018, 4, 1));
+		assertThat(employment.getImmediately()).isTrue();
+		assertThat(employment.getPermanent()).isTrue();
+		assertThat(employment.getWorkloadPercentageMin()).isEqualTo(10);
+		assertThat(employment.getWorkloadPercentageMax()).isEqualTo(100);
+
+		List<LanguageSkillDto> languageSkills = convertedDto.getLanguageSkills();
+		assertThat(languageSkills).isNotNull();
+		assertThat(languageSkills).isNotEmpty();
+		LanguageSkillDto languageSkill = languageSkills.get(0);
+		assertThat(languageSkill).isNotNull();
+		assertThat(languageSkill.getLanguageIsoCode()).isEqualTo("de");
+		assertThat(languageSkill.getSpokenLevel()).isEqualTo(LanguageLevel.BASIC);
+		assertThat(languageSkill.getWrittenLevel()).isEqualTo(LanguageLevel.BASIC);
+
+		assertThat(convertedDto.getOccupation()).isNull();
 	}
 }

@@ -6,35 +6,30 @@ import javax.validation.constraints.NotNull;
 
 public class LegacyContactDto {
 
-    @NotNull
-    private Salutation salutation;
-    @NotNull
+    private LegacyTitleEnum title;
     private String firstName;
-    @NotNull
     private String lastName;
-    @NotNull
     private String phoneNumber;
-    @NotNull
     private String email;
 
     protected LegacyContactDto() {
         // For reflection libs
     }
 
-    public LegacyContactDto(Salutation salutation, String firstName, String lastName, String phoneNumber, String email) {
-        this.salutation = salutation;
+    public LegacyContactDto(LegacyTitleEnum title, String firstName, String lastName, String phoneNumber, String email) {
+        this.title = title;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.email = email;
     }
 
-    public Salutation getSalutation() {
-        return salutation;
+    public LegacyTitleEnum getTitle() {
+        return title;
     }
 
-    public void setSalutation(Salutation salutation) {
-        this.salutation = salutation;
+    public void setTitle(LegacyTitleEnum title) {
+        this.title = title;
     }
 
     public String getFirstName() {

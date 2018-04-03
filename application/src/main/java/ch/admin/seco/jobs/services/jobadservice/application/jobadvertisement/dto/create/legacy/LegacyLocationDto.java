@@ -5,24 +5,38 @@ import javax.validation.constraints.NotNull;
 public class LegacyLocationDto {
 
     @NotNull
+    private String postalCode;
+    @NotNull
+    private String locality;
+    @NotNull
     private String countryCode;
-    @NotNull
-    private String zipCode;
-    private String communalCode;
-    @NotNull
-    private String city;
     private String additionalDetails;
 
     protected LegacyLocationDto() {
         // For reflection libs
     }
 
-    public LegacyLocationDto(String countryCode, String zipCode, String communalCode, String city, String additionalDetails) {
+    public LegacyLocationDto(String postalCode, String locality, String countryCode, String additionalDetails) {
         this.countryCode = countryCode;
-        this.zipCode = zipCode;
-        this.communalCode = communalCode;
-        this.city = city;
+        this.postalCode = postalCode;
+        this.locality = locality;
         this.additionalDetails = additionalDetails;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getLocality() {
+        return locality;
+    }
+
+    public void setLocality(String locality) {
+        this.locality = locality;
     }
 
     public String getCountryCode() {
@@ -31,30 +45,6 @@ public class LegacyLocationDto {
 
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-
-    public String getCommunalCode() {
-        return communalCode;
-    }
-
-    public void setCommunalCode(String communalCode) {
-        this.communalCode = communalCode;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
     }
 
     public String getAdditionalDetails() {

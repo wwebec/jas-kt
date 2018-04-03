@@ -9,40 +9,31 @@ public class LegacyJobDto {
 
     @NotNull
     private String title;
-    @Valid
-    private LegacyOccupationDto occupation;
     @NotNull
     private String description;
-    @NotNull
-    private int workingTimePercentageMin;
-    @NotNull
-    private int workingTimePercentageMax;
-    @NotNull
-    private boolean startsImmediately;
+    private int workingTimePercentageFrom;
+    private int workingTimePercentageTo;
     private LocalDate startDate;
-    @NotNull
-    private boolean permanent;
     private LocalDate endDate;
-    private LegacyDrivingLicenseLevelEnum drivingLicenseLevel;
-    private List<LegacyLanguageSkillDto> languageSkills;
+    private boolean startsImmediately;
+    private boolean permanent;
     @Valid
     private LegacyLocationDto location;
+    private List<LegacyLanguageSkillDto> languageSkills;
 
     protected LegacyJobDto() {
         // For reflection libs
     }
 
-    public LegacyJobDto(String title, LegacyOccupationDto occupation, String description, int workingTimePercentageMin, int workingTimePercentageMax, boolean startsImmediately, LocalDate startDate, boolean permanent, LocalDate endDate, LegacyDrivingLicenseLevelEnum drivingLicenseLevel, List<LegacyLanguageSkillDto> languageSkills, LegacyLocationDto location) {
+    public LegacyJobDto(String title, String description, int workingTimePercentageFrom, int workingTimePercentageTo, boolean startsImmediately, LocalDate startDate, boolean permanent, LocalDate endDate, List<LegacyLanguageSkillDto> languageSkills, LegacyLocationDto location) {
         this.title = title;
-        this.occupation = occupation;
         this.description = description;
-        this.workingTimePercentageMin = workingTimePercentageMin;
-        this.workingTimePercentageMax = workingTimePercentageMax;
+        this.workingTimePercentageFrom = workingTimePercentageFrom;
+        this.workingTimePercentageTo = workingTimePercentageTo;
         this.startsImmediately = startsImmediately;
         this.startDate = startDate;
         this.permanent = permanent;
         this.endDate = endDate;
-        this.drivingLicenseLevel = drivingLicenseLevel;
         this.languageSkills = languageSkills;
         this.location = location;
     }
@@ -55,14 +46,6 @@ public class LegacyJobDto {
         this.title = title;
     }
 
-    public LegacyOccupationDto getOccupation() {
-        return occupation;
-    }
-
-    public void setOccupation(LegacyOccupationDto occupation) {
-        this.occupation = occupation;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -71,20 +54,20 @@ public class LegacyJobDto {
         this.description = description;
     }
 
-    public int getWorkingTimePercentageMin() {
-        return workingTimePercentageMin;
+    public int getWorkingTimePercentageFrom() {
+        return workingTimePercentageFrom;
     }
 
-    public void setWorkingTimePercentageMin(int workingTimePercentageMin) {
-        this.workingTimePercentageMin = workingTimePercentageMin;
+    public void setWorkingTimePercentageFrom(int workingTimePercentageFrom) {
+        this.workingTimePercentageFrom = workingTimePercentageFrom;
     }
 
-    public int getWorkingTimePercentageMax() {
-        return workingTimePercentageMax;
+    public int getWorkingTimePercentageTo() {
+        return workingTimePercentageTo;
     }
 
-    public void setWorkingTimePercentageMax(int workingTimePercentageMax) {
-        this.workingTimePercentageMax = workingTimePercentageMax;
+    public void setWorkingTimePercentageTo(int workingTimePercentageTo) {
+        this.workingTimePercentageTo = workingTimePercentageTo;
     }
 
     public boolean isStartsImmediately() {
@@ -117,14 +100,6 @@ public class LegacyJobDto {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
-    }
-
-    public LegacyDrivingLicenseLevelEnum getDrivingLicenseLevel() {
-        return drivingLicenseLevel;
-    }
-
-    public void setDrivingLicenseLevel(LegacyDrivingLicenseLevelEnum drivingLicenseLevel) {
-        this.drivingLicenseLevel = drivingLicenseLevel;
     }
 
     public List<LegacyLanguageSkillDto> getLanguageSkills() {

@@ -83,8 +83,10 @@ public class JobAdvertisementApplicationService {
         location = locationService.enrichCodes(location);
 
         Occupation occupation = toOccupation(createJobAdvertisementDto.getOccupation());
+        // FIXME occupation can be null (until old api is removed)
         occupation = enrichOccupationWithProfessionCodes(occupation);
 
+        // FIXME occupation can be null (until old api is removed)
         boolean reportingObligation = checkReportingObligation(
                 occupation,
                 location
