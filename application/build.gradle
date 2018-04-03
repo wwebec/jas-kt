@@ -1,7 +1,6 @@
 dependencies {
     compile project(':domain')
     compile 'org.springframework:spring-tx'
-    compile 'com.fasterxml.jackson.core:jackson-annotations'
 
     testCompile files(this.project(':core').sourceSets.test.output)
     testCompile 'org.springframework.boot:spring-boot-starter-test'
