@@ -15,7 +15,7 @@ public class JobContent implements ValueObject<JobContent> {
     private String x28OccupationCodes;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_CONTENT_DESCRIPTION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @CollectionTable(name = "JOB_ADVERTISEMENT_DESCRIPTION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<JobDescription> jobDescriptions;
 
@@ -79,12 +79,12 @@ public class JobContent implements ValueObject<JobContent> {
     private Location location;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_CONTENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @CollectionTable(name = "JOB_ADVERTISEMENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<Occupation> occupations;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_CONTENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<LanguageSkill> languageSkills;
 

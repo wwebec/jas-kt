@@ -145,7 +145,7 @@
             <column name="PUBLIC_CONTACT_EMAIL" type="varchar(50)"/>
         </createTable>
 
-        <createTable tableName="JOB_CONTENT_DESCRIPTION">
+        <createTable tableName="JOB_ADVERTISEMENT_DESCRIPTION">
             <column name="JOB_ADVERTISEMENT_ID" type="varchar(36)">
                 <constraints nullable="false"/>
             </column>
