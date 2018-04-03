@@ -5,8 +5,6 @@
 
 package org.hibernate.type;
 
-import static java.util.Objects.nonNull;
-
 import java.io.Serializable;
 import java.util.Map;
 
@@ -120,8 +118,11 @@ public class TypeHelper {
                     Type[] subtypes = componentType.getSubtypes();
                     Object[] origComponentValues = original[i] == null ? new Object[subtypes.length] : componentType.getPropertyValues(original[i], session);
                     Object[] targetComponentValues = target[i] == null ? new Object[subtypes.length] : componentType.getPropertyValues(target[i], session);
+
+                    // quickfix to support ElementCollection in nested Embedded objects
+                    // see https://hibernate.atlassian.net/browse/OGM-1261
                     Object[] values = replaceAssociations(origComponentValues, targetComponentValues, subtypes, session, null, copyCache, foreignKeyDirection);
-                    if (nonNull(target[i])) {
+                    if (target[i] != null) {
                         componentType.setPropertyValues(target[i], values, null);
                     }
                     copied[i] = target[i];
