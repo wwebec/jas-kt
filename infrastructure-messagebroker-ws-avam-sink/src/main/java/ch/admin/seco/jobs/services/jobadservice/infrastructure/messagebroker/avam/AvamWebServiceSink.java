@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
+import static java.util.Objects.nonNull;
+
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
@@ -30,6 +32,8 @@ public class AvamWebServiceSink {
 
     private boolean mustSendDeregistratonNotification(JobAdvertisement jobAdvertisement) {
         // send deregistration message only for JobAds registered by JOBROOM or API.
-        return SourceSystem.JOBROOM.equals(jobAdvertisement.getSourceSystem()) || SourceSystem.API.equals(jobAdvertisement.getSourceSystem());
+        return (nonNull(jobAdvertisement.getStellennummerAvam()) &&
+                (SourceSystem.JOBROOM.equals(jobAdvertisement.getSourceSystem())
+                        || SourceSystem.API.equals(jobAdvertisement.getSourceSystem())));
     }
 }

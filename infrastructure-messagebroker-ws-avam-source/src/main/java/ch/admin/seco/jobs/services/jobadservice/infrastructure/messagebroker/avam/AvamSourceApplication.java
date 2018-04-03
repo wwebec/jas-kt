@@ -17,7 +17,7 @@ public class AvamSourceApplication {
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(AvamSourceApplication.class);
-        app.setDefaultProperties(ImmutableMap.of(DEFAULT_PROFILES_PROPERTY_NAME, ProfileRegistry.AVAM_WSDL_V1));
+        app.setDefaultProperties(ImmutableMap.of(DEFAULT_PROFILES_PROPERTY_NAME, ProfileRegistry.AVAM_WSDL_V2));
         app.run(args);
     }
 }

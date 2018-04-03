@@ -3,8 +3,8 @@
 This app provides an Web Service endpoint and publish the data into the `jobad.action` message queue.
 
 ### Spring Profiles:
-- avam-wsdl-v1: AVAM Web Service Version 1 (Jobroom 1) (**default**) 
-- avam-wsdl-v2: AVAM Web Service Version 2 (Jobroom 2, with reportingObligation)
+- avam-wsdl-v1: AVAM Web Service Version 1 (Jobroom 1)
+- avam-wsdl-v2: AVAM Web Service Version 2 (Jobroom 2, with reportingObligation) **default**
 
 ### Deployment to Spring Cloud DataFlow
 

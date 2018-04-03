@@ -3,8 +3,8 @@
 This app listens on message queue `jobad.event` for events (_JOB_ADVERTISEMENT_INSPECTING_ and _JOB_ADVERTISEMENT_CANCELLING_) and sends them via web service to AVAM.
 
 ### Spring Profiles:
-- avam-wsdl-v1: AVAM Web Service Version 1 (Jobroom 1) (**default**) 
-- avam-wsdl-v2: AVAM Web Service Version 2 (Jobroom 2, with reportingObligation)
+- avam-wsdl-v1: AVAM Web Service Version 1 (Jobroom 1)  
+- avam-wsdl-v2: AVAM Web Service Version 2 (Jobroom 2, with reportingObligation) **default**
 
 ### Deployment to Spring Cloud DataFlow
 
