@@ -19,7 +19,7 @@ public class LegacyToJobAdvertisementConverterTest {
 	public void shouldConvertLegacyDto() {
 		// GIVEN
 		LegacyLocationDto legacyLocationDto = new LegacyLocationDto("CH", "1234", "2222", "Bern", "details");
-		LegacyLanguageSkillDto legacyLanguageSkillDto = new LegacyLanguageSkillDto(LegacyLanguageEnum.DE, LegacyLanguageLevelEnum.BASIC, LegacyLanguageLevelEnum.BASIC);
+		LegacyLanguageSkillDto legacyLanguageSkillDto = new LegacyLanguageSkillDto(LegacyLanguageEnum.DE, LanguageLevel.BASIC, LanguageLevel.BASIC);
 		LegacyJobDto legacyJobDto = new LegacyJobDto(
 				"title",
 				new LegacyOccupationDto("avam", LegacyDegreeEnum.PRIMAR_OBLIGATORISCHE_SCHULE, LegacyExperienceEnum.BETWEEN_1_AND_3_YEARS),

@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
+
 import javax.validation.constraints.NotNull;
 
 public class LegacyOccupationDto {

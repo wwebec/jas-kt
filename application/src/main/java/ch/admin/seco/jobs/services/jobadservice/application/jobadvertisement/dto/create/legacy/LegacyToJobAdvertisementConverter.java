@@ -29,13 +29,6 @@ public class LegacyToJobAdvertisementConverter {
 			.put(LegacyExperienceEnum.MORE_THAN_3_YEARS, WorkExperience.MORE_THAN_3_YEARS)
 			.toImmutable();
 
-	private static final MappingBuilder<LegacyLanguageLevelEnum, LanguageLevel> LANGUAGE_LEVEL_MAPPING = new MappingBuilder<LegacyLanguageLevelEnum, LanguageLevel>()
-			.put(LegacyLanguageLevelEnum.NONE, LanguageLevel.NONE)
-			.put(LegacyLanguageLevelEnum.BASIC, LanguageLevel.BASIC)
-			.put(LegacyLanguageLevelEnum.INTERMEDIATE, LanguageLevel.INTERMEDIATE)
-			.put(LegacyLanguageLevelEnum.PROFICIENT, LanguageLevel.PROFICIENT)
-			.toImmutable();
-
 	public static CreateJobAdvertisementDto convert(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
 		String language = legacyJobAdvertisementDto.getLocale().getLanguage();
 		return new CreateJobAdvertisementDto(
@@ -80,8 +73,8 @@ public class LegacyToJobAdvertisementConverter {
 		return languageSkills.stream()
 				.map(legacyLanguageSkillDto -> new LanguageSkillDto(
 						legacyLanguageSkillDto.getCode().name(),
-						LANGUAGE_LEVEL_MAPPING.getRight(legacyLanguageSkillDto.getSpokenLevel()),
-						LANGUAGE_LEVEL_MAPPING.getRight(legacyLanguageSkillDto.getWrittenLevel())
+						legacyLanguageSkillDto.getSpokenLevel(),
+						legacyLanguageSkillDto.getWrittenLevel()
 						))
 				.collect(toList());
 	}
