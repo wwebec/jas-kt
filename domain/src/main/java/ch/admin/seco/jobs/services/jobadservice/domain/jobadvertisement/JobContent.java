@@ -126,7 +126,9 @@ public class JobContent implements ValueObject<JobContent> {
         this.publicContact = Condition.notNull(builder.publicContact, "Public contact can't be null");
         this.applyChannel = builder.applyChannel;
         this.location = Condition.notNull(builder.location, "Location can't be null");
-        this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
+        // TODO reinsert occupation condition, when the legacy API is deleted
+        //this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
+        this.occupations = builder.occupations;
     }
 
     public String getExternalUrl() {
