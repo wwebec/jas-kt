@@ -107,6 +107,7 @@ public class JobAdvertisementApplicationService {
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementDto.getLanguageSkills()))
                 .build();
 
+        // TODO Add auditUser
         return new JobAdvertisementCreator.Builder(null)
                 .setReportingObligation(reportingObligation)
                 .setJobCenterCode(jobCenterCode)
@@ -144,6 +145,7 @@ public class JobAdvertisementApplicationService {
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromAvamDto.getLanguageSkills()))
                 .build();
 
+        // TODO Add auditUser
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
                 .setReportingObligation(createJobAdvertisementFromAvamDto.isReportingObligation())
                 .setReportingObligationEndDate(createJobAdvertisementFromAvamDto.getReportingObligationEndDate())
@@ -163,6 +165,7 @@ public class JobAdvertisementApplicationService {
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam)
                 .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerAvam: " + stellennummerAvam));
 
+        // TODO Add auditUser
         JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
                 // TODO TBD what can be updated from AVAM
                 .build();
@@ -196,6 +199,7 @@ public class JobAdvertisementApplicationService {
                 .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
                 .build();
 
+        // TODO Add auditUser
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
                 .setJobContent(jobContent)
                 .setPublication(
@@ -219,6 +223,7 @@ public class JobAdvertisementApplicationService {
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
                 .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
 
+        // TODO Add auditUser
         JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
                 .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint())
                 .setX28OccupationCodes(updateJobAdvertisementFromX28Dto.getX28OccupationCodes())

@@ -11,12 +11,12 @@ public class LegacyJobDto {
     private String title;
     @NotNull
     private String description;
-    private int workingTimePercentageFrom;
-    private int workingTimePercentageTo;
+    private Integer workingTimePercentageFrom;
+    private Integer workingTimePercentageTo;
     private LocalDate startDate;
     private LocalDate endDate;
-    private boolean startsImmediately;
-    private boolean permanent;
+    private Boolean startsImmediately;
+    private Boolean permanent;
     @Valid
     private LegacyLocationDto location;
     private List<LegacyLanguageSkillDto> languageSkills;
@@ -25,7 +25,7 @@ public class LegacyJobDto {
         // For reflection libs
     }
 
-    public LegacyJobDto(String title, String description, int workingTimePercentageFrom, int workingTimePercentageTo, boolean startsImmediately, LocalDate startDate, boolean permanent, LocalDate endDate, List<LegacyLanguageSkillDto> languageSkills, LegacyLocationDto location) {
+    public LegacyJobDto(String title, String description, Integer workingTimePercentageFrom, Integer workingTimePercentageTo, Boolean startsImmediately, LocalDate startDate, Boolean permanent, LocalDate endDate, List<LegacyLanguageSkillDto> languageSkills, LegacyLocationDto location) {
         this.title = title;
         this.description = description;
         this.workingTimePercentageFrom = workingTimePercentageFrom;
@@ -54,27 +54,27 @@ public class LegacyJobDto {
         this.description = description;
     }
 
-    public int getWorkingTimePercentageFrom() {
+    public Integer getWorkingTimePercentageFrom() {
         return workingTimePercentageFrom;
     }
 
-    public void setWorkingTimePercentageFrom(int workingTimePercentageFrom) {
+    public void setWorkingTimePercentageFrom(Integer workingTimePercentageFrom) {
         this.workingTimePercentageFrom = workingTimePercentageFrom;
     }
 
-    public int getWorkingTimePercentageTo() {
+    public Integer getWorkingTimePercentageTo() {
         return workingTimePercentageTo;
     }
 
-    public void setWorkingTimePercentageTo(int workingTimePercentageTo) {
+    public void setWorkingTimePercentageTo(Integer workingTimePercentageTo) {
         this.workingTimePercentageTo = workingTimePercentageTo;
     }
 
-    public boolean isStartsImmediately() {
+    public Boolean isStartsImmediately() {
         return startsImmediately;
     }
 
-    public void setStartsImmediately(boolean startsImmediately) {
+    public void setStartsImmediately(Boolean startsImmediately) {
         this.startsImmediately = startsImmediately;
     }
 
@@ -86,11 +86,11 @@ public class LegacyJobDto {
         this.startDate = startDate;
     }
 
-    public boolean isPermanent() {
+    public Boolean isPermanent() {
         return permanent;
     }
 
-    public void setPermanent(boolean permanent) {
+    public void setPermanent(Boolean permanent) {
         this.permanent = permanent;
     }
 
