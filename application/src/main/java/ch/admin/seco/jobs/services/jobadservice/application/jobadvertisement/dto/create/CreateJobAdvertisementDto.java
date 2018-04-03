@@ -47,7 +47,9 @@ public class CreateJobAdvertisementDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, @NotNull ContactDto contact, @NotNull PublicationDto publication, @NotNull List<JobDescriptionDto> jobDescriptions, @NotNull CompanyDto company, EmployerDto employer, @NotNull EmploymentDto employment, @NotNull CreateLocationDto location, @NotNull OccupationDto occupation, @NotNull List<LanguageSkillDto> languageSkills, ApplyChannelDto applyChannel, @NotNull PublicContactDto publicContact) {
+    public CreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, @NotNull ContactDto contact, @NotNull PublicationDto publication, @NotNull List<JobDescriptionDto> jobDescriptions, @NotNull CompanyDto company, EmployerDto employer, @NotNull EmploymentDto employment, @NotNull CreateLocationDto location,
+                                     //@NotNull
+                                     OccupationDto occupation, @NotNull List<LanguageSkillDto> languageSkills, ApplyChannelDto applyChannel, @NotNull PublicContactDto publicContact) {
         this.reportToAvam = reportToAvam;
         this.externalUrl = externalUrl;
         this.contact = contact;
