@@ -1,6 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

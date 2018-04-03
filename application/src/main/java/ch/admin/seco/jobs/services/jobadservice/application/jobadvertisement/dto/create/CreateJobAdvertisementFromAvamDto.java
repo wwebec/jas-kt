@@ -1,5 +1,6 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -8,9 +9,10 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
-public class CreateJobAdvertisementAvamDto {
+public class CreateJobAdvertisementFromAvamDto {
 
     @NotEmpty
     private String stellennummerAvam;
@@ -25,10 +27,14 @@ public class CreateJobAdvertisementAvamDto {
     @Pattern(regexp = "[a-z]{2}")
     private String languageIsoCode;
 
-    @NotNull
-    private EmploymentDto employment;
+    private boolean reportingObligation;
+
+    private LocalDate reportingObligationEndDate;
 
     private String jobCenterCode;
+
+    @NotNull
+    private EmploymentDto employment;
 
     private ApplyChannelDto applyChannel;
 
@@ -51,19 +57,21 @@ public class CreateJobAdvertisementAvamDto {
 
     private Set<WorkForm> workForm;
 
-    protected CreateJobAdvertisementAvamDto() {
+    protected CreateJobAdvertisementFromAvamDto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementAvamDto(String stellennummerAvam, String title,
-            String description, String languageIsoCode, String jobCenterCode, EmploymentDto employment,
-            ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
-            List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication,
-            Set<WorkForm> workForm) {
+    public CreateJobAdvertisementFromAvamDto(String stellennummerAvam, String title,
+                                             String description, String languageIsoCode, boolean reportingObligation, LocalDate reportingObligationEndDate, String jobCenterCode, EmploymentDto employment,
+                                             ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
+                                             List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication,
+                                             Set<WorkForm> workForm) {
         this.stellennummerAvam = stellennummerAvam;
         this.title = title;
         this.description = description;
         this.languageIsoCode = languageIsoCode;
+        this.reportingObligation = reportingObligation;
+        this.reportingObligationEndDate = reportingObligationEndDate;
         this.jobCenterCode = jobCenterCode;
         this.employment = employment;
         this.applyChannel = applyChannel;
@@ -108,20 +116,36 @@ public class CreateJobAdvertisementAvamDto {
         this.languageIsoCode = languageIsoCode;
     }
 
-    public EmploymentDto getEmployment() {
-        return employment;
-    }
-
-    public void setEmployment(EmploymentDto employment) {
-        this.employment = employment;
-    }
-
     public String getJobCenterCode() {
         return jobCenterCode;
     }
 
     public void setJobCenterCode(String jobCenterCode) {
         this.jobCenterCode = jobCenterCode;
+    }
+
+    public boolean isReportingObligation() {
+        return reportingObligation;
+    }
+
+    public void setReportingObligation(boolean reportingObligation) {
+        this.reportingObligation = reportingObligation;
+    }
+
+    public LocalDate getReportingObligationEndDate() {
+        return reportingObligationEndDate;
+    }
+
+    public void setReportingObligationEndDate(LocalDate reportingObligationEndDate) {
+        this.reportingObligationEndDate = reportingObligationEndDate;
+    }
+
+    public EmploymentDto getEmployment() {
+        return employment;
+    }
+
+    public void setEmployment(EmploymentDto employment) {
+        this.employment = employment;
     }
 
     public ApplyChannelDto getApplyChannel() {

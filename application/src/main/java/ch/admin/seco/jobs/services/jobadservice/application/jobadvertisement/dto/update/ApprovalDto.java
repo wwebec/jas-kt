@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
+package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update;
 
 import java.time.LocalDate;
 

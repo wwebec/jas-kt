@@ -4,6 +4,11 @@ import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.*;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
@@ -18,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
 import static java.util.stream.Collectors.toList;
@@ -54,116 +62,68 @@ public class JobAdvertisementApplicationService {
         this.professionSerivce = professionService;
     }
 
-    public JobAdvertisementId createFromWebForm(CreateJobAdvertisementWebFormDto createJobAdvertisementWebFormDto) {
-        LOG.debug("Create '{}' from Webform", createJobAdvertisementWebFormDto.getTitle());
+    public JobAdvertisementId createFromWebForm(CreateJobAdvertisementDto createJobAdvertisementDto) {
+        LOG.debug("Create '{}' from Webform", createJobAdvertisementDto.getJobDescriptions().get(0));
 
-        Location location = toLocation(createJobAdvertisementWebFormDto.getLocation());
-        location = locationService.enrichCodes(location);
-
-        Occupation occupation = toOccupation(createJobAdvertisementWebFormDto.getOccupation());
-        occupation = enrichOccupationWithProfessionCodes(occupation);
-
-        boolean reportingObligation = checkReportingObligation(
-                occupation,
-                location
-        );
-
-        // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
-        String jobCenterCode = null;
-
-        JobContent jobContent = new JobContent.Builder()
-                .setJobDescriptions(Collections.singletonList(
-                        new JobDescription.Builder()
-                                .setLanguage(new Locale(createJobAdvertisementWebFormDto.getLanguageIsoCode()))
-                                .setTitle(createJobAdvertisementWebFormDto.getTitle())
-                                .setDescription(createJobAdvertisementWebFormDto.getDescription())
-                                .build()
-                ))
-                .setLocation(location)
-                .setOccupations(Collections.singletonList(occupation))
-                .setEmployment(toEmployment(createJobAdvertisementWebFormDto.getEmployment()))
-                .setApplyChannel(toApplyChannel(createJobAdvertisementWebFormDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementWebFormDto.getCompany()))
-                .setPublicContact(toPublicContact(createJobAdvertisementWebFormDto.getContact()))
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementWebFormDto.getLanguageSkills()))
-                .build();
-
-        //TODO What should be the EURES value?
-        Publication publication = new Publication.Builder()
-                // TODO Add fields of publication
-                .setEures(createJobAdvertisementWebFormDto.isEures())
-                .build();
-
-        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
-                .setReportingObligation(reportingObligation)
-                .setJobCenterCode(jobCenterCode)
-                .setJobContent(jobContent)
-                .setContact(toContact(createJobAdvertisementWebFormDto.getContact()))
-                .setPublication(publication)
-                .build();
-
+        final JobAdvertisementCreator creator = getJobAdvertisementCreatorFromInternal(createJobAdvertisementDto);
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(creator);
         return jobAdvertisement.getId();
     }
 
-    public JobAdvertisementId createFromApi(CreateJobAdvertisementApiDto createJobAdvertisementApiDto) {
-        LOG.debug("Create '{}' from API", createJobAdvertisementApiDto.getJob().getTitle());
+    public JobAdvertisementId createFromApi(CreateJobAdvertisementDto createJobAdvertisementDto) {
+        LOG.debug("Create '{}' from API", createJobAdvertisementDto.getJobDescriptions().get(0));
 
-        Location location = toLocation(createJobAdvertisementApiDto.getJob().getLocation());
+        final JobAdvertisementCreator creator = getJobAdvertisementCreatorFromInternal(createJobAdvertisementDto);
+        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(creator);
+        return jobAdvertisement.getId();
+    }
+
+    private JobAdvertisementCreator getJobAdvertisementCreatorFromInternal(CreateJobAdvertisementDto createJobAdvertisementDto) {
+        Location location = toLocation(createJobAdvertisementDto.getLocation());
         location = locationService.enrichCodes(location);
 
-        Occupation occupation = toOccupation(createJobAdvertisementApiDto.getOccupation());
-        occupation = enrichOccupationWithProfessionCodes(occupation);
-
-        boolean reportingObligation = checkReportingObligation(
-                occupation,
-                location
-        );
+        Occupation occupation = toOccupation(createJobAdvertisementDto.getOccupation());
+        // TODO remove this if, when the legacy API is deleted
+        boolean reportingObligation = false;
+        if (occupation != null) {
+            occupation = enrichOccupationWithProfessionCodes(occupation);
+            reportingObligation = checkReportingObligation(
+                    occupation,
+                    location
+            );
+        }
 
         // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
         String jobCenterCode = null;
 
         JobContent jobContent = new JobContent.Builder()
-                .setJobDescriptions(Collections.singletonList(
-                        new JobDescription.Builder()
-                                .setLanguage(new Locale(createJobAdvertisementApiDto.getJob().getLanguageIsoCode()))
-                                .setTitle(createJobAdvertisementApiDto.getJob().getTitle())
-                                .setDescription(createJobAdvertisementApiDto.getJob().getDescription())
-                                .build()
-                ))
+                .setJobDescriptions(toJobDescriptions(createJobAdvertisementDto.getJobDescriptions()))
                 .setLocation(location)
                 .setOccupations(Collections.singletonList(occupation))
-                .setEmployment(toEmployment(createJobAdvertisementApiDto.getJob()))
-                .setApplyChannel(toApplyChannel(createJobAdvertisementApiDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementApiDto.getCompany()))
-                .setPublicContact(toPublicContact(createJobAdvertisementApiDto.getContact()))
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementApiDto.getJob().getLanguageSkills()))
+                .setEmployment(toEmployment(createJobAdvertisementDto.getEmployment()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementDto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementDto.getCompany()))
+                .setPublicContact(toPublicContact(createJobAdvertisementDto.getContact()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementDto.getLanguageSkills()))
                 .build();
 
-        Publication publication = new Publication.Builder()
-                // TODO Add fields of publication
-                .setEures(false)
-                .build();
-
-        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+        // TODO Add auditUser
+        return new JobAdvertisementCreator.Builder(null)
                 .setReportingObligation(reportingObligation)
                 .setJobCenterCode(jobCenterCode)
                 .setJobContent(jobContent)
-                .setContact(toContact(createJobAdvertisementApiDto.getContact()))
-                .setPublication(publication)
+                .setContact(toContact(createJobAdvertisementDto.getContact()))
+                .setPublication(toPublication(createJobAdvertisementDto.getPublication()))
                 .build();
-
-        JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(creator);
-        return jobAdvertisement.getId();
     }
 
-    public JobAdvertisementId createFromAvam(CreateJobAdvertisementAvamDto createJobAdvertisementAvamDto) {
-        LOG.debug("Create '{}' from AVAM", createJobAdvertisementAvamDto.getTitle());
+    public JobAdvertisementId createFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+        LOG.debug("Create '{}' from AVAM", createJobAdvertisementFromAvamDto.getTitle());
 
-        Location location = toLocation(createJobAdvertisementAvamDto.getLocation());
+        Location location = toLocation(createJobAdvertisementFromAvamDto.getLocation());
         location = locationService.enrichCodes(location);
 
-        List<Occupation> occupations = createJobAdvertisementAvamDto.getOccupations().stream()
+        List<Occupation> occupations = createJobAdvertisementFromAvamDto.getOccupations().stream()
                 .map(this::toOccupation)
                 .map(this::enrichOccupationWithProfessionCodes)
                 .collect(toList());
@@ -172,34 +132,27 @@ public class JobAdvertisementApplicationService {
                 .setJobDescriptions(Collections.singletonList(
                         new JobDescription.Builder()
                                 .setLanguage(Locale.GERMAN)
-                                .setTitle(createJobAdvertisementAvamDto.getTitle())
-                                .setDescription(createJobAdvertisementAvamDto.getDescription())
+                                .setTitle(createJobAdvertisementFromAvamDto.getTitle())
+                                .setDescription(createJobAdvertisementFromAvamDto.getDescription())
                                 .build()
                 ))
                 .setLocation(location)
                 .setOccupations(occupations)
-                .setEmployment(toEmployment(createJobAdvertisementAvamDto.getEmployment()))
-                .setApplyChannel(toApplyChannel(createJobAdvertisementAvamDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementAvamDto.getCompany()))
-                .setPublicContact(toPublicContact(createJobAdvertisementAvamDto.getContact()))
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementAvamDto.getLanguageSkills()))
+                .setEmployment(toEmployment(createJobAdvertisementFromAvamDto.getEmployment()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisementFromAvamDto.getApplyChannel()))
+                .setCompany(toCompany(createJobAdvertisementFromAvamDto.getCompany()))
+                .setPublicContact(toPublicContact(createJobAdvertisementFromAvamDto.getContact()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromAvamDto.getLanguageSkills()))
                 .build();
 
-        Publication publication = new Publication.Builder()
-                .setEures(createJobAdvertisementAvamDto.getPublication().isEures())
-                .setEuresAnonymous(createJobAdvertisementAvamDto.getPublication().isEuresAnonymous())
-                .setPublicDisplay(createJobAdvertisementAvamDto.getPublication().isPublicDisplay())
-                .setPublicAnonynomous(createJobAdvertisementAvamDto.getPublication().isPublicAnonynomous())
-                .setRestrictedDisplay(createJobAdvertisementAvamDto.getPublication().isRestrictedDisplay())
-                .setRestrictedAnonymous(createJobAdvertisementAvamDto.getPublication().isRestrictedAnonymous())
-                .build();
-
+        // TODO Add auditUser
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
-                // FIXME .setReportingObligation(createJobAdvertisementAvamDto.getReportingObligation())
-                .setJobCenterCode(createJobAdvertisementAvamDto.getJobCenterCode())
+                .setReportingObligation(createJobAdvertisementFromAvamDto.isReportingObligation())
+                .setReportingObligationEndDate(createJobAdvertisementFromAvamDto.getReportingObligationEndDate())
+                .setJobCenterCode(createJobAdvertisementFromAvamDto.getJobCenterCode())
                 .setJobContent(jobContent)
-                .setContact(toContact(createJobAdvertisementAvamDto.getContact()))
-                .setPublication(publication)
+                .setContact(toContact(createJobAdvertisementFromAvamDto.getContact()))
+                .setPublication(toPublication(createJobAdvertisementFromAvamDto.getPublication()))
                 .build();
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromAvam(creator);
@@ -212,6 +165,7 @@ public class JobAdvertisementApplicationService {
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam)
                 .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerAvam: " + stellennummerAvam));
 
+        // TODO Add auditUser
         JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
                 // TODO TBD what can be updated from AVAM
                 .build();
@@ -245,11 +199,16 @@ public class JobAdvertisementApplicationService {
                 .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
                 .build();
 
+        // TODO Add auditUser
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
                 .setJobContent(jobContent)
                 .setPublication(
                         new Publication.Builder()
                                 .setEndDate(TimeMachine.now().plusDays(X28_PUBLICATION_MAX_DAYS).toLocalDate())
+                                .setEures(false)
+                                .setEuresAnonymous(false)
+                                .setPublicDisplay(true)
+                                .setPublicAnonynomous(true)
                                 .build()
                 )
                 .build();
@@ -264,6 +223,7 @@ public class JobAdvertisementApplicationService {
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
                 .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
 
+        // TODO Add auditUser
         JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
                 .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint())
                 .setX28OccupationCodes(updateJobAdvertisementFromX28Dto.getX28OccupationCodes())
@@ -389,17 +349,34 @@ public class JobAdvertisementApplicationService {
         return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
     }
 
-    private Employment toEmployment(JobApiDto jobApiDto) {
-        return new Employment.Builder()
-                .setStartDate(jobApiDto.getStartDate())
-                .setEndDate(jobApiDto.getEndDate())
-                .setShortEmployment(jobApiDto.getShortEmployment())
-                .setImmediately(jobApiDto.getStartsImmediately())
-                .setPermanent(jobApiDto.getPermanent())
-                .setWorkloadPercentageMin(jobApiDto.getWorkingTimePercentageFrom())
-                .setWorkloadPercentageMax(jobApiDto.getWorkingTimePercentageTo())
-                // FIXME .setWorkForms(jobApiDto.getWorkForms())
-                .build();
+    private List<JobDescription> toJobDescriptions(List<JobDescriptionDto> jobDescriptionDtos) {
+        if (jobDescriptionDtos != null) {
+            return jobDescriptionDtos.stream()
+                    .map(jobDescriptionDto -> new JobDescription.Builder()
+                            .setLanguage(new Locale(jobDescriptionDto.getLanguageIsoCode()))
+                            .setTitle(jobDescriptionDto.getTitle())
+                            .setDescription(jobDescriptionDto.getDescription())
+                            .build()
+                    )
+                    .collect(toList());
+        }
+        return null;
+    }
+
+    private Publication toPublication(PublicationDto publicationDto) {
+        if (publicationDto != null) {
+            return new Publication.Builder()
+                    .setStartDate(publicationDto.getStartDate())
+                    .setEndDate(publicationDto.getEndDate())
+                    .setEures(publicationDto.isEures())
+                    .setEuresAnonymous(publicationDto.isEuresAnonymous())
+                    .setPublicDisplay(publicationDto.isPublicDisplay())
+                    .setPublicAnonynomous(publicationDto.isPublicAnonynomous())
+                    .setRestrictedDisplay(publicationDto.isRestrictedDisplay())
+                    .setRestrictedAnonymous(publicationDto.isRestrictedAnonymous())
+                    .build();
+        }
+        return null;
     }
 
     private Employment toEmployment(EmploymentDto employmentDto) {
