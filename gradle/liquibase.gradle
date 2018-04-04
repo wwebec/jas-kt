@@ -8,6 +8,23 @@ dependencies {
     liquibase "org.liquibase.ext:liquibase-hibernate5:${liquibase_hibernate5_version}"
 }
 
+if (OperatingSystem.current().isWindows()) {
+    task pathingLiquibaseJar(type: Jar) {
+        dependsOn configurations.liquibase
+        appendix = 'pathingLiquibase'
+
+        doFirst {
+            manifest {
+                attributes 'Class-Path':
+                        sourceSets.main.runtimeClasspath.plus(configurations.liquibase)
+                                .collect {
+                            it.toURI().toURL().toString().replaceFirst(/file:\/+/, '/')
+                        }.join(' ')
+            }
+        }
+    }
+}
+
 def liquibaseCommand(command) {
     javaexec {
         if (OperatingSystem.current().isWindows()) {

@@ -10,6 +10,7 @@ import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import org.slf4j.Logger;
@@ -53,20 +54,23 @@ public class JobAdvertisementApplicationService {
 
     private final LocationService locationService;
 
-    private final ProfessionService professionSerivce;
+    private final ProfessionService professionService;
+
+    private final JobCenterService jobCenterService;
 
     @Autowired
     public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
-            JobAdvertisementFactory jobAdvertisementFactory,
-
-            ReportingObligationService reportingObligationService,
-            LocationService locationService,
-            ProfessionService professionService) {
+                                              JobAdvertisementFactory jobAdvertisementFactory,
+                                              ReportingObligationService reportingObligationService,
+                                              LocationService locationService,
+                                              ProfessionService professionService,
+                                              JobCenterService jobCenterService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.reportingObligationService = reportingObligationService;
         this.locationService = locationService;
-        this.professionSerivce = professionService;
+        this.professionService = professionService;
+        this.jobCenterService = jobCenterService;
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementDto createJobAdvertisementDto) {
@@ -305,8 +309,7 @@ public class JobAdvertisementApplicationService {
         Location location = toLocation(createJobAdvertisementDto.getLocation());
         location = locationService.enrichCodes(location);
 
-        // TODO resolve jobCenterCode (see: JobPublicationServiceImpl.computeArbeitsamtbereich)
-        String jobCenterCode = null;
+        String jobCenterCode = jobCenterService.findJobCenterCode(location.getCountryIsoCode(), location.getPostalCode());
 
         List<Occupation> occupations = null;
         boolean reportingObligation = false;
@@ -363,7 +366,7 @@ public class JobAdvertisementApplicationService {
 
     private Occupation enrichOccupationWithProfessionCodes(Occupation occupation) {
         Condition.notNull(occupation, "Occupation can't be null");
-        Profession profession = professionSerivce.findByAvamCode(occupation.getAvamOccupationCode());
+        Profession profession = professionService.findByAvamCode(occupation.getAvamOccupationCode());
         if (profession != null) {
             return new Occupation.Builder()
                     .setAvamOccupationCode(occupation.getAvamOccupationCode())
