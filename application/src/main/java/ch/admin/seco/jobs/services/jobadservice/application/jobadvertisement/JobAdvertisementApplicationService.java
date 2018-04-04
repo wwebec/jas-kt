@@ -336,7 +336,7 @@ public class JobAdvertisementApplicationService {
         List<Occupation> occupations = null;
         boolean reportingObligation = false;
 
-        if (createJobAdvertisementDto.getOccupation() == null) {
+        if (createJobAdvertisementDto.getOccupation() != null) {
             Occupation occupation = toOccupation(createJobAdvertisementDto.getOccupation());
             // TODO remove this if, when the legacy API is deleted
             if (occupation != null) {
