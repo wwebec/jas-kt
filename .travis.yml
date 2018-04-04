@@ -28,7 +28,7 @@ after_success:
 deploy:
 - provider: script
   skip_cleanup: true
-  script: "./gradlew bootJar publish -Pprod -Pzipkin -x test  -Pversion=${TRAVIS_JOB_NUMBER}-SNAPSHOT --stacktrace
+  script: "./gradlew bootJar publish registerApps -Pprod -Pzipkin -x test  -Pversion=${TRAVIS_JOB_NUMBER}-SNAPSHOT --stacktrace
     && curl https://dev.job-room.ch:8443/deploy/jr2 --insecure"
   on:
     all_branches: true
@@ -43,7 +43,7 @@ deploy:
 
 - provider: script
   skip_cleanup: true
-  script: "./gradlew bootJar publish registerApps -Pprod -Pzipkin -x test -Pversion=${TRAVIS_TAG}"
+  script: "./gradlew bootJar publish -Pprod -Pzipkin -x test -Pversion=${TRAVIS_TAG}"
   on:
     tags: true
 
