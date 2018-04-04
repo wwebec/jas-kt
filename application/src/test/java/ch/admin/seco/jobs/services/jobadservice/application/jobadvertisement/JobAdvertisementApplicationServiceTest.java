@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
@@ -47,6 +48,9 @@ public class JobAdvertisementApplicationServiceTest {
 
     @MockBean
     private ProfessionService professionService;
+
+    @MockBean
+    private JobCenterService jobCenterService;
 
     @Autowired
     private JobAdvertisementRepository jobAdvertisementRepository;
