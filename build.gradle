@@ -19,6 +19,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.4.RELEASE'
     id 'com.gorylenko.gradle-git-properties' version '1.4.17'
     id 'com.avast.gradle.docker-compose' version '0.7.1'
+    id 'io.github.http-builder-ng.http-plugin' version '0.1.1'
 }
 
 apply from: "gradle/docker.gradle"

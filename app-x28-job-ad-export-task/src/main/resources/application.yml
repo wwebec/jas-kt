@@ -29,7 +29,7 @@ spring:
 
     datasource:
         jobadservice:
-        type: com.zaxxer.hikari.HikariDataSource
+            type: com.zaxxer.hikari.HikariDataSource
             url: jdbc:h2:file:./build/h2db/db/jobadservice;DB_CLOSE_DELAY=-1
             username: replace-with-username
             password: replace-with-password

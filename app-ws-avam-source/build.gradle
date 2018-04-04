@@ -18,7 +18,7 @@ dependencies {
     compile 'com.fasterxml.jackson.module:jackson-module-afterburner'
 
     compile 'com.googlecode.libphonenumber:libphonenumber'
-    
+
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
     testCompile 'org.springframework.ws:spring-ws-test'
@@ -27,3 +27,18 @@ dependencies {
 }
 
 compileJava.dependsOn(processResources)
+
+apply plugin: 'io.github.http-builder-ng.http-plugin'
+import io.github.httpbuilderng.http.HttpTask
+task registerApps(type: HttpTask) {
+    group 'spring data flow'
+    mustRunAfter 'publish'
+    config {
+        request.uri = 'http://dev.job-room.ch:9393'
+        request.contentType = 'application/x-www-form-urlencoded'
+    }
+    post {
+        request.uri.path = '/apps/source/ws-avam'
+        request.body = "force=true&uri=maven://${project.group}:${project.name}:${version}".toString()
+    }
+}
