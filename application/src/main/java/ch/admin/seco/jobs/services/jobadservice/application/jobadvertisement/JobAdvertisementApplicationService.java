@@ -10,6 +10,8 @@ import java.util.Optional;
 
 import javax.persistence.EntityNotFoundException;
 
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
@@ -43,23 +35,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementCreator;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementFactory;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobContent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.PublicContact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 
@@ -356,6 +331,7 @@ public class JobAdvertisementApplicationService {
                 .setEmployment(toEmployment(createJobAdvertisementDto.getEmployment()))
                 .setApplyChannel(toApplyChannel(createJobAdvertisementDto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementDto.getCompany()))
+                .setEmployer(toEmployer(createJobAdvertisementDto.getEmployer()))
                 .setPublicContact(toPublicContact(createJobAdvertisementDto.getContact()))
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementDto.getLanguageSkills()))
                 .build();
@@ -484,6 +460,20 @@ public class JobAdvertisementApplicationService {
                     .setPhone(companyDto.getPhone())
                     .setEmail(companyDto.getEmail())
                     .setWebsite(companyDto.getWebsite())
+                    .build();
+        }
+        return null;
+    }
+
+    private Employer toEmployer(EmployerDto employerDto) {
+        if (employerDto != null) {
+            return new Employer.Builder()
+                    .setName(employerDto.getName())
+                    .setStreet(employerDto.getStreet())
+                    .setHouseNumber(employerDto.getHouseNumber())
+                    .setPostalCode(employerDto.getPostalCode())
+                    .setCity(employerDto.getCity())
+                    .setCountryIsoCode(employerDto.getCountryIsoCode())
                     .build();
         }
         return null;
