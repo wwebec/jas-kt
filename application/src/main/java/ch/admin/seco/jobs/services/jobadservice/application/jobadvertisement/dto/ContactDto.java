@@ -1,11 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 
 public class ContactDto {
 
@@ -90,6 +90,9 @@ public class ContactDto {
     }
 
     public static ContactDto toDto(Contact contact) {
+        if (contact == null) {
+            return null;
+        }
         ContactDto contactDto = new ContactDto();
         contactDto.setSalutation(contact.getSalutation());
         contactDto.setFirstName(contact.getFirstName());

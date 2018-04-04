@@ -58,6 +58,9 @@ public class OccupationDto {
     }
 
     public static List<OccupationDto> toDto(List<Occupation> occupations) {
-        return occupations.stream().map(OccupationDto::toDto).collect(Collectors.toList());
+        if(occupations != null) {
+            return occupations.stream().map(OccupationDto::toDto).collect(Collectors.toList());
+        }
+        return null;
     }
 }

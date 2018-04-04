@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "localities", fallback = OccupationLabelApiClientFallback.class, decode404 = true)
+@FeignClient(name = "referenceservice", fallback = OccupationLabelApiClientFallback.class, decode404 = true)
 public interface OccupationLabelApiClient {
 
     @GetMapping("/occupations/label/mapping/{type}/{code}")

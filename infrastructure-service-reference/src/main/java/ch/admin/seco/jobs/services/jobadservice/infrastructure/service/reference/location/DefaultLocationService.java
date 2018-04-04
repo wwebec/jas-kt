@@ -1,14 +1,19 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.location;
 
-import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import static org.springframework.util.StringUtils.hasText;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.stereotype.Service;
+
+import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
+
 @Service
+@EnableCaching
 public class DefaultLocationService implements LocationService {
 
     private static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
@@ -23,7 +28,7 @@ public class DefaultLocationService implements LocationService {
 
     @Override
     public Location enrichCodes(Location location) {
-        if ((location != null) && isManagedCountry(location.getCountryIsoCode())) {
+        if ((location != null) && hasText(location.getPostalCode()) && isManagedCountry(location.getCountryIsoCode())) {
             List<LocationResource> locationResources = locationApiClient.findLocationByPostalCode(location.getPostalCode());
             if ((locationResources != null) && !locationResources.isEmpty()) {
                 LocationResource matchingLocationResource = locationResources.stream()

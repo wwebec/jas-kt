@@ -45,6 +45,9 @@ public class OwnerDto {
     }
 
     public static OwnerDto toDto(Owner owner) {
+        if (owner == null) {
+            return null;
+        }
         OwnerDto ownerDto = new OwnerDto();
         ownerDto.setUserId(owner.getUserId());
         ownerDto.setAvgId(owner.getAvgId());

@@ -3,6 +3,8 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents.JOB_ADVERTISEMENT_CANCELLED;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageBrokerChannels.APPROVE_CONDITION;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageBrokerChannels.CANCEL_CONDITION;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageBrokerChannels.CREATE_FROM_AVAM_CONDITION;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageBrokerChannels.JOB_AD_ACTION_CHANNEL;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageBrokerChannels.REJECT_CONDITION;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.EVENT;
@@ -18,21 +20,24 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.RejectionDto;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementAlreadyExistsException;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 
 public class AvamService {
 
     private final Logger LOG = LoggerFactory.getLogger(AvamService.class);
 
-    private final DomainEventPublisher domainEventPublisher;
-
     private final MessageChannel jobAdEventChannel;
 
-    public AvamService(DomainEventPublisher domainEventPublisher, MessageChannel jobAdEventChannel) {
-        this.domainEventPublisher = domainEventPublisher;
+    private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
+
+    public AvamService(JobAdvertisementApplicationService jobAdvertisementApplicationService, MessageChannel jobAdEventChannel) {
+        this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
         this.jobAdEventChannel = jobAdEventChannel;
     }
 
@@ -58,10 +63,25 @@ public class AvamService {
 
     @StreamListener(target = JOB_AD_ACTION_CHANNEL, condition = APPROVE_CONDITION)
     public void handleApprovedAction(ApprovalDto approvalDto) {
+        jobAdvertisementApplicationService.approve(approvalDto);
     }
 
     @StreamListener(target = JOB_AD_ACTION_CHANNEL, condition = REJECT_CONDITION)
     public void handleRejectAction(RejectionDto rejectionDto) {
+        jobAdvertisementApplicationService.reject(rejectionDto);
     }
 
+    @StreamListener(target = JOB_AD_ACTION_CHANNEL, condition = CREATE_FROM_AVAM_CONDITION)
+    public void handleCreateAction(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+        try {
+            jobAdvertisementApplicationService.createFromAvam(createJobAdvertisementFromAvamDto);
+        } catch (JobAdvertisementAlreadyExistsException e) {
+            LOG.debug(e.getMessage());
+        }
+    }
+
+    @StreamListener(target = JOB_AD_ACTION_CHANNEL, condition = CANCEL_CONDITION)
+    public void handleCancelAction(CancellationDto cancellationDto) {
+        jobAdvertisementApplicationService.cancel(cancellationDto);
+    }
 }

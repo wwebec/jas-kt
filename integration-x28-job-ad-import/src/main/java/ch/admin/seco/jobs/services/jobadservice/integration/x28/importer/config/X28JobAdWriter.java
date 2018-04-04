@@ -21,20 +21,20 @@ import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste
 public class X28JobAdWriter implements ItemWriter<Oste> {
     private final MessageChannel output;
 
-    private final ActionDtoFactory actionDtoFactory;
+    private final JobAdvertisementDtoAssembler jobAdvertisementDtoAssembler;
 
     public X28JobAdWriter(MessageChannel output) {
         this.output = output;
-        this.actionDtoFactory = new ActionDtoFactory();
+        this.jobAdvertisementDtoAssembler = new JobAdvertisementDtoAssembler();
     }
 
     @Override
     public void write(List<? extends Oste> x28JobAdvertisements) {
         for (Oste x28JobAdvertisement : x28JobAdvertisements) {
             if (isExternalJobAdvertisement(x28JobAdvertisement)) {
-                send(actionDtoFactory.createFromX28(x28JobAdvertisement), CREATE_FROM_X28);
+                send(jobAdvertisementDtoAssembler.createFromX28(x28JobAdvertisement), CREATE_FROM_X28);
             } else {
-                send(actionDtoFactory.updateFromX28(x28JobAdvertisement), UPDATE_FROM_X28);
+                send(jobAdvertisementDtoAssembler.updateFromX28(x28JobAdvertisement), UPDATE_FROM_X28);
             }
         }
     }

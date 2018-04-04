@@ -1,7 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import static java.util.Objects.isNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -90,7 +88,7 @@ public class X28JobAdImportTaskConfig {
     public Tasklet downloadFromSftpServer() {
         return (contribution, chunkContext) -> {
             Message<File> x28JobAdDataFileMessage = x28JobAdDataFileMessageSource.receive();
-            if (isNull(x28JobAdDataFileMessage) || isNull(x28JobAdDataFileMessage.getPayload())) {
+            if ((x28JobAdDataFileMessage == null) || (x28JobAdDataFileMessage.getPayload() == null)) {
 
                 LOG.error("X28 JobAd data file not available");
                 contribution.setExitStatus(new ExitStatus("NO_FILE"));

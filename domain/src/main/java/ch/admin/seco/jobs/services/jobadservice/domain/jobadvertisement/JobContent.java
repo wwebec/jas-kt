@@ -15,7 +15,7 @@ public class JobContent implements ValueObject<JobContent> {
     private String x28OccupationCodes;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_CONTENT_DESCRIPTION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @CollectionTable(name = "JOB_ADVERTISEMENT_DESCRIPTION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<JobDescription> jobDescriptions;
 
@@ -79,12 +79,12 @@ public class JobContent implements ValueObject<JobContent> {
     private Location location;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_CONTENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @CollectionTable(name = "JOB_ADVERTISEMENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<Occupation> occupations;
 
     @ElementCollection
-    @CollectionTable(name = "JOB_CONTENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
+    @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     private List<LanguageSkill> languageSkills;
 
@@ -123,10 +123,12 @@ public class JobContent implements ValueObject<JobContent> {
         this.jobDescriptions = Condition.notEmpty(builder.jobDescriptions, "Job descriptions can't be null or empty");
         this.languageSkills = builder.languageSkills;
         this.employment = Condition.notNull(builder.employment, "Employment can't be null");
-        this.publicContact = Condition.notNull(builder.publicContact, "Public contact can't be null");
+        this.publicContact = builder.publicContact;
         this.applyChannel = builder.applyChannel;
         this.location = Condition.notNull(builder.location, "Location can't be null");
-        this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
+        // TODO reinsert occupation condition, when the legacy API is deleted
+        //this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
+        this.occupations = builder.occupations;
     }
 
     public String getExternalUrl() {
