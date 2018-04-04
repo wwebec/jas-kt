@@ -18,7 +18,7 @@ public enum JobAdvertisementStatus {
     ARCHIVED;
 
     static {
-        CREATED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, INSPECTING, PUBLISHED_PUBLIC};
+        CREATED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, INSPECTING, REFINING};
         INSPECTING.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, APPROVED, REJECTED};
         APPROVED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, REFINING};
         REJECTED.allowedDestinationStates = new JobAdvertisementStatus[]{};
