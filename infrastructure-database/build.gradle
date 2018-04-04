@@ -9,10 +9,8 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     compile 'com.fasterxml.jackson.module:jackson-module-afterburner'
-    
-    runtime 'org.liquibase:liquibase-core'
+
     runtime 'org.postgresql:postgresql'
-    runtime 'com.mattbertolini:liquibase-slf4j'
 
     testCompile 'com.h2database:h2'
 }

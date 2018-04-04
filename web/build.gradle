@@ -50,6 +50,9 @@ dependencies {
     compile 'net.logstash.logback:logstash-logback-encoder'
     compile 'org.zalando:problem-spring-web'
 
+    runtime 'org.liquibase:liquibase-core'
+    runtime 'com.mattbertolini:liquibase-slf4j'
+
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.springframework.security:spring-security-test'
 

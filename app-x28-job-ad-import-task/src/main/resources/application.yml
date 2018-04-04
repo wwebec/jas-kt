@@ -1,0 +1,43 @@
+spring:
+    application:
+        name: job-ad-x28-import
+
+##############################
+#  JACKSON - ATTENTION: spring jackson proerties only apply when the spring-web library is present on the classpath !!
+##############################
+
+
+##############################
+#  DATASOURCE CONFIG
+##############################
+
+    jpa:
+        properties:
+            hibernate.jdbc.lob.non_contextual_creation: true # prevent error message: Method org.postgresql.jdbc.PgConnection.createClob() is not yet implemented.
+
+##############################
+#  MESSAGEBROKER - KAFKA
+##############################
+    cloud:
+        stream:
+            bindings:
+                output:
+                    destination: jobad.action
+                    group: x28-importer-task
+        task:
+            batch:
+                events:
+                    enabled: false
+
+##############################
+#  X28 SFTP
+##############################
+jobroom:
+    x28:
+        sftp:
+            localDirectory: /tmp/batch/job-ad-x28-import
+            remoteDirectory: jobroom
+            fileNamePattern: x28Jobs_seco_current.zip
+            host: admin.x28.ch
+            username: replace-with-username
+            password: replace-with-password
