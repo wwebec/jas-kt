@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementApprovedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementBlackoutExpiredEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishExpiredEvent;
@@ -34,7 +35,7 @@ public class JobAdvertisementEventListener {
 
     @EventListener
     void onCreated(JobAdvertisementCreatedEvent event) {
-        LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        LOG.debug("EVENT caught for internal: JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         if (jobAdvertisement.isReportingObligation() || jobAdvertisement.isReportToAvam() || jobAdvertisement.getSourceSystem().equals(SourceSystem.JOBROOM)) {
             jobAdvertisementApplicationService.inspect(jobAdvertisement.getId());
@@ -44,20 +45,26 @@ public class JobAdvertisementEventListener {
     }
 
     @EventListener
+    void onApproved(JobAdvertisementApprovedEvent event) {
+        LOG.debug("EVENT caught for internal: JOB_ADVERTISEMENT_APPROVED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        jobAdvertisementApplicationService.refining(event.getAggregateId());
+    }
+
+    @EventListener
     void onRefined(JobAdvertisementRefinedEvent event) {
-        LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        LOG.debug("EVENT caught for internal: JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         jobAdvertisementApplicationService.publish(event.getAggregateId());
     }
 
     @EventListener
     void onBlackoutExpired(JobAdvertisementBlackoutExpiredEvent event) {
-        LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_BLACKOUT_EXPIRED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        LOG.debug("EVENT caught for internal: JOB_ADVERTISEMENT_BLACKOUT_EXPIRED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         jobAdvertisementApplicationService.publish(event.getAggregateId());
     }
 
     @EventListener
     void onPublishExpired(JobAdvertisementPublishExpiredEvent event) {
-        LOG.debug("EVENT catched for internal: JOB_ADVERTISEMENT_PUBLISH_EXPIRED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        LOG.debug("EVENT caught for internal: JOB_ADVERTISEMENT_PUBLISH_EXPIRED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         jobAdvertisementApplicationService.archive(event.getAggregateId());
     }
 

@@ -39,6 +39,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.J
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishExpiredEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishRestrictedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefinedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRejectedEvent;
 
@@ -294,6 +295,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     public void refining() {
         this.status = status.validateTransitionTo(JobAdvertisementStatus.REFINING);
         DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(this));
+        // TODO: we don't have x28-api yet
+        DomainEventPublisher.publish(new JobAdvertisementRefinedEvent(this));
     }
 
     public void publishRestricted() {
