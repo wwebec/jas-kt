@@ -4,9 +4,6 @@ import javax.validation.Valid;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy.LegacyJobAdvertisementDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,11 +37,5 @@ public class JobAdvertisementApiRestController {
 	public JobAdvertisementDto createFromLegacyApi(@RequestBody @Valid LegacyJobAdvertisementDto legacyJobAdvertisementDto) throws AggregateNotFoundException {
 		CreateJobAdvertisementDto createJobAdvertisementDto = LegacyToJobAdvertisementConverter.convert(legacyJobAdvertisementDto);
 		return createFromApi(createJobAdvertisementDto);
-	}
-
-	@PostMapping(path = "/api/{id}/cancel")
-	public ResponseEntity<?> cancelFromApi(@PathVariable Integer id) {
-		// TODO: implement
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }
