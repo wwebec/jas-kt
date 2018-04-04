@@ -21,13 +21,13 @@ public class AvamRegistrationEventListener {
 
     @EventListener
     protected void handle(JobAdvertisementInspectingEvent event) {
-        LOG.debug("EVENT catched for AVAM: JOB_ADVERTISEMENT_INSPECTING for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        LOG.debug("EVENT caught for AVAM: JOB_ADVERTISEMENT_INSPECTING for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         this.avamTaskRepository.save(new AvamTask(new AvamTaskId(), event.getAggregateId(), AvamTaskType.REGISTER));
     }
 
     @EventListener
     protected void handle(JobAdvertisementCancelledEvent event) {
-        LOG.debug("EVENT catched for AVAM: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        LOG.debug("EVENT caught for AVAM: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         this.avamTaskRepository.save(new AvamTask(new AvamTaskId(), event.getAggregateId(), AvamTaskType.DEREGISTER));
     }
 }
