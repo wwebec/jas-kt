@@ -56,6 +56,7 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 false,
                 null,
                 avamJobAdvertisement.getArbeitsamtBereich(),
+                parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
                 createEmploymentDto(avamJobAdvertisement),
                 createApplyChannelDto(avamJobAdvertisement),
                 createCompanyDto(avamJobAdvertisement),
