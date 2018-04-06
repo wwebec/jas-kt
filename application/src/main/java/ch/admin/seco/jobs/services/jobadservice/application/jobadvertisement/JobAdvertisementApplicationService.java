@@ -123,6 +123,7 @@ public class JobAdvertisementApplicationService {
                 .setReportingObligation(createJobAdvertisementFromAvamDto.isReportingObligation())
                 .setReportingObligationEndDate(createJobAdvertisementFromAvamDto.getReportingObligationEndDate())
                 .setJobCenterCode(createJobAdvertisementFromAvamDto.getJobCenterCode())
+                .setApprovalDate(createJobAdvertisementFromAvamDto.getApprovalDate())
                 .setJobContent(jobContent)
                 .setContact(toContact(createJobAdvertisementFromAvamDto.getContact()))
                 .setPublication(toPublication(createJobAdvertisementFromAvamDto.getPublication()))

@@ -34,6 +34,9 @@ public class CreateJobAdvertisementFromAvamDto {
     private String jobCenterCode;
 
     @NotNull
+    private LocalDate approvalDate;
+
+    @NotNull
     private EmploymentDto employment;
 
     private ApplyChannelDto applyChannel;
@@ -62,7 +65,7 @@ public class CreateJobAdvertisementFromAvamDto {
     }
 
     public CreateJobAdvertisementFromAvamDto(String stellennummerAvam, String title,
-                                             String description, String languageIsoCode, boolean reportingObligation, LocalDate reportingObligationEndDate, String jobCenterCode, EmploymentDto employment,
+                                             String description, String languageIsoCode, boolean reportingObligation, LocalDate reportingObligationEndDate, String jobCenterCode, LocalDate approvalDate, EmploymentDto employment,
                                              ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
                                              List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication,
                                              Set<WorkForm> workForm) {
@@ -73,6 +76,7 @@ public class CreateJobAdvertisementFromAvamDto {
         this.reportingObligation = reportingObligation;
         this.reportingObligationEndDate = reportingObligationEndDate;
         this.jobCenterCode = jobCenterCode;
+        this.approvalDate = approvalDate;
         this.employment = employment;
         this.applyChannel = applyChannel;
         this.company = company;
@@ -122,6 +126,14 @@ public class CreateJobAdvertisementFromAvamDto {
 
     public void setJobCenterCode(String jobCenterCode) {
         this.jobCenterCode = jobCenterCode;
+    }
+
+    public LocalDate getApprovalDate() {
+        return approvalDate;
+    }
+
+    public void setApprovalDate(LocalDate approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
     public boolean isReportingObligation() {

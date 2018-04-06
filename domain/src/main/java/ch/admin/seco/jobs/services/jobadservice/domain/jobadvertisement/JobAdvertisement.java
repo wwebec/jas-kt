@@ -573,7 +573,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             return this;
         }
 
-        public Builder approvalDate(LocalDate approvalDate) {
+        public Builder setApprovalDate(LocalDate approvalDate) {
             this.approvalDate = approvalDate;
             return this;
         }
