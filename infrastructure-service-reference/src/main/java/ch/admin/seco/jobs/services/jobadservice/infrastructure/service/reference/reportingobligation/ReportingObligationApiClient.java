@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 
-@FeignClient(name = "referenceservice", fallback = ReportingObligationApiClientFallback.class, decode404 = true)
+@FeignClient(name = "referenceservice", url = "${feign.referenceservice.url:}", fallback = ReportingObligationApiClientFallback.class, decode404 = true)
 public interface ReportingObligationApiClient {
 
-    @GetMapping(value = "/reporting-obligations/check-by-canton/{codeType}/{code}", consumes = "application/json")
-    boolean hasReportingObligation(
+    @GetMapping(value = "/api/reporting-obligations/check-by-canton/{codeType}/{code}", consumes = "application/json")
+    ReportingObligationResource hasReportingObligation(
             @PathVariable("codeType") ProfessionCodeType professionCodeType,
             @PathVariable("code") String professionCode,
             @RequestParam("cantonCode") String cantonCode
@@ -24,8 +24,12 @@ public interface ReportingObligationApiClient {
 class ReportingObligationApiClientFallback implements ReportingObligationApiClient {
 
     @Override
-    public boolean hasReportingObligation(ProfessionCodeType professionCodeType, String professionCode, String cantonCode) {
-        return (professionCode.equals("51000") && cantonCode.equalsIgnoreCase("BE"));
+    public ReportingObligationResource hasReportingObligation(ProfessionCodeType professionCodeType, String professionCode, String cantonCode) {
+        return new ReportingObligationResource(
+                true,
+                null,
+                null
+        );
     }
 
 }

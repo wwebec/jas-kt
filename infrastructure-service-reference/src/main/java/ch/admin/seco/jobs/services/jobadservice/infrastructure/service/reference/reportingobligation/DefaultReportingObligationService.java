@@ -17,7 +17,8 @@ public class DefaultReportingObligationService implements ReportingObligationSer
 
     @Override
     public boolean hasReportingObligation(ProfessionCodeType professionCodeType, String professionCode, String cantonCode) {
-        return reportingObligationApiClient.hasReportingObligation(professionCodeType, professionCode, cantonCode);
+        ReportingObligationResource resource = reportingObligationApiClient.hasReportingObligation(professionCodeType, professionCode, cantonCode);
+        return (resource != null) && resource.isHasReportingObligation();
     }
 
 }

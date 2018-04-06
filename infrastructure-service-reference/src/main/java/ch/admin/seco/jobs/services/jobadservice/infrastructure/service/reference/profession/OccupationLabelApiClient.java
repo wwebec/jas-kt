@@ -5,10 +5,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "referenceservice", fallback = OccupationLabelApiClientFallback.class, decode404 = true)
+@FeignClient(name = "referenceservice", url = "${feign.referenceservice.url:}", fallback = OccupationLabelApiClientFallback.class, decode404 = true)
 public interface OccupationLabelApiClient {
 
-    @GetMapping("/occupations/label/mapping/{type}/{code}")
+    @GetMapping("/api/occupations/label/mapping/{type}/{code}")
     OccupationLabelMappingResource getOccupationMapping(@PathVariable("type") String type, @PathVariable("code") String code);
 
 }
