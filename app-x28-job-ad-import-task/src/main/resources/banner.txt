@@ -5,4 +5,5 @@
  /_/\_\_____\___/     _/ |\___/|_.__/       \__,_|\__,_|     |_|_| |_| |_| .__/ \___/|_|   \__|     \__\__,_|___/_|\_\
                      |__/                                                |_|
 
-${AnsiColor.BRIGHT_BLUE}:: job-ad-service ${application.formatted-version}  :: Running Spring Boot ${spring-boot.version} ::  Active Profiles: ${spring.profiles.active:${spring.profiles.default}}
+${AnsiColor.BRIGHT_BLUE}:: job-ad-service ${application.formatted-version} :: Running Spring Boot ${spring-boot.formatted-version} :: Active Profiles: ${spring.profiles.active:${spring.profiles.default}}
+

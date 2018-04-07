@@ -47,7 +47,7 @@ task registerApps(type: HttpTask) {
         request.contentType = 'application/x-www-form-urlencoded'
     }
     post {
-        request.uri.path = '/apps/task/x28-job-ad-import'
+        request.uri.path = '/apps/task/x28jobadimport'
         request.body = "force=true&uri=maven://${project.group}:${project.name}:${version}".toString()
     }
 }

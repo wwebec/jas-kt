@@ -1,28 +1,3 @@
-//buildscript {
-//    repositories {
-//        maven { url 'https://plugins.gradle.org/m2/' }
-//    }
-//    dependencies {
-//        classpath 'gradle.plugin.io.github.http-builder-ng:http-plugin:0.1.1'
-//    }
-//}
-//
-//apply plugin: 'io.github.http-builder-ng.http-plugin'
-//
-//import io.github.httpbuilderng.http.HttpTask;
-//task registerApps(type: HttpTask) {
-//    group 'apps'
-//    mustRunAfter 'publish'
-//    config {
-//        request.uri = 'http://dev.job-room.ch:9393'
-//        request.contentType = 'application/x-www-form-urlencoded'
-//    }
-//    post {
-//        request.uri.path = '/apps/source/ws-avam'
-//        request.body = "force=true&uri=maven://${group}:${project.name}:${version}".toString()
-//    }
-//}
-
 apply plugin: 'org.springframework.boot'
 apply from: 'jaxb.gradle'
 apply from: 'docker.gradle'
@@ -60,7 +35,7 @@ task registerApps(type: HttpTask) {
         request.contentType = 'application/x-www-form-urlencoded'
     }
     post {
-        request.uri.path = '/apps/sink/ws-avam'
+        request.uri.path = '/apps/sink/wsavam'
         request.body = "force=true&uri=maven://${project.group}:${project.name}:${version}".toString()
     }
 }
