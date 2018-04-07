@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 
 import javax.persistence.EntityManagerFactory;
-import javax.xml.stream.XMLEventFactory;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.FilenameUtils;
@@ -37,6 +36,7 @@ import org.springframework.integration.file.FileHeaders;
 import org.springframework.integration.sftp.outbound.SftpMessageHandler;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
@@ -70,16 +70,18 @@ public class X28JobAdExportTaskConfig {
     public Job x28ExportJob(
             JpaPagingItemReader<JobAdvertisement> jpaPagingItemReader,
             X28JobAdvertisementTransformer x28JobAdvertisementTransformer,
-            StaxEventItemWriter<Oste> xmlWriter) {
+            StaxEventItemWriter<Oste> xmlWriter,
+            PlatformTransactionManager jobAdTransactionManager) {
         return jobBuilderFactory.get("x28-jobad-xml-export")
                 .incrementer(new RunIdIncrementer())
                 .listener(new PrepareAndCleanupXmlFileJobExecutionListener())
                 .start(stepBuilderFactory
                         .get("generate-xml-file")
                         .<JobAdvertisement, Oste>chunk(10)
-                        .reader(jpaPagingItemReader)
+                        .reader(jpaPagingItemReader).readerIsTransactionalQueue()
                         .processor(x28JobAdvertisementTransformer)
                         .writer(xmlWriter)
+                        .transactionManager(jobAdTransactionManager)
                         .build())
                 .next(stepBuilderFactory
                         .get("zip-and-upload-to-x28")
@@ -111,11 +113,10 @@ public class X28JobAdExportTaskConfig {
     JpaPagingItemReader<JobAdvertisement> jpaPagingItemReader(EntityManagerFactory jobAdServiceEntityManagerFactory) {
         JpaPagingItemReader<JobAdvertisement> jpaPagingItemReader = new JpaPagingItemReader<>();
         jpaPagingItemReader.setQueryString("select j from JobAdvertisement j where j.status = 'PUBLISHED_PUBLIC' and j.sourceSystem in ('API', 'JOBROOM') order by j.id");
-//        jpaPagingItemReader.setQueryString("select j from ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement j where j.status = 'PUBLISHED_PUBLIC' and j.sourceSystem in ('API', 'JOBROOM') order by j.id");
         jpaPagingItemReader.setEntityManagerFactory(jobAdServiceEntityManagerFactory);
         jpaPagingItemReader.setPageSize(10);
-        jpaPagingItemReader.setTransacted(false);
-        jpaPagingItemReader.setSaveState(false);
+        jpaPagingItemReader.setTransacted(true);
+        jpaPagingItemReader.setSaveState(true);
 
         return jpaPagingItemReader;
     }
@@ -128,7 +129,6 @@ public class X28JobAdExportTaskConfig {
     @Bean
     @JobScope
     StaxEventItemWriter<Oste> xmlFileReader(@Value("#{jobExecutionContext['" + PARAMETER_XML_FILE_PATH + "']}") File xmlFile) {
-        XMLEventFactory factory = XMLEventFactory.newInstance();
         return new StaxEventItemWriterBuilder<Oste>()
                 .name("x28-xml-export-writer")
                 .resource(new PathResource(xmlFile.toPath()))
@@ -143,7 +143,7 @@ public class X28JobAdExportTaskConfig {
     @Bean
     Jaxb2Marshaller X28Marshaller() {
         Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
-        jaxb2Marshaller.setClassesToBeBound(OsteList.class);
+        jaxb2Marshaller.setClassesToBeBound(OsteList.class, Oste.class);
         return jaxb2Marshaller;
     }
 

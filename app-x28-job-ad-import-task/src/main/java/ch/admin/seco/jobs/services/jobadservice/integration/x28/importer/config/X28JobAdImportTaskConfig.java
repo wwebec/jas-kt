@@ -3,8 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -98,13 +96,12 @@ public class X28JobAdImportTaskConfig {
             File originFile = x28JobAdDataFileMessage.getPayload();
             File xmlFile = unzip(originFile);
             if (!xmlFile.equals(originFile)) {
-                delete(originFile.toPath());
+                delete(originFile);
             }
 
             ExecutionContext executionContext = chunkContext.getStepContext().getStepExecution().getJobExecution().getExecutionContext();
-            String xmlFilePath = xmlFile.getAbsolutePath();
-            executionContext.put(PARAMETER_XML_FILE_PATH, xmlFilePath);
-            executionContext.put(PARAMETER_LAST_MODIFIED_TIME, getLastModifiedTime(xmlFilePath));
+            executionContext.put(PARAMETER_XML_FILE_PATH, xmlFile);
+            executionContext.put(PARAMETER_LAST_MODIFIED_TIME, getLastModifiedTime(xmlFile));
             return RepeatStatus.FINISHED;
         };
     }
@@ -118,9 +115,9 @@ public class X28JobAdImportTaskConfig {
 
     @Bean
     @JobScope
-    public StaxEventItemReader<Oste> xmlFileReader(@Value("#{jobExecutionContext['" + PARAMETER_XML_FILE_PATH + "']}") Path xmlFilePath) {
+    public StaxEventItemReader<Oste> xmlFileReader(@Value("#{jobExecutionContext['" + PARAMETER_XML_FILE_PATH + "']}") File xmlFile) {
         return new StaxEventItemReaderBuilder<Oste>()
-                .resource(new PathResource(xmlFilePath))
+                .resource(new PathResource(xmlFile.toPath()))
                 .unmarshaller(X28Marshaller())
                 .strict(false)
                 .saveState(false)
@@ -133,13 +130,13 @@ public class X28JobAdImportTaskConfig {
         return new X28JobAdWriter(messageBrokerOutputChannel);
     }
 
-    private void delete(Path filePath) {
-        if (Files.isWritable(filePath)) {
+    private void delete(File file) {
+        if (Files.isWritable(file.toPath())) {
             try {
-                Files.delete(filePath);
+                Files.delete(file.toPath());
             } catch (IOException e) {
-                filePath.toFile().deleteOnExit();
-                LOG.error("Failed to delete file {}", filePath.toAbsolutePath().toUri());
+                file.deleteOnExit();
+                LOG.error("Failed to delete file {}", file.getAbsolutePath());
             }
         }
     }
@@ -158,9 +155,9 @@ public class X28JobAdImportTaskConfig {
         }
     }
 
-    private Date getLastModifiedTime(String xmlFilePath) {
+    private Date getLastModifiedTime(File xmlFile) {
         try {
-            return new Date(Files.getLastModifiedTime(Paths.get(xmlFilePath)).toMillis());
+            return new Date(Files.getLastModifiedTime(xmlFile.toPath()).toMillis());
         } catch (IOException e) {
             return new Date();
         }
@@ -171,8 +168,8 @@ public class X28JobAdImportTaskConfig {
         public void afterJob(JobExecution jobExecution) {
             if (jobExecution.getExecutionContext().containsKey(PARAMETER_XML_FILE_PATH)) {
 
-                Path xmlFilePath = Paths.get(jobExecution.getExecutionContext().getString(PARAMETER_XML_FILE_PATH));
-                delete(xmlFilePath);
+                File xmlFile = (File) (jobExecution.getExecutionContext().get(PARAMETER_XML_FILE_PATH));
+                delete(xmlFile);
             }
         }
     }

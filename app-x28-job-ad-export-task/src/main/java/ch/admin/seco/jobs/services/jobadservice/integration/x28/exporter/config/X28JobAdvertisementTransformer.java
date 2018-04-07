@@ -3,6 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.integration.x28.exporter.config
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.batch.item.ItemProcessor;
@@ -87,8 +88,8 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
 
     private void mapPublication(Publication publication, Oste x28JobAdvertisement) {
         if (publication != null) {
-            x28JobAdvertisement.setAnmeldeDatum(DATE_FORMATTER.format(publication.getStartDate()));
-            x28JobAdvertisement.setGueltigkeit(DATE_FORMATTER.format(publication.getEndDate()));
+            x28JobAdvertisement.setAnmeldeDatum(DATE_FORMATTER.format(publication.getStartDate().atStartOfDay()));
+            x28JobAdvertisement.setGueltigkeit(DATE_FORMATTER.format(publication.getEndDate().atStartOfDay().plusDays(1).minus(1, ChronoUnit.SECONDS)));
             x28JobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
             x28JobAdvertisement.setEuresPublikation(publication.isEures());
         }

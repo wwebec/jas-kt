@@ -1,6 +1,7 @@
 spring:
     application:
-        name: job-ad-x28-import
+        name: app-x28-job-ad-import
+
 
 ##############################
 #  JACKSON - ATTENTION: spring jackson proerties only apply when the spring-web library is present on the classpath !!

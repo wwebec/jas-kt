@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.exporter.config;
 
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -14,13 +15,21 @@ import org.springframework.cloud.task.repository.support.TaskRepositoryInitializ
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 
 @Configuration
 @EnableConfigurationProperties({JobAdServiceDataSourceProperties.class, JpaProperties.class})
 public class DataSourceConfig {
+
+    @Primary
+    @Bean
+    PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
 
     /*
      * The batch data source is passed from SCDF as default data source.
@@ -89,5 +98,10 @@ public class DataSourceConfig {
                 .properties(jpaProperties.getHibernateProperties(new HibernateSettings().ddlAuto("none")))
                 .persistenceUnit("job-ad")
                 .build();
+    }
+
+    @Bean
+    PlatformTransactionManager jobAdTransactionManager(EntityManagerFactory jobAdServiceEntityManagerFactory) {
+        return new JpaTransactionManager(jobAdServiceEntityManagerFactory);
     }
 }

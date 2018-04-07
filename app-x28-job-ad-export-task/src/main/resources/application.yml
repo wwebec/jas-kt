@@ -1,6 +1,6 @@
 spring:
     application:
-        name: job-ad-x28-export
+        name: app-x28-job-ad-export
 
 ##############################
 #  DATASOURCE CONFIG

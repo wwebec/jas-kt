@@ -17,7 +17,7 @@ curl http://dev.job-room.ch:9393/tasks/definitions/x28-job-ad-export -i -X DELET
 
 # Create stream and deploy
 curl http://dev.job-room.ch:9393/tasks/definitions -X POST \
-  -d 'name=x28-job-ad-export-task&definition=x28-job-ad-export --jobroom.x28.sftp.port="22" --jobroom.x28.sftp.host="admin.x28.ch" --jobroom.x28.sftp.username="<username>" --jobroom.x28.sftp.password="<password>"'
+  -d 'name=x28-job-ad-export-task&definition=x28-job-ad-export'
 ```
 
 ##### Dashboard
@@ -36,7 +36,7 @@ curl http://dev.job-room.ch:9393/tasks/definitions -X POST \
 - `Submit`
 
 
-### Deployment form command line
+### Deployment from command line
 Run **x28-job-ad-export** as seperate task from command-line:
 
 ```bash
