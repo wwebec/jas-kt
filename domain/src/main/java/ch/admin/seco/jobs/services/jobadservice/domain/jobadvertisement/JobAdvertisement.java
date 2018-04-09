@@ -295,7 +295,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     public void refining() {
         this.status = status.validateTransitionTo(JobAdvertisementStatus.REFINING);
         DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(this));
-        // TODO: we don't have x28-api yet
+        // FIXME: shortcut, because the x28-api is not yet ready. to bee handel when api is implemented
         DomainEventPublisher.publish(new JobAdvertisementRefinedEvent(this));
     }
 
