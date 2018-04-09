@@ -67,7 +67,6 @@ public class JobAdvertisementFactory {
     }
 
     public JobAdvertisement createFromAvam(JobAdvertisementCreator creator) {
-        // TODO Tbd which data are passed to create the JobAdvertisement Object
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setStatus(JobAdvertisementStatus.REFINING)
@@ -89,7 +88,6 @@ public class JobAdvertisementFactory {
     }
 
     public JobAdvertisement createFromExtern(JobAdvertisementCreator creator) {
-        // TODO Tbd which data are passed to create the JobAdvertisement Object
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
@@ -110,7 +108,8 @@ public class JobAdvertisementFactory {
     private Owner toOwner(AuditUser auditUser) {
         if(auditUser != null) {
             return new Owner.Builder()
-                    .setUserId(auditUser.getExternalId())
+                    .setUserId(auditUser.getInternalId())
+                    .setAvgId(auditUser.getExternalId())
                     .setAccessToken(accessTokenGenerator.generateToken())
                     .build();
         } else {
