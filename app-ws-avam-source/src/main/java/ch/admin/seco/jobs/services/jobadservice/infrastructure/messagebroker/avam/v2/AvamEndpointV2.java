@@ -54,7 +54,6 @@ public class AvamEndpointV2 {
             } else if (isApproved(avamJobAdvertisement)) {
                 avamSource.approve(jobAdvertisementFromAvamAssemblerV2.createApprovaldDto(avamJobAdvertisement));
             } else if (isCreatedFromAvam(avamJobAdvertisement)) {
-                // TODO how to handle avamJobAdvertisement.isPublikation() == false?
                 avamSource.create(jobAdvertisementFromAvamAssemblerV2.createCreateJobAdvertisementAvamDto(avamJobAdvertisement));
             } else {
                 LOG.warn("Received JobAdvertisement in unknown state from AVAM: {}", transformToXml(request));
