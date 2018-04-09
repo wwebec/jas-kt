@@ -316,7 +316,7 @@ public class JobAdvertisementApplicationService {
 
         if (createJobAdvertisementDto.getOccupation() != null) {
             Occupation occupation = toOccupation(createJobAdvertisementDto.getOccupation());
-            // TODO remove this if, when the legacy API is deleted
+            // FIXME remove this if, when the legacy API is deleted
             if (occupation != null) {
                 occupation = enrichOccupationWithProfessionCodes(occupation);
                 reportingObligation = checkReportingObligation(
