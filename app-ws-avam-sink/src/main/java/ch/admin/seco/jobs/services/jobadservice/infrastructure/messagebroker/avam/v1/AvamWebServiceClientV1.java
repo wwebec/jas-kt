@@ -2,7 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamAction;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamException;

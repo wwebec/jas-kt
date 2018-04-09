@@ -1,9 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.EXPERIENCES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.LANGUAGES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.LANGUAGE_LEVEL;
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.SALUTATIONS;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.EXPERIENCES;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.SALUTATIONS;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.parseToLocalDate;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;

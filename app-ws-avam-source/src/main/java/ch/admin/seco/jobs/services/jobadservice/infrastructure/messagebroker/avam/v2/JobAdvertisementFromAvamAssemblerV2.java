@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.*;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.*;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.parseToLocalDate;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
@@ -16,7 +16,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.WSArbeitsform;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.WSArbeitsformArray;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;

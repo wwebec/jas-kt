@@ -9,8 +9,8 @@ import java.util.List;
 
 import org.springframework.util.Assert;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamAction;
-import ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
