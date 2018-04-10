@@ -59,6 +59,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 avamJobAdvertisement.isMeldepflicht(),
                 parseToLocalDate(avamJobAdvertisement.getSperrfrist()),
                 avamJobAdvertisement.getArbeitsamtBereich(),
+                parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
                 createEmploymentDto(avamJobAdvertisement),
                 createApplyChannelDto(avamJobAdvertisement),
                 createCompanyDto(avamJobAdvertisement),
