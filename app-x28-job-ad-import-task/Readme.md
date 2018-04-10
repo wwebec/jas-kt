@@ -25,8 +25,8 @@ curl http://dev.job-room.ch:9393/tasks/definitions -X POST \
 [Register Task](http://dev.job-room.ch:9393/dashboard/#/apps)
 
 - `Register Application(s)`
-  - name = x28jobad-mport
-  - type = tasks
+  - name = x28jobadimport
+  - type = task
   - App URI = `maven://ch.admin.seco.jobs.services.jobadservice:app-x28-job-ad-import-task:jar:<version>` \
   - `Register` 
 
