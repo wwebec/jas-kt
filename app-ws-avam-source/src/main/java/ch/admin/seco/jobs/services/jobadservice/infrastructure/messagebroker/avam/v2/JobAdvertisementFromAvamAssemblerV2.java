@@ -1,9 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.EXPERIENCES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.LANGUAGES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.LANGUAGE_LEVEL;
-import static ch.admin.seco.jobs.services.jobadservice.domain.avam.AvamCodeResolver.SALUTATIONS;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.*;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.parseToLocalDate;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
@@ -16,8 +13,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.WSArbeitsformArray;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -154,7 +153,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
 
     private ApplyChannelDto createApplyChannelDto(WSOsteEgov avamJobAdvertisement) {
         return new ApplyChannelDto(
-                null, // TODO Create from UntAddress
+                createApplyMailAddress(avamJobAdvertisement),
                 sanitizeEmail(avamJobAdvertisement.getUntEmail(), avamJobAdvertisement),
                 sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement),
                 sanitizeUrl(avamJobAdvertisement.getUntUrl(), avamJobAdvertisement),
@@ -222,7 +221,13 @@ public class JobAdvertisementFromAvamAssemblerV2 {
     }
 
     private Set<WorkForm> createWorkForms(WSOsteEgov avamJobAdvertisement) {
-        // TODO Map it avamJobAdvertisement.getArbeitsformCodeList()
+        WSArbeitsformArray arbeitsformCodeList = avamJobAdvertisement.getArbeitsformCodeList();
+        if(arbeitsformCodeList != null) {
+            return arbeitsformCodeList.getWSArbeitsformArrayItem()
+                    .stream()
+                    .map(item -> WORK_FORMS.getRight(item.getArbeitsformCode()))
+                    .collect(Collectors.toSet());
+        }
         return Collections.emptySet();
     }
 
@@ -274,5 +279,30 @@ public class JobAdvertisementFromAvamAssemblerV2 {
             }
         }
         return null;
+    }
+
+    private String createApplyMailAddress(WSOsteEgov avamJobAdvertisement) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(avamJobAdvertisement.getUntName());
+        if (StringUtils.hasText(avamJobAdvertisement.getUntStrasse())) {
+            sb.append(", ");
+            sb.append(avamJobAdvertisement.getUntStrasse());
+            sb.append(' ');
+            sb.append(avamJobAdvertisement.getUntHausNr());
+        }
+        if (StringUtils.hasText(avamJobAdvertisement.getUntPostfach())) {
+            sb.append(", ");
+            sb.append(avamJobAdvertisement.getUntPostfach());
+            sb.append(", ");
+            sb.append(avamJobAdvertisement.getUntPostfachPlz());
+            sb.append(' ');
+            sb.append(avamJobAdvertisement.getUntPostfachOrt());
+        } else if (StringUtils.hasText(avamJobAdvertisement.getUntPlz())) {
+            sb.append(", ");
+            sb.append(avamJobAdvertisement.getUntPlz());
+            sb.append(' ');
+            sb.append(avamJobAdvertisement.getUntOrt());
+        }
+        return sb.toString();
     }
 }
