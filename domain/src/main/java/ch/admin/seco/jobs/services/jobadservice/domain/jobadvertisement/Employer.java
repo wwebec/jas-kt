@@ -12,8 +12,6 @@ import java.util.Objects;
 @Access(AccessType.FIELD)
 public class Employer implements ValueObject<Employer> {
     private String name;
-    private String street;
-    private String houseNumber;
     private String postalCode;
     private String city;
     private String countryIsoCode;
@@ -24,8 +22,6 @@ public class Employer implements ValueObject<Employer> {
 
     public Employer(Builder builder) {
         this.name = builder.name;
-        this.street = builder.street;
-        this.houseNumber = builder.houseNumber;
         this.postalCode = builder.postalCode;
         this.city = builder.city;
         this.countryIsoCode = builder.countryIsoCode;
@@ -33,14 +29,6 @@ public class Employer implements ValueObject<Employer> {
 
     public String getName() {
         return name;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public String getHouseNumber() {
-        return houseNumber;
     }
 
     public String getPostalCode() {
@@ -59,8 +47,6 @@ public class Employer implements ValueObject<Employer> {
     public String toString() {
         return "Employer{" +
                 "name='" + name + '\'' +
-                ", street='" + street + '\'' +
-                ", houseNumber='" + houseNumber + '\'' +
                 ", postalCode='" + postalCode + '\'' +
                 ", city='" + city + '\'' +
                 ", countryIsoCode='" + countryIsoCode + '\'' +
@@ -73,8 +59,6 @@ public class Employer implements ValueObject<Employer> {
         if (o == null || getClass() != o.getClass()) return false;
         Employer employer = (Employer) o;
         return Objects.equals(name, employer.name) &&
-                Objects.equals(street, employer.street) &&
-                Objects.equals(houseNumber, employer.houseNumber) &&
                 Objects.equals(postalCode, employer.postalCode) &&
                 Objects.equals(city, employer.city) &&
                 Objects.equals(countryIsoCode, employer.countryIsoCode);
@@ -82,13 +66,11 @@ public class Employer implements ValueObject<Employer> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, street, houseNumber, postalCode, city, countryIsoCode);
+        return Objects.hash(name, postalCode, city, countryIsoCode);
     }
 
     public static final class Builder {
         private String name;
-        private String street;
-        private String houseNumber;
         private String postalCode;
         private String city;
         private String countryIsoCode;
@@ -102,16 +84,6 @@ public class Employer implements ValueObject<Employer> {
 
         public Builder setName(String name) {
             this.name = name;
-            return this;
-        }
-
-        public Builder setStreet(String street) {
-            this.street = street;
-            return this;
-        }
-
-        public Builder setHouseNumber(String houseNumber) {
-            this.houseNumber = houseNumber;
             return this;
         }
 

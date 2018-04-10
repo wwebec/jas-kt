@@ -473,8 +473,6 @@ public class JobAdvertisementApplicationService {
         if (employerDto != null) {
             return new Employer.Builder()
                     .setName(employerDto.getName())
-                    .setStreet(employerDto.getStreet())
-                    .setHouseNumber(employerDto.getHouseNumber())
                     .setPostalCode(employerDto.getPostalCode())
                     .setCity(employerDto.getCity())
                     .setCountryIsoCode(employerDto.getCountryIsoCode())
