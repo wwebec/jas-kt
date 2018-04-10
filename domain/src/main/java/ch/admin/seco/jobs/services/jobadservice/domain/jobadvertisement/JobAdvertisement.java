@@ -57,7 +57,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Enumerated(EnumType.STRING)
     private SourceSystem sourceSystem;
 
-    private String sourceEntryId;
+    private String externalReference;
 
     private String stellennummerEgov;
 
@@ -132,7 +132,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.id = Condition.notNull(builder.id, "Id can't be null");
         this.status = Condition.notNull(builder.status, "Status can't be null");
         this.sourceSystem = Condition.notNull(builder.sourceSystem, "Source system can't be null");
-        this.sourceEntryId = builder.sourceEntryId;
+        this.externalReference = builder.externalReference;
         this.stellennummerEgov = builder.stellennummerEgov;
         this.stellennummerAvam = builder.stellennummerAvam;
         this.fingerprint = builder.fingerprint;
@@ -164,8 +164,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return sourceSystem;
     }
 
-    public String getSourceEntryId() {
-        return sourceEntryId;
+    public String getExternalReference() {
+        return externalReference;
     }
 
     public String getStellennummerEgov() {
@@ -347,7 +347,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 "id=" + id +
                 ", status=" + status +
                 ", sourceSystem=" + sourceSystem +
-                ", sourceEntryId='" + sourceEntryId + '\'' +
+                ", externalReference='" + externalReference + '\'' +
                 ", stellennummerEgov='" + stellennummerEgov + '\'' +
                 ", stellennummerAvam='" + stellennummerAvam + '\'' +
                 ", fingerprint='" + fingerprint + '\'' +
@@ -372,8 +372,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         boolean hasChangedAnything = false;
 
         /*
-        if (updater.hasAnyChangesIn(SECTION_SOURCE_ENTRY_ID) && hasChanged(this.sourceEntryId, updater.getSourceEntryId())) {
-            this.sourceEntryId = updater.getSourceEntryId();
+        if (updater.hasAnyChangesIn(SECTION_SOURCE_ENTRY_ID) && hasChanged(this.externalReference, updater.getExternalReference())) {
+            this.externalReference = updater.getExternalReference();
             hasChangedAnything = true;
         }
         */
@@ -492,7 +492,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private JobAdvertisementId id;
         private JobAdvertisementStatus status;
         private SourceSystem sourceSystem;
-        private String sourceEntryId;
+        private String externalReference;
         private String stellennummerEgov;
         private String stellennummerAvam;
         private String fingerprint;
@@ -533,8 +533,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             return this;
         }
 
-        public Builder setSourceEntryId(String sourceEntryId) {
-            this.sourceEntryId = sourceEntryId;
+        public Builder setExternalReference(String externalReference) {
+            this.externalReference = externalReference;
             return this;
         }
 

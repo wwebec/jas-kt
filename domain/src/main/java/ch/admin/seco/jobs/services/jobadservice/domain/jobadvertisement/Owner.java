@@ -6,7 +6,7 @@ public class Owner {
 
     private String userId;
 
-    private String avgId;
+    private String companyId;
 
     private String accessToken;
 
@@ -16,7 +16,7 @@ public class Owner {
 
     public Owner(Builder builder) {
         this.userId = builder.userId;
-        this.avgId = builder.avgId;
+        this.companyId = builder.companyId;
         this.accessToken = builder.accessToken;
     }
 
@@ -24,8 +24,8 @@ public class Owner {
         return userId;
     }
 
-    public String getAvgId() {
-        return avgId;
+    public String getCompanyId() {
+        return companyId;
     }
 
     public String getAccessToken() {
@@ -38,27 +38,27 @@ public class Owner {
         if (o == null || getClass() != o.getClass()) return false;
         Owner owner = (Owner) o;
         return Objects.equals(userId, owner.userId) &&
-                Objects.equals(avgId, owner.avgId) &&
+                Objects.equals(companyId, owner.companyId) &&
                 Objects.equals(accessToken, owner.accessToken);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, avgId, accessToken);
+        return Objects.hash(userId, companyId, accessToken);
     }
 
     @Override
     public String toString() {
         return "Owner{" +
                 "userId='" + userId + '\'' +
-                ", avgId='" + avgId + '\'' +
+                ", companyId='" + companyId + '\'' +
                 ", accessToken='" + accessToken + '\'' +
                 '}';
     }
 
     public static final class Builder {
         private String userId;
-        private String avgId;
+        private String companyId;
         private String accessToken;
 
         public Builder() {
@@ -73,8 +73,8 @@ public class Owner {
             return this;
         }
 
-        public Builder setAvgId(String avgId) {
-            this.avgId = avgId;
+        public Builder setCompanyId(String companyId) {
+            this.companyId = companyId;
             return this;
         }
 
