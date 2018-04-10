@@ -12,7 +12,7 @@ This app provides an Web Service endpoint and publish the data into the `jobad.a
 
 ```bash
 # Register 'App'
-curl 'http://dev.job-room.ch:9393/apps/source/ws-avam' -i -X POST \
+curl 'http://dev.job-room.ch:9393/apps/source/wsavam' -i -X POST \
   -d 'force=true&uri=maven%3A%2F%2Fch.admin.seco.jobs.services.jobadservice%3Aapp-ws-avam-source%3A<version>'
 
 # Delete existing stream
@@ -20,7 +20,7 @@ curl http://dev.job-room.ch:9393/streams/definitions/ws-avam-import -i -X DELETE
 
 # Create stream and deploy
 curl http://dev.job-room.ch:9393/streams/definitions -X POST \
-  -d 'name=ws-avam-import&deploy=true&definition=ws-avam --server.port=20000 > :jobad.action'
+  -d 'name=ws-avam-import&deploy=true&definition=wsavam --server.port=20000 > :jobad.action'
 ```
 
 ##### Dashboard
@@ -28,7 +28,7 @@ curl http://dev.job-room.ch:9393/streams/definitions -X POST \
 [Register app](http://dev.job-room.ch:9393/dashboard/#/apps):
 
 - `Register Application(s)`
-  - name = ws-avam
+  - name = wsavam
   - type = source
   - App URI = `maven://ch.admin.seco.jobs.services.jobadservice:app-ws-avam-source:jar:<version>`    
   - `Register` 
@@ -36,7 +36,7 @@ curl http://dev.job-room.ch:9393/streams/definitions -X POST \
 [Create Stream](http://dev.job-room.ch:9393/dashboard/#/streams/definitions)
 - `Create Stream`
 ```bash
-ws-avam --server.port=20000 --spring.profiles.active=avam-wsdl-v1 > :jobad.action
+wsavam --server.port=20000 --spring.profiles.active=avam-wsdl-v1 > :jobad.action
 ```
 - `Create Stream`
 - Stream Name = ws-avam-import
