@@ -38,7 +38,7 @@ task registerApps(type: HttpTask) {
         request.contentType = 'application/x-www-form-urlencoded'
     }
     post {
-        request.uri.path = '/apps/source/ws-avam'
+        request.uri.path = '/apps/source/wsavam'
         request.body = "force=true&uri=maven://${project.group}:${project.name}:${version}".toString()
     }
 }

@@ -12,7 +12,7 @@ This app listens on message queue `jobad.event` for events (_JOB_ADVERTISEMENT_I
 
 ```bash
 # Register 'App'
-curl 'http://dev.job-room.ch:9393/apps/sink/ws-avam' -i -X POST \
+curl 'http://dev.job-room.ch:9393/apps/sink/wsavam' -i -X POST \
   -d 'force=true&uri=maven%3A%2F%2Fch.admin.seco.jobs.services.jobadservice%3Aapp-ws-avam-sink%3A<version>'
 
 # Delete existing stream
@@ -20,7 +20,7 @@ curl http://dev.job-room.ch:9393/streams/definitions/ws-avam-export -i -X DELETE
 
 # Create stream and deploy
 curl http://dev.job-room.ch:9393/streams/definitions -X POST \
-  -d 'name=ws-avam-export&deploy=true&definition=:jobad.event > ws-avam-export: ws-avam --end-point-url=http://dev.job-room.ch:9180/AVAM_Web/services/EgovService --password=dummy --username=dummy'
+  -d 'name=wsavam-export&deploy=true&definition=:jobad.event > ws-avam-export: ws-avam --end-point-url=http://dev.job-room.ch:9180/AVAM_Web/services/EgovService --password=dummy --username=dummy'
 ```
 
 ##### Dashboard
@@ -28,7 +28,7 @@ curl http://dev.job-room.ch:9393/streams/definitions -X POST \
 [Register app](http://dev.job-room.ch:9393/dashboard/#/apps):
 
 - `Register Application(s)`
-  - name = ws-avam
+  - name = wsavam
   - type = sink
   - App URI = `maven://ch.admin.seco.jobs.services.jobadservice:app-ws-avam-sink:jar:<version>`    
   - `Register` 
@@ -36,7 +36,7 @@ curl http://dev.job-room.ch:9393/streams/definitions -X POST \
 [Create Stream](http://dev.job-room.ch:9393/dashboard/#/streams/definitions)
 - `Create Stream`
 ```bash
-:jobad.event > ws-avam-export: ws-avam --end-point-url=http://dev.job-room.ch:9180/AVAM_Web/services/EgovService --password=dummy --username=dummy --spring.profiles.active=v2
+:jobad.event > ws-avam-export: wsavam --end-point-url=http://dev.job-room.ch:9180/AVAM_Web/services/EgovService --password=dummy --username=dummy --spring.profiles.active=v2
 ```
 - `Create Stream`
 - Stream Name = ws-avam-export

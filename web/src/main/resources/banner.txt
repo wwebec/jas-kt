@@ -7,4 +7,5 @@
   _/ |
  |__/
 
-${AnsiColor.BRIGHT_BLUE}:: Job-Room :: Running Spring Boot ${spring-boot.version} ::${AnsiColor.DEFAULT}
+${AnsiColor.BRIGHT_BLUE}:: job-ad-service ${application.formatted-version} :: Running Spring Boot ${spring-boot.formatted-version} :: Active Profiles: ${spring.profiles.active:${spring.profiles.default}}
+
