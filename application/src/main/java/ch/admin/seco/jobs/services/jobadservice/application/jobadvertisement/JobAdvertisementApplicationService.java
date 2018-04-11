@@ -102,6 +102,7 @@ public class JobAdvertisementApplicationService {
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementDto createJobAdvertisementDto) {
         LOG.debug("Create '{}' from Webform", createJobAdvertisementDto.getJobDescriptions().get(0));
+        Condition.notNull(createJobAdvertisementDto, "CreateJobAdvertisementDto can't be null");
 
         final JobAdvertisementCreator creator = getJobAdvertisementCreatorFromInternal(createJobAdvertisementDto);
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(creator);
@@ -110,6 +111,7 @@ public class JobAdvertisementApplicationService {
 
     public JobAdvertisementId createFromApi(CreateJobAdvertisementDto createJobAdvertisementDto) {
         LOG.debug("Create '{}' from API", createJobAdvertisementDto.getJobDescriptions().get(0));
+        Condition.notNull(createJobAdvertisementDto, "CreateJobAdvertisementDto can't be null");
 
         final JobAdvertisementCreator creator = getJobAdvertisementCreatorFromInternal(createJobAdvertisementDto);
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(creator);
@@ -117,8 +119,10 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
-        checkifJobAdvertisementAlreadExists(createJobAdvertisementFromAvamDto);
         LOG.debug("Create '{}' from AVAM", createJobAdvertisementFromAvamDto.getTitle());
+        Condition.notNull(createJobAdvertisementFromAvamDto, "CreateJobAdvertisementFromAvamDto can't be null");
+
+        checkifJobAdvertisementAlreadExists(createJobAdvertisementFromAvamDto);
 
         Location location = toLocation(createJobAdvertisementFromAvamDto.getLocation());
         location = locationService.enrichCodes(location);
@@ -175,9 +179,11 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
+        Condition.notNull(createJobAdvertisementFromX28Dto, "CreateJobAdvertisementFromX28Dto can't be null");
+        LOG.debug("Create '{}' from X28", createJobAdvertisementFromX28Dto.getTitle());
+
         checkifJobAdvertisementAlreadExists(createJobAdvertisementFromX28Dto);
 
-        LOG.debug("Create '{}' from X28", createJobAdvertisementFromX28Dto.getTitle());
         Location location = toLocation(createJobAdvertisementFromX28Dto.getLocation());
         location = locationService.enrichCodes(location);
 
@@ -197,7 +203,7 @@ public class JobAdvertisementApplicationService {
                 .setExternalUrl(createJobAdvertisementFromX28Dto.getExternalUrl())
                 .setLocation(location)
                 .setOccupations(occupations)
-                .setX28OccupationCodes(getX28OccupationCodes(createJobAdvertisementFromX28Dto))
+                .setX28OccupationCodes(createJobAdvertisementFromX28Dto.getProfessionCodes())
                 .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
                 .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
                 .build();
@@ -220,11 +226,6 @@ public class JobAdvertisementApplicationService {
 
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromExtern(creator);
         return jobAdvertisement.getId();
-    }
-
-    private String getX28OccupationCodes(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
-        List<String> professionCodes = createJobAdvertisementFromX28Dto.getProfessionCodes();
-        return professionCodes != null ? String.join(",", professionCodes) : null;
     }
 
     public void updateFromX28(UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto) {
@@ -548,7 +549,6 @@ public class JobAdvertisementApplicationService {
                     .setRemarks(createLocationDto.getRemarks())
                     .setCity(createLocationDto.getCity())
                     .setPostalCode(createLocationDto.getPostalCode())
-                    .setCommunalCode(createLocationDto.getCommunalCode())
                     .setCountryIsoCode(createLocationDto.getCountryIsoCode())
                     .build();
         }

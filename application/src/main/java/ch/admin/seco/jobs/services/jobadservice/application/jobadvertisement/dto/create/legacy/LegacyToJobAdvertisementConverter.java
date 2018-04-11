@@ -83,8 +83,7 @@ public class LegacyToJobAdvertisementConverter {
                 legacyLocationDto.getAdditionalDetails(),
                 legacyLocationDto.getLocality(),
                 legacyLocationDto.getPostalCode(),
-                legacyLocationDto.getCountryCode(),
-                null
+                legacyLocationDto.getCountryCode()
         );
     }
 

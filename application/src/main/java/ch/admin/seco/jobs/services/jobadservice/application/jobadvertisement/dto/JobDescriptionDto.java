@@ -1,7 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
+import org.springframework.beans.factory.annotation.Value;
 
+import javax.validation.constraints.Digits;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -9,7 +13,11 @@ import java.util.stream.Collectors;
 public class JobDescriptionDto {
 
     private String languageIsoCode;
+
+    @NotBlank
     private String title;
+
+    @NotBlank
     private String description;
 
     protected JobDescriptionDto() {

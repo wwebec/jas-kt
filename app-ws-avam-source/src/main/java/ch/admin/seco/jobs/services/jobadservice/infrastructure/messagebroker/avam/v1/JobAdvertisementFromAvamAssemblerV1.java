@@ -128,8 +128,7 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 avamJobAdvertisement.getArbeitsOrtText(),
                 avamJobAdvertisement.getArbeitsOrtOrt(),
                 avamJobAdvertisement.getArbeitsOrtPlz(),
-                avamJobAdvertisement.getArbeitsOrtLand(),
-                avamJobAdvertisement.getArbeitsOrtGemeinde()
+                avamJobAdvertisement.getArbeitsOrtLand()
         );
     }
 
