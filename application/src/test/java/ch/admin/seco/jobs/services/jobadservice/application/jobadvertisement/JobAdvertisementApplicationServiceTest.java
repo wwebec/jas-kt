@@ -14,6 +14,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.assertj.core.util.Sets;
@@ -226,7 +227,8 @@ public class JobAdvertisementApplicationServiceTest {
                 new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, true, false, 80, 100, null),
                 new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
                 new CreateLocationDto("remarks", "ctiy", "postalCode", "CH", "ZH"),
-                Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"))
+                Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
+                Arrays.asList("1", "2")
         );
 
         //Execute
