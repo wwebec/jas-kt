@@ -11,8 +11,8 @@ public class EmploymentDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean shortEmployment;
-    private Boolean immediately;
-    private Boolean permanent;
+    private boolean immediately;
+    private boolean permanent;
     private int workloadPercentageMin;
     private int workloadPercentageMax;
     private Set<WorkForm> workForms;
@@ -21,7 +21,7 @@ public class EmploymentDto {
         // For reflection libs
     }
 
-    public EmploymentDto(LocalDate startDate, LocalDate endDate, boolean shortEmployment, Boolean immediately, Boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Set<WorkForm> workForms) {
+    public EmploymentDto(LocalDate startDate, LocalDate endDate, boolean shortEmployment, boolean immediately, boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Set<WorkForm> workForms) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.shortEmployment = shortEmployment;
@@ -69,19 +69,19 @@ public class EmploymentDto {
         this.shortEmployment = shortEmployment;
     }
 
-    public Boolean getImmediately() {
+    public boolean getImmediately() {
         return immediately;
     }
 
-    public void setImmediately(Boolean immediately) {
+    public void setImmediately(boolean immediately) {
         this.immediately = immediately;
     }
 
-    public Boolean getPermanent() {
+    public boolean getPermanent() {
         return permanent;
     }
 
-    public void setPermanent(Boolean permanent) {
+    public void setPermanent(boolean permanent) {
         this.permanent = permanent;
     }
 

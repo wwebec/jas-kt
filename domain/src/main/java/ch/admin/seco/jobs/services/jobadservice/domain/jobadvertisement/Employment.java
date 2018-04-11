@@ -14,8 +14,8 @@ public class Employment implements ValueObject<Employment> {
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean shortEmployment;
-    private Boolean immediately;
-    private Boolean permanent;
+    private boolean immediately;
+    private boolean permanent;
     private int workloadPercentageMin;
     private int workloadPercentageMax;
     @ElementCollection
@@ -62,19 +62,19 @@ public class Employment implements ValueObject<Employment> {
         this.shortEmployment = shortEmployment;
     }
 
-    public Boolean getImmediately() {
+    public boolean getImmediately() {
         return immediately;
     }
 
-    void setImmediately(Boolean immediately) {
+    void setImmediately(boolean immediately) {
         this.immediately = immediately;
     }
 
-    public Boolean getPermanent() {
+    public boolean getPermanent() {
         return permanent;
     }
 
-    void setPermanent(Boolean permanent) {
+    void setPermanent(boolean permanent) {
         this.permanent = permanent;
     }
 
@@ -144,8 +144,8 @@ public class Employment implements ValueObject<Employment> {
         private LocalDate startDate;
         private LocalDate endDate;
         private boolean shortEmployment;
-        private Boolean immediately;
-        private Boolean permanent;
+        private boolean immediately;
+        private boolean permanent;
         private int workloadPercentageMin;
         private int workloadPercentageMax;
         private Set<WorkForm> workForms;
@@ -172,12 +172,12 @@ public class Employment implements ValueObject<Employment> {
             return this;
         }
 
-        public Builder setImmediately(Boolean immediately) {
+        public Builder setImmediately(boolean immediately) {
             this.immediately = immediately;
             return this;
         }
 
-        public Builder setPermanent(Boolean permanent) {
+        public Builder setPermanent(boolean permanent) {
             this.permanent = permanent;
             return this;
         }
