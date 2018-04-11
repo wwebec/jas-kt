@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -20,12 +21,15 @@ import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
 @Configuration
 @Profile(ProfileRegistry.AVAM_WSDL_V2)
 public class AvamEndpointV2Config extends WsConfigurerAdapter {
+
     @Bean
-    public ServletRegistrationBean messageDispatcherServlet(ApplicationContext applicationContext) {
+    public ServletRegistrationBean messageDispatcherServlet(
+            ApplicationContext applicationContext,
+            @Value("${jobroom.ws.avam.source.url-mapping:/services/*}") String urlMapping) {
         MessageDispatcherServlet servlet = new MessageDispatcherServlet();
         servlet.setApplicationContext(applicationContext);
         servlet.setTransformWsdlLocations(true);
-        return new ServletRegistrationBean(servlet, "/services/*");
+        return new ServletRegistrationBean(servlet, urlMapping);
     }
 
     @Bean(name = "SecoEgovService")

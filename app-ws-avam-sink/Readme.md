@@ -58,9 +58,9 @@ java -jar app-ws-avam-sink-<version>.jar \
   --spring.cloud.stream.kafka.binder.brokers=<kafka-hostname>:9092 \ 
   --spring.cloud.stream.kafka.binder.zk-nodes=<zookeeper-hostname>:2181 \
   --spring.cloud.application.group=ws-avam-export \
-  --jobroom.ws.avam.endPointUrl=https://<avam-webservice-hostname>/AVAM_Web/services/EgovService \
-  --jobroom.ws.avam.username=<username> \
-  --jobroom.ws.avam.password=<password>
+  --jobroom.ws.avam.sink.endPointUrl=https://<avam-webservice-hostname>/AVAM_Web/services/EgovService \
+  --jobroom.ws.avam.sink.username=<username> \
+  --jobroom.ws.avam.sink.password=<password>
   --server.port=0  
 ```
 
@@ -79,8 +79,8 @@ java -jar app-ws-avam-sink-<version>.jar \
   --spring.cloud.stream.kafka.binder.brokers=dev.job-room.ch:9092 \ 
   --spring.cloud.stream.kafka.binder.zk-nodes=dev.job-room.ch:2181 \
   --spring.cloud.application.group=ws-avam-export \
-  --jobroom.ws.avam.endPointUrl=http://dev.job-room.ch:9180/AVAM_Web/services/EgovService \
-  --jobroom.ws.avam.username=dummy \
-  --jobroom.ws.avam.password=dummy \  
+  --jobroom.ws.avam.sink.endPointUrl=http://dev.job-room.ch:9180/AVAM_Web/services/EgovService \
+  --jobroom.ws.avam.sink.username=dummy \
+  --jobroom.ws.avam.sink.password=dummy \  
   --server.port=0
 ```
