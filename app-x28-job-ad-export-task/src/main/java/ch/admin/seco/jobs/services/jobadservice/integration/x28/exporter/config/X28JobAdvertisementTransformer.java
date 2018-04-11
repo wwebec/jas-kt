@@ -91,7 +91,7 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
             x28JobAdvertisement.setAnmeldeDatum(DATE_FORMATTER.format(publication.getStartDate().atStartOfDay()));
             x28JobAdvertisement.setGueltigkeit(DATE_FORMATTER.format(publication.getEndDate().atStartOfDay().plusDays(1).minus(1, ChronoUnit.SECONDS)));
             x28JobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
-            x28JobAdvertisement.setEuresPublikation(publication.isEures());
+            x28JobAdvertisement.setEuresPublikation(publication.isEuresDisplay());
         }
     }
 

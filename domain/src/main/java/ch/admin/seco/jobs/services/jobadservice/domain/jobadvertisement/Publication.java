@@ -16,7 +16,7 @@ public class Publication implements ValueObject<Publication> {
 
     private LocalDate endDate;
 
-    private boolean eures;
+    private boolean euresDisplay;
 
     private boolean euresAnonymous;
 
@@ -35,7 +35,7 @@ public class Publication implements ValueObject<Publication> {
     public Publication(Builder builder) {
         this.startDate = builder.startDate;
         this.endDate = builder.endDate;
-        this.eures = builder.eures;
+        this.euresDisplay = builder.euresDisplay;
         this.euresAnonymous = builder.euresAnonymous;
         this.publicDisplay = builder.publicDisplay;
         this.publicAnonymous = builder.publicAnonynomous;
@@ -59,12 +59,12 @@ public class Publication implements ValueObject<Publication> {
         this.endDate = endDate;
     }
 
-    public boolean isEures() {
-        return eures;
+    public boolean isEuresDisplay() {
+        return euresDisplay;
     }
 
-    void setEures(boolean eures) {
-        this.eures = eures;
+    void setEuresDisplay(boolean euresDisplay) {
+        this.euresDisplay = euresDisplay;
     }
 
     public boolean isEuresAnonymous() {
@@ -112,7 +112,7 @@ public class Publication implements ValueObject<Publication> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Publication that = (Publication) o;
-        return eures == that.eures &&
+        return euresDisplay == that.euresDisplay &&
                 euresAnonymous == that.euresAnonymous &&
                 publicDisplay == that.publicDisplay &&
                 publicAnonymous == that.publicAnonymous &&
@@ -124,7 +124,7 @@ public class Publication implements ValueObject<Publication> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, endDate, eures, euresAnonymous, publicDisplay, publicAnonymous, restrictedDisplay, restrictedAnonymous);
+        return Objects.hash(startDate, endDate, euresDisplay, euresAnonymous, publicDisplay, publicAnonymous, restrictedDisplay, restrictedAnonymous);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class Publication implements ValueObject<Publication> {
         return "Publication{" +
                 "startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", eures=" + eures +
+                ", euresDisplay=" + euresDisplay +
                 ", euresAnonymous=" + euresAnonymous +
                 ", publicDisplay=" + publicDisplay +
                 ", publicAnonymous=" + publicAnonymous +
@@ -144,7 +144,7 @@ public class Publication implements ValueObject<Publication> {
     public static final class Builder {
         private LocalDate startDate;
         private LocalDate endDate;
-        private boolean eures;
+        private boolean euresDisplay;
         private boolean euresAnonymous;
         private boolean publicDisplay;
         private boolean publicAnonynomous;
@@ -168,8 +168,8 @@ public class Publication implements ValueObject<Publication> {
             return this;
         }
 
-        public Builder setEures(boolean eures) {
-            this.eures = eures;
+        public Builder setEuresDisplay(boolean euresDisplay) {
+            this.euresDisplay = euresDisplay;
             return this;
         }
 

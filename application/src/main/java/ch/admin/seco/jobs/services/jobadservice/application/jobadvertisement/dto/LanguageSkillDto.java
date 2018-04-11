@@ -3,13 +3,20 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class LanguageSkillDto {
 
+    @NotBlank
     private String languageIsoCode;
+
+    @NotNull
     private LanguageLevel spokenLevel;
+
+    @NotNull
     private LanguageLevel writtenLevel;
 
     protected LanguageSkillDto() {

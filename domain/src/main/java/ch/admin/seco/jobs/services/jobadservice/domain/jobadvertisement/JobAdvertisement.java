@@ -454,9 +454,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         if (updater.hasAnyChangesIn(SECTION_EURES) && (
-                hasChanged(publication.isEures(), updater.isEures()) ||
+                hasChanged(publication.isEuresDisplay(), updater.isEures()) ||
                         hasChanged(publication.isEuresAnonymous(), updater.isEuresAnonymous()))) {
-            publication.setEures(updater.isEures());
+            publication.setEuresDisplay(updater.isEures());
             publication.setEuresAnonymous(updater.isEuresAnonymous());
             hasChangedAnything = true;
         }

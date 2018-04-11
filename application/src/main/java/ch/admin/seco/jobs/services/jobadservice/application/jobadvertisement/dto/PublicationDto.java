@@ -2,13 +2,17 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 public class PublicationDto {
 
+    @NotNull
     private LocalDate startDate;
+
     private LocalDate endDate;
-    private boolean eures;
+
+    private boolean euresDisplay;
     private boolean euresAnonymous;
     private boolean publicDisplay;
     private boolean publicAnonynomous;
@@ -19,10 +23,10 @@ public class PublicationDto {
         // For reflection libs
     }
 
-    public PublicationDto(LocalDate startDate, LocalDate endDate, boolean eures, boolean euresAnonymous, boolean publicDisplay, boolean publicAnonynomous, boolean restrictedDisplay, boolean restrictedAnonymous) {
+    public PublicationDto(LocalDate startDate, LocalDate endDate, boolean euresDisplay, boolean euresAnonymous, boolean publicDisplay, boolean publicAnonynomous, boolean restrictedDisplay, boolean restrictedAnonymous) {
         this.startDate = startDate;
         this.endDate = endDate;
-        this.eures = eures;
+        this.euresDisplay = euresDisplay;
         this.euresAnonymous = euresAnonymous;
         this.publicDisplay = publicDisplay;
         this.publicAnonynomous = publicAnonynomous;
@@ -46,12 +50,12 @@ public class PublicationDto {
         this.endDate = endDate;
     }
 
-    public boolean isEures() {
-        return eures;
+    public boolean isEuresDisplay() {
+        return euresDisplay;
     }
 
-    public void setEures(boolean eures) {
-        this.eures = eures;
+    public void setEuresDisplay(boolean euresDisplay) {
+        this.euresDisplay = euresDisplay;
     }
 
     public boolean isEuresAnonymous() {
@@ -98,7 +102,7 @@ public class PublicationDto {
         PublicationDto publicationDto = new PublicationDto();
         publicationDto.setStartDate(publication.getStartDate());
         publicationDto.setEndDate(publication.getEndDate());
-        publicationDto.setEures(publication.isEures());
+        publicationDto.setEuresDisplay(publication.isEuresDisplay());
         publicationDto.setEuresAnonymous(publication.isEuresAnonymous());
         publicationDto.setPublicDisplay(publication.isPublicDisplay());
         publicationDto.setPublicAnonynomous(publication.isPublicAnonymous());

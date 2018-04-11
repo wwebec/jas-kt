@@ -55,7 +55,7 @@ public class AvamJobAdvertisementAssemblerV2 {
 
         avamJobAdvertisement.setGueltigkeit(formatLocalDate(publication.getEndDate()));
 
-        avamJobAdvertisement.setEures(publication.isEures());
+        avamJobAdvertisement.setEures(publication.isEuresDisplay());
         avamJobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
 
         final JobContent jobContent = jobAdvertisement.getJobContent();
