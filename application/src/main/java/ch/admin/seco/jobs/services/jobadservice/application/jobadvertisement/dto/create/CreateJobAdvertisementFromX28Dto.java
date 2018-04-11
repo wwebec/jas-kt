@@ -12,6 +12,8 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 
 public class CreateJobAdvertisementFromX28Dto {
 
+    // FIXME add X28ProfessionCodes
+
     @NotBlank
     private String title;
 
