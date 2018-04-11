@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,7 +38,8 @@ class JobAdvertisementDtoAssembler {
                 createEmploymentDto(x28JobAdvertisement),
                 createCompanyDto(x28JobAdvertisement),
                 createCreateLocationDto(x28JobAdvertisement),
-                createOccupationDtos(x28JobAdvertisement));
+                createOccupationDtos(x28JobAdvertisement),
+                createProfessionCodes(x28JobAdvertisement.getBerufsBezeichnungen()));
     }
 
     UpdateJobAdvertisementFromX28Dto updateFromX28(Oste x28JobAdvertisement) {
@@ -59,7 +59,13 @@ class JobAdvertisementDtoAssembler {
 
     }
 
-    private Collection<OccupationDto> createOccupationDtos(Oste x28JobAdvertisement) {
+    private List<String> createProfessionCodes(List<Integer> professionCodes) {
+        return professionCodes.stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
+    }
+
+    private List<OccupationDto> createOccupationDtos(Oste x28JobAdvertisement) {
         return Stream.of(x28JobAdvertisement.getBq1AvamBerufNr(), x28JobAdvertisement.getBq2AvamBerufNr(), x28JobAdvertisement.getBq3AvamBerufNr())
                 .filter(StringUtils::hasText)
                 .map(avamOccupationCode -> new OccupationDto(avamOccupationCode, null, null))
