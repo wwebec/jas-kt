@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-@ConfigurationProperties(prefix = "jobroom.ws.avam")
+@ConfigurationProperties(prefix = "jobroom.ws.avam.sink")
 @Validated
 public class AvamProperties {
 

@@ -141,4 +141,9 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
                 .build();
     }
 
+    public static Publication createPublication() {
+        return new Publication.Builder()
+                .build();
+    }
+
 }

@@ -61,6 +61,7 @@ java -jar app-ws-avam-source-<version>.jar \
   --spring.cloud.stream.kafka.binder.zk-nodes=<zookeeper-hostname>:2181 \
   --spring.cloud.application.group=ws-avam-import \
   --server.port=20000  
+  --jobroom.ws.avam.source.url-mapping=/services/*
 ```
 
 **Example**: Run in _development_ environment
@@ -78,4 +79,5 @@ java -jar app-ws-avam-source-<version>.jar \
   --spring.cloud.stream.kafka.binder.zk-nodes=dev.job-room.ch:2181 \
   --spring.cloud.application.group=ws-avam-import \
   --server.port=20000 
+  --jobroom.ws.avam.source.url-mapping=/services/*
 ```
