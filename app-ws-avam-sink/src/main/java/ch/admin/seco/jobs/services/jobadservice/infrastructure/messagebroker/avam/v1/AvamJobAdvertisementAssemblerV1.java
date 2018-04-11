@@ -88,12 +88,12 @@ public class AvamJobAdvertisementAssemblerV1 {
         if (employment == null) {
             return;
         }
-        boolean immediately = safeBoolean(employment.getImmediately());
+        boolean immediately = safeBoolean(employment.isImmediately());
         avamJobAdvertisement.setAbSofort(immediately);
         if (!immediately) {
             avamJobAdvertisement.setStellenantritt(formatLocalDate(employment.getStartDate()));
         }
-        boolean permanent = safeBoolean(employment.getPermanent());
+        boolean permanent = safeBoolean(employment.isPermanent());
         avamJobAdvertisement.setUnbefristet(permanent);
         if (!permanent) {
             avamJobAdvertisement.setVertragsdauer(formatLocalDate(employment.getEndDate()));

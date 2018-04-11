@@ -80,7 +80,7 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
 
     private void mapEmployment(Employment employment, Oste x28JobAdvertisement) {
         if (employment != null) {
-            x28JobAdvertisement.setAbSofort(employment.getImmediately());
+            x28JobAdvertisement.setAbSofort(employment.isImmediately());
             x28JobAdvertisement.setPensumVon(Long.valueOf(employment.getWorkloadPercentageMin()));
             x28JobAdvertisement.setPensumBis(Long.valueOf(employment.getWorkloadPercentageMax()));
         }

@@ -37,8 +37,8 @@ public class EmploymentDto {
         employmentDto.setStartDate(employment.getStartDate());
         employmentDto.setEndDate(employment.getEndDate());
         employmentDto.setShortEmployment(employment.getShortEmployment());
-        employmentDto.setImmediately(employment.getImmediately());
-        employmentDto.setPermanent(employment.getPermanent());
+        employmentDto.setImmediately(employment.isImmediately());
+        employmentDto.setPermanent(employment.isPermanent());
         employmentDto.setWorkloadPercentageMin(employment.getWorkloadPercentageMin());
         employmentDto.setWorkloadPercentageMax(employment.getWorkloadPercentageMax());
         employmentDto.setWorkForms(employment.getWorkForms());
