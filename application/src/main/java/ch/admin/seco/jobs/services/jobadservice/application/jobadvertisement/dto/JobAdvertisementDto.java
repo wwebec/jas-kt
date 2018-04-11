@@ -12,7 +12,7 @@ public class JobAdvertisementDto {
     private String id;
     private JobAdvertisementStatus status;
     private SourceSystem sourceSystem;
-    private String sourceEntryId;
+    private String externalReference;
     private String stellennummerEgov;
     private String stellennummerAvam;
     private String fingerprint;
@@ -35,11 +35,11 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, JobAdvertisementStatus status, SourceSystem sourceSystem, String sourceEntryId, String stellennummerEgov, String stellennummerAvam, String fingerprint, boolean reportingObligation, LocalDate reportingObligationEndDate, boolean reportToAvam, String jobCenterCode, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, JobContentDto jobContent, OwnerDto owner, ContactDto contact, PublicationDto publication) {
+    public JobAdvertisementDto(String id, JobAdvertisementStatus status, SourceSystem sourceSystem, String externalReference, String stellennummerEgov, String stellennummerAvam, String fingerprint, boolean reportingObligation, LocalDate reportingObligationEndDate, boolean reportToAvam, String jobCenterCode, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, JobContentDto jobContent, OwnerDto owner, ContactDto contact, PublicationDto publication) {
         this.id = id;
         this.status = status;
         this.sourceSystem = sourceSystem;
-        this.sourceEntryId = sourceEntryId;
+        this.externalReference = externalReference;
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.fingerprint = fingerprint;
@@ -83,12 +83,12 @@ public class JobAdvertisementDto {
         this.sourceSystem = sourceSystem;
     }
 
-    public String getSourceEntryId() {
-        return sourceEntryId;
+    public String getExternalReference() {
+        return externalReference;
     }
 
-    public void setSourceEntryId(String sourceEntryId) {
-        this.sourceEntryId = sourceEntryId;
+    public void setExternalReference(String externalReference) {
+        this.externalReference = externalReference;
     }
 
     public String getStellennummerEgov() {
@@ -232,7 +232,7 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setId(jobAdvertisement.getId().getValue());
         jobAdvertisementDto.setStatus(jobAdvertisement.getStatus());
         jobAdvertisementDto.setSourceSystem(jobAdvertisement.getSourceSystem());
-        jobAdvertisementDto.setSourceEntryId(jobAdvertisement.getSourceEntryId());
+        jobAdvertisementDto.setExternalReference(jobAdvertisement.getExternalReference());
         jobAdvertisementDto.setStellennummerEgov(jobAdvertisement.getStellennummerEgov());
         jobAdvertisementDto.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
         jobAdvertisementDto.setFingerprint(jobAdvertisement.getFingerprint());

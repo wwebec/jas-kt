@@ -1,8 +1,18 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import static java.util.Objects.nonNull;
-import static org.springframework.util.StringUtils.hasText;
-import static org.springframework.util.StringUtils.isEmpty;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import ch.admin.seco.jobs.services.jobadservice.domain.utils.WorkingTimePercentage;
+import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -10,19 +20,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
-
-import org.springframework.util.StringUtils;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.util.StringUtils.isEmpty;
 
 class JobAdvertisementDtoAssembler {
     private static final String SWISS_ISO_CODE = "CH";
@@ -43,12 +42,6 @@ class JobAdvertisementDtoAssembler {
                 createProfessionCodes(x28JobAdvertisement.getBerufsBezeichnungen()));
     }
 
-    private List<String> createProfessionCodes(List<Integer> professionCodes) {
-        return professionCodes.stream()
-                .map(String::valueOf)
-                .collect(Collectors.toList());
-    }
-
     UpdateJobAdvertisementFromX28Dto updateFromX28(Oste x28JobAdvertisement) {
         List<Integer> berufsBezeichnungen = x28JobAdvertisement.getBerufsBezeichnungen();
         String x28OccupationCodes = null;
@@ -66,15 +59,10 @@ class JobAdvertisementDtoAssembler {
 
     }
 
-    private String sanitize(String text) {
-        if (hasText(text)) {
-            // remove javascript injection and css styles
-            String sanitizedText = Jsoup.clean(text, "", Whitelist.basic(), new Document.OutputSettings().prettyPrint(false));
-
-            // replace exotic bullet points with proper dash character
-            return sanitizedText.replaceAll("[^\\p{InBasic_Latin}\\p{InLatin-1Supplement}]", "-");
-        }
-        return text;
+    private List<String> createProfessionCodes(List<Integer> professionCodes) {
+        return professionCodes.stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
     }
 
     private List<OccupationDto> createOccupationDtos(Oste x28JobAdvertisement) {
@@ -96,23 +84,41 @@ class JobAdvertisementDtoAssembler {
     }
 
     private EmploymentDto createEmploymentDto(Oste x28JobAdvertisement) {
-        LocalDate startDate = parseStartDate(x28JobAdvertisement.getAnmeldeDatum());
+        LocalDate startDate = parseDate(x28JobAdvertisement.getStellenantritt(), TimeMachine.now().toLocalDate());
+        LocalDate endDate = parseDate(x28JobAdvertisement.getVertragsdauer(), null);
+        WorkingTimePercentage workingTimePercentage = WorkingTimePercentage.evaluate(x28JobAdvertisement.getPensumVon(), x28JobAdvertisement.getPensumBis());
         return new EmploymentDto(
                 startDate,
-                startDate.plusDays(60), // default lifetime of a JobAdvertisement is 60 days
+                endDate,
                 false,
-                null,
-                x28JobAdvertisement.isUnbefristet(),
-                nonNull(x28JobAdvertisement.getPensumVon()) ? x28JobAdvertisement.getPensumVon().intValue() : 0,
-                nonNull(x28JobAdvertisement.getPensumBis()) ? x28JobAdvertisement.getPensumBis().intValue() : 100,
+                safeBoolean(x28JobAdvertisement.isAbSofort(), !startDate.isAfter(TimeMachine.now().toLocalDate())),
+                safeBoolean(x28JobAdvertisement.isUnbefristet(), (endDate != null)),
+                workingTimePercentage.getMin(),
+                workingTimePercentage.getMax(),
                 null
         );
     }
 
-    private LocalDate parseStartDate(String startDate) {
+    private String sanitize(String text) {
+        if (hasText(text)) {
+            // remove javascript injection and css styles
+            String sanitizedText = Jsoup.clean(text, "", Whitelist.basic(), new Document.OutputSettings().prettyPrint(false));
+
+            // replace exotic bullet points with proper dash character
+            return sanitizedText.replaceAll("[^\\p{InBasic_Latin}\\p{InLatin-1Supplement}]", "-");
+        }
+        return text;
+    }
+
+    private LocalDate parseDate(String startDate, LocalDate defaultValue) {
         if (isEmpty(startDate)) {
-            return LocalDate.now();
+            return defaultValue;
         }
         return LocalDate.parse(startDate, DATE_FORMATTER);
     }
+
+    private boolean safeBoolean(Boolean value, boolean defaultValue) {
+        return (value != null) ? value : defaultValue;
+    }
+
 }

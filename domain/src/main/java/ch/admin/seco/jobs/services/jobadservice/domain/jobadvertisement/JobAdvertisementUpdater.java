@@ -38,7 +38,7 @@ public class JobAdvertisementUpdater {
 
     private String x28OccupationCodes;
 
-    private String sourceEntryId;
+    private String externalReference;
 
     private String externalUrl;
 
@@ -83,7 +83,7 @@ public class JobAdvertisementUpdater {
         this.auditUser = builder.auditUser;
         this.fingerprint = builder.fingerprint;
         this.x28OccupationCodes = builder.x28OccupationCodes;
-        this.sourceEntryId = builder.sourceEntryId;
+        this.externalReference = builder.externalReference;
         this.externalUrl = builder.externalUrl;
         this.reportingObligation = builder.reportingObligation;
         this.employment = builder.employment;
@@ -121,8 +121,8 @@ public class JobAdvertisementUpdater {
         return x28OccupationCodes;
     }
 
-    public String getSourceEntryId() {
-        return sourceEntryId;
+    public String getExternalReference() {
+        return externalReference;
     }
 
     public String getExternalUrl() {
@@ -207,7 +207,7 @@ public class JobAdvertisementUpdater {
         private AuditUser auditUser;
         private String fingerprint;
         private String x28OccupationCodes;
-        private String sourceEntryId;
+        private String externalReference;
         private String externalUrl;
         private boolean reportingObligation;
         private Employment employment;
@@ -248,9 +248,9 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setSourceEntryId(String sourceEntryId) {
+        public Builder setExternalReference(String externalReference) {
             this.changedSections.add(SECTION_SOURCE_ENTRY_ID);
-            this.sourceEntryId = sourceEntryId;
+            this.externalReference = externalReference;
             return this;
         }
 

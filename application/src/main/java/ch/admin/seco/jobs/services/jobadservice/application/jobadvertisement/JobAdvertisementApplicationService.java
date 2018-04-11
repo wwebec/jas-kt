@@ -208,6 +208,7 @@ public class JobAdvertisementApplicationService {
                 .setJobContent(jobContent)
                 .setPublication(
                         new Publication.Builder()
+                                .setStartDate(TimeMachine.now().toLocalDate())
                                 .setEndDate(TimeMachine.now().plusDays(X28_PUBLICATION_MAX_DAYS).toLocalDate())
                                 .setEures(false)
                                 .setEuresAnonymous(false)
@@ -506,8 +507,6 @@ public class JobAdvertisementApplicationService {
         if (employerDto != null) {
             return new Employer.Builder()
                     .setName(employerDto.getName())
-                    .setStreet(employerDto.getStreet())
-                    .setHouseNumber(employerDto.getHouseNumber())
                     .setPostalCode(employerDto.getPostalCode())
                     .setCity(employerDto.getCity())
                     .setCountryIsoCode(employerDto.getCountryIsoCode())

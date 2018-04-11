@@ -60,7 +60,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     public static Owner createOwner(JobAdvertisementId jobAdvertisementId) {
         return new Owner.Builder()
                 .setAccessToken(String.format("access-token-%s", jobAdvertisementId.getValue()))
-                .setAvgId(String.format("avg-id-%s", jobAdvertisementId.getValue()))
+                .setCompanyId(String.format("avg-id-%s", jobAdvertisementId.getValue()))
                 .setUserId(String.format("user-id-%s", jobAdvertisementId.getValue()))
                 .build();
     }

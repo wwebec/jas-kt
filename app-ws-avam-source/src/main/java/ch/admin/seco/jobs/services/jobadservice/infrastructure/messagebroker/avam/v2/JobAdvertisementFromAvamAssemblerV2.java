@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.utils.WorkingTimePercentage;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.WSArbeitsformArray;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -112,14 +113,15 @@ public class JobAdvertisementFromAvamAssemblerV2 {
     }
 
     private EmploymentDto createEmploymentDto(WSOsteEgov avamJobAdvertisement) {
+        WorkingTimePercentage workingTimePercentage = WorkingTimePercentage.evaluate(avamJobAdvertisement.getPensumVon(), avamJobAdvertisement.getPensumBis());
         return new EmploymentDto(
                 parseToLocalDate(avamJobAdvertisement.getStellenantritt()),
                 parseToLocalDate(avamJobAdvertisement.getVertragsdauer()),
                 safeBoolean(avamJobAdvertisement.isKurzeinsatz(), false),
                 avamJobAdvertisement.isAbSofort(),
                 avamJobAdvertisement.isUnbefristet(),
-                nonNull(avamJobAdvertisement.getPensumVon()) ? avamJobAdvertisement.getPensumVon().intValue() : 0,
-                nonNull(avamJobAdvertisement.getPensumBis()) ? avamJobAdvertisement.getPensumBis().intValue() : 100,
+                workingTimePercentage.getMin(),
+                workingTimePercentage.getMax(),
                 createWorkForms(avamJobAdvertisement)
         );
     }

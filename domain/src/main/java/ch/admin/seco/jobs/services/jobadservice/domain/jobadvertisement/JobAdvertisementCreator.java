@@ -3,14 +3,11 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class JobAdvertisementCreator {
 
     private AuditUser auditUser;
-    private String sourceEntryId;
+    private String externalReference;
     private String stellennummerEgov;
     private String stellennummerAvam;
     private String fingerprint;
@@ -25,7 +22,7 @@ public class JobAdvertisementCreator {
 
     public JobAdvertisementCreator(Builder builder) {
         this.auditUser = builder.auditUser;
-        this.sourceEntryId = builder.sourceEntryId;
+        this.externalReference = builder.externalReference;
         this.stellennummerEgov = builder.stellennummerEgov;
         this.stellennummerAvam = builder.stellennummerAvam;
         this.fingerprint = builder.fingerprint;
@@ -43,8 +40,8 @@ public class JobAdvertisementCreator {
         return auditUser;
     }
 
-    public String getSourceEntryId() {
-        return sourceEntryId;
+    public String getExternalReference() {
+        return externalReference;
     }
 
     public String getStellennummerEgov() {
@@ -93,7 +90,7 @@ public class JobAdvertisementCreator {
 
     public static class Builder {
         private AuditUser auditUser;
-        private String sourceEntryId;
+        private String externalReference;
         private String stellennummerEgov;
         private String stellennummerAvam;
         private String fingerprint;
@@ -114,8 +111,8 @@ public class JobAdvertisementCreator {
             return new JobAdvertisementCreator(this);
         }
 
-        public Builder setSourceEntryId(String sourceEntryId) {
-            this.sourceEntryId = sourceEntryId;
+        public Builder setExternalReference(String externalReference) {
+            this.externalReference = externalReference;
             return this;
         }
 

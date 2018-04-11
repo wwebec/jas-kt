@@ -6,6 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.core.utils.MappingBuilder;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import ch.admin.seco.jobs.services.jobadservice.domain.utils.WorkingTimePercentage;
 
 import java.util.Collections;
 import java.util.List;
@@ -88,30 +89,17 @@ public class LegacyToJobAdvertisementConverter {
     }
 
     private static EmploymentDto convertEmploymentDto(LegacyJobDto legacyJobDto) {
-        int[] workingTimePercentage = calcWorkingTimePercentage(legacyJobDto.getWorkingTimePercentageFrom(), legacyJobDto.getWorkingTimePercentageTo());
+        WorkingTimePercentage workingTimePercentage = WorkingTimePercentage.evaluate(legacyJobDto.getWorkingTimePercentageFrom(), legacyJobDto.getWorkingTimePercentageTo());
         return new EmploymentDto(
                 legacyJobDto.getStartDate(),
                 legacyJobDto.getEndDate(),
                 false,
                 (legacyJobDto.isStartsImmediately() != null) ? legacyJobDto.isStartsImmediately() : false,
                 (legacyJobDto.isPermanent() != null) ? legacyJobDto.isPermanent() : (legacyJobDto.getEndDate() == null),
-                workingTimePercentage[0],
-                workingTimePercentage[1],
+                workingTimePercentage.getMin(),
+                workingTimePercentage.getMax(),
                 null
         );
-    }
-
-    private static int[] calcWorkingTimePercentage(Integer from, Integer to) {
-        if(from == null && to == null ) {
-            return new int[]{100, 100};
-        }
-        if(from == null) {
-            return  new int[]{to, to};
-        }
-        if(to == null) {
-            return new int[]{from, 100};
-        }
-        return new int[]{from, to};
     }
 
     private static CompanyDto convertCompanyDto(LegacyCompanyDto company) {

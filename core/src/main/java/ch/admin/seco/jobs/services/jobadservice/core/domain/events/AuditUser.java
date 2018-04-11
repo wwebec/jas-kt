@@ -4,38 +4,31 @@ import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 
 public class AuditUser {
 
-    private final String internalId;
-
     private final String externalId;
 
-    private final String firstname;
+    private final String firstName;
 
-    private final String lastname;
+    private final String lastName;
 
     private final String email;
 
-    public AuditUser(String internalId, String externalId, String firstname, String lastname, String email) {
-        this.internalId = Condition.notBlank(internalId);
+    public AuditUser(String externalId, String firstName, String lastName, String email) {
         this.externalId = Condition.notBlank(externalId);
-        this.firstname = Condition.notBlank(firstname);
-        this.lastname = Condition.notBlank(lastname);
+        this.firstName = Condition.notBlank(firstName);
+        this.lastName = Condition.notBlank(lastName);
         this.email = Condition.notBlank(email);
-    }
-
-    public String getInternalId() {
-        return internalId;
     }
 
     public String getExternalId() {
         return externalId;
     }
 
-    public String getFirstname() {
-        return firstname;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public String getLastname() {
-        return lastname;
+    public String getLastName() {
+        return lastName;
     }
 
     public String getEmail() {
@@ -43,6 +36,6 @@ public class AuditUser {
     }
 
     public String getDisplayName() {
-        return this.firstname + " " + this.lastname;
+        return this.firstName + " " + this.lastName;
     }
 }

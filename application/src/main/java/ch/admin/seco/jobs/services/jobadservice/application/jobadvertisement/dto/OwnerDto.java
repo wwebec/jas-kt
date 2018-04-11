@@ -6,7 +6,7 @@ public class OwnerDto {
 
     private String userId;
 
-    private String avgId;
+    private String companyId;
 
     private String accessToken;
 
@@ -14,9 +14,9 @@ public class OwnerDto {
         // For reflection libs
     }
 
-    public OwnerDto(String userId, String avgId, String accessToken) {
+    public OwnerDto(String userId, String companyId, String accessToken) {
         this.userId = userId;
-        this.avgId = avgId;
+        this.companyId = companyId;
         this.accessToken = accessToken;
     }
 
@@ -28,12 +28,12 @@ public class OwnerDto {
         this.userId = userId;
     }
 
-    public String getAvgId() {
-        return avgId;
+    public String getCompanyId() {
+        return companyId;
     }
 
-    public void setAvgId(String avgId) {
-        this.avgId = avgId;
+    public void setCompanyId(String companyId) {
+        this.companyId = companyId;
     }
 
     public String getAccessToken() {
@@ -50,7 +50,7 @@ public class OwnerDto {
         }
         OwnerDto ownerDto = new OwnerDto();
         ownerDto.setUserId(owner.getUserId());
-        ownerDto.setAvgId(owner.getAvgId());
+        ownerDto.setCompanyId(owner.getCompanyId());
         ownerDto.setAccessToken(owner.getAccessToken());
         return ownerDto;
     }
