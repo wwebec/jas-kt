@@ -180,6 +180,7 @@ public class JobAdvertisementApplicationService {
                 .setJobContent(jobContent)
                 .setPublication(
                         new Publication.Builder()
+                                .setStartDate(TimeMachine.now().toLocalDate())
                                 .setEndDate(TimeMachine.now().plusDays(X28_PUBLICATION_MAX_DAYS).toLocalDate())
                                 .setEures(false)
                                 .setEuresAnonymous(false)
