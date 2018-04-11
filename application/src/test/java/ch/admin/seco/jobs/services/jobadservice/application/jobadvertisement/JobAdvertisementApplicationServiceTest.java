@@ -228,7 +228,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
                 new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                 Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
-                Arrays.asList("1", "2")
+                "1,2"
         );
 
         //Execute

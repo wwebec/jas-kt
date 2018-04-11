@@ -44,16 +44,30 @@
             <column name="CONTACT_PHONE" type="VARCHAR(20)"/>
             <column name="CONTACT_SALUTATION" type="VARCHAR(3)"/>
 
-            <column name="PUBLICATION_START_DATE" type="date"/>
-            <column name="PUBLICATION_END_DATE" type="date"/>
-            <column name="PUBLICATION_EURES" type="BOOLEAN"/>
-            <column name="PUBLICATION_EURES_ANONYMOUS" type="BOOLEAN"/>
+            <column name="PUBLICATION_START_DATE" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PUBLICATION_END_DATE" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PUBLICATION_EURES_DISPLAY" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PUBLICATION_EURES_ANONYMOUS" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
             <column name="PUBLIC_ANONYMOUS" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
-            <column name="PUBLICATION_PUBLIC_DISPLAY" type="BOOLEAN"/>
-            <column name="PUBLICATION_RESTRICTED_ANONYMOUS" type="BOOLEAN"/>
-            <column name="PUBLICATION_RESTRICTED_DISPLAY" type="BOOLEAN"/>
+            <column name="PUBLICATION_PUBLIC_DISPLAY" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PUBLICATION_RESTRICTED_ANONYMOUS" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PUBLICATION_RESTRICTED_DISPLAY" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
 
             <!-- JOB_CONTENT -->
 
