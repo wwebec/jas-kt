@@ -93,7 +93,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
                 .setStartDate(TimeMachine.now().toLocalDate())
                 .setEndDate(TimeMachine.now().plusDays(31).toLocalDate())
                 .setShortEmployment(false)
-                .setImmediately(true)
+                .setImmediately(false)
                 .setPermanent(false)
                 .setWorkloadPercentageMin(80)
                 .setWorkloadPercentageMax(100)

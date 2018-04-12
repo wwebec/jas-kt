@@ -1,47 +1,20 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
-import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EURES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_FINGERPRINT;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLICATION_DATES;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLIC_ANONYMOUS;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_PUBLIC_DISPLAY;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_RESTRICTED_ANONYMOUS;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_RESTRICTED_DISPLAY;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_WORK_FORMS;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_X28_OCCUPATION_CODES;
-
-import java.time.LocalDate;
-import java.util.Objects;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.validation.Valid;
-
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementApprovedEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementArchivedEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementBlackoutExpiredEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCancelledEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementInspectingEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishExpiredEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishRestrictedEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefinedEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRejectedEvent;
+import ch.admin.seco.jobs.services.jobadservice.core.validations.Violations;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*;
+
+import javax.persistence.*;
+import javax.validation.Valid;
+import java.time.LocalDate;
+import java.util.Objects;
+
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
+import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChangedContent;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.*;
 
 @Entity
 public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertisementId> {
@@ -150,6 +123,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.owner = Condition.notNull(builder.owner);
         this.contact = builder.contact;
         this.publication = Condition.notNull(builder.publication);
+        checkViolations();
     }
 
     public JobAdvertisementId getId() {
@@ -366,6 +340,50 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 ", contact=" + contact +
                 ", publication=" + publication +
                 '}';
+    }
+
+    private void checkViolations() {
+        Violations violations = new Violations();
+        Employment employment = jobContent.getEmployment();
+        violations.addIfTrue(
+                (employment.getEndDate() != null) && (employment.getStartDate() != null) && employment.getStartDate().isAfter(employment.getEndDate()),
+                "Employment endDate %s is before startDate %s",
+                employment.getEndDate(),
+                employment.getStartDate()
+        );
+        violations.addIfTrue(
+                employment.isImmediately() && (employment.getStartDate() != null),
+                "Immediately can be true if startDate %s is set",
+                employment.getStartDate()
+        );
+        violations.addIfTrue(
+                employment.isPermanent() && (employment.getEndDate() != null),
+                "Permanent can be true if endDate %s is set",
+                employment.getEndDate()
+        );
+        violations.addIfTrue(
+                (employment.getWorkloadPercentageMin() <= 0) || (employment.getWorkloadPercentageMin() > 100),
+                "WorkloadPercentageMin %d is out of range [1..100]",
+                employment.getWorkloadPercentageMin()
+        );
+        violations.addIfTrue(
+                (employment.getWorkloadPercentageMax() <= 0) || (employment.getWorkloadPercentageMax() > 100),
+                "WorkloadPercentageMax %d is out of range [1..100]",
+                employment.getWorkloadPercentageMax()
+        );
+        violations.addIfTrue(
+                employment.getWorkloadPercentageMin() > employment.getWorkloadPercentageMax(),
+                "WorkloadPercentageMin %d is greater than workloadPercentageMax %d",
+                employment.getWorkloadPercentageMin(),
+                employment.getWorkloadPercentageMax()
+        );
+        violations.addIfTrue(
+                (publication.getEndDate() != null) && (publication.getStartDate() != null) && publication.getStartDate().isAfter(publication.getEndDate()),
+                "Publication endDate %s is before startDate %s",
+                publication.getEndDate(),
+                publication.getStartDate()
+        );
+        Condition.isTrue(violations.isEmpty(), String.valueOf(violations.getMessages()));
     }
 
     private boolean applyUpdates(JobAdvertisementUpdater updater) {
