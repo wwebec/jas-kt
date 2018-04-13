@@ -1,0 +1,2 @@
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=ch.admin.seco.jobs.services.jobadservice.infrastructure.logging.LogstashAutoConfiguration

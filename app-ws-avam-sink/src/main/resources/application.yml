@@ -1,0 +1,13 @@
+spring:
+    application:
+        name: app-ws-avam-sink
+
+
+##############################
+#  PROJECT - INFO
+##############################
+info:
+    project:
+        version: #project.version#
+
+

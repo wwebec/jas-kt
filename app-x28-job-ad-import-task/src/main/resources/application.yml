@@ -4,6 +4,14 @@ spring:
 
 
 ##############################
+#  PROJECT - INFO
+##############################
+info:
+    project:
+        version: #project.version#
+
+
+##############################
 #  JACKSON - ATTENTION: spring jackson proerties only apply when the spring-web library is present on the classpath !!
 ##############################
 
@@ -29,6 +37,7 @@ spring:
             batch:
                 events:
                     enabled: false
+
 
 ##############################
 #  X28 SFTP
