@@ -49,7 +49,6 @@ class SwaggerConfig {
         @Bean
         public Docket publicApi() {
             return new Docket(DocumentationType.SWAGGER_2)
-                    .groupName("public-api")
                     .select()
                     .paths(regex("/api/.*"))
                     .build()
@@ -113,7 +112,6 @@ class SwaggerConfig {
         @Bean
         public Docket publicApi() {
             return new Docket(DocumentationType.SWAGGER_2)
-                    .groupName("public-api")
                     .select()
                     .paths(apiPaths())
                     .build()
