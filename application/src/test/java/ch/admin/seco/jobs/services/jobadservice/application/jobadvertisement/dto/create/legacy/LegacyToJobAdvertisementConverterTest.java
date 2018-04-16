@@ -13,7 +13,6 @@ import org.junit.Test;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
 public class LegacyToJobAdvertisementConverterTest {
 
@@ -71,7 +70,7 @@ public class LegacyToJobAdvertisementConverterTest {
 		assertThat(publication.isEures()).isFalse();
 		assertThat(publication.isEuresAnonymous()).isFalse();
 		assertThat(publication.isPublicDisplay()).isTrue();
-		assertThat(publication.isPublicAnonynomous()).isFalse();
+		assertThat(publication.isPublicAnonymous()).isFalse();
 		assertThat(publication.isRestrictedDisplay()).isTrue();
 		assertThat(publication.isRestrictedAnonymous()).isFalse();
 

@@ -213,7 +213,7 @@ public class JobAdvertisementApplicationService {
                                 .setEures(false)
                                 .setEuresAnonymous(false)
                                 .setPublicDisplay(true)
-                                .setPublicAnonynomous(true)
+                                .setPublicAnonymous(true)
                                 .build()
                 )
                 .build();
@@ -275,6 +275,7 @@ public class JobAdvertisementApplicationService {
     }
 
     public void cancel(CancellationDto cancellationDto) {
+        // FIXME From API it's stellennummerEgov
         Condition.notNull(cancellationDto.getStellennummerAvam(), "StellennummerAvam can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(cancellationDto.getStellennummerAvam());
         LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
@@ -446,7 +447,7 @@ public class JobAdvertisementApplicationService {
                     .setEures(publicationDto.isEures())
                     .setEuresAnonymous(publicationDto.isEuresAnonymous())
                     .setPublicDisplay(publicationDto.isPublicDisplay())
-                    .setPublicAnonynomous(publicationDto.isPublicAnonynomous())
+                    .setPublicAnonymous(publicationDto.isPublicAnonymous())
                     .setRestrictedDisplay(publicationDto.isRestrictedDisplay())
                     .setRestrictedAnonymous(publicationDto.isRestrictedAnonymous())
                     .build();

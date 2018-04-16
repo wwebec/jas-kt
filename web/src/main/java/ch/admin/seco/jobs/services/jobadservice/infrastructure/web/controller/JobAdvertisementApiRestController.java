@@ -33,6 +33,7 @@ public class JobAdvertisementApiRestController {
 		return jobAdvertisementApplicationService.findById(jobAdvertisementId);
 	}
 
+	@Deprecated
 	@PostMapping(path = "/api-legacy")
 	public JobAdvertisementDto createFromLegacyApi(@RequestBody @Valid LegacyJobAdvertisementDto legacyJobAdvertisementDto) throws AggregateNotFoundException {
 		CreateJobAdvertisementDto createJobAdvertisementDto = LegacyToJobAdvertisementConverter.convert(legacyJobAdvertisementDto);

@@ -1,0 +1,48 @@
+== Create a new job advertisement
+
+=== Fields
+
+==== Publication
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| stellennummerEgov | String | | Required
+| date | String | The cancellation date | Required (Format: 2018-01-20)
+| code | String | The cancellation reason code | Required
+|===
+
+[cols="10,90"]
+|===
+| Code | Reason
+
+| 1 | The position has been filled
+| 2 | Enough candidates have been found
+| 3 | Other reason
+|===
+
+=== Request
+[source,json]
+----
+{
+    "stellennummerEgov": "string",
+    "date": "string",
+    "code": "string"
+}
+----
+
+=== Response
+No body
+
+=== Response status
+[cols="10,20,70"]
+|===
+| Code | Status | Description
+
+| 200 | OK | The job ad has been successfully updated
+| 400 | Bad Request | The request was malformed or invalid
+| 401 | Unauthorized | User is not logged in
+| 403 | Forbidden | User has not the required permission to perform this action
+| 404 | Not Found | No job ad with the given stellennummerEgov was found
+|===
+

@@ -1,0 +1,404 @@
+== Create a new job advertisement
+
+=== Fields
+
+==== JobAdvertisement
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| externalUrl | String | Link to the original website of the job ad | Optional
+| reportToAvam | Boolean | Should the ad be send to the RAV | Required (`true` or `false`)
+| contact | <<Contact>> | Contact person about the job ad (Administration) | Required
+| jobDescriptions | Array<<<JobDescription>>> | Language specific Title and Description | Required at least one
+| company | <<Company>> | The company that offers the job | Required
+| employer | <<Employer>> | The original company that offers the job | Required, if company.surrogate is `true`
+| employment | <<Employment>> | Description of the employment | Required
+| location | <<Location>> | The location of the job | Required
+| occupation | <<Occupation>> | The occupation skills of the job | Required
+| languageSkills | Array<<<LanguageSkill>>> | It is possible to define up to 5 language skills required by the job. | 0..5 objects
+| publicContact | <<PublicContact>> | Contact person about the job | Optional
+| applyChannel | <<ApplyChannel>> | Different application channels | Optional
+| publication | <<Publication>> | The publication properties of the job ad | Required
+|===
+
+==== Contact
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| languageIsoCode | String | The language of the person for the notifications | Required (ISO 639)
+| salutation | String |  | Required (`MR` or `MS`)
+| firstName | String |  | Required
+| lastName | String |  | Required
+| phone | String |  | Required (Format: +41123456789)
+| email | String |  | Required
+|===
+
+==== JobDescription
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| languageIsoCode | String | The language of the title and description | Required (ISO 639)
+| title | String | Short summary of the job | Required
+| description | String | Job description can contain basic HTML formatting | Required (Max 10'000 characters)
+|===
+
+==== Company
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| name | String | The name of the company | Required
+| street | String | | Optional
+| houseNumber | String | | Optional
+| postOfficeBoxNumber | String | | Optional
+| postOfficeBoxPostalCode | String | | Optional. Must be a valid swiss postal code if the company is located in Switzerland
+| postOfficeBoxCity | String | | Optional
+| postalCode | String | | Optional. Must be a valid swiss postal code if the company is located in Switzerland
+| city | String | | Optional
+| countryIsoCode | String | | Required (ISO 3166-1 alpha-2)
+| website | String | | Optional (Format: http://www.example.org)
+| phone | String | | Optional (Format: +41123456789)
+| email | String | | Optional
+| surrogate | String | | Required (`true` or `false`)
+|===
+
+==== Employer
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| name | String | The name of the original company | Required
+| city | String | | Required
+| postalCode | String | | Required. Must be a valid swiss postal code if the company is located in Switzerland
+| countryIsoCode | String | | Required (ISO 3166-1 alpha-2)
+|===
+
+==== Employment
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| startDate | String | When does the job start | Optional (Format: 2018-01-20)
+| endDate | String | When does the contract end | Optional (Format: 2018-01-20)
+| shortEmployment | Boolean | Is the employment duration less than 14 days | Required (`true` or `false`)
+| immediately | Boolean | Does the job start immediately | Required (`true` or `false`) `true` only if no startDate is set
+| permanent | Boolean | Is the contract permanent | Required (`true` or `false`) `true` only if no endDate is set
+| workloadPercentageMin | String | | Required (1..100 less or equal workloadPercentageMax)
+| workloadPercentageMax | String | | Required (1..100 greater or equal workloadPercentageMin)
+| workForms | Array<String> | | Optional (`SUNDAY_AND_HOLIDAYS`, `SHIFT_WORK`, `NIGHT_WORK`, `HOME_WORK`)
+|===
+
+==== Location
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| remarks | String | More information about job location can be added as free text. Note : this property is currently not shown on the publication medias. Work is in progress in order to integrate this feature | Optional (Max 255 characters)
+| postalCode | String | | Required. Must be a valid swiss postal code if the company is located in Switzerland
+| city | String | | Required
+| countryIsoCode | String | | Required (ISO 3166-1 alpha-2)
+|===
+
+==== Occupation
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| avamOccupationCode | String | Code provided by AVAM | Required
+| workExperience | String | | Optional (`LESS_THAN_1_YEAR`, `MORE_THAN_1_YEAR` or `MORE_THAN_3_YEARS`)
+| educationCode | String | Code provided by AVAM | Optional
+|===
+
+==== LanguageSkill
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| languageIsoCode | String | | Required (ISO 639)
+| spokenLevel | String | | Required (`NONE`, `BASIC`, `INTERMEDIATE` or `PROFICIENT`) (see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels])
+| writtenLevel | String | | Required (`NONE`, `BASIC`, `INTERMEDIATE` or `PROFICIENT`) (see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels])
+|===
+
+==== ApplyChannel
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| mailAddress | String | The address where an applicant can send his candidacy letter | Optional
+| emailAddress | String | The address where an applicant can send his candidacy email | Optional
+| phoneNumber | String | The phone number where an applicant can call | Optional (Format: +41123456789)
+| formUrl | String | The online form where an applicant can fill in his candidacy | Optional (Format: http://www.example.org)
+| additionalInfo | String | More application information can be added as free text. | Optional (Max 255 characters)
+|===
+
+==== PublicContact
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| salutation | String |  | Required (`MR` or `MS`)
+| firstName | String |  | Required
+| lastName | String |  | Required
+| phone | String |  | Required (Format: +41123456789)
+| email | String |  | Required
+|===
+
+==== Publication
+[cols="30,10,30,30"]
+|===
+| Path | Type | Description | Constraints
+
+| startDate | String | When does the advertisement publication start | Required (Format: 2018-01-20)
+| endDate | String | When does the advertisement publication end | Optional (Format: 2018-01-20)
+| euresDisplay | Boolean | Should the job ad be displayed in Eures | Required (`true` or `false`)
+| euresAnonymous | Boolean | Should company details be displayed in Eures | Required (`true` or `false`)
+| publicDisplay | Boolean | Should the job ad be displayed in job-room public area | Required (`true` or `false`)
+| publicAnonymous | Boolean | Should company details be displayed in job-room public area | Required (`true` or `false`)
+| restrictedDisplay | Boolean | Should the job ad be displayed in job-room restricted area | Required (`true` or `false`)
+| restrictedAnonymous | Boolean | Should company details be displayed in restricted area | Required (`true` or `false`)
+|===
+
+=== Request
+[source,json]
+----
+{
+    "externalUrl": "string",
+    "reportToAvam": true,
+    "contact": {
+        "languageIsoCode": "string",
+        "salutation": "MR",
+        "firstName": "string",
+        "lastName": "string",
+        "phone": "string",
+        "email": "string"
+    },
+    "jobDescriptions": [
+        {
+            "languageIsoCode": "string",
+            "title": "string",
+            "description": "string"
+        }
+    ],
+    "company": {
+        "name": "string",
+        "street": "string",
+        "houseNumber": "string",
+        "postOfficeBoxNumber": "string",
+        "postOfficeBoxPostalCode": "string",
+        "postOfficeBoxCity": "string",
+        "postalCode": "string",
+        "city": "string",
+        "countryIsoCode": "string",
+        "website": "string",
+        "phone": "string",
+        "email": "string",
+        "surrogate": true
+    },
+    "employer": {
+        "name": "string",
+        "postalCode": "string",
+        "city": "string",
+        "countryIsoCode": "string"
+    },
+    "employment": {
+        "startDate": "string",
+        "endDate": "string",
+        "shortEmployment": true,
+        "immediately": true,
+        "permanent": true,
+        "workloadPercentageMax": 0,
+        "workloadPercentageMin": 0,
+        "workForms": [
+            "SUNDAY_AND_HOLIDAYS"
+        ]
+    },
+    "location": {
+        "remarks": "string",
+        "postalCode": "string",
+        "city": "string",
+        "countryIsoCode": "string"
+    },
+    "occupation": {
+        "avamOccupationCode": "string",
+        "workExperience": "LESS_THAN_1_YEAR",
+        "educationCode": "string"
+    },
+    "languageSkills": [
+        {
+            "languageIsoCode": "string",
+            "spokenLevel": "NONE",
+            "writtenLevel": "NONE"
+        }
+    ],
+    "applyChannel": {
+        "mailAddress": "string",
+        "emailAddress": "string",
+        "phoneNumber": "string",
+        "formUrl": "string",
+        "additionalInfo": "string"
+    },
+    "publicContact": {
+        "salutation": "MR",
+        "firstName": "string",
+        "lastName": "string",
+        "phone": "string",
+        "email": "string"
+    },
+    "publication": {
+        "startDate": "string",
+        "endDate": "string",
+        "euresDisplay": true,
+        "euresAnonymous": true,
+        "publicDisplay": true,
+        "publicAnonymous": true,
+        "restrictedDisplay": true,
+        "restrictedAnonymous": true
+    }
+}
+----
+
+=== Response
+[source,json]
+----
+{
+    "id": "string",
+    "status": "CREATED",
+    "sourceSystem": "JOBROOM",
+    "stellennummerEgov": "string",
+    "stellennummerAvam": "string", #####
+    "externalReference": "string", #####
+    "fingerprint": "string",
+    "jobCenterCode": "string", #####
+    "reportToAvam": true, #####
+    "reportingObligation": true, #####
+    "reportingObligationEndDate": "string", #####
+    "approvalDate": "string", #####
+    "rejectionCode": "string", #####
+    "rejectionDate": "string", #####
+    "rejectionReason": "string", #####
+    "cancellationCode": "string", #####
+    "cancellationDate": "string", #####
+    "owner": { #####
+        "userId": "string", #####
+        "companyId": "string", #####
+        "accessToken": "string", #####
+    },
+    "contact": { #####
+        "languageIsoCode": "string", #####
+        "salutation": "MR", #####
+        "firstName": "string", #####
+        "lastName": "string", #####
+        "phone": "string", #####
+        "email": "string" #####
+    },
+    "jobContent": {
+        "externalUrl": "string",
+        "jobDescriptions": [
+            {
+                "languageIsoCode": "string",
+                "title": "string",
+                "description": "string"
+            }
+        ],
+        "company": {
+            "name": "string",
+            "street": "string",
+            "houseNumber": "string",
+            "postOfficeBoxNumber": "string",
+            "postOfficeBoxPostalCode": "string",
+            "postOfficeBoxCity": "string",
+            "postalCode": "string",
+            "city": "string",
+            "countryIsoCode": "string",
+            "website": "string",
+            "phone": "string",
+            "email": "string",
+            "surrogate": true
+        },
+        "employer": { #####
+            "name": "string", #####
+            "postalCode": "string", #####
+            "city": "string", #####
+            "countryIsoCode": "string" #####
+        },
+        "employment": {
+            "startDate": "string",
+            "endDate": "string",
+            "shortEmployment": true,
+            "immediately": true,
+            "permanent": true,
+            "workloadPercentageMax": 0,
+            "workloadPercentageMin": 0,
+            "workForms": [
+                "SUNDAY_AND_HOLIDAYS"
+            ]
+        },
+        "location": {
+            "remarks": "string",
+            "postalCode": "string",
+            "city": "string",
+            "communalCode": "string",
+            "regionCode": "string",
+            "cantonCode": "string",
+            "countryIsoCode": "string",
+            "coordinates": {
+                "latitude": 0,
+                "longitude": 0
+            }
+        },
+        "occupations": [
+            {
+                "avamOccupationCode": "string",
+                "workExperience": "LESS_THAN_1_YEAR",
+                "educationCode": "string"
+            }
+        ],
+        "languageSkills": [
+            {
+                "languageIsoCode": "string",
+                "spokenLevel": "NONE",
+                "writtenLevel": "NONE"
+            }
+        ],
+        "applyChannel": {
+            "mailAddress": "string",
+            "emailAddress": "string",
+            "phoneNumber": "string",
+            "formUrl": "string",
+            "additionalInfo": "string"
+        },
+        "publicContact": {
+            "salutation": "MR",
+            "firstName": "string",
+            "lastName": "string",
+            "phone": "string",
+            "email": "string"
+        }
+    },
+    "publication": {
+        "startDate": "string",
+        "endDate": "string",
+        "euresDisplay": true,
+        "euresAnonymous": true,
+        "publicDisplay": true,
+        "publicAnonymous": true,
+        "restrictedDisplay": true,
+        "restrictedAnonymous": true
+    }
+}
+----
+
+=== Response status
+[cols="10,20,70"]
+|===
+| Code | Status | Description
+
+| 201 | Created | The job ad has been successfully created
+| 400 | Bad Request | The request was malformed or invalid
+| 401 | Unauthorized | User is not logged in
+| 403 | Forbidden | User has not the required permission to perform this action
+|===
+

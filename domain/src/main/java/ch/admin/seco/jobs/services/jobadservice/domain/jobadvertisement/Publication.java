@@ -38,7 +38,7 @@ public class Publication implements ValueObject<Publication> {
         this.eures = builder.eures;
         this.euresAnonymous = builder.euresAnonymous;
         this.publicDisplay = builder.publicDisplay;
-        this.publicAnonymous = builder.publicAnonynomous;
+        this.publicAnonymous = builder.publicAnonymous;
         this.restrictedDisplay = builder.restrictedDisplay;
         this.restrictedAnonymous = builder.restrictedAnonymous;
     }
@@ -147,7 +147,7 @@ public class Publication implements ValueObject<Publication> {
         private boolean eures;
         private boolean euresAnonymous;
         private boolean publicDisplay;
-        private boolean publicAnonynomous;
+        private boolean publicAnonymous;
         private boolean restrictedDisplay;
         private boolean restrictedAnonymous;
 
@@ -183,8 +183,8 @@ public class Publication implements ValueObject<Publication> {
             return this;
         }
 
-        public Builder setPublicAnonynomous(boolean publicAnonynomous) {
-            this.publicAnonynomous = publicAnonynomous;
+        public Builder setPublicAnonymous(boolean publicAnonymous) {
+            this.publicAnonymous = publicAnonymous;
             return this;
         }
 

@@ -48,7 +48,7 @@
             <column name="PUBLICATION_END_DATE" type="date"/>
             <column name="PUBLICATION_EURES" type="BOOLEAN"/>
             <column name="PUBLICATION_EURES_ANONYMOUS" type="BOOLEAN"/>
-            <column name="PUBLIC_ANONYMOUS" type="BOOLEAN">
+            <column name="PUBLICATION_PUBLIC_ANONYMOUS" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
             <column name="PUBLICATION_PUBLIC_DISPLAY" type="BOOLEAN"/>
