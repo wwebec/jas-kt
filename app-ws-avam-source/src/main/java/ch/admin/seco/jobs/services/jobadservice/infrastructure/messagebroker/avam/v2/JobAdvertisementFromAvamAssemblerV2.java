@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.utils.WorkingTimePercentage;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.WSArbeitsformArray;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -131,8 +131,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 avamJobAdvertisement.getArbeitsOrtText(),
                 avamJobAdvertisement.getArbeitsOrtOrt(),
                 avamJobAdvertisement.getArbeitsOrtPlz(),
-                avamJobAdvertisement.getArbeitsOrtLand(),
-                avamJobAdvertisement.getArbeitsOrtGemeinde()
+                avamJobAdvertisement.getArbeitsOrtLand()
         );
     }
 

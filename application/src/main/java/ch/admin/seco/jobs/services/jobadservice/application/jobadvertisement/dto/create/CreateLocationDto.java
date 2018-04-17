@@ -1,27 +1,21 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
-import javax.validation.constraints.NotEmpty;
-
 public class CreateLocationDto {
 
     private String remarks;
     private String city;
-    @NotEmpty
     private String postalCode;
     private String countryIsoCode;
-    private String communalCode;
 
     protected CreateLocationDto() {
         // For reflection libs
     }
 
-    public CreateLocationDto(String remarks, String city, String postalCode, String countryIsoCode,
-            String communalCode) {
+    public CreateLocationDto(String remarks, String city, String postalCode, String countryIsoCode) {
         this.remarks = remarks;
         this.city = city;
         this.postalCode = postalCode;
         this.countryIsoCode = countryIsoCode;
-        this.communalCode = communalCode;
     }
 
     public String getRemarks() {
@@ -56,11 +50,4 @@ public class CreateLocationDto {
         this.countryIsoCode = countryIsoCode;
     }
 
-    public String getCommunalCode() {
-        return communalCode;
-    }
-
-    public void setCommunalCode(String communalCode) {
-        this.communalCode = communalCode;
-    }
 }

@@ -1,12 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 
 public class CompanyDto {
 
-    @NotNull
+    @NotBlank
     private String name;
     private String street;
     private String houseNumber;

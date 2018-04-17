@@ -6,7 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.core.utils.MappingBuilder;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-import ch.admin.seco.jobs.services.jobadservice.domain.utils.WorkingTimePercentage;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
 
 import java.util.Collections;
 import java.util.List;
@@ -83,8 +83,7 @@ public class LegacyToJobAdvertisementConverter {
                 legacyLocationDto.getAdditionalDetails(),
                 legacyLocationDto.getLocality(),
                 legacyLocationDto.getPostalCode(),
-                legacyLocationDto.getCountryCode(),
-                null
+                legacyLocationDto.getCountryCode()
         );
     }
 

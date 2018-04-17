@@ -35,13 +35,13 @@ public class CreateJobAdvertisementFromX28Dto {
     @NotEmpty
     private List<OccupationDto> occupations;
 
-    private List<String> professionCodes;
+    private String professionCodes;
 
     protected CreateJobAdvertisementFromX28Dto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromX28Dto(String title, String description, String fingerprint, String externalUrl, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, List<String> professionCodes) {
+    public CreateJobAdvertisementFromX28Dto(String title, String description, String fingerprint, String externalUrl, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes) {
         this.title = title;
         this.description = description;
         this.fingerprint = fingerprint;
@@ -117,11 +117,11 @@ public class CreateJobAdvertisementFromX28Dto {
         this.occupations = occupations;
     }
 
-    public List<String> getProfessionCodes() {
+    public String getProfessionCodes() {
         return professionCodes;
     }
 
-    public void setProfessionCodes(List<String> professionCodes) {
+    public void setProfessionCodes(String professionCodes) {
         this.professionCodes = professionCodes;
     }
 }

@@ -67,7 +67,7 @@ public class LegacyToJobAdvertisementConverterTest {
 		assertThat(publication).isNotNull();
 		assertThat(publication.getStartDate()).isEqualTo(LocalDate.of(2018, 1, 1));
 		assertThat(publication.getEndDate()).isEqualTo(LocalDate.of(2018, 2, 1));
-		assertThat(publication.isEures()).isFalse();
+		assertThat(publication.isEuresDisplay()).isFalse();
 		assertThat(publication.isEuresAnonymous()).isFalse();
 		assertThat(publication.isPublicDisplay()).isTrue();
 		assertThat(publication.isPublicAnonymous()).isFalse();
@@ -125,8 +125,8 @@ public class LegacyToJobAdvertisementConverterTest {
 		assertThat(employment).isNotNull();
 		assertThat(employment.getStartDate()).isEqualTo(LocalDate.of(2018, 3, 1));
 		assertThat(employment.getEndDate()).isEqualTo(LocalDate.of(2018, 4, 1));
-		assertThat(employment.getImmediately()).isTrue();
-		assertThat(employment.getPermanent()).isTrue();
+		assertThat(employment.isImmediately()).isTrue();
+		assertThat(employment.isPermanent()).isTrue();
 		assertThat(employment.getWorkloadPercentageMin()).isEqualTo(10);
 		assertThat(employment.getWorkloadPercentageMax()).isEqualTo(100);
 

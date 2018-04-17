@@ -54,7 +54,7 @@ public class Employment implements ValueObject<Employment> {
         this.endDate = endDate;
     }
 
-    public boolean getShortEmployment() {
+    public boolean isShortEmployment() {
         return shortEmployment;
     }
 
@@ -62,7 +62,7 @@ public class Employment implements ValueObject<Employment> {
         this.shortEmployment = shortEmployment;
     }
 
-    public boolean getImmediately() {
+    public boolean isImmediately() {
         return immediately;
     }
 
@@ -70,7 +70,7 @@ public class Employment implements ValueObject<Employment> {
         this.immediately = immediately;
     }
 
-    public boolean getPermanent() {
+    public boolean isPermanent() {
         return permanent;
     }
 
