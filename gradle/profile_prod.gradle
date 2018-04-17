@@ -1,10 +1,6 @@
 apply plugin: 'org.springframework.boot'
 apply plugin: 'com.gorylenko.gradle-git-properties'
 
-dependencies {
-
-}
-
 def profiles = 'prod'
 if (project.hasProperty('no-liquibase')) {
     profiles += ',no-liquibase'
@@ -18,14 +14,13 @@ bootRun {
     args = []
 }
 
-
 processResources {
-    filesMatching('**/application.yml') {
+    filesMatching(['**/application.yml','**/application.properties']) {
         filter {
             it.replace('#project.version#', version)
         }
     }
-    filesMatching('**/bootstrap.yml') {
+    filesMatching(['**/bootstrap.yml','**/bootstrap.properties']) {
         filter {
             it.replace('#spring.profiles.active#', profiles)
         }

@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.0.0.RELEASE'
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
         classpath 'io.spring.gradle:propdeps-plugin:0.0.10.RELEASE'
         classpath 'org.ajoberstar:gradle-git:1.4.2'
     }
@@ -64,13 +64,24 @@ subprojects {
             dependency 'net.logstash.logback:logstash-logback-encoder:4.11'
             dependency 'org.hibernate.validator:hibernate-validator:6.0.7.Final'
             dependency 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.2.Final'
+            dependency 'org.springframework.cloud:spring-cloud-starter-task:2.0.0.RC1'
+            dependency 'org.springframework.cloud:spring-cloud-task-core:2.0.0.RC1'
+            dependency 'org.springframework.cloud:spring-cloud-task-batch:2.0.0.RC1'
+            dependency 'org.springframework.cloud:spring-cloud-task-stream:2.0.0.RC1'
             dependency 'org.zalando:problem-spring-web:0.22.1'
             dependency 'com.googlecode.libphonenumber:libphonenumber:8.9.2'
             dependency 'junit:junit:4.12'
         }
         imports {
-            mavenBom 'org.springframework.boot:spring-boot-dependencies:2.0.0.RELEASE'
-            mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Finchley.M7'
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${spring_boot_version}"
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${spring_cloud_version}"
+        }
+    }
+
+    test {
+        testLogging {
+            events "passed", "skipped", "failed"
+            exceptionFormat = 'full'
         }
     }
 }

@@ -87,7 +87,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @AttributeOverrides({
             @AttributeOverride(name = "startDate", column = @Column(name = "PUBLICATION_START_DATE")),
             @AttributeOverride(name = "endDate", column = @Column(name = "PUBLICATION_END_DATE")),
-            @AttributeOverride(name = "eures", column = @Column(name = "PUBLICATION_EURES")),
+            @AttributeOverride(name = "euresDisplay", column = @Column(name = "PUBLICATION_EURES_DISPLAY")),
             @AttributeOverride(name = "euresAnonymous", column = @Column(name = "PUBLICATION_EURES_ANONYMOUS")),
             @AttributeOverride(name = "publicDisplay", column = @Column(name = "PUBLICATION_PUBLIC_DISPLAY")),
             @AttributeOverride(name = "publicAnonymous", column = @Column(name = "PUBLICATION_PUBLIC_ANONYMOUS")),

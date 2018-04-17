@@ -14,14 +14,13 @@ bootRun {
     args = []
 }
 
-
 processResources {
-    filesMatching('**/application.yml') {
+    filesMatching(['**/application.yml','**/application.properties']) {
         filter {
             it.replace('#project.version#', version)
         }
     }
-    filesMatching('**/bootstrap.yml') {
+    filesMatching(['**/bootstrap.yml','**/bootstrap.properties']) {
         filter {
             it.replace('#spring.profiles.active#', profiles)
         }

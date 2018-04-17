@@ -59,15 +59,6 @@ dependencies {
     optional 'org.springframework.boot:spring-boot-configuration-processor'
 }
 
-if (project.hasProperty('prod')) {
-    apply from: "${rootProject.rootDir}/gradle/profile_prod.gradle"
-} else {
-    apply from: "${rootProject.rootDir}/gradle/profile_dev.gradle"
-}
-if (project.hasProperty('zipkin')) {
-    apply from: "${rootProject.rootDir}/gradle/zipkin.gradle"
-}
-
 defaultTasks 'bootRun'
 
 bootJar {
