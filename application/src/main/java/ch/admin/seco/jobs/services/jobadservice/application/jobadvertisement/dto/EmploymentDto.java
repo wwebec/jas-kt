@@ -36,9 +36,9 @@ public class EmploymentDto {
         EmploymentDto employmentDto = new EmploymentDto();
         employmentDto.setStartDate(employment.getStartDate());
         employmentDto.setEndDate(employment.getEndDate());
-        employmentDto.setShortEmployment(employment.getShortEmployment());
-        employmentDto.setImmediately(employment.getImmediately());
-        employmentDto.setPermanent(employment.getPermanent());
+        employmentDto.setShortEmployment(employment.isShortEmployment());
+        employmentDto.setImmediately(employment.isImmediately());
+        employmentDto.setPermanent(employment.isPermanent());
         employmentDto.setWorkloadPercentageMin(employment.getWorkloadPercentageMin());
         employmentDto.setWorkloadPercentageMax(employment.getWorkloadPercentageMax());
         employmentDto.setWorkForms(employment.getWorkForms());
@@ -61,7 +61,7 @@ public class EmploymentDto {
         this.endDate = endDate;
     }
 
-    public boolean getShortEmployment() {
+    public boolean isShortEmployment() {
         return shortEmployment;
     }
 
@@ -69,7 +69,7 @@ public class EmploymentDto {
         this.shortEmployment = shortEmployment;
     }
 
-    public boolean getImmediately() {
+    public boolean isImmediately() {
         return immediately;
     }
 
@@ -77,7 +77,7 @@ public class EmploymentDto {
         this.immediately = immediately;
     }
 
-    public boolean getPermanent() {
+    public boolean isPermanent() {
         return permanent;
     }
 

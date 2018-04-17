@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.domain.utils;
+package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils;
 
 public class WorkingTimePercentage {
 

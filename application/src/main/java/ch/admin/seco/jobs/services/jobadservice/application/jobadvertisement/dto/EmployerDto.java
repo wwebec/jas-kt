@@ -2,8 +2,11 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employer;
 
+import javax.validation.constraints.NotBlank;
+
 public class EmployerDto {
 
+    @NotBlank
     private String name;
     private String postalCode;
     private String city;

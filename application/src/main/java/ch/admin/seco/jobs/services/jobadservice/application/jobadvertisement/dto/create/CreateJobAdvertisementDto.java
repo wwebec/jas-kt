@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -18,6 +19,7 @@ public class CreateJobAdvertisementDto {
     private PublicationDto publication;
 
     @NotNull
+    @NotEmpty
     private List<JobDescriptionDto> jobDescriptions;
 
     @NotNull

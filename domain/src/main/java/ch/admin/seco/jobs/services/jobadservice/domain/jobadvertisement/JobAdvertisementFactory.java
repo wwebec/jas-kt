@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,7 @@ public class JobAdvertisementFactory {
     }
 
     public JobAdvertisement createFromWebForm(JobAdvertisementCreator creator) {
+        Condition.notNull(creator.getContact());
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setStatus(JobAdvertisementStatus.CREATED)
@@ -47,6 +49,7 @@ public class JobAdvertisementFactory {
     }
 
     public JobAdvertisement createFromApi(JobAdvertisementCreator creator) {
+        Condition.notNull(creator.getContact());
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setStatus(JobAdvertisementStatus.CREATED)
