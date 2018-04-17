@@ -7,8 +7,6 @@
 |===
 | Path | Type | Description | Constraints
 
-| stellennummerEgov | String | | Required
-| date | String | The cancellation date | Required (Format: 2018-01-20)
 | code | String | The cancellation reason code | Required
 |===
 
@@ -25,8 +23,6 @@
 [source,json]
 ----
 {
-    "stellennummerEgov": "string",
-    "date": "string",
     "code": "string"
 }
 ----
