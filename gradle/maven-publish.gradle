@@ -3,13 +3,21 @@ buildscript {
         maven { url 'http://repo.spring.io/plugins-release' }
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:2.0.0.RELEASE'
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
         classpath 'org.ajoberstar:gradle-git:1.4.2'
     }
 }
 
 apply plugin: 'maven-publish'
 apply plugin: 'org.ajoberstar.grgit'
+if (project.hasProperty('prod')) {
+    apply from: "${rootProject.rootDir}/gradle/profile_prod.gradle"
+} else {
+    apply from: "${rootProject.rootDir}/gradle/profile_dev.gradle"
+}
+if (project.hasProperty('zipkin')) {
+    apply from: "${rootProject.rootDir}/gradle/zipkin.gradle"
+}
 
 import org.ajoberstar.grgit.Grgit
 

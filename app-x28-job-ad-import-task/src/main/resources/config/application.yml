@@ -1,8 +1,3 @@
-spring:
-    application:
-        name: app-x28-job-ad-import
-
-
 ##############################
 #  PROJECT - INFO
 ##############################
@@ -17,26 +12,15 @@ info:
 
 
 ##############################
-#  DATASOURCE CONFIG
-##############################
-
-    jpa:
-        properties:
-            hibernate.jdbc.lob.non_contextual_creation: true # prevent error message: Method org.postgresql.jdbc.PgConnection.createClob() is not yet implemented.
-
-##############################
 #  MESSAGEBROKER - KAFKA
 ##############################
+spring:
     cloud:
         stream:
             bindings:
                 output:
                     destination: jobad.action
                     group: x28-importer-task
-        task:
-            batch:
-                events:
-                    enabled: false
 
 
 ##############################

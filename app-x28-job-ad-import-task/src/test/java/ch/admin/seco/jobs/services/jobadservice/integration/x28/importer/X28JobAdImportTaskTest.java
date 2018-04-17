@@ -122,7 +122,7 @@ public class X28JobAdImportTaskTest {
     }
 
     private Path prepareZipFile() throws IOException {
-        Path source = Paths.get(new ClassPathResource(TEST_FILE_NAME).getURI());
+        Path source = Paths.get(new ClassPathResource("data/" + TEST_FILE_NAME).getURI());
         Path target = temporaryFolder.newFile(TEST_FILE_NAME).toPath();
         Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
         when(x28DataFileMessageSource.receive())

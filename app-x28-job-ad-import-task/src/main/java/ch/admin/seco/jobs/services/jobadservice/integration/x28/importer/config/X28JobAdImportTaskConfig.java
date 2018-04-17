@@ -67,7 +67,7 @@ public class X28JobAdImportTaskConfig {
                 .incrementer(new RunIdIncrementer())
                 .listener(new CleanupXmlFileJobExecutionListener())
                 .start(stepBuilderFactory
-                        .get("download-form-sftp")
+                        .get("download-from-sftp")
                         .tasklet(downloadFromSftpServer())
                         .build())
                 .on("NO_FILE").end()

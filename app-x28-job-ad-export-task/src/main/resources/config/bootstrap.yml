@@ -1,0 +1,7 @@
+spring:
+    application:
+        name: app-x28-job-ad-export
+
+    cloud:
+        config:
+            fail-fast: true

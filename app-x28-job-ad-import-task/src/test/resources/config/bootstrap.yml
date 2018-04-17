@@ -1,4 +1,4 @@
 spring:
     cloud:
         config:
-          enabled: false
+            enabled: false

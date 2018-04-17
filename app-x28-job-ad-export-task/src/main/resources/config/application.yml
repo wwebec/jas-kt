@@ -1,8 +1,3 @@
-spring:
-    application:
-        name: app-x28-job-ad-export
-
-
 ##############################
 #  PROJECT - INFO
 ##############################
@@ -15,6 +10,7 @@ info:
 #  DATASOURCE CONFIG
 ##############################
 
+spring:
     jpa:
         generate-ddl: false
         open-in-view: false
@@ -36,12 +32,16 @@ info:
         username: replace-with-username
         password: replace-with-password
 
-    datasource:
         jobadservice:
             type: com.zaxxer.hikari.HikariDataSource
             url: jdbc:h2:file:./build/h2db/db/jobadservice;DB_CLOSE_DELAY=-1
             username: replace-with-username
             password: replace-with-password
+
+    cloud:
+        task:
+            batch:
+                failOnJobFailure: true
 
 
 ##############################

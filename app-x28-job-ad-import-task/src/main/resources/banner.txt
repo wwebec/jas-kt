@@ -6,4 +6,3 @@
                      |__/                                                |_|
 
 ${AnsiColor.BRIGHT_BLUE}:: job-ad-service ${application.formatted-version} :: Running Spring Boot ${spring-boot.formatted-version} :: Active Profiles: ${spring.profiles.active:${spring.profiles.default}}
-
