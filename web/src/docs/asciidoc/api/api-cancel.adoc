@@ -20,6 +20,8 @@
 |===
 
 === Request
+`POST /api/jobadvertisements/{jobAdvertisementId}/cancel`
+
 [source,json]
 ----
 {
