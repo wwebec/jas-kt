@@ -54,7 +54,7 @@ public class Employment implements ValueObject<Employment> {
         this.endDate = endDate;
     }
 
-    public boolean getShortEmployment() {
+    public boolean isShortEmployment() {
         return shortEmployment;
     }
 

@@ -125,8 +125,8 @@ public class LegacyToJobAdvertisementConverterTest {
 		assertThat(employment).isNotNull();
 		assertThat(employment.getStartDate()).isEqualTo(LocalDate.of(2018, 3, 1));
 		assertThat(employment.getEndDate()).isEqualTo(LocalDate.of(2018, 4, 1));
-		assertThat(employment.getImmediately()).isTrue();
-		assertThat(employment.getPermanent()).isTrue();
+		assertThat(employment.isImmediately()).isTrue();
+		assertThat(employment.isPermanent()).isTrue();
 		assertThat(employment.getWorkloadPercentageMin()).isEqualTo(10);
 		assertThat(employment.getWorkloadPercentageMax()).isEqualTo(100);
 

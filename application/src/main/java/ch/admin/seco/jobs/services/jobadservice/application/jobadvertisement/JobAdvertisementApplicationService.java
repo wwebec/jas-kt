@@ -67,8 +67,9 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementDto createJobAdvertisementDto) {
-        LOG.debug("Create '{}' from Webform", createJobAdvertisementDto.getJobDescriptions().get(0));
+        LOG.debug("Start creating new job ad from WebForm");
         Condition.notNull(createJobAdvertisementDto, "CreateJobAdvertisementDto can't be null");
+        LOG.debug("Create '{}'", createJobAdvertisementDto.getJobDescriptions().get(0).getTitle());
 
         final JobAdvertisementCreator creator = getJobAdvertisementCreatorFromInternal(createJobAdvertisementDto);
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(creator);
@@ -76,8 +77,9 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromApi(CreateJobAdvertisementDto createJobAdvertisementDto) {
-        LOG.debug("Create '{}' from API", createJobAdvertisementDto.getJobDescriptions().get(0));
+        LOG.debug("Start creating new job ad from API");
         Condition.notNull(createJobAdvertisementDto, "CreateJobAdvertisementDto can't be null");
+        LOG.debug("Create '{}'", createJobAdvertisementDto.getJobDescriptions().get(0).getTitle());
 
         final JobAdvertisementCreator creator = getJobAdvertisementCreatorFromInternal(createJobAdvertisementDto);
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(creator);
@@ -85,8 +87,9 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
-        LOG.debug("Create '{}' from AVAM", createJobAdvertisementFromAvamDto.getTitle());
+        LOG.debug("Start creating new job ad from AVAM");
         Condition.notNull(createJobAdvertisementFromAvamDto, "CreateJobAdvertisementFromAvamDto can't be null");
+        LOG.debug("Create StellennummerAvam: {}", createJobAdvertisementFromAvamDto.getStellennummerAvam());
 
         checkifJobAdvertisementAlreadExists(createJobAdvertisementFromAvamDto);
 
@@ -145,8 +148,9 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
+        LOG.debug("Start creating new job ad from X28");
         Condition.notNull(createJobAdvertisementFromX28Dto, "CreateJobAdvertisementFromX28Dto can't be null");
-        LOG.debug("Create '{}' from X28", createJobAdvertisementFromX28Dto.getTitle());
+        LOG.debug("Create '{}'", createJobAdvertisementFromX28Dto.getTitle());
 
         checkifJobAdvertisementAlreadExists(createJobAdvertisementFromX28Dto);
 
@@ -426,9 +430,9 @@ public class JobAdvertisementApplicationService {
             return new Employment.Builder()
                     .setStartDate(employmentDto.getStartDate())
                     .setEndDate(employmentDto.getEndDate())
-                    .setShortEmployment(employmentDto.getShortEmployment())
-                    .setImmediately(employmentDto.getImmediately())
-                    .setPermanent(employmentDto.getPermanent())
+                    .setShortEmployment(employmentDto.isShortEmployment())
+                    .setImmediately(employmentDto.isImmediately())
+                    .setPermanent(employmentDto.isPermanent())
                     .setWorkloadPercentageMin(employmentDto.getWorkloadPercentageMin())
                     .setWorkloadPercentageMax(employmentDto.getWorkloadPercentageMax())
                     .setWorkForms(employmentDto.getWorkForms())
