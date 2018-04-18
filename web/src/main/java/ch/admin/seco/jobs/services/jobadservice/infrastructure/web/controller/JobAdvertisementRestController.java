@@ -3,7 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventData;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
@@ -11,14 +10,11 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/jobAdvertisement")
@@ -33,15 +29,19 @@ public class JobAdvertisementRestController {
         this.eventStore = eventStore;
     }
 
-    @GetMapping()
-    public List<JobAdvertisementDto> getJobAdvertisements() {
+    @GetMapping(path = "/testauth")
+    public void testAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
             System.out.println(authentication.getDetails());
             System.out.println(authentication.getPrincipal());
             System.out.println(authentication.getPrincipal());
         }
-        return jobAdvertisementApplicationService.findAll();
+    }
+
+    @GetMapping(params = {"page", "size"})
+    public Page<JobAdvertisementDto> getJobAdvertisements(@RequestParam("page") int page, @RequestParam("size") int size) {
+        return jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size));
     }
 
     @PostMapping()
@@ -50,10 +50,10 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.findById(jobAdvertisementId);
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    @PostMapping(path = "/cancel")
-    public void cancelFromApi(@RequestBody @Valid CancellationDto cancellationDto) {
-        jobAdvertisementApplicationService.cancel(cancellationDto);
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(path = "/{id}/cancel")
+    public void cancel(@PathVariable String id, @RequestBody String reasonCode) {
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), reasonCode);
     }
 
     @GetMapping("/{id}")

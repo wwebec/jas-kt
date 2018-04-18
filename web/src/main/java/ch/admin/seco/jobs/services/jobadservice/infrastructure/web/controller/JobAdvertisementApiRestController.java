@@ -1,42 +1,49 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import javax.validation.Valid;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy.LegacyJobAdvertisementDto;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy.LegacyToJobAdvertisementConverter;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/jobAdvertisement")
+@RequestMapping("/api/jobAdvertisement/api")
 public class JobAdvertisementApiRestController {
 
-	private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
+    private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
 
-	@Autowired
-	public JobAdvertisementApiRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService) {
-		this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
-	}
+    @Autowired
+    public JobAdvertisementApiRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService) {
+        this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
+    }
 
-	@PostMapping(path = "/api")
-	public JobAdvertisementDto createFromApi(@RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
-		JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementDto);
-		return jobAdvertisementApplicationService.findById(jobAdvertisementId);
-	}
+    @PostMapping
+    public JobAdvertisementDto createFromApi(@RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
+        JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementDto);
+        return jobAdvertisementApplicationService.findById(jobAdvertisementId);
+    }
 
-	@Deprecated
-	@PostMapping(path = "/api-legacy")
-	public JobAdvertisementDto createFromLegacyApi(@RequestBody @Valid LegacyJobAdvertisementDto legacyJobAdvertisementDto) throws AggregateNotFoundException {
-		CreateJobAdvertisementDto createJobAdvertisementDto = LegacyToJobAdvertisementConverter.convert(legacyJobAdvertisementDto);
-		return createFromApi(createJobAdvertisementDto);
-	}
+    @GetMapping(params = {"page", "size"})
+    public Page<JobAdvertisementDto> getJobAdvertisements(@RequestParam("page") int page, @RequestParam("size") int size) {
+        return jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size));
+    }
+
+    @GetMapping(path = "/{id}")
+    public JobAdvertisementDto getJobAdvertisement(@PathVariable String id) {
+        return jobAdvertisementApplicationService.findById(new JobAdvertisementId(id));
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PostMapping(path = "/{id}/cancel")
+    public void cancel(@PathVariable String id, @RequestBody String reasonCode) {
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), reasonCode);
+    }
+
 }

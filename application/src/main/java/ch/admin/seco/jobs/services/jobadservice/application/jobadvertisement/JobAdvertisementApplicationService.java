@@ -19,6 +19,9 @@ import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCode
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -218,6 +221,15 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(toList());
     }
 
+    public Page<JobAdvertisementDto> findAllPaginated(Pageable pageable) {
+        Page<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findAll(pageable);
+        return new PageImpl<>(
+                jobAdvertisements.getContent().stream().map(JobAdvertisementDto::toDto).collect(toList()),
+                jobAdvertisements.getPageable(),
+                jobAdvertisements.getTotalElements()
+        );
+    }
+
     public JobAdvertisementDto findById(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         return JobAdvertisementDto.toDto(jobAdvertisement);
@@ -251,6 +263,14 @@ public class JobAdvertisementApplicationService {
         JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(cancellationDto.getStellennummerAvam());
         LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
+    }
+
+    public void cancel(JobAdvertisementId jobAdvertisementId, String reasonCode) {
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
+        Condition.notBlank(reasonCode, "Code can't be blank");
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
+        jobAdvertisement.cancel(TimeMachine.now().toLocalDate(), reasonCode);
     }
 
     public void refining(JobAdvertisementId jobAdvertisementId) {

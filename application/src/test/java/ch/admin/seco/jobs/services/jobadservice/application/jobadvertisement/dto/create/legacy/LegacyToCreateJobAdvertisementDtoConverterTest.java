@@ -14,7 +14,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 
-public class LegacyToJobAdvertisementConverterTest {
+public class LegacyToCreateJobAdvertisementDtoConverterTest {
 
 	@Test
 	public void shouldConvertLegacyDto() {
@@ -35,7 +35,7 @@ public class LegacyToJobAdvertisementConverterTest {
 		);
 		LegacyCompanyDto legacyCompanyDto = new LegacyCompanyDto("companyName", "companyStreet", "companyHouseNumber", "companyPostalCode", "companyCity", new LegacyPostboxDto("postboxNumber", "postboxCity", "postboxPostalCode"), "companyCountryCode", "companyPhoneNumber", "companyEmail", "companyWebsite");
 		LegacyContactDto legacyContactDto = new LegacyContactDto(LegacyTitleEnum.MISTER, "contactFirstName", "contactLastName", "contactPhoneNumber", "contactEmail");
-		LegacyJobAdvertisementDto legacyJobAdvertisementDto = new LegacyJobAdvertisementDto(
+		LegacyCreateJobAdvertisementDto legacyCreateJobAdvertisementDto = new LegacyCreateJobAdvertisementDto(
 				LocalDate.of(2018, 1, 1),
 				LocalDate.of(2018, 2, 1),
 				"reference",
@@ -47,7 +47,7 @@ public class LegacyToJobAdvertisementConverterTest {
 		);
 
 		// WHEN
-		CreateJobAdvertisementDto convertedDto = LegacyToJobAdvertisementConverter.convert(legacyJobAdvertisementDto);
+		CreateJobAdvertisementDto convertedDto = LegacyToCreateJobAdvertisementDtoConverter.convert(legacyCreateJobAdvertisementDto);
 
 		// THEN
 		assertThat(convertedDto).isNotNull();
