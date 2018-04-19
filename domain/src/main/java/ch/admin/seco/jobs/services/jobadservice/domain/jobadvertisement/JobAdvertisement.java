@@ -259,9 +259,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementRejectedEvent(this));
     }
 
-    public void cancel(LocalDate date, String code) {
+    public void cancel(LocalDate date, String reasonCode) {
         this.cancellationDate = Condition.notNull(date);
-        this.cancellationCode = Condition.notBlank(code);
+        this.cancellationCode = Condition.notBlank(reasonCode);
         this.status = status.validateTransitionTo(JobAdvertisementStatus.CANCELLED);
         DomainEventPublisher.publish(new JobAdvertisementCancelledEvent(this));
     }
