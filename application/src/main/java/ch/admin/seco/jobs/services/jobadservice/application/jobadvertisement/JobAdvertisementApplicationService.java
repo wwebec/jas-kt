@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -235,6 +236,16 @@ public class JobAdvertisementApplicationService {
         return JobAdvertisementDto.toDto(jobAdvertisement);
     }
 
+    public JobAdvertisementDto findByStellennummerAvam(String stellennummerAvam) {
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(stellennummerAvam);
+        return JobAdvertisementDto.toDto(jobAdvertisement);
+    }
+
+    public JobAdvertisementDto findByStellennummerEgov(String stellennummerEgov) {
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(stellennummerEgov);
+        return JobAdvertisementDto.toDto(jobAdvertisement);
+    }
+
     public void inspect(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         LOG.debug("Starting inspect for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
@@ -257,20 +268,11 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
     }
 
-    public void cancel(CancellationDto cancellationDto) {
-        // FIXME From API it's stellennummerEgov
-        Condition.notNull(cancellationDto.getStellennummerAvam(), "StellennummerAvam can't be null");
-        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(cancellationDto.getStellennummerAvam());
-        LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
-        jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
-    }
-
-    public void cancel(JobAdvertisementId jobAdvertisementId, String reasonCode) {
+    public void cancel(JobAdvertisementId jobAdvertisementId, LocalDate date, String reasonCode) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
-        Condition.notBlank(reasonCode, "Code can't be blank");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
-        jobAdvertisement.cancel(TimeMachine.now().toLocalDate(), reasonCode);
+        jobAdvertisement.cancel(date, reasonCode);
     }
 
     public void refining(JobAdvertisementId jobAdvertisementId) {
@@ -586,4 +588,5 @@ public class JobAdvertisementApplicationService {
         }
         return null;
     }
+
 }

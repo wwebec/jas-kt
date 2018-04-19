@@ -4,6 +4,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.Job
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,9 +42,9 @@ public class JobAdvertisementApiRestController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping(path = "/{id}/cancel")
-    public void cancel(@PathVariable String id, @RequestBody String reasonCode) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), reasonCode);
+    @PatchMapping(path = "/{id}/cancel")
+    public void cancel(@PathVariable String id, @RequestParam String reasonCode) {
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), reasonCode);
     }
 
 }

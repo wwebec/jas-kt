@@ -6,6 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventData;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,26 +40,26 @@ public class JobAdvertisementRestController {
         }
     }
 
-    @GetMapping(params = {"page", "size"})
-    public Page<JobAdvertisementDto> getJobAdvertisements(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size));
-    }
-
     @PostMapping()
     public JobAdvertisementDto createFromWebform(@RequestBody CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromWebForm(createJobAdvertisementDto);
         return jobAdvertisementApplicationService.findById(jobAdvertisementId);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PostMapping(path = "/{id}/cancel")
-    public void cancel(@PathVariable String id, @RequestBody String reasonCode) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), reasonCode);
+    @GetMapping(params = {"page", "size"})
+    public Page<JobAdvertisementDto> getJobAdvertisements(@RequestParam("page") int page, @RequestParam("size") int size) {
+        return jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size));
     }
 
     @GetMapping("/{id}")
     public JobAdvertisementDto getJobAdvertisement(@PathVariable String id) throws AggregateNotFoundException {
         return jobAdvertisementApplicationService.findById(new JobAdvertisementId(id));
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping(path = "/{id}/cancel")
+    public void cancel(@PathVariable String id, @RequestParam String reasonCode) {
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), reasonCode);
     }
 
     @GetMapping("/{id}/events")
