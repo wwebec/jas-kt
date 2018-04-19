@@ -17,7 +17,7 @@
 | location | <<Location>> | The location of the job | Required
 | occupation | <<Occupation>> | The occupation skills of the job | Required
 | languageSkills | Array<<<LanguageSkill>>> | It is possible to define up to 5 language skills required by the job. | 0..5 objects
-| publicContact | <<PublicContact>> | Contact person about the job | Optional
+| publicContact | <<PublicContact>> | Contact person for the job seekers questions | Optional
 | applyChannel | <<ApplyChannel>> | Different application channels | Optional
 | publication | <<Publication>> | The publication properties of the job ad | Required
 |===
@@ -171,7 +171,7 @@
     "reportToAvam": true,
     "contact": {
         "languageIsoCode": "string",
-        "salutation": "MR",
+        "salutation": "string",
         "firstName": "string",
         "lastName": "string",
         "phone": "string",
@@ -214,7 +214,7 @@
         "workloadPercentageMax": 0,
         "workloadPercentageMin": 0,
         "workForms": [
-            "SUNDAY_AND_HOLIDAYS"
+            "string"
         ]
     },
     "location": {
@@ -225,14 +225,14 @@
     },
     "occupation": {
         "avamOccupationCode": "string",
-        "workExperience": "LESS_THAN_1_YEAR",
+        "workExperience": "string",
         "educationCode": "string"
     },
     "languageSkills": [
         {
             "languageIsoCode": "string",
-            "spokenLevel": "NONE",
-            "writtenLevel": "NONE"
+            "spokenLevel": "string",
+            "writtenLevel": "string"
         }
     ],
     "applyChannel": {
@@ -243,7 +243,7 @@
         "additionalInfo": "string"
     },
     "publicContact": {
-        "salutation": "MR",
+        "salutation": "string",
         "firstName": "string",
         "lastName": "string",
         "phone": "string",
@@ -267,8 +267,8 @@
 ----
 {
     "id": "string",
-    "status": "CREATED",
-    "sourceSystem": "JOBROOM",
+    "status": "string",
+    "sourceSystem": "string",
     "stellennummerEgov": "string",
     "stellennummerAvam": "string",
     "externalReference": "string",
@@ -316,7 +316,7 @@
             "workloadPercentageMax": 0,
             "workloadPercentageMin": 0,
             "workForms": [
-                "SUNDAY_AND_HOLIDAYS"
+                "string"
             ]
         },
         "location": {
@@ -335,15 +335,15 @@
         "occupations": [
             {
                 "avamOccupationCode": "string",
-                "workExperience": "LESS_THAN_1_YEAR",
+                "workExperience": "string",
                 "educationCode": "string"
             }
         ],
         "languageSkills": [
             {
                 "languageIsoCode": "string",
-                "spokenLevel": "NONE",
-                "writtenLevel": "NONE"
+                "spokenLevel": "string",
+                "writtenLevel": "string"
             }
         ],
         "applyChannel": {
@@ -354,7 +354,7 @@
             "additionalInfo": "string"
         },
         "publicContact": {
-            "salutation": "MR",
+            "salutation": "string",
             "firstName": "string",
             "lastName": "string",
             "phone": "string",

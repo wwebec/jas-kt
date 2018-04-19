@@ -9,8 +9,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -47,8 +47,8 @@ public class JobAdvertisementRestController {
     }
 
     @GetMapping(params = {"page", "size"})
-    public Page<JobAdvertisementDto> getJobAdvertisements(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size));
+    public PageResource<JobAdvertisementDto> getJobAdvertisements(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "25") int size) {
+        return PageResource.of(jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size)));
     }
 
     @GetMapping("/{id}")
@@ -58,13 +58,13 @@ public class JobAdvertisementRestController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(path = "/{id}/cancel")
-    public void cancel(@PathVariable String id, @RequestParam String reasonCode) {
+    public void cancel(@PathVariable String id, @RequestBody String reasonCode) {
         jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), reasonCode);
     }
 
     @GetMapping("/{id}/events")
-    public Page<EventData> getEventsOfJobAdvertisement(@PathVariable String id) throws AggregateNotFoundException {
-        return eventStore.findByAggregateId(id, JobAdvertisement.class.getSimpleName(), 0, 100);
+    public PageResource<EventData> getEventsOfJobAdvertisement(@PathVariable String id) throws AggregateNotFoundException {
+        return PageResource.of(eventStore.findByAggregateId(id, JobAdvertisement.class.getSimpleName(), 0, 100));
     }
 
 }

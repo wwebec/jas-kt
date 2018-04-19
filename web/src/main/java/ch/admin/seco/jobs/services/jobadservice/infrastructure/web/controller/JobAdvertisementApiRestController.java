@@ -6,8 +6,8 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -32,8 +32,8 @@ public class JobAdvertisementApiRestController {
     }
 
     @GetMapping(params = {"page", "size"})
-    public Page<JobAdvertisementDto> getJobAdvertisements(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size));
+    public PageResource<JobAdvertisementDto> getJobAdvertisements(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "25") int size) {
+        return PageResource.of(jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size)));
     }
 
     @GetMapping(path = "/{id}")
@@ -43,7 +43,7 @@ public class JobAdvertisementApiRestController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(path = "/{id}/cancel")
-    public void cancel(@PathVariable String id, @RequestParam String reasonCode) {
+    public void cancel(@PathVariable String id, @RequestBody String reasonCode) {
         jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), reasonCode);
     }
 

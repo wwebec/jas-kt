@@ -1,13 +1,21 @@
 == Create a new job advertisement
 
-=== Fields
+=== Request
+`PATCH /api/jobadvertisements/{id}/cancel`
 
-==== Publication
+[source,json]
+----
+{
+    "code": "string"
+}
+----
+
 [cols="30,10,30,30"]
 |===
-| Path | Type | Description | Constraints
+| Parameter | Constraints | Default | Description
 
-| code | String | The cancellation reason code | Required
+| id | Required | | The id of the job ad
+| code | Required | | The cancellation reason code
 |===
 
 [cols="10,90"]
@@ -19,16 +27,6 @@
 | 3 | Other reason
 |===
 
-=== Request
-`POST /api/jobadvertisements/{jobAdvertisementId}/cancel`
-
-[source,json]
-----
-{
-    "code": "string"
-}
-----
-
 === Response
 No body
 
@@ -37,7 +35,7 @@ No body
 |===
 | Code | Status | Description
 
-| 200 | OK | The job ad has been successfully updated
+| 204 | No Content | The job ad has been successfully updated
 | 400 | Bad Request | The request was malformed or invalid
 | 401 | Unauthorized | User is not logged in
 | 403 | Forbidden | User has not the required permission to perform this action
