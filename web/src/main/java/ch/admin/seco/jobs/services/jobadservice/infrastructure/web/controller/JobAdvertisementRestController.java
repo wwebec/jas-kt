@@ -9,6 +9,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.CancellationResource;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -58,8 +59,8 @@ public class JobAdvertisementRestController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(path = "/{id}/cancel")
-    public void cancel(@PathVariable String id, @RequestBody String reasonCode) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), reasonCode);
+    public void cancel(@PathVariable String id, CancellationResource cancellation) {
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getReasonCode());
     }
 
     @GetMapping("/{id}/events")

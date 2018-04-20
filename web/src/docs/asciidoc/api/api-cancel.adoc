@@ -6,7 +6,7 @@
 [source,json]
 ----
 {
-    "code": "string"
+    "reasonCode": "string"
 }
 ----
 
