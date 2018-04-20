@@ -36,7 +36,8 @@ import static java.util.stream.Collectors.toList;
 @Transactional(rollbackFor = {Exception.class})
 public class JobAdvertisementApplicationService {
 
-    public static final int X28_PUBLICATION_MAX_DAYS = 60;
+    public static final int PUBLICATION_MAX_DAYS = 60;
+
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
@@ -186,7 +187,7 @@ public class JobAdvertisementApplicationService {
                 .setPublication(
                         new Publication.Builder()
                                 .setStartDate(TimeMachine.now().toLocalDate())
-                                .setEndDate(TimeMachine.now().plusDays(X28_PUBLICATION_MAX_DAYS).toLocalDate())
+                                .setEndDate(TimeMachine.now().plusDays(PUBLICATION_MAX_DAYS).toLocalDate())
                                 .setEuresDisplay(false)
                                 .setEuresAnonymous(false)
                                 .setPublicDisplay(true)
@@ -347,13 +348,26 @@ public class JobAdvertisementApplicationService {
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementDto.getLanguageSkills()))
                 .build();
 
+        PublicationDto publicationDto = createJobAdvertisementDto.getPublication();
+
         // TODO Add auditUser
         return new JobAdvertisementCreator.Builder(null)
                 .setReportingObligation(reportingObligation)
                 .setJobCenterCode(jobCenterCode)
                 .setJobContent(jobContent)
                 .setContact(toContact(createJobAdvertisementDto.getContact()))
-                .setPublication(toPublication(createJobAdvertisementDto.getPublication()))
+                .setPublication(
+                        new Publication.Builder()
+                                .setStartDate(publicationDto.getStartDate())
+                                .setEndDate((publicationDto.getEndDate() != null) ? publicationDto.getEndDate() : TimeMachine.now().plusDays(PUBLICATION_MAX_DAYS).toLocalDate())
+                                .setEuresDisplay(publicationDto.isEuresDisplay())
+                                .setEuresAnonymous(publicationDto.isEuresAnonymous())
+                                .setRestrictedDisplay(true)
+                                .setRestrictedAnonymous(true)
+                                .setPublicDisplay(publicationDto.isPublicDisplay())
+                                .setPublicAnonynomous(publicationDto.isPublicAnonynomous())
+                                .build()
+                )
                 .build();
     }
 
