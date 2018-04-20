@@ -93,6 +93,7 @@ public class JobAdvertisementApplicationService {
 
         checkifJobAdvertisementAlreadExists(createJobAdvertisementFromAvamDto);
 
+        Condition.notNull(createJobAdvertisementFromAvamDto.getLocation(), "Location can't be null");
         Location location = toLocation(createJobAdvertisementFromAvamDto.getLocation());
         location = locationService.enrichCodes(location);
 
@@ -312,6 +313,7 @@ public class JobAdvertisementApplicationService {
     }
 
     private JobAdvertisementCreator getJobAdvertisementCreatorFromInternal(CreateJobAdvertisementDto createJobAdvertisementDto) {
+        Condition.notNull(createJobAdvertisementDto.getLocation(), "Location can't be null");
         Location location = toLocation(createJobAdvertisementDto.getLocation());
         location = locationService.enrichCodes(location);
 
