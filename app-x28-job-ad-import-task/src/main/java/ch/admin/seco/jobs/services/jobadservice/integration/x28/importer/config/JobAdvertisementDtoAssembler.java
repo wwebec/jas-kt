@@ -1,19 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
-import org.springframework.util.StringUtils;
+import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.util.StringUtils.isEmpty;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -22,6 +10,22 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
+
+import org.springframework.util.StringUtils;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
+import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 
 class JobAdvertisementDtoAssembler {
 
@@ -65,21 +69,21 @@ class JobAdvertisementDtoAssembler {
 
     private List<OccupationDto> createOccupations(Oste x28JobAdvertisement) {
         List<OccupationDto> occupations = new ArrayList<>();
-        if (StringUtils.hasText(x28JobAdvertisement.getBq1AvamBerufNr())) {
+        if (hasText(x28JobAdvertisement.getBq1AvamBerufNr())) {
             occupations.add(new OccupationDto(
                     x28JobAdvertisement.getBq1AvamBerufNr(),
                     AvamCodeResolver.EXPERIENCES.getRight(x28JobAdvertisement.getBq1ErfahrungCode()),
                     x28JobAdvertisement.getBq1AusbildungCode()
             ));
         }
-        if (StringUtils.hasText(x28JobAdvertisement.getBq2AvamBerufNr())) {
+        if (hasText(x28JobAdvertisement.getBq2AvamBerufNr())) {
             occupations.add(new OccupationDto(
                     x28JobAdvertisement.getBq2AvamBerufNr(),
                     AvamCodeResolver.EXPERIENCES.getRight(x28JobAdvertisement.getBq2ErfahrungCode()),
                     x28JobAdvertisement.getBq2AusbildungCode()
             ));
         }
-        if (StringUtils.hasText(x28JobAdvertisement.getBq3AvamBerufNr())) {
+        if (hasText(x28JobAdvertisement.getBq3AvamBerufNr())) {
             occupations.add(new OccupationDto(
                     x28JobAdvertisement.getBq3AvamBerufNr(),
                     AvamCodeResolver.EXPERIENCES.getRight(x28JobAdvertisement.getBq3ErfahrungCode()),
@@ -121,14 +125,14 @@ class JobAdvertisementDtoAssembler {
     }
 
     private EmploymentDto createEmployment(Oste x28JobAdvertisement) {
-        LocalDate startDate = parseDate(x28JobAdvertisement.getStellenantritt(), TimeMachine.now().toLocalDate());
-        LocalDate endDate = parseDate(x28JobAdvertisement.getVertragsdauer(), null);
+        LocalDate startDate = parseDate(x28JobAdvertisement.getStellenantritt());
+        LocalDate endDate = parseDate(x28JobAdvertisement.getVertragsdauer());
         WorkingTimePercentage workingTimePercentage = WorkingTimePercentage.evaluate(x28JobAdvertisement.getPensumVon(), x28JobAdvertisement.getPensumBis());
         return new EmploymentDto(
                 startDate,
                 endDate,
                 false,
-                safeBoolean(x28JobAdvertisement.isAbSofort(), !startDate.isAfter(TimeMachine.now().toLocalDate())),
+                safeBoolean(x28JobAdvertisement.isAbSofort(), false),
                 safeBoolean(x28JobAdvertisement.isUnbefristet(), (endDate != null)),
                 workingTimePercentage.getMin(),
                 workingTimePercentage.getMax(),
@@ -137,7 +141,7 @@ class JobAdvertisementDtoAssembler {
     }
 
     private String sanitize(String text) {
-        if (StringUtils.hasText(text)) {
+        if (hasText(text)) {
             // remove javascript injection and css styles
             String sanitizedText = Jsoup.clean(text, "", Whitelist.basic(), new Document.OutputSettings().prettyPrint(false));
 
@@ -148,11 +152,11 @@ class JobAdvertisementDtoAssembler {
     }
 
     private CreateLocationDto extractLocation(String localityText) {
-        if (!StringUtils.hasText(localityText)) {
+        if (hasText(localityText)) {
             Matcher countryZipCodeCityMatcher = COUNTRY_ZIPCODE_CITY_PATTERN.matcher(localityText);
             if (countryZipCodeCityMatcher.find()) {
                 String countryIsoCode = countryZipCodeCityMatcher.group(2);
-                if (StringUtils.hasText(countryIsoCode)) {
+                if (hasText(countryIsoCode)) {
                     countryIsoCode = countryIsoCode.substring(0, 2);
                     if ("FL".equals(countryIsoCode)) {
                         countryIsoCode = LICHTENSTEIN_ISO_CODE;
@@ -160,7 +164,7 @@ class JobAdvertisementDtoAssembler {
                 }
                 String postalCode = StringUtils.trimWhitespace(countryZipCodeCityMatcher.group(3));
                 String city = StringUtils.trimWhitespace(countryZipCodeCityMatcher.group(4));
-                if (StringUtils.hasText(city)) {
+                if (hasText(city)) {
                     Matcher cityCantonMatcher = CITY_CANTON_PATTERN.matcher(city);
                     if (cityCantonMatcher.find()) {
                         city = StringUtils.trimWhitespace(cityCantonMatcher.group(1));
@@ -172,9 +176,9 @@ class JobAdvertisementDtoAssembler {
         return null;
     }
 
-    private LocalDate parseDate(String startDate, LocalDate defaultValue) {
-        if (StringUtils.isEmpty(startDate)) {
-            return defaultValue;
+    private LocalDate parseDate(String startDate) {
+        if (isEmpty(startDate)) {
+            return null;
         }
         return LocalDate.parse(startDate, DATE_FORMATTER);
     }
