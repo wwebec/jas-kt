@@ -292,12 +292,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementArchivedEvent(this));
     }
 
-    private void checkIfEndStatus() {
-        if (this.status.isInAnyStates(JobAdvertisementStatus.REJECTED, JobAdvertisementStatus.CANCELLED, JobAdvertisementStatus.ARCHIVED)) {
-            throw new IllegalStateException(String.format("JobAdvertisement must not be in a end status like: %s", this.status));
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -342,6 +336,12 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 '}';
     }
 
+    private void checkIfEndStatus() {
+        if (this.status.isInAnyStates(JobAdvertisementStatus.REJECTED, JobAdvertisementStatus.CANCELLED, JobAdvertisementStatus.ARCHIVED)) {
+            throw new IllegalStateException(String.format("JobAdvertisement must not be in a end status like: %s", this.status));
+        }
+    }
+
     private void checkViolations() {
         Violations violations = new Violations();
         Employment employment = jobContent.getEmployment();
@@ -353,12 +353,12 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         );
         violations.addIfTrue(
                 employment.isImmediately() && (employment.getStartDate() != null),
-                "Immediately can be true if startDate %s is set",
+                "Immediately can't be true if startDate %s is set",
                 employment.getStartDate()
         );
         violations.addIfTrue(
                 employment.isPermanent() && (employment.getEndDate() != null),
-                "Permanent can be true if endDate %s is set",
+                "Permanent can't be true if endDate %s is set",
                 employment.getEndDate()
         );
         violations.addIfTrue(
