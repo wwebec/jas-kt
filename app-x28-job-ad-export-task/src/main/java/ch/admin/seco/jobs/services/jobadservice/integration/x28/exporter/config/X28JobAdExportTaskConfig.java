@@ -6,10 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 
 import javax.persistence.EntityManagerFactory;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,7 +134,7 @@ public class X28JobAdExportTaskConfig {
                 .resource(new PathResource(xmlFile.toPath()))
                 .marshaller(X28Marshaller())
                 .rootTagName(ROOT_TAG_NAME)
-                .rootElementAttributes(ImmutableMap.of("timestamp", TimeMachine.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
+                .rootElementAttributes(Collections.singletonMap("timestamp", TimeMachine.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)))
                 .saveState(false)
                 .overwriteOutput(true)
                 .build();
