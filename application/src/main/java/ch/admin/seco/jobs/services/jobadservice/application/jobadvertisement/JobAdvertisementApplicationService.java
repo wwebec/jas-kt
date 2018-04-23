@@ -388,7 +388,7 @@ public class JobAdvertisementApplicationService {
                                 .setRestrictedDisplay(true)
                                 .setRestrictedAnonymous(true)
                                 .setPublicDisplay(publicationDto.isPublicDisplay())
-                                .setPublicAnonynomous(publicationDto.isPublicAnonynomous())
+                                .setPublicAnonymous(publicationDto.isPublicAnonymous())
                                 .build()
                 )
                 .build();
