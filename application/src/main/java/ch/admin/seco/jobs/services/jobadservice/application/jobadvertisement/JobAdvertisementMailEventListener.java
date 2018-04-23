@@ -19,6 +19,7 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,14 +53,14 @@ public class JobAdvertisementMailEventListener {
     void onCreated(JobAdvertisementCreatedEvent event) {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
+        final Locale contactLocale = jobAdvertisement.getContact().getLanguage();
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
-        System.out.println(jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle());
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CREATED_SUBJECT,
-                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, jobAdvertisement.getContact().getLanguage()))
+                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_CREATED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(jobAdvertisement.getContact().getLanguage())
@@ -71,13 +72,14 @@ public class JobAdvertisementMailEventListener {
     void onRefined(JobAdvertisementRefinedEvent event) {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
+        final Locale contactLocale = jobAdvertisement.getContact().getLanguage();
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REFINED_SUBJECT,
-                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, jobAdvertisement.getContact().getLanguage()))
+                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_REFINED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(jobAdvertisement.getContact().getLanguage())
@@ -89,13 +91,14 @@ public class JobAdvertisementMailEventListener {
     void onRejected(JobAdvertisementRejectedEvent event) {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REJECTED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
+        final Locale contactLocale = jobAdvertisement.getContact().getLanguage();
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REJECTED_SUBJECT,
-                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, jobAdvertisement.getContact().getLanguage()))
+                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_REJECTED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(jobAdvertisement.getContact().getLanguage())
@@ -107,13 +110,14 @@ public class JobAdvertisementMailEventListener {
     void onCancelled(JobAdvertisementCancelledEvent event) {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
+        final Locale contactLocale = jobAdvertisement.getContact().getLanguage();
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CANCELLED_SUBJECT,
-                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, jobAdvertisement.getContact().getLanguage()))
+                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_CANCELLED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(jobAdvertisement.getContact().getLanguage())
