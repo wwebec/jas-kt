@@ -411,14 +411,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             this.externalUrl = updater.getExternalUrl();
             hasChangedAnything = true;
         }
+        */
 
-        if (updater.hasAnyChangesIn(SECTION_REPORTING_OBLIGATION) && hasChanged(this.reportingObligation, updater.isReportingObligation())) {
+        if (updater.hasAnyChangesIn(SECTION_REPORTING_OBLIGATION) && (
+                hasChanged(this.reportingObligation, updater.isReportingObligation()) ||
+                        hasChanged(this.reportingObligationEndDate, updater.getReportingObligationEndDate()))) {
             this.reportingObligation = updater.isReportingObligation();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && hasChanged(this.employment, updater.getEmployment())) {
-            this.employment = updater.getEmployment();
+            this.reportingObligationEndDate = updater.getReportingObligationEndDate();
             hasChangedAnything = true;
         }
 
@@ -427,13 +426,33 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_APPLY_CHANNEL) && hasChanged(this.applyChannel, updater.getApplyChannel())) {
-            this.applyChannel = updater.getApplyChannel();
+        if (updater.hasAnyChangesIn(SECTION_COMPANY) && hasChanged(this.getJobContent().getCompany(), updater.getCompany())) {
+            this.getJobContent().setCompany(updater.getCompany());
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_COMPANY) && hasChanged(this.company, updater.getCompany())) {
-            this.company = updater.getCompany();
+        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && hasChanged(this.getJobContent().getEmployment(), updater.getEmployment())) {
+            this.getJobContent().setEmployment(updater.getEmployment());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_LOCATION) && hasChanged(this.getJobContent().getLocation(), updater.getLocation())) {
+            this.getJobContent().setLocation(updater.getLocation());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_OCCUPATIONS) && hasChangedContent(this.getJobContent().getOccupations(), updater.getOccupations())) {
+            this.getJobContent().setOccupations(updater.getOccupations());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(this.getJobContent().getLanguageSkills(), updater.getLanguageSkills())) {
+            this.getJobContent().setLanguageSkills(updater.getLanguageSkills());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_APPLY_CHANNEL) && hasChanged(this.getJobContent().getApplyChannel(), updater.getApplyChannel())) {
+            this.getJobContent().setApplyChannel(updater.getApplyChannel());
             hasChangedAnything = true;
         }
 
@@ -442,60 +461,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_LOCATION) && hasChanged(this.location, updater.getLocation())) {
-            this.location = updater.getLocation();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_OCCUPATIONS) && hasChangedContent(this.occupations, updater.getOccupations())) {
-            this.occupations = updater.getOccupations();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(this.languageSkills, updater.getLanguageSkills())) {
-            this.languageSkills = updater.getLanguageSkills();
-            hasChangedAnything = true;
-        }
-        */
-
-        if (updater.hasAnyChangesIn(SECTION_WORK_FORMS) && hasChangedContent(jobContent.getEmployment().getWorkForms(), updater.getWorkForms())) {
-            jobContent.getEmployment().setWorkForms(updater.getWorkForms());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_PUBLICATION_DATES) && (
-                hasChanged(publication.getStartDate(), updater.getPublicationStartDate()) ||
-                        hasChanged(publication.getEndDate(), updater.getPublicationEndDate()))) {
-            publication.setStartDate(updater.getPublicationStartDate());
-            publication.setEndDate(updater.getPublicationEndDate());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_EURES) && (
-                hasChanged(publication.isEuresDisplay(), updater.isEures()) ||
-                        hasChanged(publication.isEuresAnonymous(), updater.isEuresAnonymous()))) {
-            publication.setEuresDisplay(updater.isEures());
-            publication.setEuresAnonymous(updater.isEuresAnonymous());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_PUBLIC_DISPLAY) && hasChanged(publication.isPublicDisplay(), updater.isPublicDisplay())) {
-            publication.setPublicDisplay(updater.isPublicDisplay());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_PUBLIC_ANONYMOUS) && hasChanged(publication.isPublicAnonymous(), updater.isPublicAnonymous())) {
-            publication.setPublicAnonymous(updater.isPublicAnonymous());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_RESTRICTED_DISPLAY) && hasChanged(publication.isRestrictedDisplay(), updater.isRestrictedDisplay())) {
-            publication.setRestrictedDisplay(updater.isRestrictedDisplay());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_RESTRICTED_ANONYMOUS) && hasChanged(publication.isRestrictedAnonymous(), updater.isRestrictedAnonymous())) {
-            publication.setRestrictedAnonymous(updater.isRestrictedAnonymous());
+        if(updater.hasAnyChangesIn(SECTION_PUBLICATION) && hasChanged(this.publication, updater.getPublication())) {
+            this.publication = updater.getPublication();
             hasChangedAnything = true;
         }
 

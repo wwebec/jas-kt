@@ -9,7 +9,10 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
@@ -94,8 +97,13 @@ public class JobAdvertisementApplicationService {
     public JobAdvertisementId createFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
         LOG.debug("Start creating new job ad from AVAM");
         Condition.notNull(createJobAdvertisementFromAvamDto, "CreateJobAdvertisementFromAvamDto can't be null");
-        LOG.debug("Create StellennummerAvam: {}", createJobAdvertisementFromAvamDto.getStellennummerAvam());
 
+        JobAdvertisement existingJobAdvertisement = getJobAdvertisementByStellennummerAvam(createJobAdvertisementFromAvamDto.getStellennummerAvam());
+        if (existingJobAdvertisement != null) {
+            return updateFromAvam(existingJobAdvertisement, createJobAdvertisementFromAvamDto);
+        }
+
+        LOG.debug("Create StellennummerAvam: {}", createJobAdvertisementFromAvamDto.getStellennummerAvam());
         checkifJobAdvertisementAlreadExists(createJobAdvertisementFromAvamDto);
 
         Condition.notNull(createJobAdvertisementFromAvamDto.getLocation(), "Location can't be null");
@@ -139,18 +147,26 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.getId();
     }
 
-    public void updateFromAvam(UpdateJobAdvertisementFromAvamDto updateJobAdvertisementFromAvamDto) {
-        LOG.debug("Update StellennummerAvam '{}' from AVAM", updateJobAdvertisementFromAvamDto.getStellennummerAvam());
-        final String stellennummerAvam = updateJobAdvertisementFromAvamDto.getStellennummerAvam();
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam)
-                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerAvam: " + stellennummerAvam));
+    public JobAdvertisementId updateFromAvam(JobAdvertisement jobAdvertisement, CreateJobAdvertisementFromAvamDto jobAdvertisementDto) {
+        LOG.debug("Update StellennummerAvam '{}' from AVAM", jobAdvertisementDto.getStellennummerAvam());
 
         // TODO Add auditUser
         JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
-                // TODO TBD what can be updated from AVAM
+                .setReportingObligation(jobAdvertisementDto.isReportingObligation(), jobAdvertisementDto.getReportingObligationEndDate())
+                .setJobCenterCode(jobAdvertisementDto.getJobCenterCode())
+                .setCompany(toCompany(jobAdvertisementDto.getCompany()))
+                .setEmployment(toEmployment(jobAdvertisementDto.getEmployment()))
+                // FIXME update location and occupations
+                //.setLocation(toLocation(jobAdvertisementDto.getLocation()))
+                //.setOccupations(jobAdvertisementDto.getOccupations())
+                .setLanguageSkills(toLanguageSkills(jobAdvertisementDto.getLanguageSkills()))
+                .setApplyChannel(toApplyChannel(jobAdvertisementDto.getApplyChannel()))
+                .setContact(toContact(jobAdvertisementDto.getContact()))
+                .setPublication(toPublication(jobAdvertisementDto.getPublication()))
                 .build();
 
         jobAdvertisement.update(updater);
+        return jobAdvertisement.getId();
     }
 
     public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
@@ -204,7 +220,7 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.getId();
     }
 
-    public void updateFromX28(UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto) {
+    public JobAdvertisementId updateFromX28(UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto) {
         LOG.debug("Update StellennummerEgov '{}' from X28", updateJobAdvertisementFromX28Dto.getStellennummerEgov());
         final String stellennummerEgov = updateJobAdvertisementFromX28Dto.getStellennummerEgov();
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
@@ -217,6 +233,7 @@ public class JobAdvertisementApplicationService {
                 .build();
 
         jobAdvertisement.update(updater);
+        return jobAdvertisement.getId();
     }
 
     public List<JobAdvertisementDto> findAll() {
