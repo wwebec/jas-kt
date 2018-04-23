@@ -1,16 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title th:text="#{mail.jobAd.cancelled}">JobAdvertisement cancelled</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}"/>
     </head>
+
     <body>
-        <h1 th:text="#{mail.jobAd.cancelled}">JobAdvertisement cancelled</h1>
-        <ul>
-            <li>Id: <span th:text="${jobAdvertisement.id.value}"></span></li>
-            <li>Title: <span th:text="${jobAdvertisement.jobContent.jobDescriptions[0].title}"></span></li>
-            <li>Description: <span th:text="${jobAdvertisement.jobContent.jobDescriptions[0].description}"></span></li>
-        </ul>
+        <div>
+            <p th:text="#{mail.jobAd.cancelled.header}"></p>
+            <p th:text="#{mail.jobAd.cancelled.body.paragraph1}"></p>
+            <p th:text="#{mail.jobAd.cancelled.body.paragraph2}"></p>
+            <div th:text="#{mail.jobAd.cancelled.body.addressblock.title}"></div>
+            <div th:text="#{mail.jobAd.cancelled.body.addressblock.address}"></div>
+            <div th:text="#{mail.jobAd.cancelled.body.addressblock.plz.city}"></div>
+            <div th:text="#{mail.jobAd.cancelled.body.addressblock.tel}"></div>
+            <div th:text="#{mail.jobAd.cancelled.body.addressblock.fax}"></div>
+            <div th:text="#{mail.jobAd.cancelled.body.addressblock.email}"></div>
+            <p th:text="#{mail.jobAd.cancelled.body.paragraph4}"></p>
+            <div th:text="#{mail.jobAd.cancelled.footer.details1}"></div>
+            <div th:text="#{mail.jobAd.cancelled.footer.details2}"></div>
+            <div th:text="#{mail.jobAd.cancelled.footer.details3}"></div>
+        </div>
     </body>
 </html>
