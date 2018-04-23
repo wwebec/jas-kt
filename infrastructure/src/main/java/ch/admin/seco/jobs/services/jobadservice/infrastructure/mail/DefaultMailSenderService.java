@@ -50,6 +50,7 @@ public class DefaultMailSenderService implements MailSenderService {
         context.setLocale(mailSenderData.getLocale());
         final String content = StringUtils.strip(templateEngine.process(mailSenderData.getTemplateName(), context));
         final String from = mailSenderData.getFrom().orElse(mailSenderProperties.getFromAddress());
+        final String[] bcc = mailSenderData.getBcc().orElse(mailSenderProperties.getBccAddress());
         final String subject = messageSource.getMessage(mailSenderData.getSubject(), null, mailSenderData.getSubject(), mailSenderData.getLocale());
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending email with MailSenderData={},\nBODY=\n{}", mailSenderData, content);
@@ -63,7 +64,7 @@ public class DefaultMailSenderService implements MailSenderService {
                 message.setCc(mailSenderData.getCc());
             }
             if(mailSenderData.getBcc() != null) {
-                message.setBcc(mailSenderData.getBcc());
+                message.setBcc(bcc);
             }
             message.setSubject(subject);
             message.setText(content, true);

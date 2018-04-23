@@ -28,6 +28,9 @@ public class MailSenderProperties {
     @NotEmpty
     private String fromAddress;
 
+    @NotEmpty
+    private String[] bccAddress;
+
     private String baseUrl;
 
     @NotNull
@@ -80,6 +83,14 @@ public class MailSenderProperties {
 
     public String getFromAddress() {
         return fromAddress;
+    }
+
+    public String[] getBccAddress() {
+        return bccAddress;
+    }
+
+    public void setBccAddress(String[] bccAddress) {
+        this.bccAddress = bccAddress;
     }
 
     public void setFromAddress(String fromAddress) {

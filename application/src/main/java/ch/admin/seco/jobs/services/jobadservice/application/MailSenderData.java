@@ -61,8 +61,8 @@ public class MailSenderData {
         return cc;
     }
 
-    public String[] getBcc() {
-        return bcc;
+    public Optional<String[]> getBcc() {
+        return Optional.ofNullable(bcc);
     }
 
     public String getTemplateName() {
