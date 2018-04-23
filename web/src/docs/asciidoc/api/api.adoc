@@ -1,0 +1,176 @@
+:contact-mail: mediamatik@seco.admin.ch
+
+= JobRoom Legacy API Documentation
+eGov Services <{contact-mail}>
+:doctype: book
+:source-highlighter: highlightjs
+:toc: left
+:icons: font
+
+:sectnums:
+:sectnumlevels: 2
+
+= General
+
+JobRoom API provides a new way to publish job advertisements through the ALV system.
+
+It is an alternative to the existing web interface available at https://www.job-room.ch/#/companies/jobpublication
+
+When using the API, job advertisements are published to *Job-Room* (https://www.job-room.ch) and *Job-Desk* (http://www.job-desk.ch).
+
+Access to the API can be requested by sending a mail to {contact-mail}
+
+== API
+
+JobRoom API exposes a simple way to manage job advertisements. It follows _RESTful_ standards like :
+
+* Actions on resources are performed through HTTP methods
+* Resources are exposed with JSON format
+* HATEOAS architecture is implemented with HAL standard
+* Basic HTTP authentication
+* Explicit HTTP status codes
+* Pagination support
+
+The following chapters explain more precisely some of these concepts and provide examples in how to create, read, edit and cancel job offers.
+
+== HTTP verbs
+
+The following verbs are fully supported :
+
+[cols="20,80"]
+|===
+| Verb | Description
+
+| GET | Used for retrieving resources, either a single object or a collection.
+| POST | Used for creating new resources or performing actions on resources.
+| PATCH | Used for updating existing resources.
+|===
+
+== HTTP response status codes
+
+Status codes in HTTP responses follow REST standards.
+
+The following table describes examples and precisions specific to JobRoom API :
+
+[cols="20,20,60"]
+|===
+| Status code | Name | Description
+
+| 200 | OK | Success using GET for retrieving resources.
+| 201 | Created | Success using POST for creating new resources.
+| 204 | No Content | Success using POST for performing actions.
+| 400 | Bad request | Occurs when error in body using POST/PATCH (missing non nullable field, invalid JSON object, wrong object type, validation failed, etc.).
+| 401 | Unauthorized | Occurs when accessing to a protected resource with bad credentials.
+| 404 | Not Found | Occurs when requested resource does not exist or when accessing another user's resource.
+| 405 | Method Not Allowed | Occurs when HTTP verb cannot be applied to requested endpoint (e.g. `POST /joboffers/1`).
+| 406 | Not Acceptable | Occurs when format of `Accept` header is not supported (e.g. `Accept:application/xml`).
+| 409 | Conflict | Occurs when a request can't be executed due to failed validation (e.g. violation of database constraint).
+| 412 | Precondition failed | Occurs when `If-Match` header does not match with current resource model (see section <<Optimistic locking>>).
+| 500 | Internal Server Error | Server encountered an internal error.
+|===
+
+== Headers
+
+[red yellow-background]#*TBD*#
+
+The following headers have to be set for some requests in order to use the API :
+
+[cols="20,35,45"]
+|===
+| Header name | Value | When to use ?
+
+| `Content-Type` | `application/json;charset=UTF-8` | On POST/PATCH (every request that contains a JSON body).
+| `Content-Type` | `application/x-www-form-urlencoded` | On job offer cancellation (see section <<Cancel a job offer>>).
+| `If-Match` | `<value of previous ETag>` | On PATCH when supporting _Optimistic locking_ (see section <<Optimistic locking>>).
+| `Authorization` | `Basic <Base64 encoded credentials>` | Always, all API endpoints require authentication (see section <<Authentication>>).
+| `Accept` | `application/json;charset=UTF-8` | Always.
+|===
+
+== Authentication
+
+[red yellow-background]#*TBD*#
+
+NOTE: First, you need to get a username and password.
+
+Authentication is done using HTTP Basic Auth.
+
+Every request to the API must have a header `Authorization` with a value constructed like : +
+`Basic _Base64(username:password)_`. +
+Value after `Basic` is a Base64 representation of the string containing the username and the password, separated by a colon.
+
+[%hardbreaks]
+Example :
+username : *user*
+password : *password*
+The value of the `Authorization` header will be `Basic dXNlcjpwYXNzd29yZA==`.
+
+== Optimistic locking
+
+[red yellow-background]#*TBD*#
+
+When two clients edit the same resource at the same time, the API doesn't prevent the one to override the other's work.
+It is up to the client to take the duty of always being up to date before editing an existing resource.
+A proper way to do this is to use the optimistic locking provided by the API.
+
+When retrieving a resource using :
+[subs="attributes"]
+----
+GET {base-url}/joboffers/123
+----
+
+The response will contain a header named `ETag` which indicates the current version of the given resource.
+
+On edit (PATCH request), it is possible to set a header `If-Match` with the version got in the previous GET request.
+If resource has been updated since, the new and given versions will not match and the API will reply with a `412 Precondition failed` error.
+
+The version of a resource changes every time the resource is updated with new values.
+
+Further information can be found in Spring Data REST documentation : http://docs.spring.io/spring-data/rest/docs/2.4.4.RELEASE/reference/html/#conditional.etag
+
+== Paging
+
+[red yellow-background]#*TBD*#
+
+Paging is supported on collections. Paging size can be defined using `size` as url parameter :
+[subs="attributes"]
+----
+GET {base-url}/joboffers/?size=2
+----
+
+Response contains an array with the number of elements defined in the `size` parameter.
+Furthermore, it comes with a set of links that can be used to navigate between the pages by directly performing the given requests :
+[source,json, subs="attributes"]
+----
+"_links": {
+    "first": {
+      "href": "{base-url}/joboffers?page=0&size=2"
+    },
+    "self": {
+      "href": "{base-url}/joboffers"
+    },
+    "next": {
+      "href": "{base-url}/joboffers?page=1&size=2"
+    },
+    "last": {
+      "href": "{base-url}/joboffers?page=10&size=2"
+}
+----
+
+Finally, the response contains a `page` object that informs about the current paging state :
+[source,json]
+----
+"page": {
+    "size": 2,
+    "totalElements": 22,
+    "totalPages": 11,
+    "number": 0
+}
+----
+
+NOTE: By default, without specifying a `size` parameter, paging is done with a size of 20
+
+Further information can be found in Spring Data REST documentation : http://docs.spring.io/spring-data/rest/docs/2.4.4.RELEASE/reference/html/#paging-and-sorting
+
+= Job advertisement API
+
+include::api-create.adoc[]

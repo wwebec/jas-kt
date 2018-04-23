@@ -1,0 +1,44 @@
+== Create a new job advertisement
+
+=== Request
+`PATCH /api/jobadvertisements/{id}/cancel`
+
+[source,json]
+----
+{
+    "reasonCode": "string"
+}
+----
+
+[cols="30,10,30,30"]
+|===
+| Parameter | Constraints | Default | Description
+
+| id | Required | | The id of the job ad
+| code | Required | | The cancellation reason code
+|===
+
+[cols="10,90"]
+|===
+| Code | Reason
+
+| 1 | The position has been filled
+| 2 | Enough candidates have been found
+| 3 | Other reason
+|===
+
+=== Response
+No body
+
+=== Response status
+[cols="10,20,70"]
+|===
+| Code | Status | Description
+
+| 204 | No Content | The job ad has been successfully updated
+| 400 | Bad Request | The request was malformed or invalid
+| 401 | Unauthorized | User is not logged in
+| 403 | Forbidden | User has not the required permission to perform this action
+| 404 | Not Found | No job ad with the given stellennummerEgov was found
+|===
+

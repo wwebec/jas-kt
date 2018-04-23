@@ -90,7 +90,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "euresDisplay", column = @Column(name = "PUBLICATION_EURES_DISPLAY")),
             @AttributeOverride(name = "euresAnonymous", column = @Column(name = "PUBLICATION_EURES_ANONYMOUS")),
             @AttributeOverride(name = "publicDisplay", column = @Column(name = "PUBLICATION_PUBLIC_DISPLAY")),
-            @AttributeOverride(name = "publicAnonynomous", column = @Column(name = "PUBLICATION_PUBLIC_ANONYNOMOU")),
+            @AttributeOverride(name = "publicAnonymous", column = @Column(name = "PUBLICATION_PUBLIC_ANONYMOUS")),
             @AttributeOverride(name = "restrictedDisplay", column = @Column(name = "PUBLICATION_RESTRICTED_DISPLAY")),
             @AttributeOverride(name = "restrictedAnonymous", column = @Column(name = "PUBLICATION_RESTRICTED_ANONYMOUS"))
     })
@@ -259,9 +259,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementRejectedEvent(this));
     }
 
-    public void cancel(LocalDate date, String code) {
+    public void cancel(LocalDate date, String reasonCode) {
         this.cancellationDate = Condition.notNull(date);
-        this.cancellationCode = Condition.notBlank(code);
+        this.cancellationCode = Condition.notBlank(reasonCode);
         this.status = status.validateTransitionTo(JobAdvertisementStatus.CANCELLED);
         DomainEventPublisher.publish(new JobAdvertisementCancelledEvent(this));
     }

@@ -1,0 +1,125 @@
+=== HTTP request
+[source,http]
+----
+GET /0.2/joboffers HTTP/1.1
+Accept: application/json;charset=UTF-8
+Authorization: Basic dXNlcjpwYXNzd29yZA==
+Host: api.job-room.ch
+----
+
+=== HTTP response
+[source,http]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=UTF-8
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Pragma: no-cache
+Expires: 0
+X-Frame-Options: DENY
+Content-Length: 2384
+
+{
+  "_embedded" : {
+    "jobOffers" : [ {
+      "id" : 96,
+      "publicationStartDate" : "2100-01-01",
+      "publicationEndDate" : "2101-02-02",
+      "reference" : "ref-284956",
+      "url" : "https://www.seco.admin.ch/jobs/284956",
+      "applicationUrl" : "https://www.seco.admin.ch/jobs/284956/apply",
+      "job" : {
+        "title" : "Software engineer",
+        "description" : "Development of eGov applications",
+        "workingTimePercentageFrom" : 80,
+        "workingTimePercentageTo" : 100,
+        "startDate" : "2100-03-01",
+        "endDate" : "2102-04-02",
+        "startsImmediately" : false,
+        "permanent" : false,
+        "location" : {
+          "countryCode" : "CH",
+          "locality" : "Bern",
+          "postalCode" : "3010",
+          "additionalDetails" : "All day in an office"
+        },
+        "languageSkills" : [ {
+          "language" : "1",
+          "spokenLevel" : "very_good",
+          "writtenLevel" : "good"
+        }, {
+          "language" : "2",
+          "spokenLevel" : "basic_knowledge",
+          "writtenLevel" : "no_knowledge"
+        } ]
+      },
+      "company" : {
+        "name" : "SECO",
+        "countryCode" : "CH",
+        "street" : "Finkenhubelweg",
+        "houseNumber" : "12",
+        "locality" : "Bern",
+        "postalCode" : "3001",
+        "phoneNumber" : "0581234567",
+        "email" : "info@seco.admin.ch",
+        "website" : "www.seco.admin.ch",
+        "postbox" : {
+          "number" : "3002",
+          "locality" : "Bern",
+          "postalCode" : "3001"
+        }
+      },
+      "contact" : {
+        "title" : "madam",
+        "firstName" : "Alizée",
+        "lastName" : "Dupont",
+        "phoneNumber" : "0791234567",
+        "email" : "alizee.dupont@seco.admin.ch"
+      },
+      "_links" : {
+        "self" : {
+          "href" : "https://api.job-room.ch/0.2/joboffers/96"
+        },
+        "jobOffer" : {
+          "href" : "https://api.job-room.ch/0.2/joboffers/96"
+        }
+      }
+    } ]
+  },
+  "_links" : {
+    "self" : {
+      "href" : "https://api.job-room.ch/0.2/joboffers"
+    },
+    "profile" : {
+      "href" : "https://api.job-room.ch/0.2/profile/joboffers"
+    },
+    "search" : {
+      "href" : "https://api.job-room.ch/0.2/joboffers/search"
+    }
+  },
+  "page" : {
+    "size" : 20,
+    "totalElements" : 1,
+    "totalPages" : 1,
+    "number" : 0
+  }
+}
+----
+
+=== Response fields
+[cols="30,10,60"]
+|===
+| Path | Type | Description
+
+| _embedded.jobOffers | Array | Contains all job offers associated to the current user.
+| page | Object | Provides informations and links used to manage pagination (see chapter <<Paging>>).
+|===
+
+NOTE: A complete description of the fields can be found in the section <<Create a job offer>>
+
+=== curl request
+[source,bash]
+----
+$ curl 'https://api.job-room.ch/0.2/joboffers' -i -u 'user:password' -H 'Accept: application/json;charset=UTF-8'
+----

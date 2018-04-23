@@ -19,11 +19,15 @@ import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCode
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -191,7 +195,7 @@ public class JobAdvertisementApplicationService {
                                 .setEuresDisplay(false)
                                 .setEuresAnonymous(false)
                                 .setPublicDisplay(true)
-                                .setPublicAnonynomous(true)
+                                .setPublicAnonymous(true)
                                 .build()
                 )
                 .build();
@@ -220,8 +224,27 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(toList());
     }
 
+    public Page<JobAdvertisementDto> findAllPaginated(Pageable pageable) {
+        Page<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findAll(pageable);
+        return new PageImpl<>(
+                jobAdvertisements.getContent().stream().map(JobAdvertisementDto::toDto).collect(toList()),
+                jobAdvertisements.getPageable(),
+                jobAdvertisements.getTotalElements()
+        );
+    }
+
     public JobAdvertisementDto findById(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        return JobAdvertisementDto.toDto(jobAdvertisement);
+    }
+
+    public JobAdvertisementDto findByStellennummerAvam(String stellennummerAvam) {
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(stellennummerAvam);
+        return JobAdvertisementDto.toDto(jobAdvertisement);
+    }
+
+    public JobAdvertisementDto findByStellennummerEgov(String stellennummerEgov) {
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(stellennummerEgov);
         return JobAdvertisementDto.toDto(jobAdvertisement);
     }
 
@@ -247,11 +270,11 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
     }
 
-    public void cancel(CancellationDto cancellationDto) {
-        Condition.notNull(cancellationDto.getStellennummerAvam(), "StellennummerAvam can't be null");
-        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(cancellationDto.getStellennummerAvam());
+    public void cancel(JobAdvertisementId jobAdvertisementId, LocalDate date, String reasonCode) {
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
-        jobAdvertisement.cancel(cancellationDto.getDate(), cancellationDto.getCode());
+        jobAdvertisement.cancel(date, reasonCode);
     }
 
     public void refining(JobAdvertisementId jobAdvertisementId) {
@@ -433,7 +456,7 @@ public class JobAdvertisementApplicationService {
                     .setEuresDisplay(publicationDto.isEuresDisplay())
                     .setEuresAnonymous(publicationDto.isEuresAnonymous())
                     .setPublicDisplay(publicationDto.isPublicDisplay())
-                    .setPublicAnonynomous(publicationDto.isPublicAnonynomous())
+                    .setPublicAnonymous(publicationDto.isPublicAnonymous())
                     .setRestrictedDisplay(publicationDto.isRestrictedDisplay())
                     .setRestrictedAnonymous(publicationDto.isRestrictedAnonymous())
                     .build();
@@ -581,4 +604,5 @@ public class JobAdvertisementApplicationService {
         }
         return null;
     }
+
 }
