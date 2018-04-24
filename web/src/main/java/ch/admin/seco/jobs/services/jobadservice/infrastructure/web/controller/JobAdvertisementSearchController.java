@@ -35,7 +35,7 @@ public class JobAdvertisementSearchController {
         this.jobAdvertisementSearchService = jobAdvertisementSearchService;
     }
 
-    @PostMapping("/_search/jobAdvertisement")
+    @PostMapping("/_search")
     @Timed
     public ResponseEntity<List<JobAdvertisementDto>> searchJobs(
             @RequestBody @Valid JobAdvertisementSearchRequest jobAdvertisementSearchRequest,
@@ -46,7 +46,7 @@ public class JobAdvertisementSearchController {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
-    @PostMapping("/_count/jobAdvertisement")
+    @PostMapping("/_count")
     @Timed
     public ResponseEntity<Map<String, Long>> countJobs(
             @RequestBody @Valid JobAdvertisementSearchRequest jobAdvertisementSearchRequest) {
