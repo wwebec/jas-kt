@@ -233,17 +233,22 @@ public class JobAdvertisementApplicationService {
         );
     }
 
-    public JobAdvertisementDto findById(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
+    public JobAdvertisementDto getById(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         return JobAdvertisementDto.toDto(jobAdvertisement);
     }
 
-    public JobAdvertisementDto findByStellennummerAvam(String stellennummerAvam) {
+    public JobAdvertisementDto getByAccessToken(String accessToken) {
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByAccessToken(accessToken);
+        return JobAdvertisementDto.toDto(jobAdvertisement);
+    }
+
+    public JobAdvertisementDto getByStellennummerAvam(String stellennummerAvam) {
         JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(stellennummerAvam);
         return JobAdvertisementDto.toDto(jobAdvertisement);
     }
 
-    public JobAdvertisementDto findByStellennummerEgov(String stellennummerEgov) {
+    public JobAdvertisementDto getByStellennummerEgov(String stellennummerEgov) {
         JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(stellennummerEgov);
         return JobAdvertisementDto.toDto(jobAdvertisement);
     }
@@ -407,6 +412,11 @@ public class JobAdvertisementApplicationService {
     private JobAdvertisement getJobAdvertisementByStellennummerAvam(String stellennummerAvam) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.EXTERNAL_ID, stellennummerAvam));
+    }
+
+    private JobAdvertisement getJobAdvertisementByAccessToken(String accessToken) {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findOneByAccessToken(accessToken);
+        return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.ACCESS_TOKEN, accessToken));
     }
 
     private Occupation enrichOccupationWithProfessionCodes(Occupation occupation) {
@@ -604,5 +614,4 @@ public class JobAdvertisementApplicationService {
         }
         return null;
     }
-
 }

@@ -29,7 +29,7 @@ public class JobAdvertisementApiRestController {
     @PostMapping
     public JobAdvertisementDto createFromApi(@RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementDto);
-        return jobAdvertisementApplicationService.findById(jobAdvertisementId);
+        return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
 
     @GetMapping(params = {"page", "size"})
@@ -39,7 +39,7 @@ public class JobAdvertisementApiRestController {
 
     @GetMapping(path = "/{id}")
     public JobAdvertisementDto getJobAdvertisement(@PathVariable String id) {
-        return jobAdvertisementApplicationService.findById(new JobAdvertisementId(id));
+        return jobAdvertisementApplicationService.getById(new JobAdvertisementId(id));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

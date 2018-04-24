@@ -44,17 +44,22 @@ public class JobAdvertisementRestController {
     @PostMapping()
     public JobAdvertisementDto createFromWebform(@RequestBody CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromWebForm(createJobAdvertisementDto);
-        return jobAdvertisementApplicationService.findById(jobAdvertisementId);
+        return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
 
     @GetMapping(params = {"page", "size"})
-    public PageResource<JobAdvertisementDto> getJobAdvertisements(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "25") int size) {
+    public PageResource<JobAdvertisementDto> getAll(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "25") int size) {
         return PageResource.of(jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size)));
     }
 
     @GetMapping("/{id}")
-    public JobAdvertisementDto getJobAdvertisement(@PathVariable String id) throws AggregateNotFoundException {
-        return jobAdvertisementApplicationService.findById(new JobAdvertisementId(id));
+    public JobAdvertisementDto getOne(@PathVariable String id) throws AggregateNotFoundException {
+        return jobAdvertisementApplicationService.getById(new JobAdvertisementId(id));
+    }
+
+    @GetMapping(params = {"token"})
+    public JobAdvertisementDto getOneByAccessToken(@RequestParam(name = "token") String accessToken) throws AggregateNotFoundException {
+        return jobAdvertisementApplicationService.getByAccessToken(accessToken);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

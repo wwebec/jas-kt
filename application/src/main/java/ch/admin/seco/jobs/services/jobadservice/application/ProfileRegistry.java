@@ -10,5 +10,6 @@ public class ProfileRegistry {
     public static final String OAUTH2 = "oauth2";
     public static final String AVAM_WSDL_V1 = "avam-wsdl-v1";
     public static final String AVAM_WSDL_V2 = "avam-wsdl-v2";
+    public static final String ELASTIC_MOCK = "elastic-mock";
 
 }
