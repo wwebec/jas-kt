@@ -396,7 +396,7 @@ public class JobAdvertisementApplicationService {
                 .setApplyChannel(toApplyChannel(createJobAdvertisementDto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementDto.getCompany()))
                 .setEmployer(toEmployer(createJobAdvertisementDto.getEmployer()))
-                .setPublicContact(toPublicContact(createJobAdvertisementDto.getContact()))
+                .setPublicContact(toPublicContact(createJobAdvertisementDto.getPublicContact()))
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementDto.getLanguageSkills()))
                 .build();
 
@@ -544,6 +544,19 @@ public class JobAdvertisementApplicationService {
                     .setPostalCode(employerDto.getPostalCode())
                     .setCity(employerDto.getCity())
                     .setCountryIsoCode(employerDto.getCountryIsoCode())
+                    .build();
+        }
+        return null;
+    }
+
+    private PublicContact toPublicContact(PublicContactDto publicContactDto) {
+        if (publicContactDto != null) {
+            return new PublicContact.Builder()
+                    .setSalutation(publicContactDto.getSalutation())
+                    .setFirstName(publicContactDto.getFirstName())
+                    .setLastName(publicContactDto.getLastName())
+                    .setPhone(publicContactDto.getPhone())
+                    .setEmail(publicContactDto.getEmail())
                     .build();
         }
         return null;
