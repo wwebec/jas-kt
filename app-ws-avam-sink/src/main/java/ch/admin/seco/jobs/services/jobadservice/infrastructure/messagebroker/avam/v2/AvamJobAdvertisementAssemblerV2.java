@@ -167,6 +167,7 @@ public class AvamJobAdvertisementAssemblerV2 {
         if (occupations.size() > 0) {
             Occupation occupation = occupations.get(0);
             avamJobAdvertisement.setBq1AvamBeruf(occupation.getLabel());
+            avamJobAdvertisement.setBq1AvamBerufNr(occupation.getAvamOccupationCode());
             avamJobAdvertisement.setBq1ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             avamJobAdvertisement.setBq1AusbildungCode(occupation.getEducationCode());
         }
@@ -174,12 +175,14 @@ public class AvamJobAdvertisementAssemblerV2 {
         if (occupations.size() > 1) {
             Occupation occupation = occupations.get(1);
             tOsteEgov.setBq2AvamBeruf(occupation.getLabel());
+            tOsteEgov.setBq2AvamBerufNr(occupation.getAvamOccupationCode());
             tOsteEgov.setBq2ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq2AusbildungCode(occupation.getEducationCode());
         }
         if (occupations.size() > 2) {
             Occupation occupation = occupations.get(2);
             tOsteEgov.setBq3AvamBeruf(occupation.getLabel());
+            tOsteEgov.setBq3AvamBerufNr(occupation.getAvamOccupationCode());
             tOsteEgov.setBq3ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq3AusbildungCode(occupation.getEducationCode());
         }
