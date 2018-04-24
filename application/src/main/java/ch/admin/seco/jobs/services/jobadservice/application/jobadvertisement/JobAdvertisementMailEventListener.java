@@ -63,7 +63,7 @@ public class JobAdvertisementMailEventListener {
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_CREATED_TEMPLATE)
                         .setTemplateVariables(variables)
-                        .setLocale(jobAdvertisement.getContact().getLanguage())
+                        .setLocale(contactLocale)
                         .build()
         );
     }
@@ -82,7 +82,7 @@ public class JobAdvertisementMailEventListener {
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_REFINED_TEMPLATE)
                         .setTemplateVariables(variables)
-                        .setLocale(jobAdvertisement.getContact().getLanguage())
+                        .setLocale(contactLocale)
                         .build()
         );
     }
@@ -101,7 +101,7 @@ public class JobAdvertisementMailEventListener {
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_REJECTED_TEMPLATE)
                         .setTemplateVariables(variables)
-                        .setLocale(jobAdvertisement.getContact().getLanguage())
+                        .setLocale(contactLocale)
                         .build()
         );
     }
@@ -120,7 +120,7 @@ public class JobAdvertisementMailEventListener {
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_CANCELLED_TEMPLATE)
                         .setTemplateVariables(variables)
-                        .setLocale(jobAdvertisement.getContact().getLanguage())
+                        .setLocale(contactLocale)
                         .build()
         );
     }
