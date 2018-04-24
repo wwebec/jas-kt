@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(propagation = Propagation.MANDATORY)
-interface StoredEventRepository extends JpaRepository<StoredEvent, String>, StoredEventRepositoryCustom {
+public interface StoredEventRepository extends JpaRepository<StoredEvent, String>, StoredEventRepositoryCustom {
 
     @Query("select e from StoredEvent e where e.aggregateId = :aggregateId and e.aggregateType = :aggregateType order by e.registrationTime desc")
     Page<StoredEvent> findByAggregateId(@Param("aggregateId") String aggregateId, @Param("aggregateType") String aggregateType, Pageable pageable);
