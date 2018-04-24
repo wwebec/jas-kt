@@ -6,9 +6,15 @@ import java.util.stream.Stream;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.QueryHint;
+
+import static org.hibernate.jpa.QueryHints.HINT_CACHE_MODE;
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public interface JobAdvertisementRepository extends JpaRepository<JobAdvertisement, JobAdvertisementId> {
@@ -25,4 +31,10 @@ public interface JobAdvertisementRepository extends JpaRepository<JobAdvertiseme
     Optional<JobAdvertisement> findByStellennummerEgov(String stellennummerEgov);
 
     Optional<JobAdvertisement> findByFingerprint(String fingerprint);
+
+    @QueryHints({
+            @QueryHint(name = HINT_FETCH_SIZE, value = "1000"),
+            @QueryHint(name = HINT_CACHE_MODE, value = "IGNORE")})
+    @Query("select j from JobAdvertisement j")
+    Stream<JobAdvertisement> streamAll();
 }

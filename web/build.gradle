@@ -8,8 +8,7 @@ dependencies {
     compile project(':infrastructure-elasticsearch')
     compile project(':infrastructure-messagebroker')
     compile project(':infrastructure-service-reference')
-//    ES is not used yet
-//    compile project(':infrastructure-elasticsearch')
+    compile project(':infrastructure-elasticsearch')
 
     compile 'org.springframework.boot:spring-boot-autoconfigure'
     compile 'org.springframework.boot:spring-boot-starter-actuator'

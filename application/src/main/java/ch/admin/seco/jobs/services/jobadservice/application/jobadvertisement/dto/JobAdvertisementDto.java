@@ -1,11 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
 public class JobAdvertisementDto {
 
@@ -230,7 +233,11 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setPublication(PublicationDto.toDto(jobAdvertisement.getPublication()));
 
         // Eager load data from ElementCollection
-        jobAdvertisementDto.getJobContent().getEmployment().setWorkForms(new HashSet<>(jobAdvertisement.getJobContent().getEmployment().getWorkForms()));
+        Set<WorkForm> workForms = jobAdvertisement.getJobContent().getEmployment().getWorkForms() != null
+                ? jobAdvertisement.getJobContent().getEmployment().getWorkForms()
+                : Collections.emptySet();
+
+        jobAdvertisementDto.getJobContent().getEmployment().setWorkForms(new HashSet<>(workForms));
         return jobAdvertisementDto;
     }
 }
