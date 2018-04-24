@@ -389,13 +389,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private boolean applyUpdates(JobAdvertisementUpdater updater) {
         boolean hasChangedAnything = false;
 
-        /*
-        if (updater.hasAnyChangesIn(SECTION_SOURCE_ENTRY_ID) && hasChanged(this.externalReference, updater.getExternalReference())) {
-            this.externalReference = updater.getExternalReference();
-            hasChangedAnything = true;
-        }
-        */
-
         if (updater.hasAnyChangesIn(SECTION_FINGERPRINT) && hasChanged(fingerprint, updater.getFingerprint())) {
             fingerprint = updater.getFingerprint();
             hasChangedAnything = true;
@@ -405,13 +398,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             getJobContent().setX28OccupationCodes(updater.getX28OccupationCodes());
             hasChangedAnything = true;
         }
-
-        /*
-        if (updater.hasAnyChangesIn(SECTION_EXTERNAL_URL) && hasChanged(this.externalUrl, updater.getExternalUrl())) {
-            this.externalUrl = updater.getExternalUrl();
-            hasChangedAnything = true;
-        }
-        */
 
         if (updater.hasAnyChangesIn(SECTION_REPORTING_OBLIGATION) && (
                 hasChanged(this.reportingObligation, updater.isReportingObligation()) ||

@@ -11,8 +11,6 @@ public class JobAdvertisementUpdater {
 
     static final String SECTION_FINGERPRINT = "SECTION_FINGERPRINT";
     static final String SECTION_X28_OCCUPATION_CODES = "SECTION_X28_OCCUPATION_CODES";
-    static final String SECTION_SOURCE_ENTRY_ID = "SECTION_SOURCE_ENTRY_ID";
-    static final String SECTION_EXTERNAL_URL = "SECTION_EXTERNAL_URL";
     static final String SECTION_REPORTING_OBLIGATION = "SECTION_REPORTING_OBLIGATION";
     static final String SECTION_PUBLICATION = "SECTION_PUBLICATION";
     static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
@@ -31,10 +29,6 @@ public class JobAdvertisementUpdater {
     private String fingerprint;
 
     private String x28OccupationCodes;
-
-    private String externalReference;
-
-    private String externalUrl;
 
     private boolean reportingObligation;
 
@@ -63,8 +57,6 @@ public class JobAdvertisementUpdater {
         this.auditUser = builder.auditUser;
         this.fingerprint = builder.fingerprint;
         this.x28OccupationCodes = builder.x28OccupationCodes;
-        this.externalReference = builder.externalReference;
-        this.externalUrl = builder.externalUrl;
         this.reportingObligation = builder.reportingObligation;
         this.reportingObligationEndDate = builder.reportingObligationEndDate;
         this.employment = builder.employment;
@@ -92,14 +84,6 @@ public class JobAdvertisementUpdater {
 
     public String getX28OccupationCodes() {
         return x28OccupationCodes;
-    }
-
-    public String getExternalReference() {
-        return externalReference;
-    }
-
-    public String getExternalUrl() {
-        return externalUrl;
     }
 
     public boolean isReportingObligation() {
@@ -152,8 +136,6 @@ public class JobAdvertisementUpdater {
         private AuditUser auditUser;
         private String fingerprint;
         private String x28OccupationCodes;
-        private String externalReference;
-        private String externalUrl;
         private boolean reportingObligation;
         private LocalDate reportingObligationEndDate;
         private Employment employment;
@@ -183,18 +165,6 @@ public class JobAdvertisementUpdater {
         public Builder setX28OccupationCodes(String x28OccupationCodes) {
             this.changedSections.add(SECTION_X28_OCCUPATION_CODES);
             this.x28OccupationCodes = x28OccupationCodes;
-            return this;
-        }
-
-        public Builder setExternalReference(String externalReference) {
-            this.changedSections.add(SECTION_SOURCE_ENTRY_ID);
-            this.externalReference = externalReference;
-            return this;
-        }
-
-        public Builder setExternalUrl(String externalUrl) {
-            this.changedSections.add(SECTION_EXTERNAL_URL);
-            this.externalUrl = externalUrl;
             return this;
         }
 
