@@ -2,9 +2,9 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamException;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceClient;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.DeliverOste;
@@ -57,9 +57,8 @@ public class AvamWebServiceClientV1 implements AvamWebServiceClient {
 
     void handleResponse(JobAdvertisementId jobAdvertisementId, AvamAction action, DeliverOsteResponse response) {
         String returnCode = response.getDeliverOsteReturn();
-        if (!AVAM_RESPONSE_OK.equals(returnCode)) {
-            throw new AvamException(jobAdvertisementId, action.name());
+        if (!AVAM_RESPONSE_OK.startsWith(returnCode)) {
+            throw new AvamException(jobAdvertisementId, action.name(), returnCode);
         }
     }
-
 }

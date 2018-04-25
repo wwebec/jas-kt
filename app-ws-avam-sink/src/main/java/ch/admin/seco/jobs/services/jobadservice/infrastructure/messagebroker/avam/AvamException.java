@@ -4,7 +4,15 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 
 public class AvamException extends RuntimeException {
 
-    public AvamException(JobAdvertisementId jobAdvertisementId, String action) {
-        super("Couldn't register JobAdvertisement with id: " + jobAdvertisementId.getValue() + " -> " + action);
+    private final JobAdvertisementId jobAdvertisementId;
+    private final String action;
+    private final String avamResponse;
+
+    public AvamException(JobAdvertisementId jobAdvertisementId, String action, String avamResponse) {
+        super("Couldn't send JobAdvertisement with id: " + jobAdvertisementId.getValue() +
+                " action: " + action + "\n" + "Details: " + avamResponse);
+        this.action = action;
+        this.avamResponse = avamResponse;
+        this.jobAdvertisementId = jobAdvertisementId;
     }
 }

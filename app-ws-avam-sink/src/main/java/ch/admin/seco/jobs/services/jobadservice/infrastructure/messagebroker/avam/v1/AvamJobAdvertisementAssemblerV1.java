@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.springframework.util.Assert;
 
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
@@ -22,6 +20,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Language
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.TOsteEgov;
 
 public class AvamJobAdvertisementAssemblerV1 {
@@ -40,8 +40,9 @@ public class AvamJobAdvertisementAssemblerV1 {
         TOsteEgov avamJobAdvertisement = new TOsteEgov();
         avamJobAdvertisement.setDetailangabenCode(AvamCodeResolver.ACTIONS.getLeft(action));
         avamJobAdvertisement.setArbeitsamtBereich(jobAdvertisement.getJobCenterCode());
-        avamJobAdvertisement.setStellennummerEgov(jobAdvertisement.getId().getValue());
+        avamJobAdvertisement.setStellennummerEgov(jobAdvertisement.getStellennummerEgov());
         avamJobAdvertisement.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
+        avamJobAdvertisement.setArbeitsamtBereich(getJobCenterCode(jobAdvertisement.getJobCenterCode()));
 
         avamJobAdvertisement.setAnmeldeDatum(formatLocalDate(jobAdvertisement.getApprovalDate()));
         if (AvamAction.ABMELDUNG.equals(action)) {
@@ -214,5 +215,13 @@ public class AvamJobAdvertisementAssemblerV1 {
             avamJobAdvertisement.setSk5MuendlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
             avamJobAdvertisement.setSk5SchriftlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
         }
+    }
+
+    private String getJobCenterCode(String jobCenterCode) {
+        if (jobCenterCode != null) {
+            return jobCenterCode;
+        }
+        //TODO define default RAV if information is missing
+        return "BE01";
     }
 }
