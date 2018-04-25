@@ -19,7 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/jobAdvertisement")
+@RequestMapping("/api/jobAdvertisements")
 public class JobAdvertisementRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
@@ -57,8 +57,8 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.getById(new JobAdvertisementId(id));
     }
 
-    @GetMapping(params = {"token"})
-    public JobAdvertisementDto getOneByAccessToken(@RequestParam(name = "token") String accessToken) throws AggregateNotFoundException {
+    @GetMapping("/token/{accessToken}")
+    public JobAdvertisementDto getOneByAccessToken(@PathVariable String accessToken) throws AggregateNotFoundException {
         return jobAdvertisementApplicationService.getByAccessToken(accessToken);
     }
 

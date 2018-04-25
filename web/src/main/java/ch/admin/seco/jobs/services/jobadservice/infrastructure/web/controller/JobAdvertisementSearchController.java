@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/jobAdvertisement")
+@RequestMapping("/api/jobAdvertisements")
 public class JobAdvertisementSearchController {
     private final JobAdvertisementIndexerService jobAdvertisementIndexerService;
     private final JobAdvertisementSearchService jobAdvertisementSearchService;
