@@ -92,7 +92,7 @@ public class JobAdvertisementSearchControllerIntTest {
 
         // WHEN
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search/jobAdvertisement")
+                post("/api/jobAdvertisement/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(new JobAdvertisementSearchRequest()))
         );
@@ -116,7 +116,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setKeywords(new String[]{"entwickler", "java"});
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search/jobAdvertisement")
+                post("/api/jobAdvertisement/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -157,7 +157,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setProfessionCodes(new ProfessionCode[]{new ProfessionCode(ProfessionCodeType.BFS, DEFAULT_BFS_CODE)});
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search/jobAdvertisement")
+                post("/api/jobAdvertisement/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -194,7 +194,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setCantonCodes(new String[]{"BE"});
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search/jobAdvertisement")
+                post("/api/jobAdvertisement/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -222,7 +222,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setWorkloadPercentageMax(80);
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search/jobAdvertisement")
+                post("/api/jobAdvertisement/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -249,7 +249,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setCompanyName("CERN");
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search/jobAdvertisement")
+                post("/api/jobAdvertisement/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -275,7 +275,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setPermanent(true);
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search/jobAdvertisement")
+                post("/api/jobAdvertisement/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -312,7 +312,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setKeywords(new String[]{"title"});
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_count/jobAdvertisement")
+                post("/api/jobAdvertisement/_count")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );

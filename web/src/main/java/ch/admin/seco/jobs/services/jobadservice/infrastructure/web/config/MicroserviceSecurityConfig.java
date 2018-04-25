@@ -78,7 +78,7 @@ public class MicroserviceSecurityConfig {
             .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/jobAdvertisement/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/jobAdvertisement", "/api/_search/jobAdvertisement", "/api/_count/jobAdvertisement").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/jobAdvertisement", "/api/jobAdvertisement/_search", "/api/jobAdvertisement/_count").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/management/info").permitAll()
                 .antMatchers("/management/health").permitAll()
