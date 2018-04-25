@@ -88,9 +88,9 @@ public class AvamService {
     public void handleCancelAction(CancellationDto cancellationDto) {
         JobAdvertisementDto jobAdvertisementDto;
         if(StringUtils.isNotBlank(cancellationDto.getStellennummerEgov())) {
-            jobAdvertisementDto = jobAdvertisementApplicationService.getByStellennummerEgov(cancellationDto.getStellennummerEgov());
+            jobAdvertisementDto = jobAdvertisementApplicationService.findByStellennummerEgov(cancellationDto.getStellennummerEgov());
         } else {
-            jobAdvertisementDto = jobAdvertisementApplicationService.getByStellennummerAvam(cancellationDto.getStellennummerAvam());
+            jobAdvertisementDto = jobAdvertisementApplicationService.findByStellennummerAvam(cancellationDto.getStellennummerAvam());
         }
         Condition.notNull(jobAdvertisementDto, "Couldn't find the jobAdvertisement for stellennummerEgov %s nor stellennummerAvam %s", cancellationDto.getStellennummerEgov(), cancellationDto.getStellennummerAvam());
         jobAdvertisementApplicationService.cancel(new JobAdvertisementId(jobAdvertisementDto.getId()), cancellationDto.getDate(), cancellationDto.getCode());
