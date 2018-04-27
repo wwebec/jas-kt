@@ -4,6 +4,10 @@ public class CancellationResource {
 
     private String reasonCode;
 
+    protected CancellationResource() {
+        // for reflection libs
+    }
+
     public CancellationResource(String reasonCode) {
         this.reasonCode = reasonCode;
     }
