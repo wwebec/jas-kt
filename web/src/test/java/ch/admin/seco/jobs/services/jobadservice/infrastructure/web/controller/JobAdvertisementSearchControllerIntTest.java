@@ -28,7 +28,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -128,14 +131,11 @@ public class JobAdvertisementSearchControllerIntTest {
 
                 .andExpect(jsonPath("$.[0].id").value(equalTo(JOB_ADVERTISEMENT_ID_01.getValue())))
                 .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].title").value(equalTo("c++ developer")))
-                //.andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].description").value(equalTo("c++ &amp; <em>java</em> <em>entwickler</em>")))
-                .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].description").value(equalTo("c++ & java entwickler")))
+                .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].description").value(equalTo("c++ &amp; <em>java</em> <em>entwickler</em>")))
 
                 .andExpect(jsonPath("$.[1].id").value(equalTo(JOB_ADVERTISEMENT_ID_02.getValue())))
-                //.andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].title").value(equalTo("<em>java</em> & <em>javascript</em> developer")))
-                .andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].title").value(equalTo("java & javascript developer")))
-                //.andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].description").value(equalTo("jee <em>entwickler</em>")))
-                .andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].description").value(equalTo("jee entwickler")));
+                .andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].title").value(equalTo("<em>java</em> & <em>javascript</em> developer")))
+                .andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].description").value(equalTo("jee <em>entwickler</em>")));
     }
 
     @Test
@@ -241,12 +241,12 @@ public class JobAdvertisementSearchControllerIntTest {
     public void shouldFilterByCompanyName() throws Exception {
         // GIVEN
         index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJobWithCompanyName(JOB_ADVERTISEMENT_ID_02, "CERN"));
+        index(createJobWithCompanyName(JOB_ADVERTISEMENT_ID_02, "Gösser"));
         index(createJob(JOB_ADVERTISEMENT_ID_03));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
-        searchRequest.setCompanyName("CERN");
+        searchRequest.setCompanyName("Goesser");
 
         ResultActions resultActions = mockMvc.perform(
                 post("/api/jobAdvertisement/_search")

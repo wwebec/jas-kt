@@ -1,24 +1,38 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.JobAdvertisementDocument;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.core.DefaultResultMapper;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.core.ResultsMapper;
+import org.springframework.data.elasticsearch.core.aggregation.AggregatedPage;
+import org.springframework.data.elasticsearch.core.aggregation.impl.AggregatedPageImpl;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.JobAdvertisementIndexerService.INDEX_NAME_JOB_ADVERTISEMENT;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.JobAdvertisementIndexerService.TYPE_JOB_ADVERTISEMENT;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -49,30 +63,46 @@ public class JobAdvertisementSearchService {
     private static final int ONLINE_SINCE_DAYS = 60;
 
     private final ElasticsearchTemplate elasticsearchTemplate;
+    private final ResultsMapper resultsMapper;
 
-    public JobAdvertisementSearchService(ElasticsearchTemplate elasticsearchTemplate) {
+
+    public JobAdvertisementSearchService(ElasticsearchTemplate elasticsearchTemplate,
+                                         ElasticsearchConfiguration.CustomEntityMapper customEntityMapper) {
         this.elasticsearchTemplate = elasticsearchTemplate;
+        this.resultsMapper = new DefaultResultMapper(elasticsearchTemplate.getElasticsearchConverter().getMappingContext(), customEntityMapper);
     }
 
     public Page<JobAdvertisementDto> search(JobAdvertisementSearchRequest jobSearchRequest, Pageable pageable) {
-        //todo add visibility filter
         SearchQuery searchQuery = createSearchQueryBuilder(jobSearchRequest)
                 .withPageable(pageable)
                 .withHighlightFields(new HighlightBuilder.Field("*").fragmentSize(300).numOfFragments(1))
+                .withIndices(INDEX_NAME_JOB_ADVERTISEMENT)
+                .withTypes(TYPE_JOB_ADVERTISEMENT)
                 .build();
-        //todo implement Highlighting
-        return elasticsearchTemplate.queryForPage(searchQuery, JobAdvertisementDocument.class)
-                .map(document -> JobAdvertisementDto.toDto(document.getJobAdvertisement()));
+
+        return elasticsearchTemplate.query(searchQuery, response -> {
+            AggregatedPage<JobAdvertisementDocument> searchResults = resultsMapper.mapResults(response, JobAdvertisementDocument.class, pageable);
+            SearchHits searchHits = response.getHits();
+            Iterator<SearchHit> searchHitIterator = searchHits.iterator();
+
+            List<JobAdvertisementDto> highLigtedResults = searchResults.getContent().stream()
+                    .map(JobAdvertisementDocument::getJobAdvertisement)
+                    .map(JobAdvertisementDto::toDto)
+                    .map(jobAdvertisementDto -> highlightFields(jobAdvertisementDto, searchHitIterator.next().getHighlightFields()))
+                    .collect(Collectors.toList());
+
+            return new AggregatedPageImpl<>(highLigtedResults, pageable, searchHits.totalHits, searchResults.getAggregations(), searchResults.getScrollId());
+        });
     }
 
     public long count(JobAdvertisementSearchRequest jobSearchRequest) {
-        //todo add visibility filter
         SearchQuery countQuery = createSearchQueryBuilder(jobSearchRequest).build();
         return elasticsearchTemplate.count(countQuery, JobAdvertisementDocument.class);
     }
 
 
     private NativeSearchQueryBuilder createSearchQueryBuilder(JobAdvertisementSearchRequest jobSearchRequest) {
+        //todo add visibility filter
         return new NativeSearchQueryBuilder()
                 .withQuery(createQuery(jobSearchRequest))
                 .withFilter(createFilter(jobSearchRequest));
@@ -227,5 +257,21 @@ public class JobAdvertisementSearchService {
         return Stream.of(queryBuilders)
                 .filter(BoolQueryBuilder::hasClauses)
                 .reduce(boolQuery(), BoolQueryBuilder::must);
+    }
+
+    private static JobAdvertisementDto highlightFields(JobAdvertisementDto jobAdvertisementDto, Map<String, HighlightField> highlightFieldMap) {
+        for (JobDescriptionDto jobDescriptionDto : jobAdvertisementDto.getJobContent().getJobDescriptions()) {
+
+            if (highlightFieldMap.containsKey(PATH_TITLE)) {
+                jobDescriptionDto.setTitle(highlightFieldMap.get(PATH_TITLE).getFragments()[0].toString());
+            }
+
+            if (highlightFieldMap.containsKey(PATH_DESCRIPTION)) {
+                jobDescriptionDto.setDescription(highlightFieldMap.get(PATH_DESCRIPTION).getFragments()[0].toString());
+            }
+
+        }
+
+        return jobAdvertisementDto;
     }
 }
