@@ -8,6 +8,7 @@
 | Path | Type | Description | Constraints
 
 | externalUrl | String | Link to the original website of the job ad | Optional
+| externalReference | String | Your reference to this job ad | Optional
 | reportToAvam | Boolean | Should the ad be send to the RAV | Required (`true` or `false`)
 | contact | <<Contact>> | Contact person about the job ad (Administration) | Required
 | jobDescriptions | Array<<<JobDescription>>> | Language specific Title and Description | Required at least one
@@ -164,6 +165,7 @@
 ----
 {
     "externalUrl": "string",
+    "externalReference": "string",
     "reportToAvam": true,
     "contact": {
         "languageIsoCode": "string",
