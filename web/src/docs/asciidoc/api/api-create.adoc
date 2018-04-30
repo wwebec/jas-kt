@@ -249,11 +249,7 @@
         "startDate": "string",
         "endDate": "string",
         "euresDisplay": true,
-        "euresAnonymous": true,
-        "publicDisplay": true,
-        "publicAnonymous": true,
-        "restrictedDisplay": true,
-        "restrictedAnonymous": true
+        "publicDisplay": true
     }
 }
 ----
