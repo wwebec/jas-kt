@@ -245,7 +245,7 @@ public class JobContent implements ValueObject<JobContent> {
     @Override
     public String toString() {
         return "JobContent{" +
-                "externalwithUrl='" + externalUrl + '\'' +
+                "externalUrl='" + externalUrl + '\'' +
                 ", x28OccupationCodes=" + x28OccupationCodes +
                 ", jobDescriptions=" + jobDescriptions +
                 ", company=" + company +

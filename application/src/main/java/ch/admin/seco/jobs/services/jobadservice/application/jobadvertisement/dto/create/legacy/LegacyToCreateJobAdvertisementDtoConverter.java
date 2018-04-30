@@ -18,6 +18,7 @@ public class LegacyToCreateJobAdvertisementDtoConverter {
         return new CreateJobAdvertisementDto(
                 false,
                 legacyCreateJobAdvertisementDto.getUrl(),
+                legacyCreateJobAdvertisementDto.getReference(),
                 convertContactDto(legacyCreateJobAdvertisementDto.getContact()),
                 convertPublicationDto(legacyCreateJobAdvertisementDto),
                 convertJobDescriptions(legacyCreateJobAdvertisementDto),

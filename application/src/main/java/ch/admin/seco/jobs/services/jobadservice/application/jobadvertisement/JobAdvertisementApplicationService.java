@@ -394,6 +394,7 @@ public class JobAdvertisementApplicationService {
         }
 
         JobContent jobContent = new JobContent.Builder()
+                .setExternalUrl(createJobAdvertisementDto.getExternalUrl())
                 .setJobDescriptions(toJobDescriptions(createJobAdvertisementDto.getJobDescriptions()))
                 .setLocation(location)
                 .setOccupations(occupations)
@@ -409,6 +410,7 @@ public class JobAdvertisementApplicationService {
 
         // TODO Add auditUser
         return new JobAdvertisementCreator.Builder(null)
+                .setExternalReference(createJobAdvertisementDto.getExternalReference())
                 .setReportingObligation(reportingObligation)
                 .setJobCenterCode(jobCenterCode)
                 .setJobContent(jobContent)

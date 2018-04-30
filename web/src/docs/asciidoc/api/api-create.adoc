@@ -56,8 +56,8 @@
 | postOfficeBoxNumber | String | | Optional
 | postOfficeBoxPostalCode | String | | Optional. Must be a valid swiss postal code if the company is located in Switzerland
 | postOfficeBoxCity | String | | Optional
-| postalCode | String | | Optional. Must be a valid swiss postal code if the company is located in Switzerland
-| city | String | | Optional
+| postalCode | String | | Required. Must be a valid swiss postal code if the company is located in Switzerland
+| city | String | | Required
 | countryIsoCode | String | | Required (ISO 3166-1 alpha-2)
 | website | String | | Optional (Format: http://www.example.org)
 | phone | String | | Optional (Format: +41123456789)
