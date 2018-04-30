@@ -1,4 +1,4 @@
-== Create a new job advertisement
+== Get a job advertisement
 
 === Request
 `GET /api/jobadvertisements/{id}`

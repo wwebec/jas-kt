@@ -1,4 +1,4 @@
-== Create a new job advertisement
+== Cancel a job advertisement
 
 === Request
 `PATCH /api/jobadvertisements/{id}/cancel`
