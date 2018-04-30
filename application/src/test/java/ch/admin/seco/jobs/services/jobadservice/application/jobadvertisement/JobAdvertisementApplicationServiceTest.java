@@ -124,6 +124,7 @@ public class JobAdvertisementApplicationServiceTest {
         CreateJobAdvertisementDto createJobAdvertisementDto = new CreateJobAdvertisementDto(
                 true,
                 null,
+                null,
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
                 new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false),
                 Collections.singletonList(new JobDescriptionDto("de", "title", "description")),
@@ -155,6 +156,7 @@ public class JobAdvertisementApplicationServiceTest {
         //Prepare
         CreateJobAdvertisementDto createJobAdvertisementDto = new CreateJobAdvertisementDto(
                 false,
+                null,
                 null,
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
                 new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false),

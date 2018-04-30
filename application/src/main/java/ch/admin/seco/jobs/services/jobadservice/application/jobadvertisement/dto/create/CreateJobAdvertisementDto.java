@@ -12,6 +12,8 @@ public class CreateJobAdvertisementDto {
 
     private String externalUrl;
 
+    private String externalReference;
+
     @NotNull
     private ContactDto contact;
 
@@ -49,11 +51,12 @@ public class CreateJobAdvertisementDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, @NotNull ContactDto contact, @NotNull PublicationDto publication, @NotNull List<JobDescriptionDto> jobDescriptions, @NotNull CompanyDto company, EmployerDto employer, @NotNull EmploymentDto employment, @NotNull CreateLocationDto location,
+    public CreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, @NotNull ContactDto contact, @NotNull PublicationDto publication, @NotNull List<JobDescriptionDto> jobDescriptions, @NotNull CompanyDto company, EmployerDto employer, @NotNull EmploymentDto employment, @NotNull CreateLocationDto location,
                                      //@NotNull
                                      OccupationDto occupation, @NotNull List<LanguageSkillDto> languageSkills, ApplyChannelDto applyChannel, @NotNull PublicContactDto publicContact) {
         this.reportToAvam = reportToAvam;
         this.externalUrl = externalUrl;
+        this.externalReference = externalReference;
         this.contact = contact;
         this.publication = publication;
         this.jobDescriptions = jobDescriptions;
@@ -81,6 +84,14 @@ public class CreateJobAdvertisementDto {
 
     public void setExternalUrl(String externalUrl) {
         this.externalUrl = externalUrl;
+    }
+
+    public String getExternalReference() {
+        return externalReference;
+    }
+
+    public void setExternalReference(String externalReference) {
+        this.externalReference = externalReference;
     }
 
     public ContactDto getContact() {

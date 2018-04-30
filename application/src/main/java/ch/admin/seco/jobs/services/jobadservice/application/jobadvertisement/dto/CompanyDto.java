@@ -11,7 +11,9 @@ public class CompanyDto {
     private String name;
     private String street;
     private String houseNumber;
+    @NotBlank
     private String postalCode;
+    @NotBlank
     private String city;
     private String countryIsoCode;
     private String postOfficeBoxNumber;
