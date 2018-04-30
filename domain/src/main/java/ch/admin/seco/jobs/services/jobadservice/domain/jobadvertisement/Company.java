@@ -1,13 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import java.util.Objects;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import java.util.Objects;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -37,10 +36,10 @@ public class Company implements ValueObject<Company> {
         this.houseNumber = builder.houseNumber;
         this.postalCode = builder.postalCode;
         this.city = builder.city;
+        // FIXME Add constrains when legacy API is removed!
 //        this.postalCode = Condition.notBlank(builder.postalCode, "Postal code of a company can't be null");
 //        this.city = Condition.notBlank(builder.city, "City of a company can't be null");
-        this.countryIsoCode = builder.countryIsoCode;
-//        this.countryIsoCode = Condition.notBlank(builder.countryIsoCode, "Country of a company can't be null");
+        this.countryIsoCode = Condition.notBlank(builder.countryIsoCode, "Country of a company can't be null");
         this.postOfficeBoxNumber = builder.postOfficeBoxNumber;
         this.postOfficeBoxPostalCode = builder.postOfficeBoxPostalCode;
         this.postOfficeBoxCity = builder.postOfficeBoxCity;
