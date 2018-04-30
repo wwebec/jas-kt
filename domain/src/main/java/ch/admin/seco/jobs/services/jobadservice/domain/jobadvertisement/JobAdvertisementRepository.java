@@ -38,6 +38,8 @@ public interface JobAdvertisementRepository extends JpaRepository<JobAdvertiseme
     @QueryHints({
             @QueryHint(name = HINT_FETCH_SIZE, value = "1000"),
             @QueryHint(name = HINT_CACHE_MODE, value = "IGNORE")})
-    @Query("select j from JobAdvertisement j")
-    Stream<JobAdvertisement> streamAll();
+    @Query("select j from JobAdvertisement j " +
+            "where j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED " +
+            "or j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC ")
+    Stream<JobAdvertisement> streamAllPublished();
 }

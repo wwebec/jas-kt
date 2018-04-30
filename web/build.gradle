@@ -48,6 +48,7 @@ dependencies {
     compile 'com.ryantenney.metrics:metrics-spring'
     compile 'net.logstash.logback:logstash-logback-encoder'
     compile 'org.zalando:problem-spring-web'
+    compile 'org.jsoup:jsoup:1.11.3'
 
     runtime 'org.liquibase:liquibase-core'
     runtime 'com.mattbertolini:liquibase-slf4j'

@@ -1,7 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.JobAdvertisementSearchRequest;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.JobAdvertisementSearchService;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.JobAdvertisementIndexerService;
@@ -9,6 +11,9 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.util.HeaderUt
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.util.PaginationUtil;
 import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiParam;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -41,7 +46,9 @@ public class JobAdvertisementSearchController {
             @RequestBody @Valid JobAdvertisementSearchRequest jobAdvertisementSearchRequest,
             @ApiParam Pageable pageable) {
 
-        Page<JobAdvertisementDto> page = jobAdvertisementSearchService.search(jobAdvertisementSearchRequest, pageable);
+        Page<JobAdvertisementDto> page = jobAdvertisementSearchService.search(jobAdvertisementSearchRequest, pageable)
+                //todo: Discuss where to put the HTML cleanup. This is suboptimal concerning performance
+                .map(this::sanitizeJobDescription);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/_search/jobs");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
@@ -65,6 +72,19 @@ public class JobAdvertisementSearchController {
         return ResponseEntity.accepted()
                 .headers(HeaderUtil.createAlert("elasticsearch.reindex.jobservice.accepted", ""))
                 .build();
+    }
+
+    private JobAdvertisementDto sanitizeJobDescription(JobAdvertisementDto jobAdvertisementDto) {
+        for (JobDescriptionDto jobDescriptionDto : jobAdvertisementDto.getJobContent().getJobDescriptions()) {
+            String sanitizedDescription = Jsoup.clean(
+                    jobDescriptionDto.getDescription(), 
+                    "",
+                    new Whitelist().addTags("em"),
+                    new Document.OutputSettings().prettyPrint(false));
+            jobDescriptionDto.setDescription(sanitizedDescription);
+        }
+
+        return jobAdvertisementDto;
     }
 
 }

@@ -22,7 +22,6 @@ public class JobAdvertisementDocument {
     }
 
     public JobAdvertisementDocument(JobAdvertisement jobAdvertisement) {
-        //todo: clean up job description with JSOUP
         this.jobAdvertisement = jobAdvertisement;
         this.id = jobAdvertisement.getId().getValue();
     }

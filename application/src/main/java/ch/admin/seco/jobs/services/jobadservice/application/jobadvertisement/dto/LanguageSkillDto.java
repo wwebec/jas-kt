@@ -62,6 +62,10 @@ public class LanguageSkillDto {
     }
 
     public static List<LanguageSkillDto> toDto(List<LanguageSkill> languageSkills) {
-        return languageSkills.stream().map(LanguageSkillDto::toDto).collect(Collectors.toList());
+        if (languageSkills != null) {
+            return languageSkills.stream().map(LanguageSkillDto::toDto).collect(Collectors.toList());
+        }
+
+        return null;
     }
 }

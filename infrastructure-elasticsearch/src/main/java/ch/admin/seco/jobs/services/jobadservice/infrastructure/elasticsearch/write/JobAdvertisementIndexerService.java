@@ -6,7 +6,6 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
@@ -54,7 +53,7 @@ public class JobAdvertisementIndexerService {
 
         stopWatch.start();
 
-        Flux.fromStream(this.jobAdvertisementRepository.streamAll())
+        Flux.fromStream(this.jobAdvertisementRepository.streamAllPublished())
                 .map(JobAdvertisementDocument::new)
                 .buffer(BUFFER_SIZE)
                 .doOnNext(this.jobAdvertisementSearchRepository::saveAll)

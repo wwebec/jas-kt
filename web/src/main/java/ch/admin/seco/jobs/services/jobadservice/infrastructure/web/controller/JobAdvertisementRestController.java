@@ -64,7 +64,7 @@ public class JobAdvertisementRestController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(path = "/{id}/cancel")
-    public void cancel(@PathVariable String id, CancellationResource cancellation) {
+    public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
         jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getReasonCode());
     }
 
