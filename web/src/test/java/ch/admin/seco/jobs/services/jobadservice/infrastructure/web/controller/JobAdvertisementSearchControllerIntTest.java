@@ -45,6 +45,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class JobAdvertisementSearchControllerIntTest {
     private static final String DEFAULT_AVAM_CODE = "11111";
     private static final String DEFAULT_BFS_CODE = "11111111";
+    private static final String API_JOB_ADVERTISEMENTS = "/api/jobAdvertisements";
 
     @Autowired
     private JobAdvertisementRepository jobAdvertisementJpaRepository;
@@ -95,7 +96,7 @@ public class JobAdvertisementSearchControllerIntTest {
 
         // WHEN
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search")
+                post(API_JOB_ADVERTISEMENTS + "/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(new JobAdvertisementSearchRequest()))
         );
@@ -119,7 +120,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setKeywords(new String[]{"entwickler", "java"});
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search")
+                post(API_JOB_ADVERTISEMENTS + "/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -157,7 +158,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setProfessionCodes(new ProfessionCode[]{new ProfessionCode(ProfessionCodeType.BFS, DEFAULT_BFS_CODE)});
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search")
+                post(API_JOB_ADVERTISEMENTS + "/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -194,7 +195,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setCantonCodes(new String[]{"BE"});
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search")
+                post(API_JOB_ADVERTISEMENTS + "/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -222,7 +223,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setWorkloadPercentageMax(80);
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search")
+                post(API_JOB_ADVERTISEMENTS + "/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -249,7 +250,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setCompanyName("Goesser");
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search")
+                post(API_JOB_ADVERTISEMENTS + "/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -275,7 +276,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setPermanent(true);
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_search")
+                post(API_JOB_ADVERTISEMENTS + "/_search")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );
@@ -312,7 +313,7 @@ public class JobAdvertisementSearchControllerIntTest {
         searchRequest.setKeywords(new String[]{"title"});
 
         ResultActions resultActions = mockMvc.perform(
-                post("/api/jobAdvertisement/_count")
+                post(API_JOB_ADVERTISEMENTS + "/_count")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
                         .content(TestUtil.convertObjectToJsonBytes(searchRequest))
         );

@@ -32,6 +32,9 @@ public interface JobAdvertisementRepository extends JpaRepository<JobAdvertiseme
 
     Optional<JobAdvertisement> findByFingerprint(String fingerprint);
 
+    @Query("select j from JobAdvertisement j where j.owner.accessToken = :accessToken")
+    Optional<JobAdvertisement> findOneByAccessToken(@Param("accessToken") String accessToken);
+
     @QueryHints({
             @QueryHint(name = HINT_FETCH_SIZE, value = "1000"),
             @QueryHint(name = HINT_CACHE_MODE, value = "IGNORE")})

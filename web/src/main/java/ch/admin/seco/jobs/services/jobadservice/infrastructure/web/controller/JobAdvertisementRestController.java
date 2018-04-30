@@ -19,7 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/jobAdvertisement")
+@RequestMapping("/api/jobAdvertisements")
 public class JobAdvertisementRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
@@ -44,17 +44,22 @@ public class JobAdvertisementRestController {
     @PostMapping()
     public JobAdvertisementDto createFromWebform(@RequestBody CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromWebForm(createJobAdvertisementDto);
-        return jobAdvertisementApplicationService.findById(jobAdvertisementId);
+        return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
 
     @GetMapping(params = {"page", "size"})
-    public PageResource<JobAdvertisementDto> getJobAdvertisements(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "25") int size) {
+    public PageResource<JobAdvertisementDto> getAll(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "25") int size) {
         return PageResource.of(jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size)));
     }
 
     @GetMapping("/{id}")
-    public JobAdvertisementDto getJobAdvertisement(@PathVariable String id) throws AggregateNotFoundException {
-        return jobAdvertisementApplicationService.findById(new JobAdvertisementId(id));
+    public JobAdvertisementDto getOne(@PathVariable String id) throws AggregateNotFoundException {
+        return jobAdvertisementApplicationService.getById(new JobAdvertisementId(id));
+    }
+
+    @GetMapping("/token/{accessToken}")
+    public JobAdvertisementDto getOneByAccessToken(@PathVariable String accessToken) throws AggregateNotFoundException {
+        return jobAdvertisementApplicationService.getByAccessToken(accessToken);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

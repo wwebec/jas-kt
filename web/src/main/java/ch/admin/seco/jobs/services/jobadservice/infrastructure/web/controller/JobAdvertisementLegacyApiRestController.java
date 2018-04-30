@@ -18,7 +18,7 @@ import javax.validation.Valid;
 
 @Deprecated
 @RestController
-@RequestMapping("/api/jobAdvertisement/api-legacy")
+@RequestMapping("/api/jobAdvertisements/api-legacy")
 public class JobAdvertisementLegacyApiRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
@@ -32,7 +32,7 @@ public class JobAdvertisementLegacyApiRestController {
     public LegacyJobAdvertisementDto create(@RequestBody @Valid LegacyCreateJobAdvertisementDto legacyCreateJobAdvertisementDto) throws AggregateNotFoundException {
         CreateJobAdvertisementDto createJobAdvertisementDto = LegacyToCreateJobAdvertisementDtoConverter.convert(legacyCreateJobAdvertisementDto);
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementDto);
-        JobAdvertisementDto jobAdvertisementDto = jobAdvertisementApplicationService.findById(jobAdvertisementId);
+        JobAdvertisementDto jobAdvertisementDto = jobAdvertisementApplicationService.getById(jobAdvertisementId);
         return LegacyFromJobAdvertisementDtoConverter.convert(jobAdvertisementDto);
     }
 
@@ -44,7 +44,7 @@ public class JobAdvertisementLegacyApiRestController {
 
     @GetMapping(path = "/{id}")
     public LegacyJobAdvertisementDto getOne(@PathVariable String id) {
-        JobAdvertisementDto jobAdvertisementDto = jobAdvertisementApplicationService.findById(new JobAdvertisementId(id));
+        JobAdvertisementDto jobAdvertisementDto = jobAdvertisementApplicationService.getById(new JobAdvertisementId(id));
         return LegacyFromJobAdvertisementDtoConverter.convert(jobAdvertisementDto);
     }
 
