@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}"/>
+    </head>
+    <body>
+        <div>
+            <p th:text="#{mail.jobAd.created.header}"></p>
+            <p th:text="#{mail.jobAd.created.body.paragraph1}"></p>
+            <p th:text="#{mail.jobAd.created.body.paragraph2}"></p>
+            <p th:text="#{mail.jobAd.created.body.reporting.obligation}"></p>
+            <p th:text="#{mail.jobAd.created.body.paragraph3}"></p>
+            <div th:text="#{mail.jobAd.created.body.addressblock.name}"></div>
+            <div th:text="#{mail.jobAd.created.body.addressblock.address}"></div>
+            <div th:text="#{mail.jobAd.created.body.addressblock.plz.city}"></div>
+            <div th:text="#{mail.jobAd.created.body.addressblock.tel}"></div>
+            <div th:text="#{mail.jobAd.created.body.addressblock.fax}"></div>
+            <div th:text="#{mail.jobAd.created.body.addressblock.email}"></div>
+            <p th:text="#{mail.jobAd.created.body.paragraph4}"></p>
+            <p th:text="#{mail.jobAd.created.body.link1}"></p>
+            <p th:text="#{mail.jobAd.footer.paragraph1}"></p>
+            <div th:text="#{mail.jobAd.footer.details1}"></div>
+            <div th:text="#{mail.jobAd.footer.details2}"></div>
+            <div th:text="#{mail.jobAd.footer.details3}"></div>
+        </div>
+    </body>
+</html>

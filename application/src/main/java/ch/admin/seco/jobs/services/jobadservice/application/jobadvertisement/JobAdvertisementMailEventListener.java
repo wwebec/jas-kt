@@ -1,5 +1,19 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
+
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
@@ -10,18 +24,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.J
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefinedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRejectedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
 @Component
 public class JobAdvertisementMailEventListener {
@@ -30,8 +32,10 @@ public class JobAdvertisementMailEventListener {
 
     private static final String JOB_ADVERTISEMENT_CREATED_SUBJECT = "mail.jobAd.created.subject";
     private static final String JOB_ADVERTISEMENT_CREATED_TEMPLATE = "JobAdCreatedMail.html";
+    private static final String JOB_ADVERTISEMENT_CREATED_WITH_REPORTING_OBLIGATION_TEMPLATE = "JobAdCreatedMail_with_reporting_obligation.html";
     private static final String JOB_ADVERTISEMENT_REFINED_SUBJECT = "mail.jobAd.refined.subject";
     private static final String JOB_ADVERTISEMENT_REFINED_TEMPLATE = "JobAdRefinedMail.html";
+    private static final String JOB_ADVERTISEMENT_REFINED_WITH_REPORTING_OBLIGATION_TEMPLATE = "JobAdRefinedMail_with_reporting_obligation.html";
     private static final String JOB_ADVERTISEMENT_REJECTED_SUBJECT = "mail.jobAd.rejected.subject";
     private static final String JOB_ADVERTISEMENT_REJECTED_TEMPLATE = "JobAdRejectedMail.html";
     private static final String JOB_ADVERTISEMENT_CANCELLED_SUBJECT = "mail.jobAd.cancelled.subject";
@@ -61,7 +65,7 @@ public class JobAdvertisementMailEventListener {
                         .setTo(jobAdvertisement.getContact().getEmail())
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CREATED_SUBJECT,
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
-                        .setTemplateName(JOB_ADVERTISEMENT_CREATED_TEMPLATE)
+                        .setTemplateName(jobAdvertisement.isReportingObligation() ? JOB_ADVERTISEMENT_CREATED_WITH_REPORTING_OBLIGATION_TEMPLATE : JOB_ADVERTISEMENT_CREATED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(contactLocale)
                         .build()
@@ -80,7 +84,7 @@ public class JobAdvertisementMailEventListener {
                         .setTo(jobAdvertisement.getContact().getEmail())
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REFINED_SUBJECT,
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
-                        .setTemplateName(JOB_ADVERTISEMENT_REFINED_TEMPLATE)
+                        .setTemplateName(jobAdvertisement.isReportingObligation() ? JOB_ADVERTISEMENT_REFINED_WITH_REPORTING_OBLIGATION_TEMPLATE : JOB_ADVERTISEMENT_REFINED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(contactLocale)
                         .build()
