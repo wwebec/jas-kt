@@ -13,6 +13,10 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebro
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.AVAM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.JOB_AD_SERVICE;
 
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +86,13 @@ public class AvamService {
 
     @StreamListener(target = JOB_AD_ACTION_CHANNEL, condition = CANCEL_CONDITION)
     public void handleCancelAction(CancellationDto cancellationDto) {
-        jobAdvertisementApplicationService.cancel(cancellationDto);
+        JobAdvertisementDto jobAdvertisementDto;
+        if(StringUtils.isNotBlank(cancellationDto.getStellennummerEgov())) {
+            jobAdvertisementDto = jobAdvertisementApplicationService.findByStellennummerEgov(cancellationDto.getStellennummerEgov());
+        } else {
+            jobAdvertisementDto = jobAdvertisementApplicationService.findByStellennummerAvam(cancellationDto.getStellennummerAvam());
+        }
+        Condition.notNull(jobAdvertisementDto, "Couldn't find the jobAdvertisement for stellennummerEgov %s nor stellennummerAvam %s", cancellationDto.getStellennummerEgov(), cancellationDto.getStellennummerAvam());
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(jobAdvertisementDto.getId()), cancellationDto.getDate(), cancellationDto.getCode());
     }
 }

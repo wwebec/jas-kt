@@ -19,9 +19,12 @@ before_install:
 - git fetch --unshallow || true
 - jdk_switcher use oraclejdk8
 - java -version
+- docker-compose -f docker/elasticsearch.yml up -d
 script:
 - chmod +x gradlew
 - "./gradlew clean check"
+after_script:
+- docker-compose -f docker/elasticsearch.yml stop
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 

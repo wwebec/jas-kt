@@ -1,0 +1,238 @@
+{
+  "job-advertisement": {
+    "properties": {
+      "id": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "jobAdvertisement": {
+        "properties": {
+          "id": {
+            "properties": {
+              "value": {
+                "type": "keyword"
+              }
+            }
+          },
+          "jobContent": {
+            "properties": {
+              "applyChannel": {
+                "properties": {
+                  "additionalInfo": {
+                    "type": "text"
+                  },
+                  "emailAddress": {
+                    "type": "text"
+                  },
+                  "formUrl": {
+                    "type": "text"
+                  },
+                  "mailAddress": {
+                    "type": "text"
+                  },
+                  "phoneNumber": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "company": {
+                "properties": {
+                  "city": {
+                    "type": "text"
+                  },
+                  "countryIsoCode": {
+                    "type": "keyword"
+                  },
+                  "name": {
+                    "type": "text",
+                    "analyzer": "ascii_folding"
+                  },
+                  "postalCode": {
+                    "type": "keyword"
+                  },
+                  "street": {
+                    "type": "text"
+                  },
+                  "surrogate": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "employment": {
+                "properties": {
+                  "endDate": {
+                    "type": "date"
+                  },
+                  "immediately": {
+                    "type": "boolean"
+                  },
+                  "permanent": {
+                    "type": "boolean"
+                  },
+                  "shortEmployment": {
+                    "type": "boolean"
+                  },
+                  "startDate": {
+                    "type": "date"
+                  },
+                  "workloadPercentageMax": {
+                    "type": "long"
+                  },
+                  "workloadPercentageMin": {
+                    "type": "long"
+                  }
+                }
+              },
+              "jobDescriptions": {
+                "properties": {
+                  "description": {
+                    "type": "text",
+                    "analyzer": "ascii_folding"
+                  },
+                  "language": {
+                    "type": "text"
+                  },
+                  "title": {
+                    "type": "text",
+                    "analyzer": "ascii_folding"
+                  }
+                }
+              },
+              "languageSkills": {
+                "properties": {
+                  "languageIsoCode": {
+                    "type": "keyword"
+                  },
+                  "spokenLevel": {
+                    "type": "keyword"
+                  },
+                  "writtenLevel": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "location": {
+                "properties": {
+                  "cantonCode": {
+                    "type": "keyword"
+                  },
+                  "city": {
+                    "type": "text"
+                  },
+                  "communalCode": {
+                    "type": "keyword"
+                  },
+                  "countryIsoCode": {
+                    "type": "keyword"
+                  },
+                  "postalCode": {
+                    "type": "keyword"
+                  },
+                  "regionCode": {
+                    "type": "keyword"
+                  },
+                  "remarks": {
+                    "type": "text"
+                  }
+                }
+              },
+              "occupations": {
+                "properties": {
+                  "avamOccupationCode": {
+                    "type": "keyword"
+                  },
+                  "bfsCode": {
+                    "type": "keyword"
+                  },
+                  "sbn3Code": {
+                    "type": "keyword"
+                  },
+                  "sbn5Code": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "publicContact": {
+                "properties": {
+                  "email": {
+                    "type": "text"
+                  },
+                  "firstName": {
+                    "type": "text"
+                  },
+                  "lastName": {
+                    "type": "text"
+                  },
+                  "phone": {
+                    "type": "keyword"
+                  },
+                  "salutation": {
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
+          },
+          "owner": {
+            "properties": {
+              "accessToken": {
+                "type": "keyword"
+              },
+              "companyId": {
+                "type": "keyword"
+              },
+              "userId": {
+                "type": "keyword"
+              }
+            }
+          },
+          "publication": {
+            "properties": {
+              "endDate": {
+                "type": "date"
+              },
+              "euresAnonymous": {
+                "type": "boolean"
+              },
+              "euresDisplay": {
+                "type": "boolean"
+              },
+              "publicAnonymous": {
+                "type": "boolean"
+              },
+              "publicDisplay": {
+                "type": "boolean"
+              },
+              "restrictedAnonymous": {
+                "type": "boolean"
+              },
+              "restrictedDisplay": {
+                "type": "boolean"
+              },
+              "startDate": {
+                "type": "date"
+              }
+            }
+          },
+          "reportToAvam": {
+            "type": "boolean"
+          },
+          "reportingObligation": {
+            "type": "boolean"
+          },
+          "sourceSystem": {
+            "type": "keyword"
+          },
+          "status": {
+            "type": "keyword"
+          }
+        }
+      }
+    }
+  }
+}

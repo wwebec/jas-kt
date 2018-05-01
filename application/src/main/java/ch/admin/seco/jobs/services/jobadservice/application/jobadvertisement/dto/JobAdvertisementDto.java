@@ -1,11 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
 public class JobAdvertisementDto {
 
@@ -27,8 +30,6 @@ public class JobAdvertisementDto {
     private LocalDate cancellationDate;
     private String cancellationCode;
     private JobContentDto jobContent;
-    private OwnerDto owner;
-    private ContactDto contact;
     private PublicationDto publication;
 
     protected JobAdvertisementDto() {
@@ -54,8 +55,6 @@ public class JobAdvertisementDto {
         this.cancellationDate = cancellationDate;
         this.cancellationCode = cancellationCode;
         this.jobContent = jobContent;
-        this.owner = owner;
-        this.contact = contact;
         this.publication = publication;
     }
 
@@ -203,22 +202,6 @@ public class JobAdvertisementDto {
         this.jobContent = jobContent;
     }
 
-    public OwnerDto getOwner() {
-        return owner;
-    }
-
-    public void setOwner(OwnerDto owner) {
-        this.owner = owner;
-    }
-
-    public ContactDto getContact() {
-        return contact;
-    }
-
-    public void setContact(ContactDto contact) {
-        this.contact = contact;
-    }
-
     public PublicationDto getPublication() {
         return publication;
     }
@@ -247,12 +230,14 @@ public class JobAdvertisementDto {
         jobAdvertisementDto.setCancellationDate(jobAdvertisement.getCancellationDate());
         jobAdvertisementDto.setCancellationCode(jobAdvertisement.getCancellationCode());
         jobAdvertisementDto.setJobContent(JobContentDto.toDto(jobAdvertisement.getJobContent()));
-        jobAdvertisementDto.setOwner(OwnerDto.toDto(jobAdvertisement.getOwner()));
-        jobAdvertisementDto.setContact(ContactDto.toDto(jobAdvertisement.getContact()));
         jobAdvertisementDto.setPublication(PublicationDto.toDto(jobAdvertisement.getPublication()));
 
         // Eager load data from ElementCollection
-        jobAdvertisementDto.getJobContent().getEmployment().setWorkForms(new HashSet<>(jobAdvertisement.getJobContent().getEmployment().getWorkForms()));
+        Set<WorkForm> workForms = jobAdvertisement.getJobContent().getEmployment().getWorkForms() != null
+                ? jobAdvertisement.getJobContent().getEmployment().getWorkForms()
+                : Collections.emptySet();
+
+        jobAdvertisementDto.getJobContent().getEmployment().setWorkForms(new HashSet<>(workForms));
         return jobAdvertisementDto;
     }
 }

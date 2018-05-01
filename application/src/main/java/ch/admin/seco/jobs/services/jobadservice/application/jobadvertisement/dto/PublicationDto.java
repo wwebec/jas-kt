@@ -10,13 +10,12 @@ public class PublicationDto {
     @NotNull
     private LocalDate startDate;
 
-    @NotNull
     private LocalDate endDate;
 
     private boolean euresDisplay;
     private boolean euresAnonymous;
     private boolean publicDisplay;
-    private boolean publicAnonynomous;
+    private boolean publicAnonymous;
     private boolean restrictedDisplay;
     private boolean restrictedAnonymous;
 
@@ -24,13 +23,13 @@ public class PublicationDto {
         // For reflection libs
     }
 
-    public PublicationDto(LocalDate startDate, LocalDate endDate, boolean euresDisplay, boolean euresAnonymous, boolean publicDisplay, boolean publicAnonynomous, boolean restrictedDisplay, boolean restrictedAnonymous) {
+    public PublicationDto(LocalDate startDate, LocalDate endDate, boolean euresDisplay, boolean euresAnonymous, boolean publicDisplay, boolean publicAnonymous, boolean restrictedDisplay, boolean restrictedAnonymous) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.euresDisplay = euresDisplay;
         this.euresAnonymous = euresAnonymous;
         this.publicDisplay = publicDisplay;
-        this.publicAnonynomous = publicAnonynomous;
+        this.publicAnonymous = publicAnonymous;
         this.restrictedDisplay = restrictedDisplay;
         this.restrictedAnonymous = restrictedAnonymous;
     }
@@ -75,12 +74,12 @@ public class PublicationDto {
         this.publicDisplay = publicDisplay;
     }
 
-    public boolean isPublicAnonynomous() {
-        return publicAnonynomous;
+    public boolean isPublicAnonymous() {
+        return publicAnonymous;
     }
 
-    public void setPublicAnonynomous(boolean publicAnonynomous) {
-        this.publicAnonynomous = publicAnonynomous;
+    public void setPublicAnonymous(boolean publicAnonymous) {
+        this.publicAnonymous = publicAnonymous;
     }
 
     public boolean isRestrictedDisplay() {
@@ -106,7 +105,7 @@ public class PublicationDto {
         publicationDto.setEuresDisplay(publication.isEuresDisplay());
         publicationDto.setEuresAnonymous(publication.isEuresAnonymous());
         publicationDto.setPublicDisplay(publication.isPublicDisplay());
-        publicationDto.setPublicAnonynomous(publication.isPublicAnonymous());
+        publicationDto.setPublicAnonymous(publication.isPublicAnonymous());
         publicationDto.setRestrictedDisplay(publication.isRestrictedDisplay());
         publicationDto.setRestrictedAnonymous(publication.isRestrictedAnonymous());
         return publicationDto;

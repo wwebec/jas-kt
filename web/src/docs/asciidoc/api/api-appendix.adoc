@@ -1,0 +1,46 @@
+
+== Salutations
+
+[cols="20,80"]
+|===
+| Value | Description
+
+| MR |
+| MS |
+|===
+
+== Work forms
+
+[cols="20,80"]
+|===
+| Value | Description
+
+| SUNDAY_AND_HOLIDAYS |
+| SHIFT_WORK |
+| NIGHT_WORK |
+| HOME_WORK |
+|===
+
+== Work experiences
+
+[cols="20,80"]
+|===
+| Value | Description
+
+| LESS_THAN_1_YEAR |
+| MORE_THAN_1_YEAR |
+| MORE_THAN_3_YEARS |
+|===
+
+== Spoken and written levels
+
+[cols="20,80"]
+|===
+| Value | Description
+
+| NONE |
+| BASIC |
+| INTERMEDIATE |
+| PROFICIENT |
+|===
+see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels]
