@@ -28,10 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -170,6 +167,38 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(header().string("X-Total-Count", "2"))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_04.getValue())))
+        ;
+    }
+
+    @Test
+    public void shouldSearchByOccupation_X28() throws Exception {
+
+        // GIVEN
+        index(createJobWithX28Code(JOB_ADVERTISEMENT_ID_01, "1111,2222"));
+        index(createJobWithX28Code(JOB_ADVERTISEMENT_ID_02, "1111"));
+        index(createJobWithX28Code(JOB_ADVERTISEMENT_ID_03, "3333"));
+        index(createJobWithX28Code(JOB_ADVERTISEMENT_ID_04, "4444"));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+        searchRequest.setProfessionCodes(new ProfessionCode[]{
+                new ProfessionCode(ProfessionCodeType.X28, "1111"),
+                new ProfessionCode(ProfessionCodeType.X28, "44")
+        });
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "2"))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
         ;
     }
 
@@ -455,6 +484,26 @@ public class JobAdvertisementSearchControllerIntTest {
                 .build();
     }
 
+    private JobAdvertisement createJobWithX28Code(JobAdvertisementId jobAdvertisementId, String x28Codes) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.CREATED)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication())
+                .setJobContent(new JobContent.Builder()
+                        .setX28OccupationCodes(x28Codes)
+                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
+                        .setCompany(createCompany(jobAdvertisementId))
+                        .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
+                        .setEmployment(createEmployment())
+                        .setPublicContact(createPublicContact(jobAdvertisementId))
+                        .setApplyChannel(createApplyChannel())
+                        .setLocation(createLocation())
+                        .setOccupations(Collections.singletonList(createOccupation()))
+                        .build())
+                .build();
+    }
 
     private JobAdvertisement createJobWithOccupation(JobAdvertisementId jobAdvertisementId, Occupation occupation) {
         return new JobAdvertisement.Builder()

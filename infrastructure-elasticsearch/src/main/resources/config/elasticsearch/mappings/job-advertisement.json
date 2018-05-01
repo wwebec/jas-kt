@@ -175,6 +175,10 @@
                     "type": "keyword"
                   }
                 }
+              },
+              "x28OccupationCodes": {
+                "type": "text",
+                "analyzer": "simple_csv_analyzer"
               }
             }
           },

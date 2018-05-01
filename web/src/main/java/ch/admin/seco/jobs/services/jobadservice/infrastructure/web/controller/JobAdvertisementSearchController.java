@@ -3,19 +3,16 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.JobAdvertisementSearchRequest;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.JobAdvertisementSearchService;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.JobAdvertisementIndexerService;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.util.HeaderUtil;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.util.PaginationUtil;
 import com.codahale.metrics.annotation.Timed;
-import io.swagger.annotations.ApiParam;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -44,13 +41,16 @@ public class JobAdvertisementSearchController {
     @Timed
     public ResponseEntity<List<JobAdvertisementDto>> searchJobs(
             @RequestBody @Valid JobAdvertisementSearchRequest jobAdvertisementSearchRequest,
-            @ApiParam Pageable pageable) {
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "20") int size,
+            @RequestParam(defaultValue = "score") JobAdvertisementSearchService.SearchSort sort
+    ) {
 
-        Page<JobAdvertisementDto> page = jobAdvertisementSearchService.search(jobAdvertisementSearchRequest, pageable)
+        Page<JobAdvertisementDto> resultPage = jobAdvertisementSearchService.search(jobAdvertisementSearchRequest, page, size, sort)
                 //todo: Discuss where to put the HTML cleanup. This is suboptimal concerning performance
                 .map(this::sanitizeJobDescription);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/_search/jobs");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(resultPage, "/api/_search/jobs");
+        return new ResponseEntity<>(resultPage.getContent(), headers, HttpStatus.OK);
     }
 
     @PostMapping("/_count")

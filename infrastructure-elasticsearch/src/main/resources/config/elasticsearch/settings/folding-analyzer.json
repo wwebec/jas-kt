@@ -8,12 +8,19 @@
           "german_normalization",
           "asciifolding"
         ]
+      },
+      "simple_csv_analyzer": {
+        "tokenizer": "simple_csv_tokenizer"
       }
     },
     "tokenizer": {
       "extended_whitespace": {
         "type": "pattern",
         "pattern": "[^\\u00C0-\\u017Fa-z\\w+\\+\\#@]+"
+      },
+      "simple_csv_tokenizer": {
+        "type": "pattern",
+        "pattern": ","
       }
     }
   }

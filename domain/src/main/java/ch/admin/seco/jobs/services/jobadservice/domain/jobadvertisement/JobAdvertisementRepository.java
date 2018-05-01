@@ -42,4 +42,9 @@ public interface JobAdvertisementRepository extends JpaRepository<JobAdvertiseme
             "where j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED " +
             "or j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC ")
     Stream<JobAdvertisement> streamAllPublished();
+
+    @Query("select count(j.id) from JobAdvertisement j " +
+            "where j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED " +
+            "or j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC ")
+    long countPublished();
 }

@@ -13,7 +13,9 @@ import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.DefaultResultMapper;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.ResultsMapper;
@@ -41,6 +43,11 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
 
 @Service
 public class JobAdvertisementSearchService {
+    public enum SearchSort {
+        score,
+        date_asc,
+        date_desc;
+    }
 
     private static final String PATH_CTX = "jobAdvertisement.";
     private static final String PATH_AVAM_JOB_ID = PATH_CTX + "stellennummerAvam";
@@ -55,6 +62,7 @@ public class JobAdvertisementSearchService {
     private static final String PATH_OCCUPATIONS_BFS_CODE = PATH_OCCUPATIONS + ".bfsCode";
     private static final String PATH_OCCUPATIONS_SBN3_CODE = PATH_OCCUPATIONS + ".sbn3Code";
     private static final String PATH_OCCUPATIONS_SBN5_CODE = PATH_OCCUPATIONS + ".sbn5Code";
+    private static final String PATH_X28_CODE = PATH_CTX + "jobContent.x28OccupationCodes";
     private static final String PATH_PERMANENT = PATH_CTX + "jobContent.employment.permanent";
     private static final String PATH_PUBLICATION_START_DATE = PATH_CTX + "publication.startDate";
     private static final String PATH_TITLE = PATH_CTX + "jobContent.jobDescriptions.title";
@@ -72,7 +80,8 @@ public class JobAdvertisementSearchService {
         this.resultsMapper = new DefaultResultMapper(elasticsearchTemplate.getElasticsearchConverter().getMappingContext(), customEntityMapper);
     }
 
-    public Page<JobAdvertisementDto> search(JobAdvertisementSearchRequest jobSearchRequest, Pageable pageable) {
+    public Page<JobAdvertisementDto> search(JobAdvertisementSearchRequest jobSearchRequest, int page, int size, SearchSort sort) {
+        Pageable pageable = PageRequest.of(page, size, createSort(sort));
         SearchQuery searchQuery = createSearchQueryBuilder(jobSearchRequest)
                 .withPageable(pageable)
                 .withHighlightFields(new HighlightBuilder.Field("*").fragmentSize(300).numOfFragments(1))
@@ -100,6 +109,16 @@ public class JobAdvertisementSearchService {
         return elasticsearchTemplate.count(countQuery, JobAdvertisementDocument.class);
     }
 
+    private Sort createSort(SearchSort sort) {
+        switch (sort) {
+            case date_asc:
+                return Sort.by(Sort.Order.asc(PATH_PUBLICATION_START_DATE));
+            case date_desc:
+                return Sort.by(Sort.Order.desc(PATH_PUBLICATION_START_DATE));
+            default:
+                return Sort.unsorted();
+        }
+    }
 
     private NativeSearchQueryBuilder createSearchQueryBuilder(JobAdvertisementSearchRequest jobSearchRequest) {
         //todo add visibility filter
@@ -141,6 +160,9 @@ public class JobAdvertisementSearchService {
                 break;
             case SBN5:
                 path = PATH_OCCUPATIONS_SBN5_CODE;
+                break;
+            case X28:
+                path = PATH_X28_CODE;
                 break;
             default:
                 path = null;

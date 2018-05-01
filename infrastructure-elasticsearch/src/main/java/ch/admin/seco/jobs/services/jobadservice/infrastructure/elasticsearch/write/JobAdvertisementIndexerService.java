@@ -46,7 +46,7 @@ public class JobAdvertisementIndexerService {
 
         disableHibernateSecondaryCache();
 
-        final long total = this.jobAdvertisementRepository.count();
+        final long total = this.jobAdvertisementRepository.countPublished();
         final AtomicInteger index = new AtomicInteger(0);
         final AtomicInteger counter = new AtomicInteger(0);
         final StopWatch stopWatch = new StopWatch();
