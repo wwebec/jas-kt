@@ -290,7 +290,6 @@ public class JobAdvertisementApplicationService {
     }
 
     public void approve(ApprovalDto approvalDto) {
-        // TODO tbd where/when the data updates has to be done (over ApprovalDto --> JobAdUpdater?)
         Condition.notNull(approvalDto.getStellennummerEgov(), "StellennummerEgov can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(approvalDto.getStellennummerEgov());
         LOG.debug("Starting approve for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
