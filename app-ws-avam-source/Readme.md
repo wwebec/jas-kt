@@ -13,7 +13,7 @@ This app provides an Web Service endpoint and publish the data into the `jobad.a
 ```bash
 # Register 'App'
 curl 'http://dev.job-room.ch:9393/apps/source/wsavam' -i -X POST \
-  -d 'force=true&uri=maven%3A%2F%2Fch.admin.seco.jobs.services.jobadservice%3Aapp-ws-avam-source%3A<version>'
+  -d 'force=true&uri=maven://ch.admin.seco.jobs.services.jobadservice:app-ws-avam-source:<version>'
 
 # Delete existing stream
 curl http://dev.job-room.ch:9393/streams/definitions/ws-avam-import -i -X DELETE

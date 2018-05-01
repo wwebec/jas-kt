@@ -11,11 +11,8 @@ public class JobAdvertisementUpdater {
 
     static final String SECTION_FINGERPRINT = "SECTION_FINGERPRINT";
     static final String SECTION_X28_OCCUPATION_CODES = "SECTION_X28_OCCUPATION_CODES";
-    static final String SECTION_SOURCE_ENTRY_ID = "SECTION_SOURCE_ENTRY_ID";
-    static final String SECTION_EXTERNAL_URL = "SECTION_EXTERNAL_URL";
     static final String SECTION_REPORTING_OBLIGATION = "SECTION_REPORTING_OBLIGATION";
-    static final String SECTION_PUBLICATION_DATES = "SECTION_PUBLICATION_DATES";
-    static final String SECTION_EURES = "SECTION_EURES";
+    static final String SECTION_PUBLICATION = "SECTION_PUBLICATION";
     static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
     static final String SECTION_JOB_CENTER_CODE = "SECTION_JOB_CENTER_CODE";
     static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
@@ -24,11 +21,6 @@ public class JobAdvertisementUpdater {
     static final String SECTION_LOCATION = "SECTION_LOCATION";
     static final String SECTION_OCCUPATIONS = "SECTION_OCCUPATIONS";
     static final String SECTION_LANGUAGE_SKILLS = "SECTION_LANGUAGE_SKILLS";
-    static final String SECTION_WORK_FORMS = "SECTION_WORK_FORMS";
-    static final String SECTION_PUBLIC_ANONYMOUS = "SECTION_PUBLIC_ANONYMOUS";
-    static final String SECTION_PUBLIC_DISPLAY = "SECTION_PUBLIC_DISPLAY";
-    static final String SECTION_RESTRICTED_ANONYMOUS = "SECTION_RESTRICTED_ANONYMOUS";
-    static final String SECTION_RESTRICTED_DISPLAY = "SECTION_RESTRICTED_DISPLAY";
 
     private Set<String> changedSections;
 
@@ -38,11 +30,9 @@ public class JobAdvertisementUpdater {
 
     private String x28OccupationCodes;
 
-    private String externalReference;
-
-    private String externalUrl;
-
     private boolean reportingObligation;
+
+    private LocalDate reportingObligationEndDate;
 
     private Employment employment;
 
@@ -60,32 +50,15 @@ public class JobAdvertisementUpdater {
 
     private List<LanguageSkill> languageSkills;
 
-    private Set<WorkForm> workForms;
-
-    private LocalDate publicationStartDate;
-
-    private LocalDate publicationEndDate;
-
-    private boolean eures;
-
-    private boolean euresAnonymous;
-
-    private boolean publicDisplay;
-
-    private boolean publicAnonymous;
-
-    private boolean restrictedDisplay;
-
-    private boolean restrictedAnonymous;
+    private Publication publication;
 
     public JobAdvertisementUpdater(Builder builder) {
         this.changedSections = builder.changedSections;
         this.auditUser = builder.auditUser;
         this.fingerprint = builder.fingerprint;
         this.x28OccupationCodes = builder.x28OccupationCodes;
-        this.externalReference = builder.externalReference;
-        this.externalUrl = builder.externalUrl;
         this.reportingObligation = builder.reportingObligation;
+        this.reportingObligationEndDate = builder.reportingObligationEndDate;
         this.employment = builder.employment;
         this.jobCenterCode = builder.jobCenterCode;
         this.applyChannel = builder.applyChannel;
@@ -94,15 +67,7 @@ public class JobAdvertisementUpdater {
         this.location = builder.location;
         this.occupations = builder.occupations;
         this.languageSkills = builder.languageSkills;
-        this.workForms = builder.workForms;
-        this.publicationStartDate = builder.publicationStartDate;
-        this.publicationEndDate = builder.publicationEndDate;
-        this.eures = builder.eures;
-        this.euresAnonymous = builder.euresAnonymous;
-        this.publicDisplay = builder.publicDisplay;
-        this.publicAnonymous = builder.publicAnonymous;
-        this.restrictedDisplay = builder.restrictedDisplay;
-        this.restrictedAnonymous = builder.restrictedAnonymous;
+        this.publication = builder.publication;
     }
 
     public boolean hasAnyChangesIn(String section) {
@@ -121,16 +86,12 @@ public class JobAdvertisementUpdater {
         return x28OccupationCodes;
     }
 
-    public String getExternalReference() {
-        return externalReference;
-    }
-
-    public String getExternalUrl() {
-        return externalUrl;
-    }
-
     public boolean isReportingObligation() {
         return reportingObligation;
+    }
+
+    public LocalDate getReportingObligationEndDate() {
+        return reportingObligationEndDate;
     }
 
     public Employment getEmployment() {
@@ -165,40 +126,8 @@ public class JobAdvertisementUpdater {
         return languageSkills;
     }
 
-    public Set<WorkForm> getWorkForms() {
-        return workForms;
-    }
-
-    public LocalDate getPublicationStartDate() {
-        return publicationStartDate;
-    }
-
-    public LocalDate getPublicationEndDate() {
-        return publicationEndDate;
-    }
-
-    public boolean isEures() {
-        return eures;
-    }
-
-    public boolean isEuresAnonymous() {
-        return euresAnonymous;
-    }
-
-    public boolean isPublicAnonymous() {
-        return publicAnonymous;
-    }
-
-    public boolean isPublicDisplay() {
-        return publicDisplay;
-    }
-
-    public boolean isRestrictedAnonymous() {
-        return restrictedAnonymous;
-    }
-
-    public boolean isRestrictedDisplay() {
-        return restrictedDisplay;
+    public Publication getPublication() {
+        return publication;
     }
 
     public static class Builder {
@@ -207,9 +136,8 @@ public class JobAdvertisementUpdater {
         private AuditUser auditUser;
         private String fingerprint;
         private String x28OccupationCodes;
-        private String externalReference;
-        private String externalUrl;
         private boolean reportingObligation;
+        private LocalDate reportingObligationEndDate;
         private Employment employment;
         private String jobCenterCode;
         private ApplyChannel applyChannel;
@@ -218,15 +146,7 @@ public class JobAdvertisementUpdater {
         private Location location;
         private List<Occupation> occupations;
         private List<LanguageSkill> languageSkills;
-        private Set<WorkForm> workForms;
-        private LocalDate publicationStartDate;
-        private LocalDate publicationEndDate;
-        private boolean eures;
-        private boolean euresAnonymous;
-        private boolean publicDisplay;
-        private boolean publicAnonymous;
-        private boolean restrictedDisplay;
-        private boolean restrictedAnonymous;
+        private Publication publication;
 
         public Builder(AuditUser auditUser) {
             this.auditUser = auditUser;
@@ -248,21 +168,10 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setExternalReference(String externalReference) {
-            this.changedSections.add(SECTION_SOURCE_ENTRY_ID);
-            this.externalReference = externalReference;
-            return this;
-        }
-
-        public Builder setExternalUrl(String externalUrl) {
-            this.changedSections.add(SECTION_EXTERNAL_URL);
-            this.externalUrl = externalUrl;
-            return this;
-        }
-
-        public Builder setReportingObligation(boolean reportingObligation) {
+        public Builder setReportingObligation(boolean reportingObligation, LocalDate reportingObligationEndDate) {
             this.changedSections.add(SECTION_REPORTING_OBLIGATION);
             this.reportingObligation = reportingObligation;
+            this.reportingObligationEndDate = reportingObligationEndDate;
             return this;
         }
 
@@ -314,47 +223,9 @@ public class JobAdvertisementUpdater {
             return this;
         }
 
-        public Builder setWorkForms(Set<WorkForm> workForms) {
-            this.changedSections.add(SECTION_WORK_FORMS);
-            this.workForms = workForms;
-            return this;
-        }
-
-        public Builder setPublicationDates(LocalDate publicationStartDate, LocalDate publicationEndDate) {
-            this.changedSections.add(SECTION_PUBLICATION_DATES);
-            this.publicationStartDate = publicationStartDate;
-            this.publicationEndDate = publicationEndDate;
-            return this;
-        }
-
-        public Builder setEures(boolean eures, boolean anonymous) {
-            this.changedSections.add(SECTION_EURES);
-            this.eures = !anonymous && eures;
-            this.euresAnonymous = anonymous && eures;
-            return this;
-        }
-
-        public Builder setPublicDisplay(boolean publicDisplay) {
-            this.changedSections.add(SECTION_PUBLIC_DISPLAY);
-            this.publicDisplay = publicDisplay;
-            return this;
-        }
-
-        public Builder setPublicAnonymous(boolean publicAnonymous) {
-            this.changedSections.add(SECTION_PUBLIC_ANONYMOUS);
-            this.publicAnonymous = publicAnonymous;
-            return this;
-        }
-
-        public Builder setRestrictedDisplay(boolean restrictedDisplay) {
-            this.changedSections.add(SECTION_RESTRICTED_DISPLAY);
-            this.restrictedDisplay = restrictedDisplay;
-            return this;
-        }
-
-        public Builder setRestrictedAnonymous(boolean restrictedAnonymous) {
-            this.changedSections.add(SECTION_RESTRICTED_ANONYMOUS);
-            this.restrictedAnonymous = restrictedAnonymous;
+        public Builder setPublication(Publication publication) {
+            this.changedSections.add(SECTION_PUBLICATION);
+            this.publication = publication;
             return this;
         }
     }

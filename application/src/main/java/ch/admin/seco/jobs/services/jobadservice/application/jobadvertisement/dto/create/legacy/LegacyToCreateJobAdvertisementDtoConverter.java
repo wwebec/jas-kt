@@ -3,9 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.core.utils.MappingBuilder;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
 
 import java.util.Collections;
@@ -13,43 +10,32 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-public class LegacyToJobAdvertisementConverter {
+public class LegacyToCreateJobAdvertisementDtoConverter {
 
     private static final String DEFAULT_LANGUAGE_ISO_CODE = "de";
 
-    private static final MappingBuilder<LegacyTitleEnum, Salutation> MAPPING_TITLE = new MappingBuilder<LegacyTitleEnum, Salutation>()
-            .put(LegacyTitleEnum.MISTER, Salutation.MR)
-            .put(LegacyTitleEnum.MADAM, Salutation.MS)
-            .toImmutable();
-
-    private static final MappingBuilder<LegacyLanguageLevelEnum, LanguageLevel> MAPPING_LANGUAGE_LEVEL = new MappingBuilder<LegacyLanguageLevelEnum, LanguageLevel>()
-            .put(LegacyLanguageLevelEnum.NO_KNOWLEDGE, LanguageLevel.NONE)
-            .put(LegacyLanguageLevelEnum.BASIC_KNOWLEDGE, LanguageLevel.BASIC)
-            .put(LegacyLanguageLevelEnum.GOOD, LanguageLevel.INTERMEDIATE)
-            .put(LegacyLanguageLevelEnum.VERY_GOOD, LanguageLevel.PROFICIENT)
-            .toImmutable();
-
-    public static CreateJobAdvertisementDto convert(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
+    public static CreateJobAdvertisementDto convert(LegacyCreateJobAdvertisementDto legacyCreateJobAdvertisementDto) {
         return new CreateJobAdvertisementDto(
                 false,
-                legacyJobAdvertisementDto.getUrl(),
-                convertContactDto(legacyJobAdvertisementDto.getContact()),
-                convertPublicationDto(legacyJobAdvertisementDto),
-                convertJobDescriptions(legacyJobAdvertisementDto),
-                convertCompanyDto(legacyJobAdvertisementDto.getCompany()),
+                legacyCreateJobAdvertisementDto.getUrl(),
+                legacyCreateJobAdvertisementDto.getReference(),
+                convertContactDto(legacyCreateJobAdvertisementDto.getContact()),
+                convertPublicationDto(legacyCreateJobAdvertisementDto),
+                convertJobDescriptions(legacyCreateJobAdvertisementDto),
+                convertCompanyDto(legacyCreateJobAdvertisementDto.getCompany()),
                 null,
-                convertEmploymentDto(legacyJobAdvertisementDto.getJob()),
-                convertLocationDto(legacyJobAdvertisementDto.getJob().getLocation()),
+                convertEmploymentDto(legacyCreateJobAdvertisementDto.getJob()),
+                convertLocationDto(legacyCreateJobAdvertisementDto.getJob().getLocation()),
                 null,
-                convertLanguageSkills(legacyJobAdvertisementDto.getJob().getLanguageSkills()),
-                convertApplyChannelDto(legacyJobAdvertisementDto),
-                convertPublicContactDto(legacyJobAdvertisementDto.getContact())
+                convertLanguageSkills(legacyCreateJobAdvertisementDto.getJob().getLanguageSkills()),
+                convertApplyChannelDto(legacyCreateJobAdvertisementDto),
+                convertPublicContactDto(legacyCreateJobAdvertisementDto.getContact())
         );
     }
 
     private static PublicContactDto convertPublicContactDto(LegacyContactDto contact) {
         return new PublicContactDto(
-                MAPPING_TITLE.getRight(contact.getTitle()),
+                LegacyTitleEnum.MAPPING_TITLE.getRight(contact.getTitle()),
                 contact.getFirstName(),
                 contact.getLastName(),
                 contact.getPhoneNumber(),
@@ -57,12 +43,12 @@ public class LegacyToJobAdvertisementConverter {
         );
     }
 
-    private static ApplyChannelDto convertApplyChannelDto(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
+    private static ApplyChannelDto convertApplyChannelDto(LegacyCreateJobAdvertisementDto legacyCreateJobAdvertisementDto) {
         return new ApplyChannelDto(
                 null,
-                legacyJobAdvertisementDto.getCompany().getEmail(),
-                legacyJobAdvertisementDto.getCompany().getPhoneNumber(),
-                legacyJobAdvertisementDto.getApplicationUrl(),
+                legacyCreateJobAdvertisementDto.getCompany().getEmail(),
+                legacyCreateJobAdvertisementDto.getCompany().getPhoneNumber(),
+                legacyCreateJobAdvertisementDto.getApplicationUrl(),
                 null
         );
     }
@@ -71,8 +57,8 @@ public class LegacyToJobAdvertisementConverter {
         return languageSkills.stream()
                 .map(legacyLanguageSkillDto -> new LanguageSkillDto(
                                 legacyLanguageSkillDto.getLanguage(),
-                                MAPPING_LANGUAGE_LEVEL.getRight(legacyLanguageSkillDto.getSpokenLevel()),
-                                MAPPING_LANGUAGE_LEVEL.getRight(legacyLanguageSkillDto.getWrittenLevel())
+                                LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getRight(legacyLanguageSkillDto.getSpokenLevel()),
+                                LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getRight(legacyLanguageSkillDto.getWrittenLevel())
                         )
                 )
                 .collect(toList());
@@ -119,20 +105,20 @@ public class LegacyToJobAdvertisementConverter {
         );
     }
 
-    private static List<JobDescriptionDto> convertJobDescriptions(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
+    private static List<JobDescriptionDto> convertJobDescriptions(LegacyCreateJobAdvertisementDto legacyCreateJobAdvertisementDto) {
         return Collections.singletonList(
                 new JobDescriptionDto(
                         DEFAULT_LANGUAGE_ISO_CODE,
-                        legacyJobAdvertisementDto.getJob().getTitle(),
-                        legacyJobAdvertisementDto.getJob().getDescription()
+                        legacyCreateJobAdvertisementDto.getJob().getTitle(),
+                        legacyCreateJobAdvertisementDto.getJob().getDescription()
                 )
         );
     }
 
-    private static PublicationDto convertPublicationDto(LegacyJobAdvertisementDto legacyJobAdvertisementDto) {
+    private static PublicationDto convertPublicationDto(LegacyCreateJobAdvertisementDto legacyCreateJobAdvertisementDto) {
         return new PublicationDto(
-                legacyJobAdvertisementDto.getPublicationStartDate(),
-                legacyJobAdvertisementDto.getPublicationEndDate(),
+                legacyCreateJobAdvertisementDto.getPublicationStartDate(),
+                legacyCreateJobAdvertisementDto.getPublicationEndDate(),
                 false,
                 false,
                 true,
@@ -144,7 +130,7 @@ public class LegacyToJobAdvertisementConverter {
 
     private static ContactDto convertContactDto(LegacyContactDto contact) {
         return new ContactDto(
-                MAPPING_TITLE.getRight(contact.getTitle()),
+                LegacyTitleEnum.MAPPING_TITLE.getRight(contact.getTitle()),
                 contact.getFirstName(),
                 contact.getLastName(),
                 contact.getPhoneNumber(),

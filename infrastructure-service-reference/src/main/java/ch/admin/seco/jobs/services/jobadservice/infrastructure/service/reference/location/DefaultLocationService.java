@@ -43,12 +43,19 @@ public class DefaultLocationService implements LocationService {
                             .setRegionCode(matchingLocationResource.getRegionCode())
                             .setCantonCode(matchingLocationResource.getCantonCode())
                             .setCountryIsoCode(location.getCountryIsoCode())
-                            .setCoordinates(new GeoPoint(matchingLocationResource.getGeoPoint().getLongitude(), matchingLocationResource.getGeoPoint().getLatitude()))
+                            .setCoordinates(getGeoPoint(matchingLocationResource))
                             .build();
                 }
             }
         }
         return location;
+    }
+
+    private GeoPoint getGeoPoint(LocationResource matchingLocationResource) {
+        if (matchingLocationResource.getGeoPoint() == null) {
+            return null;
+        }
+        return new GeoPoint(matchingLocationResource.getGeoPoint().getLongitude(), matchingLocationResource.getGeoPoint().getLatitude());
     }
 
     private boolean isManagedCountry(String countryIsoCode) {

@@ -23,16 +23,3 @@ public interface LocationApiClient {
 
 }
 
-@Component
-class LocationApiClientFallback implements LocationApiClient {
-
-    @Override
-    public LocationResource getLocationById(UUID id) {
-        return null;
-    }
-
-    @Override
-    public List<LocationResource> findLocationByPostalCode(String postalCode) {
-        return Collections.emptyList();
-    }
-}

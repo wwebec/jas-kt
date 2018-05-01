@@ -4,7 +4,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.database.eventst
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventType;
 
 //class StoredEventRepositoryImpl extends QueryDslRepositorySupport implements StoredEventRepositoryCustom {
-class StoredEventRepositoryImpl implements StoredEventRepositoryCustom {
+public class StoredEventRepositoryImpl implements StoredEventRepositoryCustom {
 
     StoredEventRepositoryImpl() {
     }

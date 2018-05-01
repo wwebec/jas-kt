@@ -44,6 +44,7 @@
             <xs:element name="bewerAngaben" nillable="true" type="xs:string"/>
             <xs:element name="bezeichnung" nillable="false" type="xs:string"/>
             <xs:element name="bq1AusbildungCode" nillable="true" type="xs:string"/>
+            <xs:element name="bq1AvamBerufNr" nillable="true" type="xs:string"/>
             <xs:element name="bq1AvamBeruf" nillable="true" type="xs:string"/>
             <xs:element name="bq1ErfahrungCode" nillable="true" type="xs:string"/>
             <xs:element name="bq1QualifikationCode" nillable="true" type="xs:string"/>

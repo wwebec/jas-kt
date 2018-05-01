@@ -23,6 +23,7 @@ spring:
                     group: x28-importer-task
 
 
+
 ##############################
 #  X28 SFTP
 ##############################
@@ -35,3 +36,10 @@ jobroom:
             host: admin.x28.ch
             username: replace-with-username
             password: replace-with-password
+
+##############################
+#  LOGGING
+##############################
+logging:
+    level:
+        org.apache.kafka.clients: warn

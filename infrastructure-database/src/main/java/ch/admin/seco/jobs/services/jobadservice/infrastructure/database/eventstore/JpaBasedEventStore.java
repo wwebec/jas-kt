@@ -14,7 +14,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventData;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
 
 @Transactional(readOnly = true)
-class JpaBasedEventStore implements EventStore {
+public class JpaBasedEventStore implements EventStore {
 
     private final StoredEventRepository storedEventRepository;
 

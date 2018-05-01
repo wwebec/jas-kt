@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+<definitions xmlns:xsd1="http://valueobjects.common.avam.bit.admin.ch"
              xmlns:tns="http://ws.web.egov.avam.bit.admin.ch"
              xmlns:xs="http://www.w3.org/2001/XMLSchema"
-             xmlns:xsd1="http://valueobjects.common.avam.bit.admin.ch"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              targetNamespace="http://ws.web.egov.avam.bit.admin.ch"
              xmlns="http://schemas.xmlsoap.org/wsdl/">
-
     <documentation>
         Schnittstelle zu SECO eGov
         ==========================
@@ -34,69 +33,72 @@
         - Abfragen von RAV-Adressen
         - Abfragen von RAV-Sachbearbeitern
     </documentation>
-
     <types>
         <xs:schema>
             <xs:import namespace="http://valueobjects.common.avam.bit.admin.ch"
                        schemaLocation="EgovToAVAM.xsd"/>
         </xs:schema>
     </types>
-
-    <!--
-        Nachrichten Deklaration
-     -->
-    <message name="deliverOsteResponse">
-        <part element="xsd1:deliverOsteResponse" name="parameters"/>
-    </message>
-    <message name="deliverOsteRequest">
-        <part element="xsd1:deliverOste" name="parameters"/>
-    </message>
     <message name="getCodeResponse">
-        <part element="xsd1:getCodeResponse" name="parameters"/>
+        <part name="parameters" element="xsd1:getCodeResponse">
+        </part>
     </message>
     <message name="getCodeRequest">
-        <part element="xsd1:getCode" name="parameters"/>
-    </message>
-    <message name="getRavAdressenResponse">
-        <part element="xsd1:getRavAdressenResponse" name="parameters"/>
-    </message>
-    <message name="getRavAdressenRequest">
-        <part element="xsd1:getRavAdressen" name="parameters"/>
+        <part name="parameters" element="xsd1:getCode">
+        </part>
     </message>
     <message name="getRavSachbearbeiterResponse">
-        <part element="xsd1:getRavSachbearbeiterResponse" name="parameters"/>
+        <part name="parameters" element="xsd1:getRavSachbearbeiterResponse">
+        </part>
+    </message>
+    <message name="deliverOsteRequest">
+        <part name="parameters" element="xsd1:deliverOste">
+        </part>
+    </message>
+    <message name="getRavAdressenResponse">
+        <part name="parameters" element="xsd1:getRavAdressenResponse">
+        </part>
+    </message>
+    <message name="getRavAdressenRequest">
+        <part name="parameters" element="xsd1:getRavAdressen">
+        </part>
     </message>
     <message name="getRavSachbearbeiterRequest">
-        <part element="xsd1:getRavSachbearbeiter" name="parameters"/>
+        <part name="parameters" element="xsd1:getRavSachbearbeiter">
+        </part>
     </message>
-
-    <!--
-        Port Deklaration
-     -->
+    <message name="deliverOsteResponse">
+        <part name="parameters" element="xsd1:deliverOsteResponse">
+        </part>
+    </message>
     <portType name="EgovPortType">
         <operation name="deliverOste">
-            <input message="tns:deliverOsteRequest" name="deliverOsteRequest"/>
-            <output message="tns:deliverOsteResponse" name="deliverOsteResponse"/>
+            <input name="deliverOsteRequest" message="tns:deliverOsteRequest">
+            </input>
+            <output name="deliverOsteResponse" message="tns:deliverOsteResponse">
+            </output>
         </operation>
         <operation name="getCode">
-            <input message="tns:getCodeRequest" name="getCodeRequest"/>
-            <output message="tns:getCodeResponse" name="getCodeResponse"/>
+            <input name="getCodeRequest" message="tns:getCodeRequest">
+            </input>
+            <output name="getCodeResponse" message="tns:getCodeResponse">
+            </output>
         </operation>
         <operation name="getRavAdressen">
-            <input message="tns:getRavAdressenRequest" name="getRavAdressenRequest"/>
-            <output message="tns:getRavAdressenResponse" name="getRavAdressenResponse"/>
+            <input name="getRavAdressenRequest" message="tns:getRavAdressenRequest">
+            </input>
+            <output name="getRavAdressenResponse" message="tns:getRavAdressenResponse">
+            </output>
         </operation>
         <operation name="getRavSachbearbeiter">
-            <input message="tns:getRavSachbearbeiterRequest"
-                   name="getRavSachbearbeiterRequest"/>
-            <output message="tns:getRavSachbearbeiterResponse"
-                    name="getRavSachbearbeiterResponse"/>
+            <input name="getRavSachbearbeiterRequest"
+                   message="tns:getRavSachbearbeiterRequest">
+            </input>
+            <output name="getRavSachbearbeiterResponse"
+                    message="tns:getRavSachbearbeiterResponse">
+            </output>
         </operation>
     </portType>
-
-    <!--
-        Port Binding
-     -->
     <binding name="EgovPortBinding" type="tns:EgovPortType">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
         <operation name="deliverOste">
@@ -136,13 +138,10 @@
             </output>
         </operation>
     </binding>
-
-    <!--
-        Service Deklaration
-     -->
     <service name="EgovService">
-        <port binding="tns:EgovPortBinding" name="EgovService">
-            <soap:address location="http://localhost:9080/AVAM_Web/services/EgovService"/>
+        <port name="EgovService" binding="tns:EgovPortBinding">
+            <soap:address
+                    location="https://appl.avam-f.bfi.admin.ch:443/AVAM_Web/services/EgovService"/>
         </port>
     </service>
 </definitions>

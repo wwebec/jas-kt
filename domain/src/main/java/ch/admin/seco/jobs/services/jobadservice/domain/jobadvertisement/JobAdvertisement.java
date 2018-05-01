@@ -90,7 +90,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "euresDisplay", column = @Column(name = "PUBLICATION_EURES_DISPLAY")),
             @AttributeOverride(name = "euresAnonymous", column = @Column(name = "PUBLICATION_EURES_ANONYMOUS")),
             @AttributeOverride(name = "publicDisplay", column = @Column(name = "PUBLICATION_PUBLIC_DISPLAY")),
-            @AttributeOverride(name = "publicAnonynomous", column = @Column(name = "PUBLICATION_PUBLIC_ANONYNOMOU")),
+            @AttributeOverride(name = "publicAnonymous", column = @Column(name = "PUBLICATION_PUBLIC_ANONYMOUS")),
             @AttributeOverride(name = "restrictedDisplay", column = @Column(name = "PUBLICATION_RESTRICTED_DISPLAY")),
             @AttributeOverride(name = "restrictedAnonymous", column = @Column(name = "PUBLICATION_RESTRICTED_ANONYMOUS"))
     })
@@ -121,7 +121,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.cancellationCode = builder.cancellationCode;
         this.jobContent = Condition.notNull(builder.jobContent);
         this.owner = Condition.notNull(builder.owner);
-        this.contact = builder.contact;
+        this.contact = builder.contact; // FIXME Mandatory when legacy API is removed
         this.publication = Condition.notNull(builder.publication);
         checkViolations();
     }
@@ -225,9 +225,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void approve(String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
-        // TODO tbd where/when the data updates has to be done (over ApprovalDto --> JobAdUpdater?)
-        Condition.isTrue(reportingObligation && (reportingObligationEndDate != null), "Reporting obligation end date is missing");
-
+        if(reportingObligation) {
+            Condition.notNull(reportingObligationEndDate, "Reporting obligation end date is missing");
+        }
         this.stellennummerAvam = Condition.notBlank(stellennummerAvam);
         this.approvalDate = Condition.notNull(date);
         this.reportingObligation = reportingObligation;
@@ -259,9 +259,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementRejectedEvent(this));
     }
 
-    public void cancel(LocalDate date, String code) {
+    public void cancel(LocalDate date, String reasonCode) {
         this.cancellationDate = Condition.notNull(date);
-        this.cancellationCode = Condition.notBlank(code);
+        this.cancellationCode = Condition.notBlank(reasonCode);
         this.status = status.validateTransitionTo(JobAdvertisementStatus.CANCELLED);
         DomainEventPublisher.publish(new JobAdvertisementCancelledEvent(this));
     }
@@ -290,12 +290,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     public void archive() {
         this.status = status.validateTransitionTo(JobAdvertisementStatus.ARCHIVED);
         DomainEventPublisher.publish(new JobAdvertisementArchivedEvent(this));
-    }
-
-    private void checkIfEndStatus() {
-        if (this.status.isInAnyStates(JobAdvertisementStatus.REJECTED, JobAdvertisementStatus.CANCELLED, JobAdvertisementStatus.ARCHIVED)) {
-            throw new IllegalStateException(String.format("JobAdvertisement must not be in a end status like: %s", this.status));
-        }
     }
 
     @Override
@@ -342,6 +336,12 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 '}';
     }
 
+    private void checkIfEndStatus() {
+        if (this.status.isInAnyStates(JobAdvertisementStatus.REJECTED, JobAdvertisementStatus.CANCELLED, JobAdvertisementStatus.ARCHIVED)) {
+            throw new IllegalStateException(String.format("JobAdvertisement must not be in a end status like: %s", this.status));
+        }
+    }
+
     private void checkViolations() {
         Violations violations = new Violations();
         Employment employment = jobContent.getEmployment();
@@ -353,12 +353,12 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         );
         violations.addIfTrue(
                 employment.isImmediately() && (employment.getStartDate() != null),
-                "Immediately can be true if startDate %s is set",
+                "Immediately can't be true if startDate %s is set",
                 employment.getStartDate()
         );
         violations.addIfTrue(
                 employment.isPermanent() && (employment.getEndDate() != null),
-                "Permanent can be true if endDate %s is set",
+                "Permanent can't be true if endDate %s is set",
                 employment.getEndDate()
         );
         violations.addIfTrue(
@@ -389,13 +389,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     private boolean applyUpdates(JobAdvertisementUpdater updater) {
         boolean hasChangedAnything = false;
 
-        /*
-        if (updater.hasAnyChangesIn(SECTION_SOURCE_ENTRY_ID) && hasChanged(this.externalReference, updater.getExternalReference())) {
-            this.externalReference = updater.getExternalReference();
-            hasChangedAnything = true;
-        }
-        */
-
         if (updater.hasAnyChangesIn(SECTION_FINGERPRINT) && hasChanged(fingerprint, updater.getFingerprint())) {
             fingerprint = updater.getFingerprint();
             hasChangedAnything = true;
@@ -406,19 +399,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        /*
-        if (updater.hasAnyChangesIn(SECTION_EXTERNAL_URL) && hasChanged(this.externalUrl, updater.getExternalUrl())) {
-            this.externalUrl = updater.getExternalUrl();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_REPORTING_OBLIGATION) && hasChanged(this.reportingObligation, updater.isReportingObligation())) {
+        if (updater.hasAnyChangesIn(SECTION_REPORTING_OBLIGATION) && (
+                hasChanged(this.reportingObligation, updater.isReportingObligation()) ||
+                        hasChanged(this.reportingObligationEndDate, updater.getReportingObligationEndDate()))) {
             this.reportingObligation = updater.isReportingObligation();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && hasChanged(this.employment, updater.getEmployment())) {
-            this.employment = updater.getEmployment();
+            this.reportingObligationEndDate = updater.getReportingObligationEndDate();
             hasChangedAnything = true;
         }
 
@@ -427,13 +412,33 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_APPLY_CHANNEL) && hasChanged(this.applyChannel, updater.getApplyChannel())) {
-            this.applyChannel = updater.getApplyChannel();
+        if (updater.hasAnyChangesIn(SECTION_COMPANY) && hasChanged(this.getJobContent().getCompany(), updater.getCompany())) {
+            this.getJobContent().setCompany(updater.getCompany());
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_COMPANY) && hasChanged(this.company, updater.getCompany())) {
-            this.company = updater.getCompany();
+        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && hasChanged(this.getJobContent().getEmployment(), updater.getEmployment())) {
+            this.getJobContent().setEmployment(updater.getEmployment());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_LOCATION) && hasChanged(this.getJobContent().getLocation(), updater.getLocation())) {
+            this.getJobContent().setLocation(updater.getLocation());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_OCCUPATIONS) && hasChangedContent(this.getJobContent().getOccupations(), updater.getOccupations())) {
+            this.getJobContent().setOccupations(updater.getOccupations());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(this.getJobContent().getLanguageSkills(), updater.getLanguageSkills())) {
+            this.getJobContent().setLanguageSkills(updater.getLanguageSkills());
+            hasChangedAnything = true;
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_APPLY_CHANNEL) && hasChanged(this.getJobContent().getApplyChannel(), updater.getApplyChannel())) {
+            this.getJobContent().setApplyChannel(updater.getApplyChannel());
             hasChangedAnything = true;
         }
 
@@ -442,60 +447,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_LOCATION) && hasChanged(this.location, updater.getLocation())) {
-            this.location = updater.getLocation();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_OCCUPATIONS) && hasChangedContent(this.occupations, updater.getOccupations())) {
-            this.occupations = updater.getOccupations();
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(this.languageSkills, updater.getLanguageSkills())) {
-            this.languageSkills = updater.getLanguageSkills();
-            hasChangedAnything = true;
-        }
-        */
-
-        if (updater.hasAnyChangesIn(SECTION_WORK_FORMS) && hasChangedContent(jobContent.getEmployment().getWorkForms(), updater.getWorkForms())) {
-            jobContent.getEmployment().setWorkForms(updater.getWorkForms());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_PUBLICATION_DATES) && (
-                hasChanged(publication.getStartDate(), updater.getPublicationStartDate()) ||
-                        hasChanged(publication.getEndDate(), updater.getPublicationEndDate()))) {
-            publication.setStartDate(updater.getPublicationStartDate());
-            publication.setEndDate(updater.getPublicationEndDate());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_EURES) && (
-                hasChanged(publication.isEuresDisplay(), updater.isEures()) ||
-                        hasChanged(publication.isEuresAnonymous(), updater.isEuresAnonymous()))) {
-            publication.setEuresDisplay(updater.isEures());
-            publication.setEuresAnonymous(updater.isEuresAnonymous());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_PUBLIC_DISPLAY) && hasChanged(publication.isPublicDisplay(), updater.isPublicDisplay())) {
-            publication.setPublicDisplay(updater.isPublicDisplay());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_PUBLIC_ANONYMOUS) && hasChanged(publication.isPublicAnonymous(), updater.isPublicAnonymous())) {
-            publication.setPublicAnonymous(updater.isPublicAnonymous());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_RESTRICTED_DISPLAY) && hasChanged(publication.isRestrictedDisplay(), updater.isRestrictedDisplay())) {
-            publication.setRestrictedDisplay(updater.isRestrictedDisplay());
-            hasChangedAnything = true;
-        }
-
-        if (updater.hasAnyChangesIn(SECTION_RESTRICTED_ANONYMOUS) && hasChanged(publication.isRestrictedAnonymous(), updater.isRestrictedAnonymous())) {
-            publication.setRestrictedAnonymous(updater.isRestrictedAnonymous());
+        if(updater.hasAnyChangesIn(SECTION_PUBLICATION) && hasChanged(this.publication, updater.getPublication())) {
+            this.publication = updater.getPublication();
             hasChangedAnything = true;
         }
 

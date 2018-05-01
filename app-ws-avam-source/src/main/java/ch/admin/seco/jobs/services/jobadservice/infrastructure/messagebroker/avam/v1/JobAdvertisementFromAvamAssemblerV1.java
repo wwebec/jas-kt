@@ -211,8 +211,8 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 parseToLocalDate(avamJobAdvertisement.getGueltigkeit()),
                 avamJobAdvertisement.isEures(),
                 avamJobAdvertisement.isEuresAnonym(),
-                avamJobAdvertisement.isAnonym(),
                 avamJobAdvertisement.isPublikation(),
+                avamJobAdvertisement.isAnonym(),
                 false, // Not defined in this AVAM version
                 false // Not defined in this AVAM version
         );

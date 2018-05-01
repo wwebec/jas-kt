@@ -15,13 +15,3 @@ public interface JobCenterApiClient {
     );
 
 }
-
-@Component
-class JobCenterApiClientFallback implements JobCenterApiClient {
-
-    @Override
-    public JobCenterResource searchJobCenterByLocation(String countryCode, String postalCode) {
-        return null;
-    }
-
-}

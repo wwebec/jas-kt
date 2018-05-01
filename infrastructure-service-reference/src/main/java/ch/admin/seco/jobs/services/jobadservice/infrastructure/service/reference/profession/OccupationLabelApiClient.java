@@ -13,12 +13,3 @@ public interface OccupationLabelApiClient {
 
 }
 
-@Component
-class OccupationLabelApiClientFallback implements OccupationLabelApiClient {
-
-    @Override
-    public OccupationLabelMappingResource getOccupationMapping(@PathVariable("type") String type, @PathVariable("code") String code) {
-        return null;
-    }
-
-}

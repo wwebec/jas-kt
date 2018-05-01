@@ -215,10 +215,10 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 parseToLocalDate(avamJobAdvertisement.getGueltigkeit()),
                 avamJobAdvertisement.isEures(),
                 avamJobAdvertisement.isEuresAnonym(),
-                avamJobAdvertisement.isAnonym(),
                 avamJobAdvertisement.isPublikation(),
-                avamJobAdvertisement.isLoginPublikation(),
-                avamJobAdvertisement.isLoginAnonym()
+                avamJobAdvertisement.isAnonym(),
+                avamJobAdvertisement.isLoginAnonym(),
+                avamJobAdvertisement.isLoginPublikation()
         );
     }
 

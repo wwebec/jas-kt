@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.springframework.util.Assert;
 
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
@@ -22,6 +20,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Language
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.TOsteEgov;
 
 public class AvamJobAdvertisementAssemblerV2 {
@@ -40,8 +40,9 @@ public class AvamJobAdvertisementAssemblerV2 {
         TOsteEgov avamJobAdvertisement = new TOsteEgov();
         avamJobAdvertisement.setDetailangabenCode(AvamCodeResolver.ACTIONS.getLeft(action));
         avamJobAdvertisement.setArbeitsamtBereich(jobAdvertisement.getJobCenterCode());
-        avamJobAdvertisement.setStellennummerEgov(jobAdvertisement.getId().getValue());
+        avamJobAdvertisement.setStellennummerEgov(jobAdvertisement.getStellennummerEgov());
         avamJobAdvertisement.setStellennummerAvam(jobAdvertisement.getStellennummerAvam());
+        avamJobAdvertisement.setArbeitsamtBereich(getJobCenterCode(jobAdvertisement.getJobCenterCode()));
 
         avamJobAdvertisement.setAnmeldeDatum(formatLocalDate(jobAdvertisement.getApprovalDate()));
         if (AvamAction.ABMELDUNG.equals(action)) {
@@ -57,6 +58,10 @@ public class AvamJobAdvertisementAssemblerV2 {
 
         avamJobAdvertisement.setEures(publication.isEuresDisplay());
         avamJobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
+        avamJobAdvertisement.setPublikation(publication.isPublicDisplay());
+        avamJobAdvertisement.setAnonym(publication.isPublicAnonymous());
+        avamJobAdvertisement.setLoginPublikation(publication.isRestrictedDisplay());
+        avamJobAdvertisement.setLoginAnonym(publication.isRestrictedAnonymous());
 
         final JobContent jobContent = jobAdvertisement.getJobContent();
         //TODO: Review if we need to check nullability
@@ -163,6 +168,7 @@ public class AvamJobAdvertisementAssemblerV2 {
         if (occupations.size() > 0) {
             Occupation occupation = occupations.get(0);
             avamJobAdvertisement.setBq1AvamBeruf(occupation.getLabel());
+            avamJobAdvertisement.setBq1AvamBerufNr(occupation.getAvamOccupationCode());
             avamJobAdvertisement.setBq1ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             avamJobAdvertisement.setBq1AusbildungCode(occupation.getEducationCode());
         }
@@ -170,12 +176,14 @@ public class AvamJobAdvertisementAssemblerV2 {
         if (occupations.size() > 1) {
             Occupation occupation = occupations.get(1);
             tOsteEgov.setBq2AvamBeruf(occupation.getLabel());
+            tOsteEgov.setBq2AvamBerufNr(occupation.getAvamOccupationCode());
             tOsteEgov.setBq2ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq2AusbildungCode(occupation.getEducationCode());
         }
         if (occupations.size() > 2) {
             Occupation occupation = occupations.get(2);
             tOsteEgov.setBq3AvamBeruf(occupation.getLabel());
+            tOsteEgov.setBq3AvamBerufNr(occupation.getAvamOccupationCode());
             tOsteEgov.setBq3ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq3AusbildungCode(occupation.getEducationCode());
         }
@@ -216,5 +224,13 @@ public class AvamJobAdvertisementAssemblerV2 {
             avamJobAdvertisement.setSk5MuendlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getSpokenLevel()));
             avamJobAdvertisement.setSk5SchriftlichCode(AvamCodeResolver.LANGUAGE_LEVEL.getLeft(languageSkill.getWrittenLevel()));
         }
+    }
+
+    private String getJobCenterCode(String jobCenterCode) {
+        if (jobCenterCode != null) {
+            return jobCenterCode;
+        }
+        //TODO define default RAV if information is missing
+        return "BE01";
     }
 }

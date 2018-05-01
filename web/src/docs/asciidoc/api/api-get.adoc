@@ -1,0 +1,135 @@
+== Get a job advertisement
+
+=== Request
+`GET /api/jobadvertisements/{id}`
+
+[cols="10,10,10,70"]
+|===
+| Parameter | Constraints | Default | Description
+
+| id | Required | | The id of the job ad
+|===
+
+=== Response
+[source,json]
+----
+{
+    "id": "string",
+    "status": "string",
+    "sourceSystem": "string",
+    "stellennummerEgov": "string",
+    "stellennummerAvam": "string",
+    "externalReference": "string",
+    "fingerprint": "string",
+    "jobCenterCode": "string",
+    "reportToAvam": true,
+    "reportingObligation": true,
+    "reportingObligationEndDate": "string",
+    "approvalDate": "string",
+    "rejectionCode": "string",
+    "rejectionDate": "string",
+    "rejectionReason": "string",
+    "cancellationCode": "string",
+    "cancellationDate": "string",
+    "jobContent": {
+        "externalUrl": "string",
+        "jobDescriptions": [
+            {
+                "languageIsoCode": "string",
+                "title": "string",
+                "description": "string"
+            }
+        ],
+        "company": {
+            "name": "string",
+            "street": "string",
+            "houseNumber": "string",
+            "postOfficeBoxNumber": "string",
+            "postOfficeBoxPostalCode": "string",
+            "postOfficeBoxCity": "string",
+            "postalCode": "string",
+            "city": "string",
+            "countryIsoCode": "string",
+            "website": "string",
+            "phone": "string",
+            "email": "string",
+            "surrogate": true
+        },
+        "employment": {
+            "startDate": "string",
+            "endDate": "string",
+            "shortEmployment": true,
+            "immediately": true,
+            "permanent": true,
+            "workloadPercentageMax": 0,
+            "workloadPercentageMin": 0,
+            "workForms": [
+                "string"
+            ]
+        },
+        "location": {
+            "remarks": "string",
+            "postalCode": "string",
+            "city": "string",
+            "communalCode": "string",
+            "regionCode": "string",
+            "cantonCode": "string",
+            "countryIsoCode": "string",
+            "coordinates": {
+                "latitude": 0,
+                "longitude": 0
+            }
+        },
+        "occupations": [
+            {
+                "avamOccupationCode": "string",
+                "workExperience": "string",
+                "educationCode": "string"
+            }
+        ],
+        "languageSkills": [
+            {
+                "languageIsoCode": "string",
+                "spokenLevel": "string",
+                "writtenLevel": "string"
+            }
+        ],
+        "applyChannel": {
+            "mailAddress": "string",
+            "emailAddress": "string",
+            "phoneNumber": "string",
+            "formUrl": "string",
+            "additionalInfo": "string"
+        },
+        "publicContact": {
+            "salutation": "string",
+            "firstName": "string",
+            "lastName": "string",
+            "phone": "string",
+            "email": "string"
+        }
+    },
+    "publication": {
+        "startDate": "string",
+        "endDate": "string",
+        "euresDisplay": true,
+        "euresAnonymous": true,
+        "publicDisplay": true,
+        "publicAnonymous": true,
+        "restrictedDisplay": true,
+        "restrictedAnonymous": true
+    }
+}
+----
+
+=== Response status
+[cols="10,20,70"]
+|===
+| Code | Status | Description
+
+| 200 | Ok | The page with job ads has been returned
+| 401 | Unauthorized | User is not logged in
+| 403 | Forbidden | User has not the required permission to perform this action
+| 404 | Not Found | No Job ad has be found for the given id
+|===
+

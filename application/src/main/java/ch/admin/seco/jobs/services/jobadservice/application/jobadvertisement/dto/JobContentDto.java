@@ -9,7 +9,6 @@ public class JobContentDto {
     private String externalUrl;
     private List<JobDescriptionDto> jobDescriptions;
     private CompanyDto company;
-    private EmployerDto employer;
     private EmploymentDto employment;
     private LocationDto location;
     private List<OccupationDto> occupations;
@@ -43,14 +42,6 @@ public class JobContentDto {
 
     public void setCompany(CompanyDto company) {
         this.company = company;
-    }
-
-    public EmployerDto getEmployer() {
-        return employer;
-    }
-
-    public void setEmployer(EmployerDto employer) {
-        this.employer = employer;
     }
 
     public EmploymentDto getEmployment() {
@@ -106,7 +97,6 @@ public class JobContentDto {
         jobContentDto.setExternalUrl(jobContent.getExternalUrl());
         jobContentDto.setJobDescriptions(JobDescriptionDto.toDto(jobContent.getJobDescriptions()));
         jobContentDto.setCompany(CompanyDto.toDto(jobContent.getCompany()));
-        jobContentDto.setEmployer(EmployerDto.toDto(jobContent.getEmployer()));
         jobContentDto.setEmployment(EmploymentDto.toDto(jobContent.getEmployment()));
         jobContentDto.setLocation(LocationDto.toDto(jobContent.getLocation()));
         jobContentDto.setOccupations(OccupationDto.toDto(jobContent.getOccupations()));
