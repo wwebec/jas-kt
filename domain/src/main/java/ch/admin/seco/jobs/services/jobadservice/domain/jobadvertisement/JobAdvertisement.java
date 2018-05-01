@@ -9,6 +9,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -24,9 +25,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @Valid
     private JobAdvertisementId id;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private JobAdvertisementStatus status;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     private SourceSystem sourceSystem;
 
@@ -60,6 +63,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     @Embedded
     @Valid
+    @NotNull
     private JobContent jobContent;
 
     @Embedded
@@ -69,6 +73,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "accessToken", column = @Column(name = "OWNER_ACCESS_TOKEN"))
     })
     @Valid
+    @NotNull
     private Owner owner;
 
     @Embedded
@@ -95,6 +100,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "restrictedAnonymous", column = @Column(name = "PUBLICATION_RESTRICTED_ANONYMOUS"))
     })
     @Valid
+    @NotNull
     private Publication publication;
 
     protected JobAdvertisement() {

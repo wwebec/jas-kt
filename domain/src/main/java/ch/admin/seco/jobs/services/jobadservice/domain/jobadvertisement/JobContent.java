@@ -5,6 +5,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,6 +19,7 @@ public class JobContent implements ValueObject<JobContent> {
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_DESCRIPTION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
+    @NotEmpty
     private List<JobDescription> jobDescriptions;
 
     @Embedded
@@ -36,6 +39,7 @@ public class JobContent implements ValueObject<JobContent> {
             @AttributeOverride(name = "surrogate", column = @Column(name = "COMPANY_SURROGATE"))
     })
     @Valid
+    @NotNull
     private Company company;
 
     @Embedded
@@ -61,6 +65,7 @@ public class JobContent implements ValueObject<JobContent> {
             @AttributeOverride(name = "workloadPercentageMax", column = @Column(name = "EMPLOYMENT_WORKLOAD_PERCENTAGE_MAX"))
     })
     @Valid
+    @NotNull
     private Employment employment;
 
     @Embedded

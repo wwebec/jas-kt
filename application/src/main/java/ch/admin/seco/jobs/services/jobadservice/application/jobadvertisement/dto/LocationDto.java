@@ -97,6 +97,10 @@ public class LocationDto {
     }
 
     public static LocationDto toDto(Location location) {
+        if(location == null) {
+            return null;
+        }
+
         LocationDto locationDto = new LocationDto();
         locationDto.setRemarks(location.getRemarks());
         locationDto.setCity(location.getCity());
