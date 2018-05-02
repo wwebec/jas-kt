@@ -11,12 +11,20 @@
             <p th:text="#{mail.jobAd.rejected.body.paragraph2}"></p>
             <p th:text="${jobAdvertisement.rejectionReason}"></p>
             <p th:text="#{mail.jobAd.rejected.body.paragraph3}"></p>
-            <div th:text="#{mail.jobAd.rejected.body.addressblock.name}"></div>
-            <div th:text="#{mail.jobAd.rejected.body.addressblock.address}"></div>
-            <div th:text="#{mail.jobAd.rejected.body.addressblock.plz.city}"></div>
-            <div th:text="#{mail.jobAd.rejected.body.addressblock.tel}"></div>
-            <div th:text="#{mail.jobAd.rejected.body.addressblock.fax}"></div>
-            <div th:text="#{mail.jobAd.rejected.body.addressblock.email}"></div>
+            <div th:text="${jobCenter.address.name}"></div>
+            <span th:text="${jobCenter.address.street}"></span>
+            <span th:text="${jobCenter.address.houseNumber}"></span>
+            <br>
+            <span th:text="${jobCenter.address.zipCode}"></span>
+            <span th:text="${jobCenter.address.city}"></span>
+            <span th:text="#{mail.jobAd.rejected.body.addressblock.tel}"></span>
+            <span th:text="${jobCenter.phone}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.rejected.body.addressblock.fax}"></span>
+            <span th:text="${jobCenter.fax}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.rejected.body.addressblock.email}"></span>
+            <span th:text="${jobCenter.email}"></span>
             <p th:text="#{mail.jobAd.footer.paragraph1}"></p>
             <div th:text="#{mail.jobAd.footer.details1}"></div>
             <div th:text="#{mail.jobAd.footer.details2}"></div>
