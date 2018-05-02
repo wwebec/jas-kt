@@ -10,4 +10,9 @@ public class JobCenterApiClientFallback implements JobCenterApiClient {
         return null;
     }
 
+    @Override
+    public JobCenterResource searchJobCenterByCode(String code) {
+        return null;
+    }
+
 }

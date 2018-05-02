@@ -1,19 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.event.TransactionPhase;
-import org.springframework.transaction.event.TransactionalEventListener;
-
+import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
@@ -24,6 +11,19 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.J
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefinedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRejectedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class JobAdvertisementMailEventListener {
@@ -44,13 +44,15 @@ public class JobAdvertisementMailEventListener {
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final MailSenderService mailSenderService;
     private final MessageSource messageSource;
+    private final JobCenterService jobCenterService;
 
 
     @Autowired
-    public JobAdvertisementMailEventListener(JobAdvertisementRepository jobAdvertisementRepository, MailSenderService mailSenderService, MessageSource messageSource) {
+    public JobAdvertisementMailEventListener(JobAdvertisementRepository jobAdvertisementRepository, MailSenderService mailSenderService, MessageSource messageSource, JobCenterService jobCenterService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.mailSenderService = mailSenderService;
         this.messageSource = messageSource;
+        this.jobCenterService = jobCenterService;
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -58,8 +60,10 @@ public class JobAdvertisementMailEventListener {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         final Locale contactLocale = jobAdvertisement.getContact().getLanguage();
+        final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
+        variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
@@ -77,8 +81,10 @@ public class JobAdvertisementMailEventListener {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         final Locale contactLocale = jobAdvertisement.getContact().getLanguage();
+        final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
+        variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
@@ -96,8 +102,10 @@ public class JobAdvertisementMailEventListener {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REJECTED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         final Locale contactLocale = jobAdvertisement.getContact().getLanguage();
+        final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
+        variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
@@ -115,8 +123,10 @@ public class JobAdvertisementMailEventListener {
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
         final Locale contactLocale = jobAdvertisement.getContact().getLanguage();
+        final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
+        variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(jobAdvertisement.getContact().getEmail())
