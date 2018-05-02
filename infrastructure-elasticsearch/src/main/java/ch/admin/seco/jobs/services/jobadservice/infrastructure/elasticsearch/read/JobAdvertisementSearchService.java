@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.re
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.security.UserService;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.JobAdvertisementDocument;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -33,6 +34,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants.JOBSEEKER_CLIENT;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.JobAdvertisementIndexerService.INDEX_NAME_JOB_ADVERTISEMENT;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.JobAdvertisementIndexerService.TYPE_JOB_ADVERTISEMENT;
 import static org.apache.commons.lang3.ArrayUtils.isEmpty;
@@ -66,18 +70,21 @@ public class JobAdvertisementSearchService {
     private static final String PATH_PERMANENT = PATH_CTX + "jobContent.employment.permanent";
     private static final String PATH_PUBLICATION_START_DATE = PATH_CTX + "publication.startDate";
     private static final String PATH_TITLE = PATH_CTX + "jobContent.jobDescriptions.title";
+    private static final String PATH_STATUS = PATH_CTX + "status";
     private static final String PATH_WORKLOAD_PERCENTAGE_MAX = PATH_CTX + "jobContent.employment.workloadPercentageMax";
     private static final String PATH_WORKLOAD_TIME_PERCENTAGE_MIN = PATH_CTX + "jobContent.employment.workloadPercentageMin";
     private static final int ONLINE_SINCE_DAYS = 60;
 
     private final ElasticsearchTemplate elasticsearchTemplate;
     private final ResultsMapper resultsMapper;
-
+    private final UserService userService;
 
     public JobAdvertisementSearchService(ElasticsearchTemplate elasticsearchTemplate,
-                                         ElasticsearchConfiguration.CustomEntityMapper customEntityMapper) {
+                                         ElasticsearchConfiguration.CustomEntityMapper customEntityMapper,
+                                         UserService userService) {
         this.elasticsearchTemplate = elasticsearchTemplate;
         this.resultsMapper = new DefaultResultMapper(elasticsearchTemplate.getElasticsearchConverter().getMappingContext(), customEntityMapper);
+        this.userService = userService;
     }
 
     public Page<JobAdvertisementDto> search(JobAdvertisementSearchRequest jobSearchRequest, int page, int size, SearchSort sort) {
@@ -121,7 +128,6 @@ public class JobAdvertisementSearchService {
     }
 
     private NativeSearchQueryBuilder createSearchQueryBuilder(JobAdvertisementSearchRequest jobSearchRequest) {
-        //todo add visibility filter
         return new NativeSearchQueryBuilder()
                 .withQuery(createQuery(jobSearchRequest))
                 .withFilter(createFilter(jobSearchRequest));
@@ -209,6 +215,7 @@ public class JobAdvertisementSearchService {
 
     private QueryBuilder createFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         return mustAll(
+                visibilityFilter(),
                 publicationStartDateFilter(jobSearchRequest),
                 localityFilter(jobSearchRequest),
                 workingTimeFilter(jobSearchRequest),
@@ -258,6 +265,18 @@ public class JobAdvertisementSearchService {
         }
 
         return localityFilter;
+    }
+
+    private BoolQueryBuilder visibilityFilter() {
+        BoolQueryBuilder visibilityFilter = boolQuery();
+
+        if (this.userService.isCurrentUserInRole(JOBSEEKER_CLIENT)) {
+            visibilityFilter.must(termsQuery(PATH_STATUS, PUBLISHED_RESTRICTED.toString(), PUBLISHED_PUBLIC.toString()));
+        } else {
+            visibilityFilter.must(termsQuery(PATH_STATUS, PUBLISHED_PUBLIC.toString()));
+        }
+
+        return visibilityFilter;
     }
 
     private BoolQueryBuilder workingTimeFilter(JobAdvertisementSearchRequest jobSearchRequest) {

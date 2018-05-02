@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
 import ch.admin.seco.jobs.services.jobadservice.Application;
+import ch.admin.seco.jobs.services.jobadservice.application.security.UserService;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.JobAdvertisementSearchRequest;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
@@ -30,9 +32,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 
+import static ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants.JOBSEEKER_CLIENT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -61,6 +65,9 @@ public class JobAdvertisementSearchControllerIntTest {
     private ExceptionTranslator exceptionTranslator;
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
+
+    @MockBean
+    private UserService userService;
 
     private MockMvc mockMvc;
 
@@ -320,6 +327,58 @@ public class JobAdvertisementSearchControllerIntTest {
     }
 
     @Test
+    public void shouldNotShowRestrictedJobsForAnonymusUsers() throws Exception {
+        // GIVEN
+        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_01));
+        index(createJob(JOB_ADVERTISEMENT_ID_02));
+        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_03));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "1"))
+                .andExpect(jsonPath("$.*.id").value(JOB_ADVERTISEMENT_ID_02.getValue()))
+        ;
+    }
+
+    @Test
+    public void shouldNotShowRestrictedJobsForJobSeekers() throws Exception {
+        // GIVEN
+        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_01));
+        index(createJob(JOB_ADVERTISEMENT_ID_02));
+        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_03));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+        when(userService.isCurrentUserInRole(JOBSEEKER_CLIENT)).thenReturn(true);
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "3"))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
+        ;
+    }
+
+    @Test
     public void countJobs() throws Exception {
         // GIVEN
         index(createJob(JOB_ADVERTISEMENT_ID_01));
@@ -373,7 +432,19 @@ public class JobAdvertisementSearchControllerIntTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication())
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .build();
+
+    }
+
+    private JobAdvertisement createRestrictedJob(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_RESTRICTED)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(createJobContent(jobAdvertisementId))
@@ -386,7 +457,7 @@ public class JobAdvertisementSearchControllerIntTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
@@ -415,7 +486,7 @@ public class JobAdvertisementSearchControllerIntTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
@@ -437,7 +508,7 @@ public class JobAdvertisementSearchControllerIntTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
@@ -468,7 +539,7 @@ public class JobAdvertisementSearchControllerIntTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
@@ -488,7 +559,7 @@ public class JobAdvertisementSearchControllerIntTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
@@ -509,7 +580,7 @@ public class JobAdvertisementSearchControllerIntTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
@@ -529,7 +600,7 @@ public class JobAdvertisementSearchControllerIntTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()

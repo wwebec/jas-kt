@@ -26,4 +26,14 @@ public class UserServiceImpl implements UserService {
                     return null;
                 });
     }
+
+
+    @Override
+    public boolean isCurrentUserInRole(String authority) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        return Optional.ofNullable(securityContext.getAuthentication())
+                .map(authentication -> authentication.getAuthorities().stream()
+                        .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(authority)))
+                .orElse(false);
+    }
 }

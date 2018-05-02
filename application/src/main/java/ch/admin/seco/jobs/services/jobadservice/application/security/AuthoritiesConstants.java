@@ -9,6 +9,8 @@ public final class AuthoritiesConstants {
 
     public static final String USER = "ROLE_USER";
 
+    public static final String JOBSEEKER_CLIENT = "ROLE_JOBSEEKER_CLIENT";
+
     public static final String PRIVATE_EMPLOYMENT_AGENT = "ROLE_PRIVATE_EMPLOYMENT_AGENT";
     public static final String PUBLIC_EMPLOYMENT_SERVICE = "ROLE_PUBLIC_EMPLOYMENT_SERVICE";
 
