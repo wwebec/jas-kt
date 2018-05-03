@@ -25,24 +25,26 @@ public class DefaultJobCenterService implements JobCenterService {
     @Override
     public JobCenter findJobCenterByCode(String code) {
         JobCenterResource jobCenterResource = jobCenterApiClient.searchJobCenterByCode(code);
-        AddressResource jobCenterAddressResource = jobCenterResource.getAddress();
-        if (jobCenterAddressResource != null) {
-            JobCenterAddress jobCenterAddress = new JobCenterAddress(
-                    jobCenterAddressResource.getName(),
-                    jobCenterAddressResource.getCity(),
-                    jobCenterAddressResource.getStreet(),
-                    jobCenterAddressResource.getHouseNumber(),
-                    jobCenterAddressResource.getZipCode()
-            );
-            return new JobCenter(
-                    jobCenterResource.getId(),
-                    jobCenterResource.getCode(),
-                    jobCenterResource.getEmail(),
-                    jobCenterResource.getPhone(),
-                    jobCenterResource.getFax(),
-                    jobCenterResource.isShowContactDetailsToPublic(),
-                    jobCenterAddress
-            );
+        if (jobCenterResource != null) {
+            AddressResource jobCenterAddressResource = jobCenterResource.getAddress();
+            if (jobCenterAddressResource != null) {
+                JobCenterAddress jobCenterAddress = new JobCenterAddress(
+                        jobCenterAddressResource.getName(),
+                        jobCenterAddressResource.getCity(),
+                        jobCenterAddressResource.getStreet(),
+                        jobCenterAddressResource.getHouseNumber(),
+                        jobCenterAddressResource.getZipCode()
+                );
+                return new JobCenter(
+                        jobCenterResource.getId(),
+                        jobCenterResource.getCode(),
+                        jobCenterResource.getEmail(),
+                        jobCenterResource.getPhone(),
+                        jobCenterResource.getFax(),
+                        jobCenterResource.isShowContactDetailsToPublic(),
+                        jobCenterAddress
+                );
+            }
         }
         return null;
     }
