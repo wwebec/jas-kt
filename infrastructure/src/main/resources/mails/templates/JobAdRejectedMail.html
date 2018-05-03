@@ -1,16 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title th:text="#{mail.jobAd.rejected}">JobAdvertisement rejected</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
         <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}"/>
     </head>
     <body>
-        <h1 th:text="#{mail.jobAd.rejected}">JobAdvertisement rejected</h1>
-        <ul>
-            <li>Id: <span th:text="${jobAdvertisement.id.value}"></span></li>
-            <li>Title: <span th:text="${jobAdvertisement.jobContent.jobDescriptions[0].title}"></span></li>
-            <li>Description: <span th:text="${jobAdvertisement.jobContent.jobDescriptions[0].description}"></span></li>
-        </ul>
+        <div>
+            <p th:text="#{mail.jobAd.rejected.header}"></p>
+            <p th:text="#{mail.jobAd.rejected.body.paragraph1}"></p>
+            <p th:text="#{mail.jobAd.rejected.body.paragraph2}"></p>
+            <p th:text="${jobAdvertisement.rejectionReason}"></p>
+            <p th:text="#{mail.jobAd.rejected.body.paragraph3}"></p>
+            <div th:text="${jobCenter.address.name}"></div>
+            <span th:text="${jobCenter.address.street}"></span>
+            <span th:text="${jobCenter.address.houseNumber}"></span>
+            <br>
+            <span th:text="${jobCenter.address.zipCode}"></span>
+            <span th:text="${jobCenter.address.city}"></span>
+            <span th:text="#{mail.jobAd.rejected.body.addressblock.tel}"></span>
+            <span th:text="${jobCenter.phone}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.rejected.body.addressblock.fax}"></span>
+            <span th:text="${jobCenter.fax}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.rejected.body.addressblock.email}"></span>
+            <span th:text="${jobCenter.email}"></span>
+            <p th:text="#{mail.jobAd.footer.paragraph1}"></p>
+            <div th:text="#{mail.jobAd.footer.details1}"></div>
+            <div th:text="#{mail.jobAd.footer.details2}"></div>
+            <div th:text="#{mail.jobAd.footer.details3}"></div>
+        </div>
     </body>
 </html>

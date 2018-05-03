@@ -1,20 +1,23 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
+import java.nio.charset.StandardCharsets;
+
+import javax.mail.MessagingException;
+import javax.mail.util.ByteArrayDataSource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import javax.mail.MessagingException;
-import javax.mail.util.ByteArrayDataSource;
-import java.nio.charset.StandardCharsets;
+import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
+import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
 
 public class DefaultMailSenderService implements MailSenderService {
 
@@ -50,6 +53,7 @@ public class DefaultMailSenderService implements MailSenderService {
         context.setLocale(mailSenderData.getLocale());
         final String content = StringUtils.strip(templateEngine.process(mailSenderData.getTemplateName(), context));
         final String from = mailSenderData.getFrom().orElse(mailSenderProperties.getFromAddress());
+        final String[] bcc = mailSenderData.getBcc().orElse(mailSenderProperties.getBccAddress());
         final String subject = messageSource.getMessage(mailSenderData.getSubject(), null, mailSenderData.getSubject(), mailSenderData.getLocale());
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending email with MailSenderData={},\nBODY=\n{}", mailSenderData, content);
@@ -58,12 +62,10 @@ public class DefaultMailSenderService implements MailSenderService {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, !mailSenderData.getEmailAttachments().isEmpty(), CONTENT_ENCODING);
             message.setFrom(from);
             message.setReplyTo(from);
+            message.setBcc(bcc);
             message.setTo(mailSenderData.getTo());
             if(mailSenderData.getCc() != null) {
                 message.setCc(mailSenderData.getCc());
-            }
-            if(mailSenderData.getBcc() != null) {
-                message.setBcc(mailSenderData.getBcc());
             }
             message.setSubject(subject);
             message.setText(content, true);
