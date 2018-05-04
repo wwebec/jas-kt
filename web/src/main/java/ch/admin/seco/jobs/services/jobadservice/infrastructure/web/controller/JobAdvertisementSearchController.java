@@ -62,9 +62,7 @@ public class JobAdvertisementSearchController {
         return new ResponseEntity<>(Collections.singletonMap("totalCount", totalCount), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/elasticsearch/index",
-            method = RequestMethod.POST,
-            produces = MediaType.TEXT_PLAIN_VALUE)
+    @PostMapping(value = "/elasticsearch/index", produces = MediaType.TEXT_PLAIN_VALUE)
     @Timed
     @PreAuthorize("hasAuthority('" + AuthoritiesConstants.ADMIN + "')")
     public ResponseEntity<Void> reindexAll() {
@@ -77,7 +75,7 @@ public class JobAdvertisementSearchController {
     private JobAdvertisementDto sanitizeJobDescription(JobAdvertisementDto jobAdvertisementDto) {
         for (JobDescriptionDto jobDescriptionDto : jobAdvertisementDto.getJobContent().getJobDescriptions()) {
             String sanitizedDescription = Jsoup.clean(
-                    jobDescriptionDto.getDescription(), 
+                    jobDescriptionDto.getDescription(),
                     "",
                     new Whitelist().addTags("em"),
                     new Document.OutputSettings().prettyPrint(false));

@@ -20,6 +20,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
@@ -32,6 +33,7 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.config.Defaul
 @EnableFeignClients
 @EnableScheduling
 @EnableDiscoveryClient
+@EnableAsync
 public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);

@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StopWatch;
@@ -39,6 +40,7 @@ public class JobAdvertisementIndexerService {
         this.entityManager = entityManager;
     }
 
+    @Async
     @Transactional(readOnly = true)
     public void reindexAll() {
         elasticsearchTemplate.createIndex(JobAdvertisementDocument.class);
