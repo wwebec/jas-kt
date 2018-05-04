@@ -25,7 +25,7 @@ public class JobAdvertisementSearchRequest {
     @Min(1)
     @Max(60)
     private Integer onlineSince;
-
+    private Boolean displayRestricted;
 
     public String getLanguage() {
         return language;
@@ -115,6 +115,14 @@ public class JobAdvertisementSearchRequest {
         this.onlineSince = onlineSince;
     }
 
+    public Boolean getDisplayRestricted() {
+        return displayRestricted;
+    }
+
+    public void setDisplayRestricted(Boolean displayRestricted) {
+        this.displayRestricted = displayRestricted;
+    }
+
     @Override
     public String toString() {
         return "JobAdvertisementSearchRequest{" +
@@ -129,6 +137,7 @@ public class JobAdvertisementSearchRequest {
                 ", permanent=" + permanent +
                 ", companyName='" + companyName + '\'' +
                 ", onlineSince=" + onlineSince +
+                ", displayRestricted=" + displayRestricted +
                 '}';
     }
 }

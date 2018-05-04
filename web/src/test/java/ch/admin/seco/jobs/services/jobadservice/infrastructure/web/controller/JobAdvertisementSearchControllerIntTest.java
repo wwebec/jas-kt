@@ -36,6 +36,7 @@ import static ch.admin.seco.jobs.services.jobadservice.application.security.Auth
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -327,6 +328,34 @@ public class JobAdvertisementSearchControllerIntTest {
     }
 
     @Test
+    public void shouldFilterByDisplayRestricted() throws Exception {
+        // GIVEN
+        index(createJob(JOB_ADVERTISEMENT_ID_01));
+        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_02));
+        index(createJob(JOB_ADVERTISEMENT_ID_03));
+
+        given(userService.isCurrentUserInRole(JOBSEEKER_CLIENT)).willReturn(true);
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+        searchRequest.setDisplayRestricted(true);
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "1"))
+                .andExpect(jsonPath("$.*.id").value(JOB_ADVERTISEMENT_ID_02.getValue()))
+        ;
+    }
+
+    @Test
     public void shouldNotShowRestrictedJobsForAnonymusUsers() throws Exception {
         // GIVEN
         index(createRestrictedJob(JOB_ADVERTISEMENT_ID_01));
@@ -448,6 +477,7 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
                 .build();
 
     }

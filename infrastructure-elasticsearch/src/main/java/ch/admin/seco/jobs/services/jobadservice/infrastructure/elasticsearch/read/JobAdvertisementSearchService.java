@@ -73,6 +73,7 @@ public class JobAdvertisementSearchService {
     private static final String PATH_STATUS = PATH_CTX + "status";
     private static final String PATH_WORKLOAD_PERCENTAGE_MAX = PATH_CTX + "jobContent.employment.workloadPercentageMax";
     private static final String PATH_WORKLOAD_TIME_PERCENTAGE_MIN = PATH_CTX + "jobContent.employment.workloadPercentageMin";
+    private static final String PATH_REPORTING_OBLIGATION = PATH_CTX + "reportingObligation";
     private static final int ONLINE_SINCE_DAYS = 60;
 
     private final ElasticsearchTemplate elasticsearchTemplate;
@@ -216,6 +217,7 @@ public class JobAdvertisementSearchService {
     private QueryBuilder createFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         return mustAll(
                 visibilityFilter(),
+                restrictedJobsFilter(jobSearchRequest),
                 publicationStartDateFilter(jobSearchRequest),
                 localityFilter(jobSearchRequest),
                 workingTimeFilter(jobSearchRequest),
@@ -277,6 +279,16 @@ public class JobAdvertisementSearchService {
         }
 
         return visibilityFilter;
+    }
+
+    private BoolQueryBuilder restrictedJobsFilter(JobAdvertisementSearchRequest jobSearchRequest) {
+        BoolQueryBuilder restrictedJobsFilter = boolQuery();
+
+        if (this.userService.isCurrentUserInRole(JOBSEEKER_CLIENT) && jobSearchRequest.getDisplayRestricted() != null) {
+            restrictedJobsFilter.must(termsQuery(PATH_REPORTING_OBLIGATION, jobSearchRequest.getDisplayRestricted()));
+        }
+
+        return restrictedJobsFilter;
     }
 
     private BoolQueryBuilder workingTimeFilter(JobAdvertisementSearchRequest jobSearchRequest) {
