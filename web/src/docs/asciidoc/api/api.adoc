@@ -1,7 +1,7 @@
-:contact-mail: mediamatik@seco.admin.ch
+:contact-mail: mediamatik@seco.admin.ch, anton.menninger@seco.admin.ch
 
-= JobRoom Legacy API Documentation
-eGov Services <{contact-mail}>
+= Job-Room Jobs API Documentation
+Seco eGovernment Services
 :doctype: book
 :source-highlighter: highlightjs
 :toc: left
@@ -14,7 +14,7 @@ eGov Services <{contact-mail}>
 
 include::api-general.adoc[]
 
-= Job advertisement API
+= Jobs advertisement API
 
 include::api-create.adoc[]
 

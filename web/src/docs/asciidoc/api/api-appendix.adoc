@@ -1,3 +1,4 @@
+== Code lists
 
 == Salutations
 
@@ -21,7 +22,7 @@
 | HOME_WORK |
 |===
 
-== Work experiences
+== Work experience
 
 [cols="20,80"]
 |===
@@ -44,3 +45,34 @@
 | PROFICIENT |
 |===
 see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels]
+
+== Cancellation reason codes
+TBD
+
+== AVAM education code
+
+[cols="20,50,50,50,50"]
+|===
+| Code | German | English | French | Italian
+
+|130      |Weiterführende Schule (Sek. II | Secondary school (upper-secondary education) | Ecole supérieure (Sec. II) | Scuola superiore (Sec. II)
+|131      |Berufliche Grundbildung EBA oder äquivalent | Vocational education and training with the Swiss Federal VET Certificate or equivalent | Formation professionnelle initiale AFP ou équivalent | Formazione professionale di base CFP o equivalente
+|132     | Berufliche Grundbildung EFZ oder äquivalent | Vocational education and training with the Swiss Federal VET Diploma or equivalent | Formation professionnelle initiale CFC ou équivalent | Formazione professionale di base AFC o equivalente
+|133     | Fachmittelschule oder äquivalent | Upper-secondary specialised school or equivalent | Ecole de culture générale ou équivalent | Scuola specializzata o equivalente
+|134     | Berufsmaturität oder äquivalent | Vocational and professional school-leaving certificate or equivalent | Maturité professionnelle ou équivalent | Maturità professionale o equivalente
+|135    |  Fachmaturität oder äquivalent | Specialised school-leaving certificate or equivalent | Maturité spécialisée ou équivalent | Maturità specializzata o equivalente
+|136    |  Gymnasiale Maturität oder äquivalent | Baccalaureate school-leaving certificate or equivalent | Maturité gymnasiale ou équivalent | Maturità liceale o equivalente
+
+|150    |  Höhere Berufsbildung, eidg. FA oder äquivalent | Higher professional education and training, Swiss Federal PET diploma or equivalent | Formation professionnelle supérieure BF ou équivalent | Formazione professionale superiore APF o equivalente
+|160     | Höhere Berufsbildung, Diplom oder äquivalent | Higher professional education and training, diploma or equivalent | Formation professionnelle supérieure, diplôme ou équivalent | Formazione professionale superiore, diploma o equivalente
+|170     | Bachelor Fachhochschule oder äquivalent | Bachelor’s degree from a university of applied sciences or equivalent | Bachelor HES ou équivalent | Bachelor SUP o equivalente
+|171    |  Bachelor universitäre Hochschule oder äquivalent | Bachelor’s degree from a university or equivalent | Bachelor HEU ou équivalent | Bachelor scuola univ./poli. o equivalente
+|172    |  Master Fachhochschule oder äquivalent | Master’s degree from a university of applied sciences or equivalent | Master HES ou équivalent | Master SUP o equivalente
+|173    |  Master universitäre Hochschule oder äquivalent | Master’s degree from a university or equivalent | Master HEU ou équivalent | Master scuola univ./poli. o equivalente
+|180    |  Doktorat universitäre Hochschule oder äquivalent | Doctorate from a university or equivalent | Doctorat HEU ou équivalent | Dottorato scuola univ./poli. o equivalente
+|===
+
+== AVAM occupation code
+Refer to separate Excel sheet. The AVAM occupation list comprises > 4000 occupations with labels in three languages.
+Each is assigned to an SBN occupation group. The occupation code is required to determine whether
+a job vacancy falls under the registration requirement.

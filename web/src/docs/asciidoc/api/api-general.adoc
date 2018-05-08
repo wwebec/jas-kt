@@ -1,11 +1,42 @@
 
-JobRoom API provides a new way to publish job advertisements through the ALV system.
+Last modified: May 3, 2018 | Version: 0.95
 
-It is an alternative to the existing web interface available at https://www.job-room.ch/#/companies/jobpublication
+Contact: mediamatik@seco.admin.ch, anton.menninger@seco.admin.ch
 
-When using the API, job advertisements are published to *Job-Room* (https://www.job-room.ch) and *Job-Desk* (http://www.job-desk.ch).
+The Job-Room Jobs API provides an additional channel for employers to publish job advertisements to the Swiss public employment services system.
+It is an alternative to the web form available at https://www.job-room.ch/#/companies/jobpublication.
 
-Access to the API can be requested by sending a mail to {contact-mail}
+This document describes the new version of the API which will go in production on July 1, 2018.
+The legacy API (described at http://api.job-room.ch/0.2/docs/index.html) will be decommissioned at the same time.
+The upgrade is necessary because of the _job vacancy registration requirement_ going into force on July 1.
+Companies that wish to use the jobs API will need to request access credentials.
+Those will be available once the test environment is available, which is expected by mid May.
+
+For technical questions regarding the jobs API, use the contact addresses above. Please provide the name of the company and a technical contact person.
+For nontechnical questions (e. g. legal, administrative) regarding the job registration requirement, please refer to https://www.arbeit.swiss/secoalv/en/home/menue/unternehmen/stellenmeldepflicht.html.
+
+== Jobs registration process
+
+Under the job registration requirement, from July 1 2018, employers must report job vacancies in Switzerland in certain occupations to the public employment services.
+The list of occupations that fall under the law can be downloaded from the
+https://www.arbeit.swiss/dam/secoalv/de/dokumente/unternehmen/Stellenmeldepflicht/Liste_meldepflichtiger_Berufsarten_mit_zugeh%C3%B6rigen_Berufsbezeichnungen_DE_FR_IT.xlsx.download.xlsx/[arbeit.swiss portal].
+Regardless of the legal requirement, employers are invited to publish, free of charge, any vacancies on the public job search platforms of the
+Swiss public employment service - *Job-Room* (https://www.job-room.ch) and
+*Job-Desk* (http://www.job-desk.ch) - as well as on the European platform *Eures* (https://ec.europa.eu/eures/public/en/homepage).
+
+The registration process via the Jobs interface (API) is as follows:
+
+* Job ads are published one by one using the Create method.
+* All vacancies reported to the API must have an occupation code. Based on that code, the system determines whether the job falls under the registration requirement.
+* If no: the job ad is directly published on Job-Room and will be visible and searchable to the public. The maximum publication period is 60 days. Job ads can at any time be canceled via the API.
+* If yes: the job ad is transmitted to the database of the Swiss public employment service (PES), called AVAM. It is then reviewed and approved by a PES agent (there can be a delay). It may also be rejected, for example if information is insufficient.
+* After the ad is approved or rejected, an email to the contact person is generated with information about the registration requirementn.
+* The ad may not be published elsewhere for a period of five work days from the date of approval. The end date of that period is indicated in the email message.
+* During the blackout period, the ad is not visible to the public, only to registered jobseekers.
+* After the blackout period, the ad is available to the public on Job-Room. The employer may opt out of this.
+* The owner of a job ad may at any time view the state of the data object using the Get method.
+
+
 
 == API
 
@@ -77,7 +108,7 @@ The following headers have to be set for some requests in order to use the API :
 
 [red yellow-background]#*TBD*#
 
-NOTE: First, you need to get a username and password.
+//NOTE: First, you need to get a username and password.
 
 Authentication is done using HTTP Basic Auth.
 

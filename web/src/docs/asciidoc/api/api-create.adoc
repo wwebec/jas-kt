@@ -3,50 +3,53 @@
 === Fields
 
 ==== JobAdvertisement
-[cols="30,10,30,30"]
+[cols="30,10,30,20,50"]
 |===
-| Path | Type | Description | Constraints
+| Path | Type | Description | Constraints | Notes
 
-| externalUrl | String | Link to the original website of the job ad | Optional
-| externalReference | String | Your reference to this job ad | Optional
-| reportToAvam | Boolean | Should the ad be send to the RAV | Required (`true` or `false`)
-| contact | <<Contact>> | Contact person about the job ad (Administration) | Required
-| jobDescriptions | Array<<<JobDescription>>> | Language specific Title and Description | Required at least one
-| company | <<Company>> | The company that offers the job | Required
-| employer | <<Employer>> | The original company that offers the job | Required, if company.surrogate is `true`
-| employment | <<Employment>> | Description of the employment | Required
-| location | <<Location>> | The location of the job | Required
-| occupation | <<Occupation>> | The occupation skills of the job | Required
-| languageSkills | Array<<<LanguageSkill>>> | It is possible to define up to 5 language skills required by the job. | 0..5 objects
-| publicContact | <<PublicContact>> | Contact person for the job seekers questions | Optional
-| applyChannel | <<ApplyChannel>> | Different application channels | Optional
-| publication | <<Publication>> | The publication properties of the job ad | Required
+| externalUrl | String | Link to the original website of the job ad | Optional | For jobs that fall under the reporting obligation, the ad must not be published elsewhere.
+| externalReference | String | Your internal reference to this job ad | Optional |
+| reportToAvam | Boolean | Should the ad be transmitted to the PES (RAV)? | Required (`true` or `false`) | Use this option if you want a PES agent to know about your vacancy
+| contact | <<Contact>> | Contact person about the job ad | Required | Administrative contact, not for publication
+| jobDescriptions | Array<<<JobDescription>>> | Language specific title and description | Required 1..4 | The text of the job advertisement; may be multilingual
+| company | <<Company>> | The company that handles the recruitment | Required | May be a private employment agency acting as surrogate
+| employer | <<Employer>> | The actual employer that offers the job | Required, if _company.surrogate_ is `true` | For administrative purposes, not for publication
+| employment | <<Employment>> | Certain employment conditions | Required |
+| location | <<Location>> | The work location | Required |
+| occupation | <<Occupation>> | Occupation, education and work experience | Required |
+| languageSkills | Array<<<LanguageSkill>>> | It is possible to define up to 5 language skills required by the job. | 0..5 objects |
+| publicContact | <<PublicContact>> | Contact person for the job seekers questions | Optional | Will be published in Job-Room
+| applyChannel | <<ApplyChannel>> | Different application channels | Optional | Provide at least one application channel
+| publication | <<Publication>> | The publication platforms | Required | You can control how your ad is published
 |===
 
 ==== Contact
+Provide an administrative contact (e. g. an HR employee); this contact is used for email notifications concerning the reporting obligation
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
 
-| languageIsoCode | String | The language of the person for the notifications | Required (ISO 639)
+| languageIsoCode | String | The language of correspondence | Required (ISO 639), must be one of de, fr, it,en
 | salutation | String |  | Required (`MR` or `MS`)
 | firstName | String |  | Required
 | lastName | String |  | Required
 | phone | String |  | Required (Format: +41123456789)
-| email | String |  | Required
+| email | String | Multiple comma separated addresses allowed | Required
 |===
 
 ==== JobDescription
+The text of the job advertisement; may be multilingual
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
 
-| languageIsoCode | String | The language of the title and description | Required (ISO 639)
-| title | String | Short summary of the job | Required
-| description | String | Job description can contain basic HTML formatting | Required (Max 10'000 characters)
+| languageIsoCode | String | The language of the title and description | Required (ISO 639) but only de, fr, it or en
+| title | String | Job title or occupation | Required
+| description | String | Job description can contain basic HTML formatting as well as markdown convention | Required (Max 10'000 characters)
 |===
 
 ==== Company
+The company that handles the recruitment. This information is published.
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
@@ -54,19 +57,17 @@
 | name | String | The name of the company | Required
 | street | String | | Optional
 | houseNumber | String | | Optional
-| postOfficeBoxNumber | String | | Optional
-| postOfficeBoxPostalCode | String | | Optional. Must be a valid swiss postal code if the company is located in Switzerland
-| postOfficeBoxCity | String | | Optional
 | postalCode | String | | Required. Must be a valid swiss postal code if the company is located in Switzerland
 | city | String | | Required
 | countryIsoCode | String | | Required (ISO 3166-1 alpha-2)
 | website | String | | Optional (Format: http://www.example.org)
 | phone | String | | Optional (Format: +41123456789)
 | email | String | | Optional
-| surrogate | String | | Required (`true` or `false`)
+| surrogate | String | Does the company act as a surrogate for the actual employer? | Required (`true` or `false`)
 |===
 
 ==== Employer
+Must be provided if the company handling the recruitment is not the actual employer; will not be published.
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
@@ -78,18 +79,19 @@
 |===
 
 ==== Employment
+Employment metadata
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
 
 | startDate | String | When does the job start | Optional (Format: 2018-01-20)
 | endDate | String | When does the contract end | Optional (Format: 2018-01-20)
-| shortEmployment | Boolean | Is the employment duration less than 14 days | Required (`true` or `false`)
+| shortEmployment | Boolean | Is the employment duration 14 days or less | Required (`true` or `false`)
 | immediately | Boolean | Does the job start immediately | Required (`true` or `false`) `true` only if no startDate is set
 | permanent | Boolean | Is the contract permanent | Required (`true` or `false`) `true` only if no endDate is set
-| workloadPercentageMin | String | | Required (1..100 less or equal workloadPercentageMax)
-| workloadPercentageMax | String | | Required (1..100 greater or equal workloadPercentageMin)
-| workForms | Array<String> | | Optional (`SUNDAY_AND_HOLIDAYS`, `SHIFT_WORK`, `NIGHT_WORK`, `HOME_WORK`)
+| workloadPercentageMin | String | | Required (10..100 less or equal workloadPercentageMax)
+| workloadPercentageMax | String | | Required (10..100 greater or equal workloadPercentageMin)
+| workForms | Array<String> | Special work requirements | Optional (`SUNDAY_AND_HOLIDAYS`, `SHIFT_WORK`, `NIGHT_WORK`, `HOME_WORK`)
 |===
 
 ==== Location
@@ -97,20 +99,21 @@
 |===
 | Path | Type | Description | Constraints
 
-| remarks | String | More information about job location can be added as free text. Note : this property is currently not shown on the publication medias. Work is in progress in order to integrate this feature | Optional (Max 255 characters)
 | postalCode | String | | Required. Must be a valid swiss postal code if the company is located in Switzerland
-| city | String | | Required
+| city | String | The (main) place of work | Required
 | countryIsoCode | String | | Required (ISO 3166-1 alpha-2)
+| remarks | String | More information about job location can be added as free text.
 |===
 
 ==== Occupation
+The ad must be coded to an occupation according ot the AVAM occupation list; this determines the reporting obligation.
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
 
-| avamOccupationCode | String | Code provided by AVAM | Required
+| avamOccupationCode | String | <<AVAM occupation code>>  | Required
 | workExperience | String | | Optional (`LESS_THAN_1_YEAR`, `MORE_THAN_1_YEAR` or `MORE_THAN_3_YEARS`)
-| educationCode | String | Code provided by AVAM | Optional
+| educationCode | String | <<AVAM education code>> | Optional
 |===
 
 ==== LanguageSkill
@@ -124,18 +127,20 @@
 |===
 
 ==== ApplyChannel
+Provide at least one channel for applications.
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
 
-| mailAddress | String | The address where an applicant can send his candidacy letter | Optional
-| emailAddress | String | The address where an applicant can send his candidacy email | Optional
-| phoneNumber | String | The phone number where an applicant can call | Optional (Format: +41123456789)
-| formUrl | String | The online form where an applicant can fill in his candidacy | Optional (Format: http://www.example.org)
+| formUrl | String | An online form where an applicant can apply | Optional (Format: http://www.example.org)
+| emailAddress | String | An email address where an applicant can send their application | Optional
+| phoneNumber | String | A phone number where an applicant can call | Optional (Format: +41123456789)
+| mailAddress | String | A post address where an applicant can send their application | Optional
 | additionalInfo | String | More application information can be added as free text. | Optional (Max 255 characters)
 |===
 
 ==== PublicContact
+Provide a public contact if you want to give applicants the opportunity to ask questions about the job.
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
@@ -148,14 +153,17 @@
 |===
 
 ==== Publication
+If the ad falls under the reporting obligation, the ad will be restricted for five business days.
+After that period, the ad will be published
+in the Job-Room public area if the publicDisplay flag is set, otherwise not.
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
 
 | startDate | String | When does the advertisement publication start | Required (Format: 2018-01-20)
-| endDate | String | When does the advertisement publication end | Optional (Format: 2018-01-20)
+| endDate | String | When does the advertisement publication end (max 60 days) | Optional (Format: 2018-01-20)
 | euresDisplay | Boolean | Should the job ad be displayed in Eures | Required (`true` or `false`)
-| publicDisplay | Boolean | Should the job ad be displayed in job-room public area | Required (`true` or `false`)
+| publicDisplay | Boolean | Should the job ad be displayed in Job-Room public area | Required (`true` or `false`)
 |===
 
 === Request
@@ -257,6 +265,10 @@
 ----
 
 === Response
+The response provides the _id_ needed to later retrieve the object via Get.
+The flag _reportingObligation_ indicates whether the ad falls under the reporting obligation,
+based on the occupation code provided.
+
 [source,json]
 ----
 {

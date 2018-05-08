@@ -18,14 +18,14 @@
 | code | Required | | The cancellation reason code
 |===
 
-[cols="10,90"]
-|===
-| Code | Reason
+//[cols="10,90"]
+//|===
+//| Code | Reason
 
-| 1 | The position has been filled
-| 2 | Enough candidates have been found
-| 3 | Other reason
-|===
+//| 1 | The position has been filled
+//| 2 | Enough candidates have been found
+//| 3 | Other reason
+//|===
 
 === Response
 No body

@@ -1,5 +1,9 @@
 == Get a job advertisement
 
+The Get request returns the state of the data object. The response includes the flag
+_reportingObligation_ und the date _reportingObligationEndDate_.
+This date is only set after approval by the PES (RAV), in case that the ad falls under the reporting obligation.
+
 === Request
 `GET /api/jobadvertisements/{id}`
 

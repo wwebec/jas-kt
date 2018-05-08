@@ -1,4 +1,4 @@
-== Get all job advertisement
+== Get all job advertisements belonging to the owner
 
 === Request
 `GET /api/jobadvertisements?page=0&size25`
