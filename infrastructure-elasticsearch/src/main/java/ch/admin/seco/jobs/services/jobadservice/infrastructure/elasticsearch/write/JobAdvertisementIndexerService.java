@@ -43,6 +43,7 @@ public class JobAdvertisementIndexerService {
     @Async
     @Transactional(readOnly = true)
     public void reindexAll() {
+        elasticsearchTemplate.deleteIndex(JobAdvertisementDocument.class);
         elasticsearchTemplate.createIndex(JobAdvertisementDocument.class);
         elasticsearchTemplate.putMapping(JobAdvertisementDocument.class);
 
