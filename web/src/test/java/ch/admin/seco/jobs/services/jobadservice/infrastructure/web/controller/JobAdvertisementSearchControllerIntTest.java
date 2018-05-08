@@ -145,6 +145,32 @@ public class JobAdvertisementSearchControllerIntTest {
     }
 
     @Test
+    public void shouldSearchBySourceSystemKeyword() throws Exception {
+        // GIVEN
+        index(createJobWithDescription(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", SourceSystem.EXTERN));
+        index(createJobWithDescription(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", SourceSystem.API));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+        searchRequest.setKeywords(new String[]{"*extern"});
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "1"))
+
+                .andExpect(jsonPath("$.[0].id").value(equalTo(JOB_ADVERTISEMENT_ID_01.getValue())))
+		        .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].title").value(equalTo("c++ developer")))
+		        .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].description").value(equalTo("c++ &amp; java entwickler")));
+    }
+
+    @Test
     public void shouldSearchByOccupation_BFS() throws Exception {
 
         // GIVEN
@@ -534,10 +560,13 @@ public class JobAdvertisementSearchControllerIntTest {
     }
 
     private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description) {
+        return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM);
+    }
 
+    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
+                .setSourceSystem(sourceSystem)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())

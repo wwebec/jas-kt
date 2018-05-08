@@ -50,7 +50,7 @@ public class JobAdvertisementSearchService {
     public enum SearchSort {
         score,
         date_asc,
-        date_desc;
+        date_desc
     }
 
     private static final String PATH_CTX = "jobAdvertisement.";
@@ -71,6 +71,7 @@ public class JobAdvertisementSearchService {
     private static final String PATH_PUBLICATION_START_DATE = PATH_CTX + "publication.startDate";
     private static final String PATH_TITLE = PATH_CTX + "jobContent.jobDescriptions.title";
     private static final String PATH_STATUS = PATH_CTX + "status";
+    private static final String PATH_SOURCE_SYSTEM = PATH_CTX + "sourceSystem";
     private static final String PATH_WORKLOAD_PERCENTAGE_MAX = PATH_CTX + "jobContent.employment.workloadPercentageMax";
     private static final String PATH_WORKLOAD_TIME_PERCENTAGE_MIN = PATH_CTX + "jobContent.employment.workloadPercentageMin";
     private static final String PATH_REPORTING_OBLIGATION = PATH_CTX + "reportingObligation";
@@ -188,7 +189,7 @@ public class JobAdvertisementSearchService {
         if (isNotEmpty(jobSearchRequest.getKeywords())) {
             Stream.of(jobSearchRequest.getKeywords())
                     .flatMap(keyword -> keyword.startsWith("*")
-                            ? Stream.of(termQuery("source", keyword.substring(1)).boost(2f))
+                            ? Stream.of(termQuery(PATH_SOURCE_SYSTEM, keyword.substring(1).toUpperCase()).boost(2f))
                             : Stream.of
                             (
                                     multiMatchQuery(keyword, PATH_DESCRIPTION)
