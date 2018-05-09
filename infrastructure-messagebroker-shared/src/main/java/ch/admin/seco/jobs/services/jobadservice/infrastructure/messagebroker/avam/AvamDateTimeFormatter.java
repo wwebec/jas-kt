@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class AvamDateTimeFormatter {
 
-    private static final DateTimeFormatter AVAM_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private static final DateTimeFormatter AVAM_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss.SSSSSS");
 
     public static String formatLocalDate(LocalDate localDate) {
         return (localDate != null) ? localDate.format(AVAM_DATE_FORMATTER) : null;
