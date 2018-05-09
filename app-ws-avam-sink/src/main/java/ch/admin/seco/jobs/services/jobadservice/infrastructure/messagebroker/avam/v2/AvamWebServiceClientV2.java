@@ -1,10 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.ws.client.core.WebServiceTemplate;
-
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
@@ -14,6 +9,10 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.Delive
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.DeliverOsteResponse;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.TOsteEgov;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.WSCredentials;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ws.client.core.WebServiceTemplate;
 
 public class AvamWebServiceClientV2 implements AvamWebServiceClient {
 
@@ -62,7 +61,7 @@ public class AvamWebServiceClientV2 implements AvamWebServiceClient {
 
     void handleResponse(JobAdvertisementId jobAdvertisementId, AvamAction action, DeliverOsteResponse response) {
         String returnCode = response.getDeliverOsteReturn();
-        if (!AVAM_RESPONSE_OK.startsWith(returnCode)) {
+        if (!AVAM_RESPONSE_OK.equals(StringUtils.trim(returnCode))) {
             throw new AvamException(jobAdvertisementId, action.name(), returnCode);
         }
     }
