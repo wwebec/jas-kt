@@ -1,9 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
 
 
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.formatLocalDate;
 import static org.springframework.util.StringUtils.hasText;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -26,14 +26,8 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v2.TOsteE
 
 public class AvamJobAdvertisementAssemblerV2 {
 
-    private static final DateTimeFormatter AVAM_DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
     private static boolean safeBoolean(Boolean value) {
         return (value != null) ? value : false;
-    }
-
-    public static String formatLocalDate(LocalDate localDate) {
-        return (localDate != null) ? localDate.format(AVAM_DATE_FORMATTER) : null;
     }
 
     public TOsteEgov toOsteEgov(JobAdvertisement jobAdvertisement, AvamAction action) {

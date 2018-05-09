@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
@@ -57,7 +58,7 @@ public class AvamWebServiceClientV1 implements AvamWebServiceClient {
 
     void handleResponse(JobAdvertisementId jobAdvertisementId, AvamAction action, DeliverOsteResponse response) {
         String returnCode = response.getDeliverOsteReturn();
-        if (!AVAM_RESPONSE_OK.startsWith(returnCode)) {
+        if (!AVAM_RESPONSE_OK.equals(StringUtils.trim(returnCode))) {
             throw new AvamException(jobAdvertisementId, action.name(), returnCode);
         }
     }
