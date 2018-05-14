@@ -1,5 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
+import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -7,9 +10,11 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,6 +24,7 @@ import org.springframework.util.StringUtils;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
@@ -45,8 +51,33 @@ class JobAdvertisementDtoAssembler {
                 createCompany(x28JobAdvertisement),
                 createLocation(x28JobAdvertisement),
                 createOccupations(x28JobAdvertisement),
-                createProfessionCodes(x28JobAdvertisement)
+                createProfessionCodes(x28JobAdvertisement),
+                createLanguageSkills(x28JobAdvertisement)
         );
+    }
+
+    private List<LanguageSkillDto> createLanguageSkills(Oste x28JobAdvertisement) {
+        return Stream
+                .of(
+                        createLanguageSkillDto(x28JobAdvertisement.getSk1SpracheCode(), x28JobAdvertisement.getSk1MuendlichCode(), x28JobAdvertisement.getSk1SchriftlichCode()),
+                        createLanguageSkillDto(x28JobAdvertisement.getSk2SpracheCode(), x28JobAdvertisement.getSk2MuendlichCode(), x28JobAdvertisement.getSk2SchriftlichCode()),
+                        createLanguageSkillDto(x28JobAdvertisement.getSk3SpracheCode(), x28JobAdvertisement.getSk3MuendlichCode(), x28JobAdvertisement.getSk3SchriftlichCode()),
+                        createLanguageSkillDto(x28JobAdvertisement.getSk4SpracheCode(), x28JobAdvertisement.getSk4MuendlichCode(), x28JobAdvertisement.getSk4SchriftlichCode()),
+                        createLanguageSkillDto(x28JobAdvertisement.getSk5SpracheCode(), x28JobAdvertisement.getSk5MuendlichCode(), x28JobAdvertisement.getSk5SchriftlichCode())
+                )
+                .filter(Objects::nonNull)
+                .collect(toList());
+    }
+
+    private LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
+        if (hasText(spracheCode)) {
+            return new LanguageSkillDto(
+                    LANGUAGES.getRight(spracheCode),
+                    LANGUAGE_LEVEL.getRight(muendlichCode),
+                    LANGUAGE_LEVEL.getRight(schriftlichCode)
+            );
+        }
+        return null;
     }
 
     UpdateJobAdvertisementFromX28Dto updateFromX28(Oste x28JobAdvertisement) {

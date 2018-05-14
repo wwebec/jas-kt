@@ -210,6 +210,7 @@ public class JobAdvertisementApplicationService {
                 .setX28OccupationCodes(createJobAdvertisementFromX28Dto.getProfessionCodes())
                 .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
                 .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkills()))
                 .build();
 
         // TODO Add auditUser
