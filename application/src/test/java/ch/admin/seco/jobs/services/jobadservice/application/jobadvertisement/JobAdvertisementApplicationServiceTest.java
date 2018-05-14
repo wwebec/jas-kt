@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService.COUNTRY_ISO_CODE_SWITZERLAND;
 import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_02;
@@ -48,7 +49,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
@@ -261,7 +261,9 @@ public class JobAdvertisementApplicationServiceTest {
                 new CreateLocationDto(null, "ctiy", "postalCode", null),
                 Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
                 "1,2",
-                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
+                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
+                TimeMachine.now().toLocalDate(),
+                null
         );
 
         //Execute

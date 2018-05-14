@@ -2,11 +2,13 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 import java.util.List;
 
 public class CreateJobAdvertisementFromX28Dto {
