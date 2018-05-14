@@ -45,7 +45,9 @@ class JobAdvertisementDtoAssembler {
                 createCompany(x28JobAdvertisement),
                 createLocation(x28JobAdvertisement),
                 createOccupations(x28JobAdvertisement),
-                createProfessionCodes(x28JobAdvertisement)
+                createProfessionCodes(x28JobAdvertisement),
+                parseDate(x28JobAdvertisement.getAnmeldeDatum()),
+                parseDate(x28JobAdvertisement.getGueltigkeit())
         );
     }
 

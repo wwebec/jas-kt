@@ -212,13 +212,18 @@ public class JobAdvertisementApplicationService {
                 .build();
 
         // TODO Add auditUser
+        LocalDate publicationStartDate = createJobAdvertisementFromX28Dto.getPublicationStartDate();
+        LocalDate publicationEndDate = createJobAdvertisementFromX28Dto.getPublicationEndDate();
+        if(publicationEndDate == null) {
+            publicationEndDate = publicationStartDate.plusDays(PUBLICATION_MAX_DAYS);
+        }
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
                 .setFingerprint(createJobAdvertisementFromX28Dto.getFingerprint())
                 .setJobContent(jobContent)
                 .setPublication(
                         new Publication.Builder()
-                                .setStartDate(TimeMachine.now().toLocalDate())
-                                .setEndDate(TimeMachine.now().plusDays(PUBLICATION_MAX_DAYS).toLocalDate())
+                                .setStartDate(publicationStartDate)
+                                .setEndDate(publicationEndDate)
                                 .setEuresDisplay(false)
                                 .setEuresAnonymous(false)
                                 .setPublicDisplay(true)

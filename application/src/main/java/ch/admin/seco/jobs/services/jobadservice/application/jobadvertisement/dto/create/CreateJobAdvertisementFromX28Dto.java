@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
@@ -37,11 +38,15 @@ public class CreateJobAdvertisementFromX28Dto {
 
     private String professionCodes;
 
+    private LocalDate publicationStartDate;
+
+    private LocalDate publicationEndDate;
+
     protected CreateJobAdvertisementFromX28Dto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromX28Dto(String title, String description, String fingerprint, String externalUrl, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes) {
+    public CreateJobAdvertisementFromX28Dto(String title, String description, String fingerprint, String externalUrl, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, LocalDate publicationStartDate, LocalDate publicationEndDate) {
         this.title = title;
         this.description = description;
         this.fingerprint = fingerprint;
@@ -51,6 +56,8 @@ public class CreateJobAdvertisementFromX28Dto {
         this.location = location;
         this.occupations = occupations;
         this.professionCodes = professionCodes;
+        this.publicationStartDate = publicationStartDate;
+        this.publicationEndDate = publicationEndDate;
     }
 
     public String getTitle() {
@@ -123,5 +130,21 @@ public class CreateJobAdvertisementFromX28Dto {
 
     public void setProfessionCodes(String professionCodes) {
         this.professionCodes = professionCodes;
+    }
+
+    public LocalDate getPublicationStartDate() {
+        return publicationStartDate;
+    }
+
+    public void setPublicationStartDate(LocalDate publicationStartDate) {
+        this.publicationStartDate = publicationStartDate;
+    }
+
+    public LocalDate getPublicationEndDate() {
+        return publicationEndDate;
+    }
+
+    public void setPublicationEndDate(LocalDate publicationEndDate) {
+        this.publicationEndDate = publicationEndDate;
     }
 }
