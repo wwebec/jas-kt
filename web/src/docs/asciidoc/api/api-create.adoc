@@ -29,7 +29,7 @@ Provide an administrative contact (e. g. an HR employee); this contact is used f
 |===
 | Path | Type | Description | Constraints
 
-| languageIsoCode | String | The language of correspondence | Required (ISO 639), must be one of de, fr, it,en
+| languageIsoCode | String | The language of correspondence | Required (ISO 639-1), must be one of de, fr, it,en
 | salutation | String |  | Required (`MR` or `MS`)
 | firstName | String |  | Required
 | lastName | String |  | Required
@@ -43,7 +43,7 @@ The text of the job advertisement; may be multilingual
 |===
 | Path | Type | Description | Constraints
 
-| languageIsoCode | String | The language of the title and description | Required (ISO 639) but only de, fr, it or en
+| languageIsoCode | String | The language of the title and description | Required (ISO 639-1) but only de, fr, it or en
 | title | String | Job title or occupation | Required
 | description | String | Job description can contain basic HTML formatting as well as markdown convention | Required (Max 10'000 characters)
 |===
@@ -121,7 +121,7 @@ The ad must be coded to an occupation according ot the AVAM occupation list; thi
 |===
 | Path | Type | Description | Constraints
 
-| languageIsoCode | String | | Required (ISO 639)
+| languageIsoCode | String | | Required (ISO 639-1)
 | spokenLevel | String | | Required (`NONE`, `BASIC`, `INTERMEDIATE` or `PROFICIENT`) (see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels])
 | writtenLevel | String | | Required (`NONE`, `BASIC`, `INTERMEDIATE` or `PROFICIENT`) (see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels])
 |===
@@ -167,7 +167,7 @@ in the Job-Room public area if the publicDisplay flag is set, otherwise not.
 |===
 
 === Request
-`POST /api/jobadvertisements`
+`POST <BASE_URL>/jobadvertisements`
 
 [source,json]
 ----
