@@ -127,7 +127,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.cancellationCode = builder.cancellationCode;
         this.jobContent = Condition.notNull(builder.jobContent);
         this.owner = Condition.notNull(builder.owner);
-        this.contact = builder.contact; // FIXME Mandatory when legacy API is removed
+        this.contact = builder.contact; // FIXME Mandatory when legacy API is removed and field from AVAM is required!
         this.publication = Condition.notNull(builder.publication);
         checkViolations();
     }
