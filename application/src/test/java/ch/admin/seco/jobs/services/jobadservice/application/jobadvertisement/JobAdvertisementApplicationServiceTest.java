@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService.COUNTRY_ISO_CODE_SWITZERLAND;
 import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_02;
@@ -14,7 +15,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.assertj.core.util.Sets;
@@ -48,7 +48,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
@@ -243,6 +242,30 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.EXTERN);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
+    }
+
+    @Test
+    public void createFromX28WithEmptyCountry() {
+        //Prepare
+        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto(
+                "title",
+                "description",
+                "fingerprint",
+                "url",
+                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
+                new CreateLocationDto(null, "ctiy", "postalCode", null),
+                Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
+                "1,2"
+        );
+
+        //Execute
+        JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);
+
+        //Validate
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
+        assertThat(jobAdvertisement).isNotNull();
+        assertThat(jobAdvertisement.getJobContent().getLocation().getCountryIsoCode()).isEqualTo(COUNTRY_ISO_CODE_SWITZERLAND);
     }
 
     @Test
