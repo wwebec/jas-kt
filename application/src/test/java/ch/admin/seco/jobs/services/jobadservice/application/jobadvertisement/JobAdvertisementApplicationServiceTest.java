@@ -231,6 +231,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new CreateLocationDto("remarks", "ctiy", "postalCode", "CH"),
                 Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
                 "1,2",
+                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
                 TimeMachine.now().toLocalDate(),
                 null
         );
@@ -245,6 +246,31 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.EXTERN);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
+    }
+
+    @Test
+    public void createFromX28WithEmptyCountry() {
+        //Prepare
+        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto(
+                "title",
+                "description",
+                "fingerprint",
+                "url",
+                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
+                new CompanyDto("name", "stree", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
+                new CreateLocationDto(null, "ctiy", "postalCode", null),
+                Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
+                "1,2",
+                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT))
+        );
+
+        //Execute
+        JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);
+
+        //Validate
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
+        assertThat(jobAdvertisement).isNotNull();
+        assertThat(jobAdvertisement.getJobContent().getLocation().getCountryIsoCode()).isEqualTo(COUNTRY_ISO_CODE_SWITZERLAND);
     }
 
     @Test

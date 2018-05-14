@@ -46,9 +46,34 @@ class JobAdvertisementDtoAssembler {
                 createLocation(x28JobAdvertisement),
                 createOccupations(x28JobAdvertisement),
                 createProfessionCodes(x28JobAdvertisement),
+                createLanguageSkills(x28JobAdvertisement),
                 parseDate(x28JobAdvertisement.getAnmeldeDatum()),
                 parseDate(x28JobAdvertisement.getGueltigkeit())
         );
+    }
+
+    private List<LanguageSkillDto> createLanguageSkills(Oste x28JobAdvertisement) {
+        return Stream
+                .of(
+                        createLanguageSkillDto(x28JobAdvertisement.getSk1SpracheCode(), x28JobAdvertisement.getSk1MuendlichCode(), x28JobAdvertisement.getSk1SchriftlichCode()),
+                        createLanguageSkillDto(x28JobAdvertisement.getSk2SpracheCode(), x28JobAdvertisement.getSk2MuendlichCode(), x28JobAdvertisement.getSk2SchriftlichCode()),
+                        createLanguageSkillDto(x28JobAdvertisement.getSk3SpracheCode(), x28JobAdvertisement.getSk3MuendlichCode(), x28JobAdvertisement.getSk3SchriftlichCode()),
+                        createLanguageSkillDto(x28JobAdvertisement.getSk4SpracheCode(), x28JobAdvertisement.getSk4MuendlichCode(), x28JobAdvertisement.getSk4SchriftlichCode()),
+                        createLanguageSkillDto(x28JobAdvertisement.getSk5SpracheCode(), x28JobAdvertisement.getSk5MuendlichCode(), x28JobAdvertisement.getSk5SchriftlichCode())
+                )
+                .filter(Objects::nonNull)
+                .collect(toList());
+    }
+
+    private LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
+        if (hasText(spracheCode)) {
+            return new LanguageSkillDto(
+                    LANGUAGES.getRight(spracheCode),
+                    LANGUAGE_LEVEL.getRight(muendlichCode),
+                    LANGUAGE_LEVEL.getRight(schriftlichCode)
+            );
+        }
+        return null;
     }
 
     UpdateJobAdvertisementFromX28Dto updateFromX28(Oste x28JobAdvertisement) {

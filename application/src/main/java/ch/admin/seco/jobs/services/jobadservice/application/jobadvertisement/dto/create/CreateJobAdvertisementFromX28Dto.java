@@ -1,15 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
-import java.time.LocalDate;
-import java.util.List;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import java.util.List;
 
 public class CreateJobAdvertisementFromX28Dto {
 
@@ -38,6 +36,8 @@ public class CreateJobAdvertisementFromX28Dto {
 
     private String professionCodes;
 
+    private List<LanguageSkillDto> languageSkills;
+
     private LocalDate publicationStartDate;
 
     private LocalDate publicationEndDate;
@@ -46,7 +46,7 @@ public class CreateJobAdvertisementFromX28Dto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromX28Dto(String title, String description, String fingerprint, String externalUrl, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, LocalDate publicationStartDate, LocalDate publicationEndDate) {
+    public CreateJobAdvertisementFromX28Dto(String title, String description, String fingerprint, String externalUrl, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate) {
         this.title = title;
         this.description = description;
         this.fingerprint = fingerprint;
@@ -56,6 +56,7 @@ public class CreateJobAdvertisementFromX28Dto {
         this.location = location;
         this.occupations = occupations;
         this.professionCodes = professionCodes;
+        this.languageSkills = languageSkills;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
     }
@@ -130,6 +131,14 @@ public class CreateJobAdvertisementFromX28Dto {
 
     public void setProfessionCodes(String professionCodes) {
         this.professionCodes = professionCodes;
+    }
+
+    public List<LanguageSkillDto> getLanguageSkills() {
+        return languageSkills;
+    }
+
+    public void setLanguageSkills(List<LanguageSkillDto> languageSkills) {
+        this.languageSkills = languageSkills;
     }
 
     public LocalDate getPublicationStartDate() {

@@ -43,6 +43,7 @@ import static java.util.stream.Collectors.toList;
 public class JobAdvertisementApplicationService {
 
     public static final int PUBLICATION_MAX_DAYS = 60;
+    public static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
 
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
 
@@ -209,6 +210,7 @@ public class JobAdvertisementApplicationService {
                 .setX28OccupationCodes(createJobAdvertisementFromX28Dto.getProfessionCodes())
                 .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
                 .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkills()))
                 .build();
 
         // TODO Add auditUser
@@ -607,11 +609,13 @@ public class JobAdvertisementApplicationService {
 
     private Location toLocation(CreateLocationDto createLocationDto) {
         if (createLocationDto != null) {
+            String countryIsoCode = Optional.ofNullable(createLocationDto.getCountryIsoCode())
+                    .orElse(COUNTRY_ISO_CODE_SWITZERLAND);
             return new Location.Builder()
                     .setRemarks(createLocationDto.getRemarks())
                     .setCity(createLocationDto.getCity())
                     .setPostalCode(createLocationDto.getPostalCode())
-                    .setCountryIsoCode(createLocationDto.getCountryIsoCode())
+                    .setCountryIsoCode(countryIsoCode)
                     .build();
         }
         return null;
