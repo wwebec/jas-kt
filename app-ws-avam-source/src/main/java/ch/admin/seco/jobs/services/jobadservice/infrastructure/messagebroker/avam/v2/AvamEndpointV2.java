@@ -1,27 +1,24 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
 
-import static org.springframework.util.StringUtils.hasText;
-
-import java.io.StringWriter;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-
+import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamSource;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.InsertOste;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.InsertOsteResponse;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.WSOsteEgov;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.context.annotation.Profile;
 import org.springframework.ws.server.endpoint.annotation.Endpoint;
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
 import org.springframework.ws.server.endpoint.annotation.RequestPayload;
 import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
 
-import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamSource;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.InsertOste;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.InsertOsteResponse;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.WSOsteEgov;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
+
+import static org.springframework.util.StringUtils.hasText;
 
 @Endpoint
 @Profile(ProfileRegistry.AVAM_WSDL_V2)
@@ -43,6 +40,10 @@ public class AvamEndpointV2 {
     @PayloadRoot(namespace = NAMESPACE_URI, localPart = "insertOste")
     @ResponsePayload
     public InsertOsteResponse receiveJobAdvertisementFromAvam(@RequestPayload InsertOste request) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Recieved request: {}", transformToXml(request));
+        }
+        LOG.info("Recieved stellennummerAvam={}, stellennummerEgov={}", request.getOste().getStellennummerAvam(), request.getOste().getStellennummerEgov());
 
         WSOsteEgov avamJobAdvertisement = request.getOste();
 
