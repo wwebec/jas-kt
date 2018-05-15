@@ -136,6 +136,7 @@ public class JobAdvertisementApplicationService {
 
         // TODO Add auditUser
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+                .setStellennummerAvam(createJobAdvertisementFromAvamDto.getStellennummerAvam())
                 .setReportingObligation(createJobAdvertisementFromAvamDto.isReportingObligation())
                 .setReportingObligationEndDate(createJobAdvertisementFromAvamDto.getReportingObligationEndDate())
                 .setJobCenterCode(createJobAdvertisementFromAvamDto.getJobCenterCode())
