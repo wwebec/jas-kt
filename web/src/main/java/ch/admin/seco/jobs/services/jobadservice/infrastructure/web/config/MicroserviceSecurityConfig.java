@@ -22,6 +22,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 
@@ -79,6 +81,7 @@ public class MicroserviceSecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/jobAdvertisements/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/jobAdvertisements", "/api/jobAdvertisements/_search", "/api/jobAdvertisements/_count").permitAll()
+                .antMatchers("/api/apiUser/**").hasAuthority(AuthoritiesConstants.ADMIN)
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/management/info").permitAll()
                 .antMatchers("/management/health").permitAll()
@@ -152,6 +155,7 @@ public class MicroserviceSecurityConfig {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/api/jobAdvertisement").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/jobAdvertisement", "/api/_search/jobAdvertisement", "/api/_count/jobAdvertisement").permitAll()
+                .antMatchers("/api/apiUser/**").hasAuthority(AuthoritiesConstants.ADMIN)
                 .antMatchers("/api/**").authenticated()
                 .antMatchers("/management/info").permitAll()
                 .antMatchers("/management/health").permitAll()

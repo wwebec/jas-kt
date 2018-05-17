@@ -1,0 +1,53 @@
+{
+  "api-user": {
+    "properties": {
+      "id": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "apiUser": {
+        "properties": {
+          "id": {
+            "properties": {
+              "value": {
+                "type": "keyword"
+              }
+            }
+          },
+          "username": {
+            "type": "keyword"
+          },
+          "password": {
+            "type": "keyword"
+          },
+          "email": {
+            "type": "text"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "companyName": {
+            "type": "text"
+          },
+          "contactName": {
+            "type": "text"
+          },
+          "contactEmail": {
+            "type": "text"
+          },
+          "createDate": {
+            "type": "date"
+          },
+          "lastAccessDate": {
+            "type": "date"
+          }
+        }
+      }
+    }
+  }
+}
