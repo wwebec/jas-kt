@@ -54,7 +54,7 @@ The following chapters explain more precisely some of these concepts and provide
 
 == Base URL
 
-<BASE_URL> = https://api.job-room.ch/jobad/v1
+<BASE_URL> = https://api.job-room.ch/jobadertisement/v1
 
 == HTTP verbs
 

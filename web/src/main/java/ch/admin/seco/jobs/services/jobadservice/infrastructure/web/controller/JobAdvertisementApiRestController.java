@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/jobAdvertisements/api")
+@RequestMapping("/api/jobAdvertisements/api/v1")
 public class JobAdvertisementApiRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
