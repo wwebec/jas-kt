@@ -1,5 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
+import static ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants.PRIVATE_EMPLOYMENT_AGENT;
+import static ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants.PUBLIC_EMPLOYMENT_SERVICE;
+
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
@@ -14,6 +17,7 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.re
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -62,10 +66,17 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.getByAccessToken(accessToken);
     }
 
+    @PreAuthorize("hasAnyAuthority(" + PRIVATE_EMPLOYMENT_AGENT + "," + PUBLIC_EMPLOYMENT_SERVICE + ")")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(path = "/{id}/cancel")
     public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
         jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getReasonCode());
+    }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PatchMapping(path = "/cancel/token/{token}")
+    public void cancelByToken(@PathVariable String token, @RequestBody CancellationResource cancellation) {
+        jobAdvertisementApplicationService.cancelByToken(token, TimeMachine.now().toLocalDate(), cancellation.getReasonCode());
     }
 
     @GetMapping("/{id}/events")

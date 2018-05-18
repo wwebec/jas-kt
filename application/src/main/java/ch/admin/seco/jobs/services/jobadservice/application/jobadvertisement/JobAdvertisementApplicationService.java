@@ -318,6 +318,13 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.cancel(date, reasonCode);
     }
 
+    public void cancelByToken(String token, LocalDate date, String reasonCode) {
+        Condition.notNull(token, "token can't be null");
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByAccessToken(token);
+        LOG.debug("Starting cancel for token: '{}'", token);
+        jobAdvertisement.cancel(date, reasonCode);
+    }
+
     public void refining(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         LOG.debug("Starting refining for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
