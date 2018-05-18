@@ -15,7 +15,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 
 import org.assertj.core.util.Sets;
@@ -382,6 +381,23 @@ public class JobAdvertisementApplicationServiceTest {
     }
 
     @Test
+    public void checkPublicationStarts() {
+        // given
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_02, JobAdvertisementStatus.CANCELLED, null));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, JobAdvertisementStatus.REFINING, now().toLocalDate().plusDays(1)));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_04, JobAdvertisementStatus.REFINING, now().toLocalDate().minusDays(1)));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_05, JobAdvertisementStatus.REFINING, now().toLocalDate()));
+
+        // when
+        this.sut.scheduledCheckPublicationStarts();
+
+        // then
+        DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
+        assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_04);
+    }
+
+    @Test
     public void checkBlackoutPolicyExpiration() {
         // given
         jobAdvertisementRepository.save(createJobWithStatusAndReportingObligationEndDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
@@ -391,7 +407,7 @@ public class JobAdvertisementApplicationServiceTest {
         jobAdvertisementRepository.save(createJobWithStatusAndReportingObligationEndDate(JOB_ADVERTISEMENT_ID_05, JobAdvertisementStatus.PUBLISHED_RESTRICTED, now().toLocalDate()));
 
         // when
-        this.sut.checkBlackoutPolicyExpiration();
+        this.sut.scheduledCheckBlackoutPolicyExpiration();
 
         // then
         DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_BLACKOUT_EXPIRED.getDomainEventType());
@@ -408,13 +424,26 @@ public class JobAdvertisementApplicationServiceTest {
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_05, JobAdvertisementStatus.PUBLISHED_PUBLIC, now().toLocalDate()));
 
         // when
-        this.sut.checkPublicationExpiration();
+        this.sut.scheduledCheckPublicationExpiration();
 
         // then
         DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_EXPIRED.getDomainEventType());
         assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_04);
     }
 
+
+    private JobAdvertisement createJobWithStatusAndPublicationStartDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate publicationStartDate) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setContact(createContact(jobAdvertisementId))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setPublication(new Publication.Builder().setStartDate(publicationStartDate).build())
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStellennummerEgov(jobAdvertisementId.getValue())
+                .setStatus(status)
+                .build();
+    }
 
     private JobAdvertisement createJobWithStatusAndReportingObligationEndDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate reportingObligationEndDate) {
         return new JobAdvertisement.Builder()

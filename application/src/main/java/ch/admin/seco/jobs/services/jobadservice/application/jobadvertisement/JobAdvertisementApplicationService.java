@@ -325,31 +325,20 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.refining();
     }
 
-    @Scheduled(cron = "${jobAdvertisement.checkBlackoutPolicyExpiration.cron}")
-    public void checkBlackoutPolicyExpiration() {
-        this.jobAdvertisementRepository
-                .findAllWhereBlackoutNeedToExpire(TimeMachine.now().toLocalDate())
-                .forEach(JobAdvertisement::expireBlackout);
-
-    }
-
-    @Scheduled(cron = "${jobAdvertisement.checkPublicationExpiration.cron}")
-    public void checkPublicationExpiration() {
-        this.jobAdvertisementRepository
-                .findAllWherePublicationNeedToExpire(TimeMachine.now().toLocalDate())
-                .forEach(JobAdvertisement::expirePublication);
-
-    }
-
     public void publish(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         LOG.debug("Starting publish for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        publish(jobAdvertisement);
+    }
+
+    private void publish(JobAdvertisement jobAdvertisement) {
+        Condition.notNull(jobAdvertisement, "JobAdvertisement can't be null");
         if (jobAdvertisement.isReportingObligation() && REFINING.equals(jobAdvertisement.getStatus())) {
-            LOG.debug("Publish in restricted area for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
+            LOG.debug("Publish in restricted area for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
             jobAdvertisement.publishRestricted();
         } else {
-            LOG.debug("Publish in public area for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
+            LOG.debug("Publish in public area for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
             jobAdvertisement.publishPublic();
         }
     }
@@ -359,6 +348,30 @@ public class JobAdvertisementApplicationService {
         LOG.debug("Starting archive for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.archive();
+    }
+
+    @Scheduled(cron = "${jobAdvertisement.checkPublicationStarts.cron}")
+    public void scheduledCheckPublicationStarts() {
+        this.jobAdvertisementRepository
+                .findAllWherePublicationShouldStart(TimeMachine.now().toLocalDate())
+                .forEach(this::publish);
+
+    }
+
+    @Scheduled(cron = "${jobAdvertisement.checkBlackoutPolicyExpiration.cron}")
+    public void scheduledCheckBlackoutPolicyExpiration() {
+        this.jobAdvertisementRepository
+                .findAllWhereBlackoutNeedToExpire(TimeMachine.now().toLocalDate())
+                .forEach(JobAdvertisement::expireBlackout);
+
+    }
+
+    @Scheduled(cron = "${jobAdvertisement.checkPublicationExpiration.cron}")
+    public void scheduledCheckPublicationExpiration() {
+        this.jobAdvertisementRepository
+                .findAllWherePublicationNeedToExpire(TimeMachine.now().toLocalDate())
+                .forEach(JobAdvertisement::expirePublication);
+
     }
 
     private void checkifJobAdvertisementAlreadExists(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
