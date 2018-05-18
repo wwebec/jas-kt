@@ -383,8 +383,6 @@ public class JobAdvertisementApplicationServiceTest {
     @Test
     public void checkPublicationStarts() {
         // given
-        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
-        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_02, JobAdvertisementStatus.CANCELLED, null));
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, JobAdvertisementStatus.REFINING, now().toLocalDate().plusDays(1)));
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_04, JobAdvertisementStatus.REFINING, now().toLocalDate().minusDays(1)));
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_05, JobAdvertisementStatus.REFINING, now().toLocalDate()));
@@ -393,8 +391,7 @@ public class JobAdvertisementApplicationServiceTest {
         this.sut.scheduledCheckPublicationStarts();
 
         // then
-        DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
-        assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_04);
+        DomainEvent domainEvent = domainEventMockUtils.assertMultipleDomainEventPublished(2, JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
     }
 
     @Test
@@ -438,7 +435,7 @@ public class JobAdvertisementApplicationServiceTest {
                 .setOwner(createOwner(jobAdvertisementId))
                 .setContact(createContact(jobAdvertisementId))
                 .setJobContent(createJobContent(jobAdvertisementId))
-                .setPublication(new Publication.Builder().setStartDate(publicationStartDate).build())
+                .setPublication(new Publication.Builder().setStartDate(publicationStartDate).setEndDate(publicationStartDate.plusMonths(1)).build())
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStatus(status)
