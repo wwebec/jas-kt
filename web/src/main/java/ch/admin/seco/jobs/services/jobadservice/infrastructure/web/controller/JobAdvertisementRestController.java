@@ -66,7 +66,7 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.getByAccessToken(accessToken);
     }
 
-    @PreAuthorize("hasAnyAuthority(" + PRIVATE_EMPLOYMENT_AGENT + "," + PUBLIC_EMPLOYMENT_SERVICE + ")")
+    @PreAuthorize("hasAnyAuthority('" + PRIVATE_EMPLOYMENT_AGENT + "','" + PUBLIC_EMPLOYMENT_SERVICE + "')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(path = "/{id}/cancel")
     public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
