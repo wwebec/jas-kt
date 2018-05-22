@@ -229,8 +229,7 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "2"))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
-        ;
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())));
     }
 
     @Test
