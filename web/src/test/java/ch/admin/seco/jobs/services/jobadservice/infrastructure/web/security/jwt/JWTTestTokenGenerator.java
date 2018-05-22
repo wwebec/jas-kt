@@ -1,24 +1,23 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt;
 
-import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
+import ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import static org.springframework.util.StringUtils.arrayToCommaDelimitedString;
 
-import ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants;
-
-class JWTTokenGenerator {
-    private static final String AUTHORITIES_KEY = "auth";
+class JWTTestTokenGenerator {
 
     static String generateToken(String username, String secretKey, long expirationInSeconds, String... roles) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim(AUTHORITIES_KEY, arrayToCommaDelimitedString(roles))
+                .setClaims(generateClaims(username, roles))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .setExpiration(Date.from(Instant.now().plusSeconds(expirationInSeconds)))
                 .compact();
@@ -27,10 +26,23 @@ class JWTTokenGenerator {
     static String generateToken(String username, String secretKey, LocalDate expirationDate, String... roles) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim(AUTHORITIES_KEY, arrayToCommaDelimitedString(roles))
+                .setClaims(generateClaims(username, roles))
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .setExpiration(Date.from(expirationDate.atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .compact();
+    }
+
+    private static Claims generateClaims(String username, String... roles) {
+        Claims claims = Jwts.claims();
+        claims.setSubject(username);
+        claims.put(JWTClaimKey.userId.name(), "userId");
+        claims.put(JWTClaimKey.extId.name(), "extId");
+        claims.put(JWTClaimKey.companyId.name(), "companyId");
+        claims.put(JWTClaimKey.firstName.name(), "firstName");
+        claims.put(JWTClaimKey.lastName.name(), "lastName");
+        claims.put(JWTClaimKey.email.name(), "email");
+        claims.put(JWTClaimKey.auth.name(), arrayToCommaDelimitedString(roles));
+        return claims;
     }
 
     public static void main(String[] args) {

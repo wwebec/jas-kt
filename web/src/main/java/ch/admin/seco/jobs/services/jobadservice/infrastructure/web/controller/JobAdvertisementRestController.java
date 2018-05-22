@@ -31,16 +31,6 @@ public class JobAdvertisementRestController {
         this.eventStore = eventStore;
     }
 
-    @GetMapping(path = "/testauth")
-    public void testAuth() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            System.out.println(authentication.getDetails());
-            System.out.println(authentication.getPrincipal());
-            System.out.println(authentication.getPrincipal());
-        }
-    }
-
     @PostMapping()
     public JobAdvertisementDto createFromWebform(@RequestBody CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromWebForm(createJobAdvertisementDto);

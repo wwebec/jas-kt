@@ -6,6 +6,8 @@ import java.util.Set;
 
 public class CurrentUser {
 
+    private final String userId;
+
     private final String externalId;
 
     private final String companyId;
@@ -18,13 +20,18 @@ public class CurrentUser {
 
     private final Set<String> authorities = new HashSet<>();
 
-    public CurrentUser(String externalId, String companyId, String firstName, String lastName, String email, Collection<String> authorities) {
+    public CurrentUser(String userId, String externalId, String companyId, String firstName, String lastName, String email, Collection<String> authorities) {
+        this.userId = userId;
         this.externalId = externalId;
         this.companyId = companyId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.authorities.addAll(authorities);
+    }
+
+    public String getUserId() {
+        return userId;
     }
 
     public String getExternalId() {

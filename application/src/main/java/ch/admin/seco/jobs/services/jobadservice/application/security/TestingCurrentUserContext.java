@@ -4,7 +4,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 
 import java.util.Collections;
 
-public class TestingCurrentUserContext implements UserContext {
+public class TestingCurrentUserContext implements CurrentUserContext {
 
     private final String externalId;
 
@@ -19,8 +19,9 @@ public class TestingCurrentUserContext implements UserContext {
     @Override
     public CurrentUser getCurrentUser() {
         return new CurrentUser(
+                "userId",
                 externalId,
-                null,
+                "companyId",
                 "Junit",
                 "Junit",
                 "junit@example.com",
@@ -31,11 +32,23 @@ public class TestingCurrentUserContext implements UserContext {
     @Override
     public AuditUser getAuditUser() {
         return new AuditUser(
+                "userId",
                 externalId,
+                "companyId",
                 "Junit",
                 "Junit",
                 "junit@example.com"
         );
+    }
+
+    @Override
+    public boolean hasRole(Role role) {
+        return true;
+    }
+
+    @Override
+    public boolean hasAnyRoles(Role... roles) {
+        return true;
     }
 
 }

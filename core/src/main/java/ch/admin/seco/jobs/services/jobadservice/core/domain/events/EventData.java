@@ -6,40 +6,63 @@ public class EventData {
 
     private String id;
 
+    private LocalDateTime registrationTime;
+
+    private String domainEventType;
+
     private String aggregateType;
 
     private String aggregateId;
 
-    private String domainEventType;
-
     private String userId;
 
-    private String userEmail;
+    private String userExternalId;
 
     private String userDisplayName;
 
-    private LocalDateTime registrationTime;
+    private String userEmail;
 
     private String payload;
 
     EventData(Builder builder) {
-        this.aggregateId = builder.aggregateId;
-        this.aggregateType = builder.aggregateType;
         this.id = builder.id;
-        this.domainEventType = builder.domainEventType;
-        this.userId = builder.userId;
-        this.userDisplayName = builder.displayName;
         this.registrationTime = builder.registrationTime;
-        this.payload = builder.payload;
+        this.domainEventType = builder.domainEventType;
+        this.aggregateType = builder.aggregateType;
+        this.aggregateId = builder.aggregateId;
+        this.userId = builder.userId;
+        this.userExternalId = builder.userExternalId;
+        this.userDisplayName = builder.displayName;
         this.userEmail = builder.userEmail;
+        this.payload = builder.payload;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public LocalDateTime getRegistrationTime() {
+        return registrationTime;
+    }
+
+    public String getDomainEventType() {
+        return domainEventType;
+    }
+
+    public String getAggregateType() {
+        return aggregateType;
     }
 
     public String getAggregateId() {
         return aggregateId;
     }
 
-    public String getAggregateType() {
-        return aggregateType;
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getUserExternalId() {
+        return userExternalId;
     }
 
     public String getUserDisplayName() {
@@ -50,67 +73,29 @@ public class EventData {
         return userEmail;
     }
 
-    public void setAggregateId(String aggregateId) {
-        this.aggregateId = aggregateId;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getDomainEventType() {
-        return domainEventType;
-    }
-
-    public void setDomainEventType(String domainEventType) {
-        this.domainEventType = domainEventType;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public LocalDateTime getRegistrationTime() {
-        return registrationTime;
-    }
-
-    public void setRegistrationTime(LocalDateTime registrationTime) {
-        this.registrationTime = registrationTime;
-    }
-
     public String getPayload() {
         return payload;
     }
 
-    public void setPayload(String payload) {
-        this.payload = payload;
-    }
-
     public static class Builder {
-
-        private String aggregateId;
-
-        private String aggregateType;
 
         private String id;
 
+        private LocalDateTime registrationTime;
+
         private String domainEventType;
 
+        private String aggregateType;
+
+        private String aggregateId;
+
         private String userId;
+
+        private String userExternalId;
 
         private String displayName;
 
         private String userEmail;
-
-        private LocalDateTime registrationTime;
 
         private String payload;
 
@@ -118,33 +103,8 @@ public class EventData {
             return new EventData(this);
         }
 
-        public Builder setAggregateId(String aggregateId) {
-            this.aggregateId = aggregateId;
-            return this;
-        }
-
-        public Builder setAggregateType(String aggregateType) {
-            this.aggregateType = aggregateType;
-            return this;
-        }
-
         public Builder setId(String id) {
             this.id = id;
-            return this;
-        }
-
-        public Builder setDomainEventType(String domainEventType) {
-            this.domainEventType = domainEventType;
-            return this;
-        }
-
-        public Builder setUserId(String userId) {
-            this.userId = userId;
-            return this;
-        }
-
-        public Builder setDisplayName(String displayName) {
-            this.displayName = displayName;
             return this;
         }
 
@@ -153,13 +113,43 @@ public class EventData {
             return this;
         }
 
-        public Builder setPayload(String payload) {
-            this.payload = payload;
+        public Builder setDomainEventType(String domainEventType) {
+            this.domainEventType = domainEventType;
+            return this;
+        }
+
+        public Builder setAggregateType(String aggregateType) {
+            this.aggregateType = aggregateType;
+            return this;
+        }
+
+        public Builder setAggregateId(String aggregateId) {
+            this.aggregateId = aggregateId;
+            return this;
+        }
+
+        public Builder setUserId(String userId) {
+            this.userId = userId;
+            return this;
+        }
+
+        public Builder setUserExternalId(String userExternalId) {
+            this.userExternalId = userExternalId;
+            return this;
+        }
+
+        public Builder setDisplayName(String displayName) {
+            this.displayName = displayName;
             return this;
         }
 
         public Builder setUserEmail(String userEmail) {
             this.userEmail = userEmail;
+            return this;
+        }
+
+        public Builder setPayload(String payload) {
+            this.payload = payload;
             return this;
         }
     }
