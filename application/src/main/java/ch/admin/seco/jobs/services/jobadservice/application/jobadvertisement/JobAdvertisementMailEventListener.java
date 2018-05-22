@@ -42,15 +42,13 @@ public class JobAdvertisementMailEventListener {
     private static final String JOB_ADVERTISEMENT_CANCELLED_TEMPLATE = "JobAdCancelledMail.html";
     private static final String DEFAULT_LANGUAGE = "";
 
-
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final MailSenderService mailSenderService;
     private final MessageSource messageSource;
     private final JobCenterService jobCenterService;
 
     @Autowired
-    public JobAdvertisementMailEventListener(JobAdvertisementRepository jobAdvertisementRepository, MailSenderService mailSenderService, MessageSource messageSource, JobCenterService jobCenterService
-                                              ) {
+    public JobAdvertisementMailEventListener(JobAdvertisementRepository jobAdvertisementRepository, MailSenderService mailSenderService, MessageSource messageSource, JobCenterService jobCenterService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.mailSenderService = mailSenderService;
         this.messageSource = messageSource;
