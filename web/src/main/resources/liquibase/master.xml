@@ -8,5 +8,6 @@
     <include file="classpath:/liquibase/changelog/20180306080000_added_sequence_EgovNum.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180321080000_added_entity_AvamTask.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180510080000_added_entity_ApiUser.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20180518080000_update_cancellation_code.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180522080000_fixes_entity_StoredEvent.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
