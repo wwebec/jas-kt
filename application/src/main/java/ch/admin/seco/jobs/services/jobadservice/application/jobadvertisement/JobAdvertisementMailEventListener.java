@@ -41,6 +41,7 @@ public class JobAdvertisementMailEventListener {
     private static final String JOB_ADVERTISEMENT_CANCELLED_SUBJECT = "mail.jobAd.cancelled.subject";
     private static final String JOB_ADVERTISEMENT_CANCELLED_TEMPLATE = "JobAdCancelledMail.html";
     private static final String DEFAULT_LANGUAGE = "";
+    private static final String TOKEN_STRING = "?token=";
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final MailSenderService mailSenderService;
@@ -66,7 +67,7 @@ public class JobAdvertisementMailEventListener {
         final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
-        variables.put("creationLink", jobAdvertisement.getId().getValue() + "?token=" + jobAdvertisement.getOwner().getAccessToken());
+        variables.put("creationLink", jobAdvertisement.getId().getValue() + TOKEN_STRING + jobAdvertisement.getOwner().getAccessToken());
         variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
@@ -91,7 +92,7 @@ public class JobAdvertisementMailEventListener {
         final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
-        variables.put("refinedLink", jobAdvertisement.getId().getValue() + "?token=" + jobAdvertisement.getOwner().getAccessToken());
+        variables.put("refinedLink", jobAdvertisement.getId().getValue() + TOKEN_STRING + jobAdvertisement.getOwner().getAccessToken());
         variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
