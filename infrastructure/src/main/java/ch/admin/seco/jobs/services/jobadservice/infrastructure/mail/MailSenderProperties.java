@@ -33,6 +33,8 @@ public class MailSenderProperties {
 
     private String baseUrl;
 
+    private String linkToJobAdDetailPage;
+
     @NotNull
     private String templatesPath;
 
@@ -104,6 +106,10 @@ public class MailSenderProperties {
     public void setBaseUrl(String baseUrl) {
         this.baseUrl = baseUrl;
     }
+
+    public String getLinkToJobAdDetailPage() { return linkToJobAdDetailPage; }
+
+    public void setLinkToJobAdDetailPage(String linkToJobAdDetailPage) { this.linkToJobAdDetailPage = linkToJobAdDetailPage; }
 
     public String getTemplatesPath() {
         return templatesPath;

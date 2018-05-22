@@ -26,7 +26,7 @@
             <span th:text="${jobCenter.email}"></span>
             <p th:text="#{mail.jobAd.refined.body.paragraph4}"></p>
             <ul>
-                <li><p th:text="#{mail.jobAd.refined.body.link1}"></p></li>
+                <li><link th:href="@{|${linkToJobAdDetailPage + refinedLink}}"/></li>
             </ul>
             <p th:text="#{mail.jobAd.footer.paragraph1}"></p>
             <div th:text="#{mail.jobAd.footer.details1}"></div>

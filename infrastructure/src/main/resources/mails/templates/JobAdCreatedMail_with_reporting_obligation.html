@@ -26,6 +26,7 @@
             <br>
             <span th:text="#{mail.jobAd.created.body.addressblock.email}"></span>
             <span th:text="${jobCenter.email}"></span>
+            <link th:href="@{|${linkToJobAdDetailPage} + ${creationlink}}"/>
             <p th:text="#{mail.jobAd.created.body.paragraph4}"></p>
             <p th:text="#{mail.jobAd.created.body.link1}"></p>
             <p th:text="#{mail.jobAd.footer.paragraph1}"></p>
