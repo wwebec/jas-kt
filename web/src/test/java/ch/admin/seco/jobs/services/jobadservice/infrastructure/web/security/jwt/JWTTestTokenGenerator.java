@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt;
 
-import ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants;
+import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -46,6 +46,6 @@ class JWTTestTokenGenerator {
     }
 
     public static void main(String[] args) {
-        System.out.println("Bearer " + generateToken("julien", "my-secret-token-to-change-in-production", LocalDate.now().plusYears(1), AuthoritiesConstants.ADMIN, AuthoritiesConstants.PUBLIC_EMPLOYMENT_SERVICE, AuthoritiesConstants.USER));
+        System.out.println("Bearer " + generateToken("julien", "my-secret-token-to-change-in-production", LocalDate.now().plusYears(1), Role.ADMIN.getValue(), Role.PUBLIC_EMPLOYMENT_SERVICE.getValue(), Role.USER.getValue()));
     }
 }

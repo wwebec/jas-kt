@@ -63,7 +63,7 @@ public class SpringSecurityBasedCurrentCurrentUserContext implements CurrentUser
         List<String> authorities = getAuthorities();
         if (authorities != null) {
             for (Role role : roles) {
-                if (authorities.contains(PREFIX_ROLE + role.name())) {
+                if (authorities.contains(role.getValue())) {
                     return true;
                 }
             }

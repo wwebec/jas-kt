@@ -1,20 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.config;
 
-import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
-
+import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTConfigurer;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTSecurityProperties;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.TokenProvider;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.FixedAuthoritiesExtractor;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.FixedPrincipalExtractor;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.*;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,16 +16,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
-
-import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
-import ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTConfigurer;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTSecurityProperties;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.TokenProvider;
+import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 @Configuration
 @Import(SecurityProblemSupport.class)
@@ -63,32 +50,32 @@ public class MicroserviceSecurityConfig {
         protected void configure(HttpSecurity http) throws Exception {
             // @formatter:off
             http
-                .csrf()
-                .disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(problemSupport)
-                .accessDeniedHandler(problemSupport)
-            .and()
-                .headers()
-                .frameOptions()
-                .disable()
-            .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-                .anonymous()
-            .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/jobAdvertisements/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/jobAdvertisements", "/api/jobAdvertisements/_search", "/api/jobAdvertisements/_count").permitAll()
-                .antMatchers("/api/apiUser/**").hasAuthority(AuthoritiesConstants.ADMIN)
-                .antMatchers("/api/**").authenticated()
-                .antMatchers("/management/info").permitAll()
-                .antMatchers("/management/health").permitAll()
-                .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN)
-                .antMatchers("/swagger-ui.html").permitAll()
-            .and()
-                .apply(securityConfigurerAdapter());
+                    .csrf()
+                    .disable()
+                    .exceptionHandling()
+                    .authenticationEntryPoint(problemSupport)
+                    .accessDeniedHandler(problemSupport)
+                    .and()
+                    .headers()
+                    .frameOptions()
+                    .disable()
+                    .and()
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                    .anonymous()
+                    .and()
+                    .authorizeRequests()
+                    .antMatchers(HttpMethod.GET, "/api/jobAdvertisements/**").permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/jobAdvertisements", "/api/jobAdvertisements/_search", "/api/jobAdvertisements/_count").permitAll()
+                    .antMatchers("/api/apiUser/**").hasAuthority(Role.ADMIN.getValue())
+                    .antMatchers("/api/**").authenticated()
+                    .antMatchers("/management/info").permitAll()
+                    .antMatchers("/management/health").permitAll()
+                    .antMatchers("/management/**").hasAuthority(Role.ADMIN.getValue())
+                    .antMatchers("/swagger-ui.html").permitAll()
+                    .and()
+                    .apply(securityConfigurerAdapter());
             // @formatter:on
         }
 
@@ -107,7 +94,7 @@ public class MicroserviceSecurityConfig {
         private final SecurityProblemSupport problemSupport;
 
         public OAuth2Config(ResourceServerProperties resourceServerProperties,
-                SecurityProblemSupport problemSupport) {
+                            SecurityProblemSupport problemSupport) {
             this.resourceServerProperties = resourceServerProperties;
             this.problemSupport = problemSupport;
         }
@@ -137,29 +124,29 @@ public class MicroserviceSecurityConfig {
         public void configure(HttpSecurity http) throws Exception {
             // @formatter:off
             http
-                .csrf()
-                .disable()
-                .exceptionHandling()
-                .authenticationEntryPoint(problemSupport)
-                .accessDeniedHandler(problemSupport)
-            .and()
-                .headers()
-                .frameOptions()
-                .disable()
-            .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            .and()
-                .anonymous()
-            .and()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/jobAdvertisement").permitAll()
-                .antMatchers(HttpMethod.POST, "/api/jobAdvertisement", "/api/_search/jobAdvertisement", "/api/_count/jobAdvertisement").permitAll()
-                .antMatchers("/api/apiUser/**").hasAuthority(AuthoritiesConstants.ADMIN)
-                .antMatchers("/api/**").authenticated()
-                .antMatchers("/management/info").permitAll()
-                .antMatchers("/management/health").permitAll()
-                .antMatchers("/management/**").hasAuthority(AuthoritiesConstants.ADMIN);
+                    .csrf()
+                    .disable()
+                    .exceptionHandling()
+                    .authenticationEntryPoint(problemSupport)
+                    .accessDeniedHandler(problemSupport)
+                    .and()
+                    .headers()
+                    .frameOptions()
+                    .disable()
+                    .and()
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                    .anonymous()
+                    .and()
+                    .authorizeRequests()
+                    .antMatchers(HttpMethod.GET, "/api/jobAdvertisement").permitAll()
+                    .antMatchers(HttpMethod.POST, "/api/jobAdvertisement", "/api/_search/jobAdvertisement", "/api/_count/jobAdvertisement").permitAll()
+                    .antMatchers("/api/apiUser/**").hasAuthority(Role.ADMIN.getValue())
+                    .antMatchers("/api/**").authenticated()
+                    .antMatchers("/management/info").permitAll()
+                    .antMatchers("/management/health").permitAll()
+                    .antMatchers("/management/**").hasAuthority(Role.ADMIN.getValue());
             // @formatter:on
         }
     }
