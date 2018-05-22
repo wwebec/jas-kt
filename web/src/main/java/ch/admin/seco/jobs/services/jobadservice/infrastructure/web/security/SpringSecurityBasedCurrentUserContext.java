@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import static org.springframework.util.StringUtils.hasText;
 
 @Component
-public class SpringSecurityBasedCurrentCurrentUserContext implements CurrentUserContext {
+public class SpringSecurityBasedCurrentUserContext implements CurrentUserContext {
 
     public static final String USER_ANONYMOUS = "anonymousUser";
 
