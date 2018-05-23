@@ -18,12 +18,22 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 @Configuration
+@Order(2)
 @Import(SecurityProblemSupport.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class MicroserviceSecurityConfig {
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint(){
+        BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
+        entryPoint.setRealmName("admin realm");
+        return entryPoint;
+    }
 
     @Configuration
     @Order(SecurityProperties.BASIC_AUTH_ORDER)

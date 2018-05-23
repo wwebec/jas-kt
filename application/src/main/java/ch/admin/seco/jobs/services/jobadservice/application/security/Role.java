@@ -10,6 +10,8 @@ public enum Role {
 
     JOBSEEKER_CLIENT("ROLE_JOBSEEKER_CLIENT"),
 
+    API("ROLE_API"),
+
     USER("ROLE_USER"),
     ALLOW("ROLE_ALLOW");
 

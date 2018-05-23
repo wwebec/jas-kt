@@ -5,8 +5,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.apiuser.ApiUserServi
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.ChangeApiUserStatusDto;
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.CreateApiUserDto;
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
-import ch.admin.seco.jobs.services.jobadservice.application.security.TestingCurrentUserContext;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserId;
@@ -16,6 +14,7 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.rea
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserDocument;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserElasticsearchRepository;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.TestUtil;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.TestWebConfig;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.errors.ExceptionTranslator;
 import org.junit.After;
 import org.junit.Before;
@@ -23,12 +22,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -70,11 +69,6 @@ public class ApiUserRestControllerIntTest {
 
     private ApiUser apiUser1;
     private ApiUser apiUser2;
-
-    @Bean
-    public CurrentUserContext currentUserContext() {
-        return new TestingCurrentUserContext("junit");
-    }
 
     @Before
     public void setUp() {
