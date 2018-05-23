@@ -162,6 +162,37 @@ public class ApiUserRestControllerIntTest {
 	}
 
 	@Test
+	public void shouldNotSaveApiUserWithSameUsername() throws Exception {
+		// GIVEN
+		saveApiUser(apiUser1);
+
+		CreateApiUserDto createApiUserDto = new CreateApiUserDto();
+		createApiUserDto.setUsername("alex");
+		createApiUserDto.setPassword("secret");
+		createApiUserDto.setCompanyName("Company");
+		createApiUserDto.setEmail("email@email");
+		createApiUserDto.setActive(true);
+		createApiUserDto.setContactName("contactName");
+		createApiUserDto.setContactEmail("contact@mail.com");
+
+		// WHEN
+		ResultActions resultActions = mockMvc.perform(
+				post(API_API_USERS)
+						.contentType(TestUtil.APPLICATION_JSON_UTF8)
+						.content(TestUtil.convertObjectToJsonBytes(createApiUserDto))
+		);
+
+		// THEN
+		resultActions
+				.andExpect(status().is5xxServerError());
+
+		List<ApiUser> all = apiUserRepository.findAll();
+		assertThat(all).hasSize(1);
+		assertThat(all.get(0).getId()).isEqualTo(apiUser1.getId());
+
+	}
+
+	@Test
 	public void shouldUpdateApiUser() throws Exception {
 		// GIVEN
 		saveApiUser(apiUser1);
