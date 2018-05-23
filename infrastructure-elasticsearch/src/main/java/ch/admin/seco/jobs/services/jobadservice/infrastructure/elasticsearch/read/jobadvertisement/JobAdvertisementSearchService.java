@@ -5,6 +5,8 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.security.UserService;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementDocument;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementElasticsearchRepository;
+
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
@@ -44,7 +46,6 @@ import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
-
 @Service
 public class JobAdvertisementSearchService {
     public enum SearchSort {
@@ -80,11 +81,14 @@ public class JobAdvertisementSearchService {
     private final ElasticsearchTemplate elasticsearchTemplate;
     private final ResultsMapper resultsMapper;
     private final UserService userService;
+    private final JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository;
 
     public JobAdvertisementSearchService(ElasticsearchTemplate elasticsearchTemplate,
-                                         ElasticsearchConfiguration.CustomEntityMapper customEntityMapper,
-                                         UserService userService) {
+            ElasticsearchConfiguration.CustomEntityMapper customEntityMapper,
+            UserService userService,
+            JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository) {
         this.elasticsearchTemplate = elasticsearchTemplate;
+        this.jobAdvertisementElasticsearchRepository = jobAdvertisementElasticsearchRepository;
         this.resultsMapper = new DefaultResultMapper(elasticsearchTemplate.getElasticsearchConverter().getMappingContext(), customEntityMapper);
         this.userService = userService;
     }
@@ -111,6 +115,50 @@ public class JobAdvertisementSearchService {
 
             return new AggregatedPageImpl<>(highLigtedResults, pageable, searchHits.totalHits, searchResults.getAggregations(), searchResults.getScrollId());
         });
+    }
+
+    public Page<JobAdvertisementDto> searchPeaJobAdvertisements(
+            PeaJobAdvertisementSearchRequest searchRequest,
+            Pageable pageable) {
+
+        SearchQuery query = createPeaSearchQueryBuilder(searchRequest)
+                .withPageable(pageable)
+                .build();
+
+        return jobAdvertisementElasticsearchRepository.search(query)
+                .map(JobAdvertisementDocument::getJobAdvertisement)
+                .map(JobAdvertisementDto::toDto);
+    }
+
+    private NativeSearchQueryBuilder createPeaSearchQueryBuilder(PeaJobAdvertisementSearchRequest searchRequest) {
+        QueryBuilder filter = mustAll(
+                titleFilter(searchRequest),
+                publicationStartDatePeaFilter(searchRequest),
+                companyFilter(searchRequest.getCompanyName())
+        );
+
+        return new NativeSearchQueryBuilder()
+                .withFilter(filter);
+    }
+
+    private BoolQueryBuilder titleFilter(PeaJobAdvertisementSearchRequest searchRequest) {
+        BoolQueryBuilder query = boolQuery();
+
+        if (isNotBlank(searchRequest.getJobTitle())) {
+            query.must(matchQuery(PATH_TITLE, searchRequest.getJobTitle()));
+        }
+
+        return query;
+    }
+
+    private BoolQueryBuilder publicationStartDatePeaFilter(PeaJobAdvertisementSearchRequest searchRequest) {
+        BoolQueryBuilder query = boolQuery();
+        if (searchRequest.getOnlineSinceDays() == null) {
+            return query;
+        }
+
+        String publicationStartDate = String.format("now-%sd/d", searchRequest.getOnlineSinceDays());
+        return query.must(rangeQuery(PATH_PUBLICATION_START_DATE).gte(publicationStartDate));
     }
 
     public long count(JobAdvertisementSearchRequest jobSearchRequest) {
@@ -223,7 +271,7 @@ public class JobAdvertisementSearchService {
                 localityFilter(jobSearchRequest),
                 workingTimeFilter(jobSearchRequest),
                 contractTypeFilter(jobSearchRequest),
-                companyFilter(jobSearchRequest));
+                companyFilter(jobSearchRequest.getCompanyName()));
     }
 
     private BoolQueryBuilder publicationStartDateFilter(JobAdvertisementSearchRequest jobSearchRequest) {
@@ -234,11 +282,11 @@ public class JobAdvertisementSearchService {
         return boolQuery().must(rangeQuery(PATH_PUBLICATION_START_DATE).gte(publicationStartDate));
     }
 
-    private BoolQueryBuilder companyFilter(JobAdvertisementSearchRequest jobSearchRequest) {
+    private BoolQueryBuilder companyFilter(String companyName) {
         BoolQueryBuilder companyFilter = boolQuery();
 
-        if (isNotBlank(jobSearchRequest.getCompanyName())) {
-            companyFilter.must(matchPhraseQuery(PATH_COMPANY_NAME, jobSearchRequest.getCompanyName()));
+        if (isNotBlank(companyName)) {
+            companyFilter.must(matchPhraseQuery(PATH_COMPANY_NAME, companyName));
         }
 
         return companyFilter;

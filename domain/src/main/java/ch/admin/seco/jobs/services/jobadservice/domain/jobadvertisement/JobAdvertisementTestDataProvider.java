@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Stream;
 
 public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdvertisement> {
 
@@ -110,14 +109,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     }
 
     public static Company createCompany(JobAdvertisementId jobAdvertisementId) {
-        return new Company.Builder()
-                .setName(String.format("name-%s", jobAdvertisementId.getValue()))
-                .setStreet("street")
-                .setPostalCode("postalCode")
-                .setCity("city")
-                .setCountryIsoCode("ch")
-                .setSurrogate(false)
-                .build();
+        return createCompany(String.format("name-%s", jobAdvertisementId.getValue()));
     }
 
     public static Company createCompany(String companyName) {
