@@ -5,6 +5,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 public class UpdateApiUserDto {
+
 	@NotBlank
 	private String id;
 
@@ -15,21 +16,35 @@ public class UpdateApiUserDto {
 	private String password;
 
 	@NotBlank
-	@Email
-	private String email;
-
-	@NotNull
-	private Boolean active;
-
-	@NotBlank
 	private String companyName;
 
 	@NotBlank
-	private String contactName;
+	@Email
+	private String companyEmail;
+
+	@NotBlank
+	private String technicalContactName;
 
 	@NotBlank
 	@Email
-	private String contactEmail;
+	private String technicalContactEmail;
+
+	private boolean active;
+
+	protected UpdateApiUserDto() {
+		// For reflection libs
+	}
+
+	public UpdateApiUserDto(String id, String username, String password, String companyName, String companyEmail, String technicalContactName, String technicalContactEmail, boolean active) {
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.companyName = companyName;
+		this.companyEmail = companyEmail;
+		this.technicalContactName = technicalContactName;
+		this.technicalContactEmail = technicalContactEmail;
+		this.active = active;
+	}
 
 	public String getId() {
 		return id;
@@ -37,14 +52,6 @@ public class UpdateApiUserDto {
 
 	public void setId(String id) {
 		this.id = id;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
 	}
 
 	public String getUsername() {
@@ -63,12 +70,12 @@ public class UpdateApiUserDto {
 		this.password = password;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getCompanyEmail() {
+		return companyEmail;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setCompanyEmail(String companyEmail) {
+		this.companyEmail = companyEmail;
 	}
 
 	public String getCompanyName() {
@@ -79,20 +86,28 @@ public class UpdateApiUserDto {
 		this.companyName = companyName;
 	}
 
-	public String getContactName() {
-		return contactName;
+	public String getTechnicalContactName() {
+		return technicalContactName;
 	}
 
-	public void setContactName(String contactName) {
-		this.contactName = contactName;
+	public void setTechnicalContactName(String technicalContactName) {
+		this.technicalContactName = technicalContactName;
 	}
 
-	public String getContactEmail() {
-		return contactEmail;
+	public String getTechnicalContactEmail() {
+		return technicalContactEmail;
 	}
 
-	public void setContactEmail(String contactEmail) {
-		this.contactEmail = contactEmail;
+	public void setTechnicalContactEmail(String technicalContactEmail) {
+		this.technicalContactEmail = technicalContactEmail;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 }

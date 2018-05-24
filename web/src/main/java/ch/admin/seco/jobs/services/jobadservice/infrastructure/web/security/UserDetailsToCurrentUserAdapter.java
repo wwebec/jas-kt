@@ -12,7 +12,7 @@ public class UserDetailsToCurrentUserAdapter extends User {
     private final CurrentUser currentUser;
 
     public UserDetailsToCurrentUserAdapter(ApiUser apiUser, CurrentUser currentUser, Collection<? extends GrantedAuthority> authorities) {
-        super(apiUser.getUsername(), apiUser.getPassword(), apiUser.getActive(), true, true, true, authorities);
+        super(apiUser.getUsername(), apiUser.getPassword(), apiUser.isActive(), true, true, true, authorities);
         this.currentUser = currentUser;
     }
 

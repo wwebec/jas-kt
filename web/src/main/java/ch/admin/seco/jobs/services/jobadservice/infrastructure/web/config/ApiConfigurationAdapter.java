@@ -36,10 +36,10 @@ public class ApiConfigurationAdapter extends WebSecurityConfigurerAdapter {
                 CurrentUser currentUser = new CurrentUser(
                         apiUser.getId().getValue(),
                         null,
-                        null, // FIXME retrieve from apiUser.getCompanyName()
                         null,
-                        apiUser.getContactName(),
-                        apiUser.getContactEmail(),
+                        "(API)",
+                        apiUser.getCompanyName(),
+                        apiUser.getCompanyEmail(),
                         Collections.singleton(Role.API.getValue())
                 );
 

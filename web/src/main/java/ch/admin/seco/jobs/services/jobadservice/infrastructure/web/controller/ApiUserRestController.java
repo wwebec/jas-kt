@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.ApiUserService;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.ApiUserApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.ApiUserDto;
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.ChangeApiUserStatusDto;
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.CreateApiUserDto;
@@ -32,34 +32,34 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.util.Paginati
 @RequestMapping("/api/apiUsers")
 public class ApiUserRestController {
 
-	private ApiUserService apiUserService;
+	private ApiUserApplicationService apiUserApplicationService;
 	private ApiUserSearchService apiUserSearchService;
 
 	@Autowired
-	public ApiUserRestController(ApiUserService apiUserService, ApiUserSearchService apiUserSearchService) {
-		this.apiUserService = apiUserService;
+	public ApiUserRestController(ApiUserApplicationService apiUserApplicationService, ApiUserSearchService apiUserSearchService) {
+		this.apiUserApplicationService = apiUserApplicationService;
 		this.apiUserSearchService = apiUserSearchService;
 	}
 
 	@PostMapping
 	public ApiUserDto createApiUser(@Valid @RequestBody CreateApiUserDto createApiUserDto) {
-		ApiUserId apiUserId = apiUserService.createApiUser(createApiUserDto);
-		return apiUserService.findById(apiUserId);
+		ApiUserId apiUserId = apiUserApplicationService.create(createApiUserDto);
+		return apiUserApplicationService.findById(apiUserId);
 	}
 
 	@PutMapping
 	public ApiUserDto update(@Valid @RequestBody UpdateApiUserDto updateApiUserDto) {
-		return apiUserService.update(updateApiUserDto);
+		return apiUserApplicationService.update(updateApiUserDto);
 	}
 
 	@GetMapping("/{id}")
 	public ApiUserDto findById(@PathVariable String id) {
-		return apiUserService.findById(new ApiUserId(id));
+		return apiUserApplicationService.findById(new ApiUserId(id));
 	}
 
 	@GetMapping
 	public Page<ApiUserDto> findAll(Pageable pageable) {
-		return apiUserService.findAll(pageable);
+		return apiUserApplicationService.findAll(pageable);
 	}
 
 	@PostMapping("/_search")
@@ -71,6 +71,6 @@ public class ApiUserRestController {
 
 	@PutMapping("/{id}/active")
 	public void changeApiUserStatus(@PathVariable String id, @Valid @RequestBody ChangeApiUserStatusDto statusDto) {
-		apiUserService.changeApiUserStatus(new ApiUserId(id), statusDto.getActive());
+		apiUserApplicationService.changeStatus(new ApiUserId(id), statusDto.getActive());
 	}
 }

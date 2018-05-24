@@ -7,13 +7,30 @@ public class ApiUserDto {
 	private String id;
 	private String username;
 	private String password;
-	private String email;
-	private Boolean active;
 	private String companyName;
-	private String contactName;
-	private String contactEmail;
+	private String companyEmail;
+	private String technicalContactName;
+	private String technicalContactEmail;
+	private boolean active;
 	private LocalDate createDate;
 	private LocalDate lastAccessDate;
+
+	protected ApiUserDto() {
+		// For reflection libs
+	}
+
+	public ApiUserDto(String id, String username, String password, String companyName, String companyEmail, String technicalContactName, String technicalContactEmail, boolean active, LocalDate createDate, LocalDate lastAccessDate) {
+		this.id = id;
+		this.username = username;
+		this.password = password;
+		this.companyName = companyName;
+		this.companyEmail = companyEmail;
+		this.technicalContactName = technicalContactName;
+		this.technicalContactEmail = technicalContactEmail;
+		this.active = active;
+		this.createDate = createDate;
+		this.lastAccessDate = lastAccessDate;
+	}
 
 	public String getId() {
 		return id;
@@ -39,22 +56,6 @@ public class ApiUserDto {
 		this.password = password;
 	}
 
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public Boolean getActive() {
-		return active;
-	}
-
-	public void setActive(Boolean active) {
-		this.active = active;
-	}
-
 	public String getCompanyName() {
 		return companyName;
 	}
@@ -63,20 +64,36 @@ public class ApiUserDto {
 		this.companyName = companyName;
 	}
 
-	public String getContactName() {
-		return contactName;
+	public String getCompanyEmail() {
+		return companyEmail;
 	}
 
-	public void setContactName(String contactName) {
-		this.contactName = contactName;
+	public void setCompanyEmail(String companyEmail) {
+		this.companyEmail = companyEmail;
 	}
 
-	public String getContactEmail() {
-		return contactEmail;
+	public String getTechnicalContactName() {
+		return technicalContactName;
 	}
 
-	public void setContactEmail(String contactEmail) {
-		this.contactEmail = contactEmail;
+	public void setTechnicalContactName(String technicalContactName) {
+		this.technicalContactName = technicalContactName;
+	}
+
+	public String getTechnicalContactEmail() {
+		return technicalContactEmail;
+	}
+
+	public void setTechnicalContactEmail(String technicalContactEmail) {
+		this.technicalContactEmail = technicalContactEmail;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public LocalDate getCreateDate() {
@@ -100,11 +117,11 @@ public class ApiUserDto {
 		dto.setId(apiUser.getId().getValue());
 		dto.setUsername(apiUser.getUsername());
 		dto.setPassword(apiUser.getPassword());
-		dto.setEmail(apiUser.getEmail());
-		dto.setActive(apiUser.getActive());
+		dto.setCompanyEmail(apiUser.getCompanyEmail());
 		dto.setCompanyName(apiUser.getCompanyName());
-		dto.setContactName(apiUser.getContactName());
-		dto.setContactEmail(apiUser.getContactEmail());
+		dto.setTechnicalContactName(apiUser.getTechnicalContactName());
+		dto.setTechnicalContactEmail(apiUser.getTechnicalContactEmail());
+		dto.setActive(apiUser.isActive());
 		dto.setCreateDate(apiUser.getCreateDate());
 		dto.setLastAccessDate(apiUser.getLastAccessDate());
 		return dto;
