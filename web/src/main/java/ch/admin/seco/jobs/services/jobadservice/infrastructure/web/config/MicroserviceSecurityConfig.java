@@ -69,11 +69,11 @@ public class MicroserviceSecurityConfig {
                     .authorizeRequests()
                     .antMatchers(HttpMethod.GET, "/api/jobAdvertisements/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/jobAdvertisements", "/api/jobAdvertisements/_search", "/api/jobAdvertisements/_count").permitAll()
-                    .antMatchers("/api/apiUsers/**").hasAuthority(Role.ADMIN.getValue())
+                    .antMatchers("/api/apiUsers/**").hasAuthority(Role.SYSADMIN.getValue())
                     .antMatchers("/api/**").authenticated()
                     .antMatchers("/management/info").permitAll()
                     .antMatchers("/management/health").permitAll()
-                    .antMatchers("/management/**").hasAuthority(Role.ADMIN.getValue())
+                    .antMatchers("/management/**").hasAuthority(Role.SYSADMIN.getValue())
                     .antMatchers("/swagger-ui.html").permitAll()
                     .and()
                     .apply(securityConfigurerAdapter());
@@ -144,11 +144,11 @@ public class MicroserviceSecurityConfig {
                     .authorizeRequests()
                     .antMatchers(HttpMethod.GET, "/api/jobAdvertisement").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/jobAdvertisement", "/api/_search/jobAdvertisement", "/api/_count/jobAdvertisement").permitAll()
-                    .antMatchers("/api/apiUser/**").hasAuthority(Role.ADMIN.getValue())
+                    .antMatchers("/api/apiUser/**").hasAuthority(Role.SYSADMIN.getValue())
                     .antMatchers("/api/**").authenticated()
                     .antMatchers("/management/info").permitAll()
                     .antMatchers("/management/health").permitAll()
-                    .antMatchers("/management/**").hasAuthority(Role.ADMIN.getValue());
+                    .antMatchers("/management/**").hasAuthority(Role.SYSADMIN.getValue());
             // @formatter:on
         }
     }

@@ -5,21 +5,21 @@ import javax.validation.constraints.NotNull;
 public class UpdateStatusApiUserDto {
 
     @NotNull
-    private Boolean active;
+    private boolean active;
 
     protected UpdateStatusApiUserDto() {
         // For reflection libs
     }
 
-    public UpdateStatusApiUserDto(Boolean active) {
+    public UpdateStatusApiUserDto(boolean active) {
         this.active = active;
     }
 
-    public Boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 }

@@ -24,7 +24,7 @@ public class ElasticsearchIndexRestController {
 
     @PostMapping(value = "/index", produces = MediaType.TEXT_PLAIN_VALUE)
     @Timed
-    @PreAuthorize("hasRole(T(ch.admin.seco.jobs.services.jobadservice.application.security.Role).ADMIN.value)")
+    @PreAuthorize("hasRole(T(ch.admin.seco.jobs.services.jobadservice.application.security.Role).SYSADMIN.value)")
     public ResponseEntity<Void> reindexAll() {
         elasticsearchIndexService.reindexAll();
         return ResponseEntity.accepted()

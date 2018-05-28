@@ -125,7 +125,7 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
         return Objects.hash(id);
     }
 
-    public void update(Builder builder) {
+    public void updateDetails(Builder builder) {
         this.username = Condition.notBlank(builder.username);
         this.companyName = Condition.notBlank(builder.companyName);
         this.companyEmail = Condition.notBlank(builder.companyEmail);
@@ -140,7 +140,7 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
     }
 
     public void changePassword(String password) {
-        this.password = password;
+        this.password = Condition.notBlank(password);
         DomainEventPublisher.publish(new ApiUserUpdatedPasswordEvent(this));
     }
 

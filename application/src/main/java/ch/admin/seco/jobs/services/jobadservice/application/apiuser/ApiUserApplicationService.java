@@ -60,7 +60,7 @@ public class ApiUserApplicationService {
 
     public ApiUserDto changeDetails(ApiUserId apiUserId, UpdateDetailsApiUserDto updateDetailsApiUserDto) {
         ApiUser apiUser = getById(apiUserId);
-        apiUser.update(new ApiUser.Builder()
+        apiUser.updateDetails(new ApiUser.Builder()
                 .setUsername(updateDetailsApiUserDto.getUsername())
                 .setCompanyEmail(updateDetailsApiUserDto.getCompanyEmail())
                 .setCompanyName(updateDetailsApiUserDto.getCompanyName())
@@ -77,7 +77,7 @@ public class ApiUserApplicationService {
 
     public void changeStatus(ApiUserId apiUserId, UpdateStatusApiUserDto updateStatusApiUserDto) {
         ApiUser apiUser = getById(apiUserId);
-        apiUser.changeStatus(updateStatusApiUserDto.getActive());
+        apiUser.changeStatus(updateStatusApiUserDto.isActive());
     }
 
     private ApiUser getById(ApiUserId id) {
