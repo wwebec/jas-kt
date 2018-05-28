@@ -47,7 +47,6 @@ public class JobAdvertisementMailEventListener {
     private final MessageSource messageSource;
     private final JobCenterService jobCenterService;
 
-
     @Autowired
     public JobAdvertisementMailEventListener(JobAdvertisementRepository jobAdvertisementRepository, MailSenderService mailSenderService, MessageSource messageSource, JobCenterService jobCenterService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;

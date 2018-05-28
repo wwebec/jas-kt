@@ -25,7 +25,8 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
     @Valid
     private ApiUserId id;
 
-    @NotEmpty
+	@NotEmpty
+	@Column(unique = true)
     private String username;
 
     @NotEmpty
