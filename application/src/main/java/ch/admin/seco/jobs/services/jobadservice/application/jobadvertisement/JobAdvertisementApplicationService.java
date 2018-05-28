@@ -12,6 +12,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
@@ -47,6 +48,8 @@ public class JobAdvertisementApplicationService {
 
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
 
+    private final CurrentUserContext currentUserContext;
+
     private final JobAdvertisementRepository jobAdvertisementRepository;
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
@@ -60,12 +63,14 @@ public class JobAdvertisementApplicationService {
     private final JobCenterService jobCenterService;
 
     @Autowired
-    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
+    public JobAdvertisementApplicationService(CurrentUserContext currentUserContext,
+                                              JobAdvertisementRepository jobAdvertisementRepository,
                                               JobAdvertisementFactory jobAdvertisementFactory,
                                               ReportingObligationService reportingObligationService,
                                               LocationService locationService,
                                               ProfessionService professionService,
                                               JobCenterService jobCenterService) {
+        this.currentUserContext = currentUserContext;
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.reportingObligationService = reportingObligationService;
@@ -134,8 +139,7 @@ public class JobAdvertisementApplicationService {
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromAvamDto.getLanguageSkills()))
                 .build();
 
-        // TODO Add auditUser
-        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(currentUserContext.getAuditUser())
                 .setStellennummerAvam(createJobAdvertisementFromAvamDto.getStellennummerAvam())
                 .setReportingObligation(createJobAdvertisementFromAvamDto.isReportingObligation())
                 .setReportingObligationEndDate(createJobAdvertisementFromAvamDto.getReportingObligationEndDate())
@@ -163,8 +167,7 @@ public class JobAdvertisementApplicationService {
                 .map(this::enrichOccupationWithProfessionCodes)
                 .collect(toList());
 
-        // TODO Add auditUser
-        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
                 .setReportingObligation(jobAdvertisementDto.isReportingObligation(), jobAdvertisementDto.getReportingObligationEndDate())
                 .setJobCenterCode(jobAdvertisementDto.getJobCenterCode())
                 .setCompany(toCompany(jobAdvertisementDto.getCompany()))
@@ -214,13 +217,12 @@ public class JobAdvertisementApplicationService {
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkills()))
                 .build();
 
-        // TODO Add auditUser
         LocalDate publicationStartDate = createJobAdvertisementFromX28Dto.getPublicationStartDate();
         LocalDate publicationEndDate = createJobAdvertisementFromX28Dto.getPublicationEndDate();
-        if(publicationEndDate == null) {
+        if (publicationEndDate == null) {
             publicationEndDate = publicationStartDate.plusDays(PUBLICATION_MAX_DAYS);
         }
-        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(currentUserContext.getAuditUser())
                 .setFingerprint(createJobAdvertisementFromX28Dto.getFingerprint())
                 .setJobContent(jobContent)
                 .setPublication(
@@ -246,8 +248,7 @@ public class JobAdvertisementApplicationService {
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
                 .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
 
-        // TODO Add auditUser
-        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
                 .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint())
                 .setX28OccupationCodes(updateJobAdvertisementFromX28Dto.getX28OccupationCodes())
                 .build();
@@ -415,8 +416,7 @@ public class JobAdvertisementApplicationService {
 
         PublicationDto publicationDto = createJobAdvertisementDto.getPublication();
 
-        // TODO Add auditUser
-        return new JobAdvertisementCreator.Builder(null)
+        return new JobAdvertisementCreator.Builder(currentUserContext.getAuditUser())
                 .setExternalReference(createJobAdvertisementDto.getExternalReference())
                 .setReportingObligation(reportingObligation)
                 .setJobCenterCode(jobCenterCode)

@@ -21,7 +21,6 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     public static final JobAdvertisementId JOB_ADVERTISEMENT_ID_09 = new JobAdvertisementId("job09");
     public static final JobAdvertisementId JOB_ADVERTISEMENT_ID_10 = new JobAdvertisementId("job10");
 
-
     private List<JobAdvertisement> jobAdvertisements;
 
     @Override

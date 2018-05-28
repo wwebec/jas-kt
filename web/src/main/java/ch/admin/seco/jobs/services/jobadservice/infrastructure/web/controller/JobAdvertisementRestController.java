@@ -11,11 +11,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.CancellationResource;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,20 +22,9 @@ public class JobAdvertisementRestController {
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
     private final EventStore eventStore;
 
-    @Autowired
     public JobAdvertisementRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService, EventStore eventStore) {
         this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
         this.eventStore = eventStore;
-    }
-
-    @GetMapping(path = "/testauth")
-    public void testAuth() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            System.out.println(authentication.getDetails());
-            System.out.println(authentication.getPrincipal());
-            System.out.println(authentication.getPrincipal());
-        }
     }
 
     @PostMapping()

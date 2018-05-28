@@ -2,7 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.re
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
-import ch.admin.seco.jobs.services.jobadservice.application.security.UserService;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
+import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementDocument;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementElasticsearchRepository;
@@ -28,15 +29,10 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants.JOBSEEKER_CLIENT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.ElasticsearchIndexService.INDEX_NAME_JOB_ADVERTISEMENT;
@@ -78,19 +74,19 @@ public class JobAdvertisementSearchService {
     private static final String PATH_REPORTING_OBLIGATION = PATH_CTX + "reportingObligation";
     private static final int ONLINE_SINCE_DAYS = 60;
 
+    private final CurrentUserContext currentUserContext;
     private final ElasticsearchTemplate elasticsearchTemplate;
     private final ResultsMapper resultsMapper;
-    private final UserService userService;
     private final JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository;
 
-    public JobAdvertisementSearchService(ElasticsearchTemplate elasticsearchTemplate,
-            ElasticsearchConfiguration.CustomEntityMapper customEntityMapper,
-            UserService userService,
-            JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository) {
+    public JobAdvertisementSearchService(CurrentUserContext currentUserContext,
+                                         ElasticsearchTemplate elasticsearchTemplate,
+                                         ElasticsearchConfiguration.CustomEntityMapper customEntityMapper,
+                                         JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository) {
+        this.currentUserContext = currentUserContext;
         this.elasticsearchTemplate = elasticsearchTemplate;
-        this.jobAdvertisementElasticsearchRepository = jobAdvertisementElasticsearchRepository;
         this.resultsMapper = new DefaultResultMapper(elasticsearchTemplate.getElasticsearchConverter().getMappingContext(), customEntityMapper);
-        this.userService = userService;
+        this.jobAdvertisementElasticsearchRepository = jobAdvertisementElasticsearchRepository;
     }
 
     public Page<JobAdvertisementDto> search(JobAdvertisementSearchRequest jobSearchRequest, int page, int size, SearchSort sort) {
@@ -321,7 +317,7 @@ public class JobAdvertisementSearchService {
     private BoolQueryBuilder visibilityFilter() {
         BoolQueryBuilder visibilityFilter = boolQuery();
 
-        if (this.userService.isCurrentUserInRole(JOBSEEKER_CLIENT)) {
+        if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT)) {
             visibilityFilter.must(termsQuery(PATH_STATUS, PUBLISHED_RESTRICTED.toString(), PUBLISHED_PUBLIC.toString()));
         } else {
             visibilityFilter.must(termsQuery(PATH_STATUS, PUBLISHED_PUBLIC.toString()));
@@ -333,7 +329,7 @@ public class JobAdvertisementSearchService {
     private BoolQueryBuilder restrictedJobsFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         BoolQueryBuilder restrictedJobsFilter = boolQuery();
 
-        if (this.userService.isCurrentUserInRole(JOBSEEKER_CLIENT) && jobSearchRequest.getDisplayRestricted() != null) {
+        if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT) && jobSearchRequest.getDisplayRestricted() != null) {
             restrictedJobsFilter.must(termsQuery(PATH_REPORTING_OBLIGATION, jobSearchRequest.getDisplayRestricted()));
         }
 
