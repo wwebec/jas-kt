@@ -170,14 +170,15 @@ public class ApiUserRestControllerIntTest {
 		storeDatabase(originalApiUser);
 		// FIXME New Test
 
-		CreateApiUserDto createApiUserDto = new CreateApiUserDto();
-		createApiUserDto.setUsername("alex");
-		createApiUserDto.setPassword("secret");
-		createApiUserDto.setCompanyName("Company");
-		createApiUserDto.setEmail("email@email");
-		createApiUserDto.setActive(true);
-		createApiUserDto.setContactName("contactName");
-		createApiUserDto.setContactEmail("contact@mail.com");
+        CreateApiUserDto createApiUserDto = new CreateApiUserDto(
+                originalApiUser.getUsername(),
+                "password-new",
+                "companyName-new",
+                "companyEmail-new@example.com",
+                "technicalContactName-new",
+                "technicalContactEmail-new@example.com",
+                true
+        );
 
 		// WHEN
 		ResultActions resultActions = mockMvc.perform(
@@ -190,10 +191,10 @@ public class ApiUserRestControllerIntTest {
 		resultActions
 				.andExpect(status().is5xxServerError());
 
-		List<ApiUser> all = apiUserRepository.findAll();
-		assertThat(all).hasSize(1);
-		assertThat(all.get(0).getId()).isEqualTo(apiUser1.getId());
-
+        List<ApiUser> all = apiUserRepository.findAll();
+        assertThat(all).hasSize(1);
+        ApiUser apiUser = all.get(0);
+        assertThat(apiUser.getId()).isEqualTo(originalApiUser.getId());
 	}
 
 	@Test
