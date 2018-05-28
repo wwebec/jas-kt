@@ -2,6 +2,10 @@ package ch.admin.seco.jobs.services.jobadservice.domain.apiuser;
 
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.events.ApiUserUpdatedDetailsEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.events.ApiUserUpdatedPasswordEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.events.ApiUserUpdatedStatusEvent;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
@@ -103,10 +107,6 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
         return lastAccessDate;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -126,15 +126,24 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
 
     public void update(Builder builder) {
         this.username = Condition.notBlank(builder.username);
-        this.password = Condition.notBlank(builder.password);
         this.companyName = Condition.notBlank(builder.companyName);
         this.companyEmail = Condition.notBlank(builder.companyEmail);
         this.technicalContactName = Condition.notBlank(builder.technicalContactName);
         this.technicalContactEmail = Condition.notBlank(builder.technicalContactEmail);
-        this.active = builder.active;
+        DomainEventPublisher.publish(new ApiUserUpdatedDetailsEvent(this));
     }
 
-    public void updateLastAccessDate(LocalDate lastAccessDate) {
+    public void changeStatus(Boolean active) {
+        this.active = active;
+        DomainEventPublisher.publish(new ApiUserUpdatedStatusEvent(this));
+    }
+
+    public void changePassword(String password) {
+        this.password = password;
+        DomainEventPublisher.publish(new ApiUserUpdatedPasswordEvent(this));
+    }
+
+    public void changeLastAccessDate(LocalDate lastAccessDate) {
         this.lastAccessDate = lastAccessDate;
     }
 

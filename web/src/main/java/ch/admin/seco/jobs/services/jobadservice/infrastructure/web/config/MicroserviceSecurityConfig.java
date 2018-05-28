@@ -18,28 +18,18 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
 @Configuration
-@Order(2)
 @Import(SecurityProblemSupport.class)
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class MicroserviceSecurityConfig {
-
-    @Bean
-    public AuthenticationEntryPoint authenticationEntryPoint(){
-        BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
-        entryPoint.setRealmName("admin realm");
-        return entryPoint;
-    }
 
     @Configuration
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     @EnableConfigurationProperties(JWTSecurityProperties.class)
     @Profile("!" + ProfileRegistry.OAUTH2)
-    public class JWTConfig extends WebSecurityConfigurerAdapter {
+    static class JWTConfig extends WebSecurityConfigurerAdapter {
 
         private final JWTSecurityProperties securityProperties;
         private final SecurityProblemSupport problemSupport;
@@ -57,6 +47,7 @@ public class MicroserviceSecurityConfig {
                     .antMatchers("/swagger-ui.html");
         }
 
+        @Override
         protected void configure(HttpSecurity http) throws Exception {
             // @formatter:off
             http
@@ -78,7 +69,7 @@ public class MicroserviceSecurityConfig {
                     .authorizeRequests()
                     .antMatchers(HttpMethod.GET, "/api/jobAdvertisements/**").permitAll()
                     .antMatchers(HttpMethod.POST, "/api/jobAdvertisements", "/api/jobAdvertisements/_search", "/api/jobAdvertisements/_count").permitAll()
-                    .antMatchers("/api/apiUser/**").hasAuthority(Role.ADMIN.getValue())
+                    .antMatchers("/api/apiUsers/**").hasAuthority(Role.ADMIN.getValue())
                     .antMatchers("/api/**").authenticated()
                     .antMatchers("/management/info").permitAll()
                     .antMatchers("/management/health").permitAll()
@@ -95,9 +86,10 @@ public class MicroserviceSecurityConfig {
     }
 
     @Configuration
+    @Order(SecurityProperties.BASIC_AUTH_ORDER)
     @EnableResourceServer
     @Profile(ProfileRegistry.OAUTH2)
-    public class OAuth2Config extends ResourceServerConfigurerAdapter {
+    static class OAuth2Config extends ResourceServerConfigurerAdapter {
 
         private final ResourceServerProperties resourceServerProperties;
 

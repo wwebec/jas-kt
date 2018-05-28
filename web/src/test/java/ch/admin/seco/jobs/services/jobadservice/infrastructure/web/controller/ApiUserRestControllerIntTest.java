@@ -2,9 +2,11 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
 import ch.admin.seco.jobs.services.jobadservice.Application;
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.ApiUserApplicationService;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.ChangeApiUserStatusDto;
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.CreateApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateDetailsApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdatePasswordApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateStatusApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
@@ -66,19 +68,28 @@ public class ApiUserRestControllerIntTest {
 
     @Autowired
     private ApiUserApplicationService apiUserApplicationService;
+
     @Autowired
     private ApiUserSearchService apiUserSearchService;
+
     @Autowired
     private ApiUserRepository apiUserRepository;
+
+    @Autowired
+    private EventStore eventStore;
+
     @Autowired
     private ApiUserElasticsearchRepository apiUserElasticsearchRepository;
 
     @Autowired
     private FormattingConversionService formattingConversionService;
+
     @Autowired
     private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
+
     @Autowired
     private ExceptionTranslator exceptionTranslator;
+
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
@@ -87,7 +98,7 @@ public class ApiUserRestControllerIntTest {
     @Before
     public void setUp() {
         ApiUserRestController apiUserRestController =
-                new ApiUserRestController(apiUserApplicationService, apiUserSearchService);
+                new ApiUserRestController(apiUserApplicationService, apiUserSearchService, eventStore);
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(apiUserRestController)
                 .setConversionService(formattingConversionService)
@@ -104,7 +115,7 @@ public class ApiUserRestControllerIntTest {
     }
 
     @Test
-    public void shouldSaveApiUser() throws Exception {
+    public void shouldCreateApiUser() throws Exception {
         // GIVEN
         ApiUser expectedApiUser = ApiUserTestDataProvider.createApiUser01();
         CreateApiUserDto createApiUserDto = new CreateApiUserDto(
@@ -153,56 +164,6 @@ public class ApiUserRestControllerIntTest {
     }
 
     @Test
-    public void shouldUpdateApiUser() throws Exception {
-        // GIVEN
-        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
-        storeDatabase(originalApiUser);
-
-        UpdateApiUserDto updateApiUserDto = new UpdateApiUserDto(
-                originalApiUser.getId().getValue(),
-                "username-new",
-                "password-new",
-                "companyName-new",
-                "companyEmail-new@example.com",
-                "technicalContactName-new",
-                "technicalContactEmail-new@example.com",
-                false
-        );
-
-        // WHEN
-        ResultActions resultActions = mockMvc.perform(
-                put(API_API_USERS)
-                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                        .content(TestUtil.convertObjectToJsonBytes(updateApiUserDto))
-        );
-
-        // THEN
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(jsonPath(JSON_PATH_ID).value(updateApiUserDto.getId()))
-                .andExpect(jsonPath(JSON_PATH_USERNAME).value(updateApiUserDto.getUsername()))
-                .andExpect(jsonPath(JSON_PATH_COMPANY_NAME).value(updateApiUserDto.getCompanyName()))
-                .andExpect(jsonPath(JSON_PATH_COMPANY_EMAIL).value(updateApiUserDto.getCompanyEmail()))
-                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_NAME).value(updateApiUserDto.getTechnicalContactName()))
-                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_EMAIL).value(updateApiUserDto.getTechnicalContactEmail()))
-                .andExpect(jsonPath(JSON_PATH_ACTIVE).value(updateApiUserDto.isActive()))
-                .andExpect(jsonPath(JSON_PATH_CREATE_DATE).value(originalApiUser.getCreateDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
-
-        List<ApiUser> all = apiUserRepository.findAll();
-        assertThat(all).hasSize(1);
-        ApiUser apiUser = all.get(0);
-        assertThat(apiUser.getId().getValue()).isEqualTo(originalApiUser.getId().getValue());
-        assertThat(apiUser.getUsername()).isEqualTo(updateApiUserDto.getUsername());
-        assertThat(apiUser.getCompanyName()).isEqualTo(updateApiUserDto.getCompanyName());
-        assertThat(apiUser.getCompanyEmail()).isEqualTo(updateApiUserDto.getCompanyEmail());
-        assertThat(apiUser.isActive()).isFalse();
-        assertThat(apiUser.getTechnicalContactName()).isEqualTo(updateApiUserDto.getTechnicalContactName());
-        assertThat(apiUser.getTechnicalContactEmail()).isEqualTo(updateApiUserDto.getTechnicalContactEmail());
-        assertThat(apiUser.getCreateDate()).isEqualTo(originalApiUser.getCreateDate());
-    }
-
-    @Test
     public void shouldFindById() throws Exception {
         // GIVEN
         ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
@@ -226,18 +187,85 @@ public class ApiUserRestControllerIntTest {
     }
 
     @Test
-    public void shouldChangeApiUserStatus() throws Exception {
+    public void shouldUpdateApiUserDetails() throws Exception {
         // GIVEN
         ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
         storeDatabase(originalApiUser);
 
-        ChangeApiUserStatusDto changeApiUserStatusDto = new ChangeApiUserStatusDto(!originalApiUser.isActive());
+        UpdateDetailsApiUserDto updateDetailsApiUserDto = new UpdateDetailsApiUserDto(
+                "username-new",
+                "companyName-new",
+                "companyEmail-new@example.com",
+                "technicalContactName-new",
+                "technicalContactEmail-new@example.com"
+        );
+
+        // WHEN
+        ResultActions resultActions = mockMvc.perform(
+                put(API_API_USERS + '/' + originalApiUser.getId().getValue())
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(updateDetailsApiUserDto))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath(JSON_PATH_ID).value(originalApiUser.getId().getValue()))
+                .andExpect(jsonPath(JSON_PATH_USERNAME).value(updateDetailsApiUserDto.getUsername()))
+                .andExpect(jsonPath(JSON_PATH_COMPANY_NAME).value(updateDetailsApiUserDto.getCompanyName()))
+                .andExpect(jsonPath(JSON_PATH_COMPANY_EMAIL).value(updateDetailsApiUserDto.getCompanyEmail()))
+                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_NAME).value(updateDetailsApiUserDto.getTechnicalContactName()))
+                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_EMAIL).value(updateDetailsApiUserDto.getTechnicalContactEmail()))
+                .andExpect(jsonPath(JSON_PATH_ACTIVE).value(originalApiUser.isActive()))
+                .andExpect(jsonPath(JSON_PATH_CREATE_DATE).value(originalApiUser.getCreateDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
+
+        ApiUser apiUser = apiUserRepository.findById(originalApiUser.getId()).get();
+        assertThat(apiUser.getId().getValue()).isEqualTo(originalApiUser.getId().getValue());
+        assertThat(apiUser.getUsername()).isEqualTo(updateDetailsApiUserDto.getUsername());
+        assertThat(apiUser.getCompanyName()).isEqualTo(updateDetailsApiUserDto.getCompanyName());
+        assertThat(apiUser.getCompanyEmail()).isEqualTo(updateDetailsApiUserDto.getCompanyEmail());
+        assertThat(apiUser.isActive()).isEqualTo(originalApiUser.isActive());
+        assertThat(apiUser.getTechnicalContactName()).isEqualTo(updateDetailsApiUserDto.getTechnicalContactName());
+        assertThat(apiUser.getTechnicalContactEmail()).isEqualTo(updateDetailsApiUserDto.getTechnicalContactEmail());
+        assertThat(apiUser.getCreateDate()).isEqualTo(originalApiUser.getCreateDate());
+    }
+
+    @Test
+    public void shouldUpdateApiUserPassword() throws Exception {
+        // GIVEN
+        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        storeDatabase(originalApiUser);
+
+        UpdatePasswordApiUserDto updatePasswordApiUserDto = new UpdatePasswordApiUserDto(
+                "password-new"
+        );
+
+        // WHEN
+        mockMvc.perform(
+                put(API_API_USERS + '/' + originalApiUser.getId().getValue() + "/password")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(updatePasswordApiUserDto))
+        );
+
+        // THEN
+        ApiUser apiUser = apiUserRepository.findById(originalApiUser.getId()).get();
+        assertThat(apiUser.getPassword()).isNotEqualTo(originalApiUser.getPassword());
+    }
+
+    @Test
+    public void shouldUpdateApiUserStatus() throws Exception {
+        // GIVEN
+        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        storeDatabase(originalApiUser);
+
+        UpdateStatusApiUserDto updateStatusApiUserDto = new UpdateStatusApiUserDto(!originalApiUser.isActive());
 
         // WHEN
         mockMvc.perform(
                 put(API_API_USERS + '/' + originalApiUser.getId().getValue() + "/active")
                         .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                        .content(TestUtil.convertObjectToJsonBytes(changeApiUserStatusDto))
+                        .content(TestUtil.convertObjectToJsonBytes(updateStatusApiUserDto))
         );
 
         // THEN

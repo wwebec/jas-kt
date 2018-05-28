@@ -1,18 +1,17 @@
 package ch.admin.seco.jobs.services.jobadservice.application.apiuser;
 
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.ApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.CreateApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserId;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.events.ApiUserSavedEvent;
-import org.springframework.beans.factory.annotation.Autowired;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.events.ApiUserCreatedEvent;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,18 +20,20 @@ import javax.transaction.Transactional;
 @Transactional
 public class ApiUserApplicationService {
 
-    private ApiUserRepository apiUserRepository;
+    private final ApiUserRepository apiUserRepository;
 
-    @Autowired
+    private final PasswordEncoder passwordEncoder;
+
     public ApiUserApplicationService(ApiUserRepository apiUserRepository) {
         this.apiUserRepository = apiUserRepository;
+        this.passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     public ApiUserId create(CreateApiUserDto createApiUserDto) {
         ApiUser apiUser = new ApiUser.Builder()
                 .setId(new ApiUserId())
                 .setUsername(createApiUserDto.getUsername())
-                .setPassword(createApiUserDto.getPassword())
+                .setPassword(passwordEncoder.encode(createApiUserDto.getPassword()))
                 .setCompanyName(createApiUserDto.getCompanyName())
                 .setCompanyEmail(createApiUserDto.getCompanyEmail())
                 .setTechnicalContactName(createApiUserDto.getTechnicalContactName())
@@ -42,7 +43,7 @@ public class ApiUserApplicationService {
                 .build();
 
         ApiUser newApiUser = apiUserRepository.save(apiUser);
-        DomainEventPublisher.publish(new ApiUserSavedEvent(newApiUser));
+        DomainEventPublisher.publish(new ApiUserCreatedEvent(newApiUser));
         return newApiUser.getId();
     }
 
@@ -57,26 +58,26 @@ public class ApiUserApplicationService {
                 .orElse(null);
     }
 
-    public ApiUserDto update(UpdateApiUserDto updateApiUserDto) {
-        ApiUser.Builder updater = new ApiUser.Builder()
-                .setUsername(updateApiUserDto.getUsername())
-                .setPassword(updateApiUserDto.getPassword())
-                .setCompanyEmail(updateApiUserDto.getCompanyEmail())
-                .setActive(updateApiUserDto.isActive())
-                .setCompanyName(updateApiUserDto.getCompanyName())
-                .setTechnicalContactName(updateApiUserDto.getTechnicalContactName())
-                .setTechnicalContactEmail(updateApiUserDto.getTechnicalContactEmail());
-
-        ApiUser apiUser = getById(new ApiUserId(updateApiUserDto.getId()));
-        apiUser.update(updater);
-        DomainEventPublisher.publish(new ApiUserSavedEvent(apiUser));
+    public ApiUserDto changeDetails(ApiUserId apiUserId, UpdateDetailsApiUserDto updateDetailsApiUserDto) {
+        ApiUser apiUser = getById(apiUserId);
+        apiUser.update(new ApiUser.Builder()
+                .setUsername(updateDetailsApiUserDto.getUsername())
+                .setCompanyEmail(updateDetailsApiUserDto.getCompanyEmail())
+                .setCompanyName(updateDetailsApiUserDto.getCompanyName())
+                .setTechnicalContactName(updateDetailsApiUserDto.getTechnicalContactName())
+                .setTechnicalContactEmail(updateDetailsApiUserDto.getTechnicalContactEmail())
+        );
         return ApiUserDto.toDto(apiUser);
     }
 
-    public void changeStatus(ApiUserId id, boolean activeStatus) {
-        ApiUser apiUser = getById(id);
-        apiUser.setActive(activeStatus);
-        DomainEventPublisher.publish(new ApiUserSavedEvent(apiUser));
+    public void changePassword(ApiUserId apiUserId, UpdatePasswordApiUserDto updatePasswordApiUserDto) {
+        ApiUser apiUser = getById(apiUserId);
+        apiUser.changePassword(passwordEncoder.encode(updatePasswordApiUserDto.getPassword()));
+    }
+
+    public void changeStatus(ApiUserId apiUserId, UpdateStatusApiUserDto updateStatusApiUserDto) {
+        ApiUser apiUser = getById(apiUserId);
+        apiUser.changeStatus(updateStatusApiUserDto.getActive());
     }
 
     private ApiUser getById(ApiUserId id) {
