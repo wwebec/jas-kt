@@ -42,14 +42,30 @@ public class Condition {
     }
 
     public static String notBlank(String value, String message, Object... arguments) {
+        if (notBlankInternal(value)) {
+            return value;
+        }
+        throw new ConditionException(message, arguments);
+    }
+
+    public static void anyNotBlank(String message, String... values) {
+        for (String value : values) {
+            if (notBlankInternal(value)) {
+                return;
+            }
+        }
+        throw new ConditionException(message);
+    }
+
+    private static boolean notBlankInternal(String value) {
         if ((value != null) && !value.isEmpty()) {
             for (int i = 0; i < value.length(); i++) {
                 if (!Character.isWhitespace(value.charAt(i))) {
-                    return value;
+                    return true;
                 }
             }
         }
-        throw new ConditionException(message, arguments);
+        return false;
     }
 
     public static boolean isTrue(boolean expression) {

@@ -92,6 +92,6 @@ public class JobAdvertisementFactoryTest {
     }
 
     private AuditUser createAuditUser() {
-        return new AuditUser("extern-1", "My", "User", "my.user@example.org");
+        return new AuditUser("user-1","extern-1", "company-1", "My", "User", "my.user@example.org");
     }
 }

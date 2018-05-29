@@ -47,7 +47,19 @@
 see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels]
 
 == Cancellation reason codes
-TBD
+
+[cols="20,50,50,50,50"]
+|===
+| Value | German | English | French | Italian
+
+| OCCUPIED_JOBCENTER | Sie konnten die Stelle besetzen in Zusammenarbeit mit der regionalen Arbeitsvermittlung (RAV) | You were able to fill the position in cooperation with the regional employment centre (RAV) | Vous avez pu pourvoir le poste en collaboration avec l'Office régional de placement (ORP) | Ha potuto assegnare il posto in collaborazione con l'Ufficio regionale di collocamento (URC)
+| OCCUPIED_AGENCY | Sie konnten die Stelle besetzen in Zusammenarbeit mit der privaten Arbeitsvermittlung (pAV) | You were able to fill the position in cooperation with a private employment agency | Vous avez pu pourvoir le poste en collaboration avec un placeur privé | Ha potuto assegnare il posto in collaborazione con un'agenzia privata di collocamento
+| OCCUPIED_JOBROOM | Sie konnten die Stelle selber besetzen mit einer Kandidatin/einem Kandidaten aus Job-Room | Your were able to fill the position yourself with a candidate from Job-Room | Vous avez pu pourvoir le poste par vous-même avec un/une candidat/e de Job-Room | Hai potuto assegnare il posto a un candidato di Job-Room
+| OCCUPIED_OTHER | Sie konnten die Stelle selber besetzen anderweitig | Your were able to fill the position yourself with a candidate not from Job-Room | Vous avez pu pourvoir le poste par vous-même par un autre moyen que Job-Room | Hai potuto assegnare il posto a un'altra persona
+| NOT_OCCUPIED | Sie konnten die Stelle nicht besetzen | You were unable to fill the position | Vous n'avez pas pu pourvoir le poste | Non ha potuto assegnare il posto
+| CHANGE_OR_REPOSE | Sie möchten die Ausschreibung ändern oder neu erfassen | You want to change or repost the position | - | -
+|===
+
 
 == AVAM education code
 

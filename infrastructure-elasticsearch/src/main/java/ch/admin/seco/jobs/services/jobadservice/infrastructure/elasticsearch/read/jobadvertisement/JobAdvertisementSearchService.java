@@ -2,9 +2,12 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.re
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
-import ch.admin.seco.jobs.services.jobadservice.application.security.UserService;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
+import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementDocument;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementElasticsearchRepository;
+
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
@@ -26,15 +29,10 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants.JOBSEEKER_CLIENT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.ElasticsearchIndexService.INDEX_NAME_JOB_ADVERTISEMENT;
@@ -43,7 +41,6 @@ import static org.apache.commons.lang3.ArrayUtils.isEmpty;
 import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.elasticsearch.index.query.QueryBuilders.*;
-
 
 @Service
 public class JobAdvertisementSearchService {
@@ -77,16 +74,19 @@ public class JobAdvertisementSearchService {
     private static final String PATH_REPORTING_OBLIGATION = PATH_CTX + "reportingObligation";
     private static final int ONLINE_SINCE_DAYS = 60;
 
+    private final CurrentUserContext currentUserContext;
     private final ElasticsearchTemplate elasticsearchTemplate;
     private final ResultsMapper resultsMapper;
-    private final UserService userService;
+    private final JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository;
 
-    public JobAdvertisementSearchService(ElasticsearchTemplate elasticsearchTemplate,
+    public JobAdvertisementSearchService(CurrentUserContext currentUserContext,
+                                         ElasticsearchTemplate elasticsearchTemplate,
                                          ElasticsearchConfiguration.CustomEntityMapper customEntityMapper,
-                                         UserService userService) {
+                                         JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository) {
+        this.currentUserContext = currentUserContext;
         this.elasticsearchTemplate = elasticsearchTemplate;
         this.resultsMapper = new DefaultResultMapper(elasticsearchTemplate.getElasticsearchConverter().getMappingContext(), customEntityMapper);
-        this.userService = userService;
+        this.jobAdvertisementElasticsearchRepository = jobAdvertisementElasticsearchRepository;
     }
 
     public Page<JobAdvertisementDto> search(JobAdvertisementSearchRequest jobSearchRequest, int page, int size, SearchSort sort) {
@@ -111,6 +111,50 @@ public class JobAdvertisementSearchService {
 
             return new AggregatedPageImpl<>(highLigtedResults, pageable, searchHits.totalHits, searchResults.getAggregations(), searchResults.getScrollId());
         });
+    }
+
+    public Page<JobAdvertisementDto> searchPeaJobAdvertisements(
+            PeaJobAdvertisementSearchRequest searchRequest,
+            Pageable pageable) {
+
+        SearchQuery query = createPeaSearchQueryBuilder(searchRequest)
+                .withPageable(pageable)
+                .build();
+
+        return jobAdvertisementElasticsearchRepository.search(query)
+                .map(JobAdvertisementDocument::getJobAdvertisement)
+                .map(JobAdvertisementDto::toDto);
+    }
+
+    private NativeSearchQueryBuilder createPeaSearchQueryBuilder(PeaJobAdvertisementSearchRequest searchRequest) {
+        QueryBuilder filter = mustAll(
+                titleFilter(searchRequest),
+                publicationStartDatePeaFilter(searchRequest),
+                companyFilter(searchRequest.getCompanyName())
+        );
+
+        return new NativeSearchQueryBuilder()
+                .withFilter(filter);
+    }
+
+    private BoolQueryBuilder titleFilter(PeaJobAdvertisementSearchRequest searchRequest) {
+        BoolQueryBuilder query = boolQuery();
+
+        if (isNotBlank(searchRequest.getJobTitle())) {
+            query.must(matchQuery(PATH_TITLE, searchRequest.getJobTitle()));
+        }
+
+        return query;
+    }
+
+    private BoolQueryBuilder publicationStartDatePeaFilter(PeaJobAdvertisementSearchRequest searchRequest) {
+        BoolQueryBuilder query = boolQuery();
+        if (searchRequest.getOnlineSinceDays() == null) {
+            return query;
+        }
+
+        String publicationStartDate = String.format("now-%sd/d", searchRequest.getOnlineSinceDays());
+        return query.must(rangeQuery(PATH_PUBLICATION_START_DATE).gte(publicationStartDate));
     }
 
     public long count(JobAdvertisementSearchRequest jobSearchRequest) {
@@ -223,7 +267,7 @@ public class JobAdvertisementSearchService {
                 localityFilter(jobSearchRequest),
                 workingTimeFilter(jobSearchRequest),
                 contractTypeFilter(jobSearchRequest),
-                companyFilter(jobSearchRequest));
+                companyFilter(jobSearchRequest.getCompanyName()));
     }
 
     private BoolQueryBuilder publicationStartDateFilter(JobAdvertisementSearchRequest jobSearchRequest) {
@@ -234,11 +278,11 @@ public class JobAdvertisementSearchService {
         return boolQuery().must(rangeQuery(PATH_PUBLICATION_START_DATE).gte(publicationStartDate));
     }
 
-    private BoolQueryBuilder companyFilter(JobAdvertisementSearchRequest jobSearchRequest) {
+    private BoolQueryBuilder companyFilter(String companyName) {
         BoolQueryBuilder companyFilter = boolQuery();
 
-        if (isNotBlank(jobSearchRequest.getCompanyName())) {
-            companyFilter.must(matchPhraseQuery(PATH_COMPANY_NAME, jobSearchRequest.getCompanyName()));
+        if (isNotBlank(companyName)) {
+            companyFilter.must(matchPhraseQuery(PATH_COMPANY_NAME, companyName));
         }
 
         return companyFilter;
@@ -273,7 +317,7 @@ public class JobAdvertisementSearchService {
     private BoolQueryBuilder visibilityFilter() {
         BoolQueryBuilder visibilityFilter = boolQuery();
 
-        if (this.userService.isCurrentUserInRole(JOBSEEKER_CLIENT)) {
+        if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT)) {
             visibilityFilter.must(termsQuery(PATH_STATUS, PUBLISHED_RESTRICTED.toString(), PUBLISHED_PUBLIC.toString()));
         } else {
             visibilityFilter.must(termsQuery(PATH_STATUS, PUBLISHED_PUBLIC.toString()));
@@ -285,7 +329,7 @@ public class JobAdvertisementSearchService {
     private BoolQueryBuilder restrictedJobsFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         BoolQueryBuilder restrictedJobsFilter = boolQuery();
 
-        if (this.userService.isCurrentUserInRole(JOBSEEKER_CLIENT) && jobSearchRequest.getDisplayRestricted() != null) {
+        if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT) && jobSearchRequest.getDisplayRestricted() != null) {
             restrictedJobsFilter.must(termsQuery(PATH_REPORTING_OBLIGATION, jobSearchRequest.getDisplayRestricted()));
         }
 

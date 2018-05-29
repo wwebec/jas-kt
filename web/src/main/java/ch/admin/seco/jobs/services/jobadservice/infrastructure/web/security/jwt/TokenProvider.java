@@ -1,27 +1,21 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.UserDetailsToCurrentUserAdapter;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class TokenProvider {
 
-    private static final String AUTHORITIES_KEY = "auth";
     private final Logger log = LoggerFactory.getLogger(TokenProvider.class);
     private String secretKey;
 
@@ -36,11 +30,28 @@ public class TokenProvider {
                 .getBody();
 
         Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                Arrays.stream(claims.get(JWTClaimKey.auth.name()).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        User principal = new User(claims.getSubject(), "", authorities);
+        CurrentUser currentUser = new CurrentUser(
+                claims.get(JWTClaimKey.userId.name()).toString(),
+                claims.get(JWTClaimKey.extId.name()).toString(),
+                claims.get(JWTClaimKey.companyId.name()).toString(),
+                claims.get(JWTClaimKey.firstName.name()).toString(),
+                claims.get(JWTClaimKey.lastName.name()).toString(),
+                claims.get(JWTClaimKey.email.name()).toString(),
+                authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet())
+        );
+
+        UserDetailsToCurrentUserAdapter principal = new UserDetailsToCurrentUserAdapter(
+                claims.getSubject(),
+                "",
+                currentUser,
+                authorities
+        );
+
+        //User principal = new User(claims.getSubject(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
