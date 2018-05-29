@@ -1,4 +1,4 @@
-:contact-mail: mediamatik@seco.admin.ch
+:contact-mail: jobroom-api@seco.admin.ch
 = JobRoom Legacy API Documentation `Deprecated`
 eGov Services <{contact-mail}>
 :doctype: book

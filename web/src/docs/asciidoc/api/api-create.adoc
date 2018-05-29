@@ -148,8 +148,8 @@ Provide a public contact if you want to give applicants the opportunity to ask q
 | salutation | String |  | Required (`MR` or `MS`)
 | firstName | String |  | Required
 | lastName | String |  | Required
-| phone | String |  | Required (Format: +41123456789)
-| email | String |  | Required
+| phone | String |  | Optional (Format: +41123456789) (phone or email must be set)
+| email | String |  | Optional (phone or email must be set)
 |===
 
 ==== Publication
