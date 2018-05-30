@@ -8,7 +8,7 @@ public class CurrentUser {
 
     private final String userId;
 
-    private final String externalId;
+    private final String userExternalId;
 
     private final String companyId;
 
@@ -20,9 +20,9 @@ public class CurrentUser {
 
     private final Set<String> authorities = new HashSet<>();
 
-    public CurrentUser(String userId, String externalId, String companyId, String firstName, String lastName, String email, Collection<String> authorities) {
+    public CurrentUser(String userId, String userExternalId, String companyId, String firstName, String lastName, String email, Collection<String> authorities) {
         this.userId = userId;
-        this.externalId = externalId;
+        this.userExternalId = userExternalId;
         this.companyId = companyId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -34,8 +34,8 @@ public class CurrentUser {
         return userId;
     }
 
-    public String getExternalId() {
-        return externalId;
+    public String getUserExternalId() {
+        return userExternalId;
     }
 
     public String getCompanyId() {

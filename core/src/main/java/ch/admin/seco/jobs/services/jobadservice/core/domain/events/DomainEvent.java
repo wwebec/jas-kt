@@ -79,7 +79,7 @@ public abstract class DomainEvent<T> {
     public void setAuditUser(AuditUser auditUser) {
         Condition.notNull(auditUser);
         this.userId = auditUser.getUserId();
-        this.userExternalId = auditUser.getExternalId();
+        this.userExternalId = auditUser.getUserExternalId();
         this.userDisplayName = auditUser.getDisplayName();
         this.userEmail = auditUser.getEmail();
     }

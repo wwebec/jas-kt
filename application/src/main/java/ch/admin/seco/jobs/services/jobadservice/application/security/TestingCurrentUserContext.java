@@ -7,7 +7,7 @@ import java.util.Collections;
 
 public class TestingCurrentUserContext implements CurrentUserContext {
 
-    private final String externalId;
+    private final String userExternalId;
 
     private final Collection<String> authorities;
 
@@ -15,12 +15,12 @@ public class TestingCurrentUserContext implements CurrentUserContext {
         this("JUNIT-TESTING");
     }
 
-    public TestingCurrentUserContext(String externalId) {
-        this(externalId, null);
+    public TestingCurrentUserContext(String userExternalId) {
+        this(userExternalId, null);
     }
 
-    public TestingCurrentUserContext(String externalId, Collection<String> authorities) {
-        this.externalId = externalId;
+    public TestingCurrentUserContext(String userExternalId, Collection<String> authorities) {
+        this.userExternalId = userExternalId;
         this.authorities = authorities;
     }
 
@@ -28,7 +28,7 @@ public class TestingCurrentUserContext implements CurrentUserContext {
     public CurrentUser getCurrentUser() {
         return new CurrentUser(
                 "userId",
-                externalId,
+                userExternalId,
                 "companyId",
                 "Junit",
                 "Junit",
@@ -41,7 +41,7 @@ public class TestingCurrentUserContext implements CurrentUserContext {
     public AuditUser getAuditUser() {
         return new AuditUser(
                 "userId",
-                externalId,
+                userExternalId,
                 "companyId",
                 "Junit",
                 "Junit",
