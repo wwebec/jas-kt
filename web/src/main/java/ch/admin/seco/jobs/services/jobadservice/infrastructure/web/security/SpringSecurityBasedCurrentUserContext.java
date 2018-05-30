@@ -43,7 +43,7 @@ public class SpringSecurityBasedCurrentUserContext implements CurrentUserContext
         if (currentUser != null) {
             return new AuditUser(
                     currentUser.getUserId(),
-                    currentUser.getExternalId(),
+                    currentUser.getUserExternalId(),
                     currentUser.getCompanyId(),
                     currentUser.getFirstName(),
                     currentUser.getLastName(),

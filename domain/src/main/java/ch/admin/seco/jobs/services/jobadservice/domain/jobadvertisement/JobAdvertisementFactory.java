@@ -114,7 +114,7 @@ public class JobAdvertisementFactory {
     private Owner toOwner(AuditUser auditUser) {
         if(auditUser != null) {
             return new Owner.Builder()
-                    .setUserId(auditUser.getExternalId())
+                    .setUserId(auditUser.getUserExternalId())
                     .setCompanyId(auditUser.getCompanyId())
                     .setAccessToken(accessTokenGenerator.generateToken())
                     .build();

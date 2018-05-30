@@ -30,17 +30,17 @@ public class TokenProvider {
                 .getBody();
 
         Collection<? extends GrantedAuthority> authorities =
-                Arrays.stream(claims.get(JWTClaimKey.auth.name()).toString().split(","))
+                Arrays.stream(readClaimKey(claims, JWTClaimKey.auth, "").split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
         CurrentUser currentUser = new CurrentUser(
-                claims.get(JWTClaimKey.userId.name()).toString(),
-                claims.get(JWTClaimKey.extId.name()).toString(),
-                claims.get(JWTClaimKey.companyId.name()).toString(),
-                claims.get(JWTClaimKey.firstName.name()).toString(),
-                claims.get(JWTClaimKey.lastName.name()).toString(),
-                claims.get(JWTClaimKey.email.name()).toString(),
+                readClaimKey(claims, JWTClaimKey.userId, null),
+                readClaimKey(claims, JWTClaimKey.extId, null),
+                readClaimKey(claims, JWTClaimKey.companyId, null),
+                readClaimKey(claims, JWTClaimKey.firstName, null),
+                readClaimKey(claims, JWTClaimKey.lastName, null),
+                readClaimKey(claims, JWTClaimKey.email, null),
                 authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet())
         );
 
@@ -50,8 +50,6 @@ public class TokenProvider {
                 currentUser,
                 authorities
         );
-
-        //User principal = new User(claims.getSubject(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
@@ -77,5 +75,10 @@ public class TokenProvider {
             log.trace("JWT token compact of handler are invalid trace: {}", e);
         }
         return false;
+    }
+
+    private String readClaimKey(Claims claims, JWTClaimKey key, String defaultValue) {
+        Object value = claims.get(key.name());
+        return (value == null) ? defaultValue : value.toString();
     }
 }
