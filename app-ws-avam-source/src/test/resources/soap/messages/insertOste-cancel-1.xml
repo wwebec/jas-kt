@@ -8,7 +8,7 @@
         <abSofort>1</abSofort>
         <abgelehnt>0</abgelehnt>
         <abmeldeDatum>2018-03-04-00.00.00.0</abmeldeDatum>
-        <abmeldeGrundCode>CANCEL-CODE</abmeldeGrundCode>
+        <abmeldeGrundCode>1</abmeldeGrundCode>
         <alterBis>50</alterBis>
         <alterVon>20</alterVon>
         <angabenAlter></angabenAlter>

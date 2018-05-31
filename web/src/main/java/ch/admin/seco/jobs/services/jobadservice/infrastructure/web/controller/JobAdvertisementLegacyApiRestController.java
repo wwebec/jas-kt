@@ -6,6 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy.*;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.CancellationCode;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,7 +57,15 @@ public class JobAdvertisementLegacyApiRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(path = "/{id}/cancel", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public void cancel(@PathVariable String id, LegacyCancellationDto cancellationDto) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellationDto.getReasonCode());
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), determinCancellationCode(cancellationDto.getReasonCode()));
+    }
+
+    private CancellationCode determinCancellationCode(String reasonCode) {
+        switch (reasonCode) {
+            case "1": return CancellationCode.OCCUPIED_JOBROOM;
+            case "2": return CancellationCode.OCCUPIED_JOBCENTER;
+            default: return CancellationCode.OCCUPIED_OTHER;
+        }
     }
 
 }

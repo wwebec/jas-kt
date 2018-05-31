@@ -5,10 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 
 public class JobAdvertisementDto {
 
@@ -28,7 +25,7 @@ public class JobAdvertisementDto {
     private String rejectionCode;
     private String rejectionReason;
     private LocalDate cancellationDate;
-    private String cancellationCode;
+    private CancellationCode cancellationCode;
     private JobContentDto jobContent;
     private PublicationDto publication;
 
@@ -36,7 +33,7 @@ public class JobAdvertisementDto {
         // For reflection libs
     }
 
-    public JobAdvertisementDto(String id, JobAdvertisementStatus status, SourceSystem sourceSystem, String externalReference, String stellennummerEgov, String stellennummerAvam, String fingerprint, boolean reportingObligation, LocalDate reportingObligationEndDate, boolean reportToAvam, String jobCenterCode, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, String cancellationCode, JobContentDto jobContent, OwnerDto owner, ContactDto contact, PublicationDto publication) {
+    public JobAdvertisementDto(String id, JobAdvertisementStatus status, SourceSystem sourceSystem, String externalReference, String stellennummerEgov, String stellennummerAvam, String fingerprint, boolean reportingObligation, LocalDate reportingObligationEndDate, boolean reportToAvam, String jobCenterCode, LocalDate approvalDate, LocalDate rejectionDate, String rejectionCode, String rejectionReason, LocalDate cancellationDate, CancellationCode cancellationCode, JobContentDto jobContent, OwnerDto owner, ContactDto contact, PublicationDto publication) {
         this.id = id;
         this.status = status;
         this.sourceSystem = sourceSystem;
@@ -186,11 +183,11 @@ public class JobAdvertisementDto {
         this.cancellationDate = cancellationDate;
     }
 
-    public String getCancellationCode() {
+    public CancellationCode getCancellationCode() {
         return cancellationCode;
     }
 
-    public void setCancellationCode(String cancellationCode) {
+    public void setCancellationCode(CancellationCode cancellationCode) {
         this.cancellationCode = cancellationCode;
     }
 

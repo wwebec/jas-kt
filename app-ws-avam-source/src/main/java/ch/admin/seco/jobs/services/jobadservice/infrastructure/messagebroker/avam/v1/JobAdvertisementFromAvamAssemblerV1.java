@@ -1,9 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.EXPERIENCES;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.SALUTATIONS;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.*;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.parseToLocalDate;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
@@ -94,7 +91,7 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 avamJobAdvertisement.getStellennummerEgov(),
                 avamJobAdvertisement.getStellennummerAvam(),
                 parseToLocalDate(avamJobAdvertisement.getAbmeldeDatum()),
-                avamJobAdvertisement.getAbmeldeGrundCode()
+                CANCELLATION_CODE.getRight(avamJobAdvertisement.getAbmeldeGrundCode())
         );
     }
 

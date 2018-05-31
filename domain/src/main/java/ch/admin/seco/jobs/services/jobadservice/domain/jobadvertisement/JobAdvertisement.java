@@ -59,7 +59,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private LocalDate cancellationDate;
 
-    private String cancellationCode;
+    @Enumerated(EnumType.STRING)
+    private CancellationCode cancellationCode;
 
     @Embedded
     @Valid
@@ -196,7 +197,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         return cancellationDate;
     }
 
-    public String getCancellationCode() {
+    public CancellationCode getCancellationCode() {
         return cancellationCode;
     }
 
@@ -265,9 +266,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementRejectedEvent(this));
     }
 
-    public void cancel(LocalDate date, String reasonCode) {
+    public void cancel(LocalDate date, CancellationCode cancellationCode) {
         this.cancellationDate = Condition.notNull(date);
-        this.cancellationCode = Condition.notBlank(reasonCode);
+        this.cancellationCode = Condition.notNull(cancellationCode);
         this.status = status.validateTransitionTo(JobAdvertisementStatus.CANCELLED);
         DomainEventPublisher.publish(new JobAdvertisementCancelledEvent(this));
     }
@@ -482,7 +483,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         private String rejectionCode;
         private String rejectionReason;
         private LocalDate cancellationDate;
-        private String cancellationCode;
+        private CancellationCode cancellationCode;
         private JobContent jobContent;
         private Owner owner;
         private Contact contact;
@@ -575,7 +576,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             return this;
         }
 
-        public Builder setCancellationCode(String cancellationCode) {
+        public Builder setCancellationCode(CancellationCode cancellationCode) {
             this.cancellationCode = cancellationCode;
             return this;
         }
