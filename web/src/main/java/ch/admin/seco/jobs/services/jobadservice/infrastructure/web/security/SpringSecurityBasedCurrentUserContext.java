@@ -1,20 +1,22 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security;
 
-import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
-import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
-import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
+import static org.springframework.util.StringUtils.hasText;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.util.StringUtils.hasText;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
+import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.ConditionException;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 
 @Component
 public class SpringSecurityBasedCurrentUserContext implements CurrentUserContext {
@@ -39,7 +41,13 @@ public class SpringSecurityBasedCurrentUserContext implements CurrentUserContext
 
     @Override
     public AuditUser getAuditUser() {
-        final CurrentUser currentUser = getCurrentUser();
+        CurrentUser currentUser = null;
+        // FIXME exception for system or batch call
+        try {
+            currentUser = getCurrentUser();
+        } catch (IllegalStateException | ConditionException e) {
+            // Do nothing
+        }
         if (currentUser != null) {
             return new AuditUser(
                     currentUser.getUserId(),
