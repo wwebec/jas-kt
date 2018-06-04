@@ -46,6 +46,14 @@ class JWTTestTokenGenerator {
     }
 
     public static void main(String[] args) {
-        System.out.println("Bearer " + generateToken("julien", "my-secret-token-to-change-in-production", LocalDate.now().plusYears(1), Role.ADMIN.getValue(), Role.PUBLIC_EMPLOYMENT_SERVICE.getValue(), Role.USER.getValue()));
+        System.out.println("Bearer " + generateToken(
+                "julien",
+                "my-secret-token-to-change-in-production",
+                LocalDate.now().plusYears(1),
+                Role.SYSADMIN.getValue(),
+                Role.ADMIN.getValue(),
+                Role.PUBLIC_EMPLOYMENT_SERVICE.getValue(),
+                Role.USER.getValue()
+        ));
     }
 }
