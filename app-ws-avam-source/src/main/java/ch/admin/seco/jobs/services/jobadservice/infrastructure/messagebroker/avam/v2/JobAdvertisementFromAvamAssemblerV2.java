@@ -90,7 +90,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 avamJobAdvertisement.getStellennummerEgov(),
                 avamJobAdvertisement.getStellennummerAvam(),
                 parseToLocalDate(avamJobAdvertisement.getAbmeldeDatum()),
-                avamJobAdvertisement.getAbmeldeGrundCode()
+                CANCELLATION_CODE.getRight(avamJobAdvertisement.getAbmeldeGrundCode())
         );
     }
 

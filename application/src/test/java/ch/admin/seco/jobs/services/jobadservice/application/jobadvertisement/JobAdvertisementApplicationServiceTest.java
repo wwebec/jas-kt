@@ -329,11 +329,11 @@ public class JobAdvertisementApplicationServiceTest {
                 JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
 
         // when
-        sut.cancel(JOB_ADVERTISEMENT_ID_01, LocalDate.of(2018, 1, 1), "cancel");
+        sut.cancel(JOB_ADVERTISEMENT_ID_01, LocalDate.of(2018, 1, 1), CancellationCode.OCCUPIED_OTHER);
 
         // then
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
-        assertThat(jobAdvertisement.getCancellationCode()).isEqualTo("cancel");
+        assertThat(jobAdvertisement.getCancellationCode()).isEqualTo(CancellationCode.OCCUPIED_OTHER);
         assertThat(jobAdvertisement.getCancellationDate()).isEqualTo(LocalDate.of(2018, 1, 1));
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CANCELLED);
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CANCELLED.getDomainEventType());

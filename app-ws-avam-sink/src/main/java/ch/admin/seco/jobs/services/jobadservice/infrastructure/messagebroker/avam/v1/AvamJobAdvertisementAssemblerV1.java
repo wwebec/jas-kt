@@ -1,32 +1,33 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
 
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.formatLocalDate;
-import static org.springframework.util.StringUtils.hasText;
-
-import java.util.List;
-
-import org.springframework.util.Assert;
-
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobContent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.TOsteEgov;
+import org.springframework.util.Assert;
+
+import java.util.List;
+
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.formatLocalDate;
+import static org.springframework.util.StringUtils.hasText;
 
 public class AvamJobAdvertisementAssemblerV1 {
 
     private static boolean safeBoolean(Boolean value) {
         return (value != null) ? value : false;
+    }
+
+    private static String tempMapCancellationCode(CancellationCode code) {
+        String avamCode = AvamCodeResolver.CANCELLATION_CODE.getLeft(code);
+        switch (avamCode) {
+            case "6":
+                return "5";
+            case "0":
+                return "7";
+            default:
+                return avamCode;
+        }
     }
 
     public TOsteEgov toOsteEgov(JobAdvertisement jobAdvertisement, AvamAction action) {
@@ -40,7 +41,7 @@ public class AvamJobAdvertisementAssemblerV1 {
         avamJobAdvertisement.setAnmeldeDatum(formatLocalDate(jobAdvertisement.getApprovalDate()));
         if (AvamAction.ABMELDUNG.equals(action)) {
             avamJobAdvertisement.setAbmeldeDatum(formatLocalDate(jobAdvertisement.getCancellationDate()));
-            avamJobAdvertisement.setAbmeldeGrundCode(jobAdvertisement.getCancellationCode());
+            avamJobAdvertisement.setAbmeldeGrundCode(tempMapCancellationCode(jobAdvertisement.getCancellationCode()));
         }
 
         final Publication publication = jobAdvertisement.getPublication();
