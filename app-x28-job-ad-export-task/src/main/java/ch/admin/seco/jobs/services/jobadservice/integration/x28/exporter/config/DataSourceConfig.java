@@ -4,6 +4,9 @@ package ch.admin.seco.jobs.services.jobadservice.integration.x28.exporter.config
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateSettings;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
@@ -24,6 +27,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 @Configuration
 @EnableConfigurationProperties({JobAdServiceDataSourceProperties.class, JpaProperties.class})
 public class DataSourceConfig {
+    private static final Logger LOG = LoggerFactory.getLogger(DataSourceConfig.class);
 
     @Primary
     @Bean
@@ -82,7 +86,9 @@ public class DataSourceConfig {
 
     @Bean
     DataSource jobAdServiceDataSource() {
-        return jobAdServiceDataSourceProperties().initializeDataSourceBuilder().build();
+        JobAdServiceDataSourceProperties jobAdServiceDataSourceProperties = jobAdServiceDataSourceProperties();
+        LOG.info("Building jobAdServiceDataSource ({})", jobAdServiceDataSourceProperties.getUrl());
+        return jobAdServiceDataSourceProperties.initializeDataSourceBuilder().build();
     }
 
     /*

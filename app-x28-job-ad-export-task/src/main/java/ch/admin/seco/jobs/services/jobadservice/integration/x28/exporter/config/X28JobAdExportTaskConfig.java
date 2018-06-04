@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.List;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -21,6 +22,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.listener.ItemListenerSupport;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.database.JpaPagingItemReader;
@@ -77,6 +79,7 @@ public class X28JobAdExportTaskConfig {
                 .listener(new PrepareAndCleanupXmlFileJobExecutionListener())
                 .start(stepBuilderFactory
                         .get("generate-xml-file")
+                        .listener(itemLoggerListener())
                         .<JobAdvertisement, Oste>chunk(10)
                         .reader(jpaPagingItemReader).readerIsTransactionalQueue()
                         .processor(x28JobAdvertisementTransformer)
@@ -91,19 +94,29 @@ public class X28JobAdExportTaskConfig {
     }
 
     @Bean
+    public ItemLoggerListener itemLoggerListener() {
+        return new ItemLoggerListener();
+    }
+
+    @Bean
     public Tasklet uploadToSftpServer() {
         return (contribution, chunkContext) -> {
+            LOG.info("Uploading jobs to SFTP Server: '{}:{}/{}'",
+                    x28Properties.getHost(), x28Properties.getPort(), x28Properties.getRemoteDirectory());
             File xmlFile = (File) chunkContext.getStepContext().getJobExecutionContext().get(PARAMETER_XML_FILE_PATH);
 
             File zipFile = zip(xmlFile, x28Properties.getXmlFileName());
             String remoteFileName = FilenameUtils.getBaseName(x28Properties.getXmlFileName()) + ".zip";
 
+            LOG.info("Sending zip '{}' to SFTP", remoteFileName);
             sftpMessageHandler.handleMessage(
                     MessageBuilder.withPayload(zipFile)
                             .setHeader(FileHeaders.FILENAME, remoteFileName)
                             .build());
 
+            LOG.debug("Delete xml file '{}'", xmlFile.getAbsolutePath());
             delete(xmlFile);
+            LOG.debug("Delete zip file '{}'", zipFile.getAbsolutePath());
             delete(zipFile);
             return RepeatStatus.FINISHED;
         };
@@ -159,6 +172,7 @@ public class X28JobAdExportTaskConfig {
     }
 
     private File zip(File xmlFile, String xmlFileName) throws IOException {
+        LOG.debug("Zip xml file '{}'", xmlFileName);
         Path targetFile = Files.createTempFile(xmlFile.toPath().getParent(), null, ".zip");
         Files.deleteIfExists(targetFile);
         ZipUtil.packEntry(xmlFile, targetFile.toFile(), xmlFileName);
@@ -169,8 +183,8 @@ public class X28JobAdExportTaskConfig {
         @Override
         public void afterJob(JobExecution jobExecution) {
             if (jobExecution.getExecutionContext().containsKey(PARAMETER_XML_FILE_PATH)) {
-
                 File xmlFile = (File) (jobExecution.getExecutionContext().get(PARAMETER_XML_FILE_PATH));
+                LOG.info("Cleanup xml file '{}'", xmlFile.getAbsolutePath());
                 delete(xmlFile);
             }
         }
@@ -180,11 +194,44 @@ public class X28JobAdExportTaskConfig {
             try {
                 Path tempFolder = Paths.get(x28Properties.getLocalDirectory());
                 Files.createDirectories(tempFolder);
-                Path tempXmlFilePath = Files.createTempFile(tempFolder, null, ".xml");
-                jobExecution.getExecutionContext().put(PARAMETER_XML_FILE_PATH, tempXmlFilePath.toAbsolutePath().toFile());
+                Path tempXmlFilePath = Files.createTempFile(tempFolder, null, ".xml")
+                        .toAbsolutePath();
+                LOG.info("Create temp xml file: {}", tempXmlFilePath);
+                jobExecution.getExecutionContext().put(PARAMETER_XML_FILE_PATH, tempXmlFilePath.toFile());
             } catch (IOException e) {
                 throw new IllegalStateException(e);
             }
+        }
+    }
+
+    private static class ItemLoggerListener extends ItemListenerSupport<JobAdvertisement, Oste> {
+        private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoggerListener.class);
+
+        @Override
+        public void afterRead(JobAdvertisement item) {
+            LOGGER.debug("Successfully read JobAdvertisement: {}", item);
+        }
+
+        @Override
+        public void onReadError(Exception ex) {
+            LOGGER.error("JobAdvertisement read failure", ex);
+        }
+
+        @Override
+        public void onProcessError(JobAdvertisement item, Exception e) {
+            LOGGER.error("JobAdvertisement ({}) process failed", item);
+            LOGGER.error("JobAdvertisement process failure", e);
+        }
+
+        @Override
+        public void afterWrite(List<? extends Oste> item) {
+            LOGGER.debug("x28 xml successfully written: {}", item);
+        }
+
+        @Override
+        public void onWriteError(Exception ex, List<? extends Oste> item) {
+            LOGGER.error("x28 xml write failed: {}", item);
+            LOGGER.error("x28 xml write failure", ex);
         }
     }
 }

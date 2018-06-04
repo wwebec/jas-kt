@@ -11,6 +11,9 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
@@ -19,6 +22,7 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.mes
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 
 public class X28JobAdWriter implements ItemWriter<Oste> {
+    private static final Logger LOG = LoggerFactory.getLogger(X28JobAdWriter.class);
     private final MessageChannel output;
 
     private final JobAdvertisementDtoAssembler jobAdvertisementDtoAssembler;
@@ -30,6 +34,7 @@ public class X28JobAdWriter implements ItemWriter<Oste> {
 
     @Override
     public void write(List<? extends Oste> x28JobAdvertisements) {
+        LOG.debug("Send x28 JobAdvertisements ({}) to JobAd service", x28JobAdvertisements.size());
         for (Oste x28JobAdvertisement : x28JobAdvertisements) {
             if (isExternalJobAdvertisement(x28JobAdvertisement)) {
                 send(jobAdvertisementDtoAssembler.createFromX28(x28JobAdvertisement), CREATE_FROM_X28);
