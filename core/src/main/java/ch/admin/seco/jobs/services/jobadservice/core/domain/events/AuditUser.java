@@ -27,7 +27,7 @@ public class AuditUser {
 
     public AuditUser(String userId, String userExternalId, String companyId, String firstName, String lastName, String email) {
         this.userId = Condition.notBlank(userId);
-        this.userExternalId = Condition.notBlank(userExternalId);
+        this.userExternalId = userExternalId;
         this.companyId = companyId;
         this.firstName = Condition.notBlank(firstName);
         this.lastName = Condition.notBlank(lastName);
