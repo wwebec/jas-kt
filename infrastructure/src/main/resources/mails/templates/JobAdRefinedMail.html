@@ -9,24 +9,24 @@
             <p th:text="#{mail.jobAd.refined.header}"></p>
             <p th:text="#{mail.jobAd.refined.body.paragraph1}"></p>
             <p th:text="#{mail.jobAd.refined.body.paragraph2}"></p>
-            <!--<div th:text="${jobCenter.address.name}"></div>-->
-            <!--<span th:text="${jobCenter.address.street}"></span>-->
-            <!--<span th:text="${jobCenter.address.houseNumber}"></span>-->
-            <!--<br>-->
-            <!--<span th:text="${jobCenter.address.zipCode}"></span>-->
-            <!--<span th:text="${jobCenter.address.city}"></span>-->
-            <!--<br>-->
+            <div th:text="${jobCenter.address.name}"></div>
+            <span th:text="${jobCenter.address.street}"></span>
+            <span th:text="${jobCenter.address.houseNumber}"></span>
+            <br>
+            <span th:text="${jobCenter.address.zipCode}"></span>
+            <span th:text="${jobCenter.address.city}"></span>
+            <br>
             <span th:text="#{mail.jobAd.refined.body.addressblock.tel}"></span>
-            <!--<span th:text="${jobCenter.phone}"></span>-->
+            <span th:text="${jobCenter.phone}"></span>
             <br>
             <span th:text="#{mail.jobAd.refined.body.addressblock.fax}"></span>
-            <!--<span th:text="${jobCenter.fax}"></span>-->
+            <span th:text="${jobCenter.fax}"></span>
             <br>
             <span th:text="#{mail.jobAd.refined.body.addressblock.email}"></span>
-            <!--<span th:text="${jobCenter.email}"></span>-->
+            <span th:text="${jobCenter.email}"></span>
             <p th:text="#{mail.jobAd.refined.body.paragraph4}"></p>
             <ul>
-                <li><link th:href="@{|${linkToJobAdDetailPage}${jobAdvertisement.id.value}#{mail.jobAd.token.string}${jobAdvertisement.owner.accessToken}}"/></li>
+                <li><a th:href="@{|${linkToJobAdDetailPage}${jobAdvertisement.id.value}#{mail.jobAd.token.string}${jobAdvertisement.owner.accessToken}}"/></li>
             </ul>
             <p th:text="#{mail.jobAd.footer.paragraph1}"></p>
             <div th:text="#{mail.jobAd.footer.details1}"></div>

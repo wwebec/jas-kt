@@ -26,7 +26,7 @@
             <span th:text="#{mail.jobAd.created.body.addressblock.email}"></span>
             <span th:text="${jobCenter.email}"></span>
             <p th:text="#{mail.jobAd.created.body.paragraph4}"></p>
-            <link th:href="@{|${linkToJobAdDetailPage}${jobAdvertisement.id.value}#{mail.jobAd.token.string}${jobAdvertisement.owner.accessToken}}"/>
+            <a th:href="@{|${linkToJobAdDetailPage}${jobAdvertisement.id.value}#{mail.jobAd.token.string}${jobAdvertisement.owner.accessToken}}"/>
             <p th:text="#{mail.jobAd.footer.paragraph1}"></p>
             <div th:text="#{mail.jobAd.footer.details1}"></div>
             <div th:text="#{mail.jobAd.footer.details2}"></div>
