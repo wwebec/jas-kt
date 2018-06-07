@@ -33,8 +33,11 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
 
-    @GetMapping(params = {"page", "size"})
-    public PageResource<JobAdvertisementDto> getAll(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "25") int size) {
+    @GetMapping
+    public PageResource<JobAdvertisementDto> getAll(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "25") int size
+    ) {
         return PageResource.of(jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size)));
     }
 
@@ -49,7 +52,7 @@ public class JobAdvertisementRestController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping(path = "/{id}/cancel")
+    @PatchMapping("/{id}/cancel")
     public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
         jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode());
     }

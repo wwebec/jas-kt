@@ -12,6 +12,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
@@ -263,6 +264,19 @@ public class JobAdvertisementApplicationService {
     public List<JobAdvertisementDto> findAll() {
         List<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findAll();
         return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(toList());
+    }
+
+    public Page<JobAdvertisementDto> findOwnJobAdvertisements(Pageable pageable) {
+        CurrentUser currentUser = currentUserContext.getCurrentUser();
+        if (currentUser == null) {
+            return new PageImpl<>(Collections.EMPTY_LIST, pageable, 0);
+        }
+        Page<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findOwnJobAdvertisements(pageable, currentUser.getUserId(), currentUser.getCompanyId());
+        return new PageImpl<>(
+                jobAdvertisements.getContent().stream().map(JobAdvertisementDto::toDto).collect(toList()),
+                jobAdvertisements.getPageable(),
+                jobAdvertisements.getTotalElements()
+        );
     }
 
     public Page<JobAdvertisementDto> findAllPaginated(Pageable pageable) {

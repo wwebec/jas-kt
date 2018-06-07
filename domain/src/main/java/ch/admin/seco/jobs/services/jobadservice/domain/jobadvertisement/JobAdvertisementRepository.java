@@ -1,9 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import java.time.LocalDate;
-import java.util.Optional;
-import java.util.stream.Stream;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -12,6 +10,9 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.QueryHint;
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.hibernate.jpa.QueryHints.HINT_CACHE_MODE;
 import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
@@ -52,4 +53,7 @@ public interface JobAdvertisementRepository extends JpaRepository<JobAdvertiseme
             "where j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED " +
             "or j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC ")
     long countPublished();
+
+    @Query("select j from JobAdvertisement j where j.owner.userId = :userId or j.owner.companyId = :companyId")
+    Page<JobAdvertisement> findOwnJobAdvertisements(Pageable pageable, @Param("userId") String userId, @Param("companyId") String companyId);
 }
