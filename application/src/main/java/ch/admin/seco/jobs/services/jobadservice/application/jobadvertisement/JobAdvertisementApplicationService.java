@@ -581,6 +581,7 @@ public class JobAdvertisementApplicationService {
                     .setPhone(companyDto.getPhone())
                     .setEmail(companyDto.getEmail())
                     .setWebsite(companyDto.getWebsite())
+                    .setSurrogate(companyDto.isSurrogate())
                     .build();
         }
         return null;

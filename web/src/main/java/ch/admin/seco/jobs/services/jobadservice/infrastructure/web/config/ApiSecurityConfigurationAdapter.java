@@ -16,6 +16,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.UserDetailsToCurrentUserAdapter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 @Configuration
 @Order(SecurityProperties.BASIC_AUTH_ORDER - 1)
@@ -55,13 +56,12 @@ public class ApiSecurityConfigurationAdapter extends WebSecurityConfigurerAdapte
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .antMatcher("/api/jobAdvertisements/api**")
-                .httpBasic()
-                .realmName("admin realm")
+                .antMatcher("/api/public/**")
+                .httpBasic().realmName("public-api")
                 .and()
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/jobAdvertisements/api-legacy/**").hasAuthority(Role.API.getValue())
-                .antMatchers("/api/jobAdvertisements/api/**").hasAuthority(Role.API.getValue());
+                .antMatchers("/api/public/**").hasAuthority(Role.API.getValue());
     }
 
 }

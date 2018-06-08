@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/jobAdvertisements/api/v1")
+@RequestMapping("/api/public/jobAdvertisements/v1")
 public class JobAdvertisementApiRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
@@ -27,7 +27,9 @@ public class JobAdvertisementApiRestController {
     }
 
     @PostMapping
-    public JobAdvertisementDto createFromApi(@RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
+    public JobAdvertisementDto createFromApi(
+            @RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto
+    ) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementDto);
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
@@ -41,13 +43,18 @@ public class JobAdvertisementApiRestController {
     }
 
     @GetMapping("/{id}")
-    public JobAdvertisementDto getJobAdvertisement(@PathVariable String id) {
+    public JobAdvertisementDto getJobAdvertisement(
+            @PathVariable String id
+    ) {
         return jobAdvertisementApplicationService.getById(new JobAdvertisementId(id));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/{id}/cancel")
-    public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
+    public void cancel(
+            @PathVariable String id,
+            @RequestBody CancellationResource cancellation
+    ) {
         jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode());
     }
 

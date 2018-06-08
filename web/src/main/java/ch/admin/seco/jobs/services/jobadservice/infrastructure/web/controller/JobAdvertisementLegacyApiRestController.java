@@ -19,7 +19,7 @@ import javax.validation.Valid;
 
 @Deprecated
 @RestController
-@RequestMapping("/api/jobAdvertisements/api-legacy")
+@RequestMapping("/api/public/jobAdvertisements/legacy")
 public class JobAdvertisementLegacyApiRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
