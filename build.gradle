@@ -9,6 +9,7 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${spring_boot_version}"
         classpath 'io.spring.gradle:propdeps-plugin:0.0.10.RELEASE'
         classpath 'org.ajoberstar:gradle-git:1.4.2'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin'
     }
 }
 
@@ -20,6 +21,7 @@ plugins {
     id 'com.gorylenko.gradle-git-properties' version '1.4.17'
     id 'com.avast.gradle.docker-compose' version '0.7.1'
     id 'io.github.http-builder-ng.http-plugin' version '0.1.1'
+    id "org.asciidoctor.convert" version "1.5.2"
 }
 
 apply from: "gradle/docker.gradle"

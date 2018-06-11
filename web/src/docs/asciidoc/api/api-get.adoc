@@ -5,7 +5,7 @@ _reportingObligation_ und the date _reportingObligationEndDate_.
 This date is only set after approval by the PES (RAV), in case that the ad falls under the reporting obligation.
 
 === Request
-`GET <BASE_URL>/jobadvertisements/{id}`
+`GET {api-url}/{id}`
 
 [cols="10,10,10,70"]
 |===

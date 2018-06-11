@@ -52,10 +52,6 @@ JobRoom API exposes a simple way to manage job advertisements. It follows _RESTf
 
 The following chapters explain more precisely some of these concepts and provide examples in how to create, read, edit and cancel job offers.
 
-== Base URL
-
-<BASE_URL> = https://api.job-room.ch/jobAdvertisements/v1/
-
 == HTTP verbs
 
 The following verbs are fully supported :
