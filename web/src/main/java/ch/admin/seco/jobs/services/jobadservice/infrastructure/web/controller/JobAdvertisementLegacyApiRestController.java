@@ -39,7 +39,7 @@ public class JobAdvertisementLegacyApiRestController {
 
     @GetMapping(params = {"page", "size"})
     public LegacyPageDto getAll(@RequestParam("page") int page, @RequestParam("size") int size) {
-        Page<JobAdvertisementDto> paginated = jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size));
+        Page<JobAdvertisementDto> paginated = jobAdvertisementApplicationService.findOwnJobAdvertisements(PageRequest.of(page, size));
         return LegacyFromJobAdvertisementDtoConverter.convert(paginated);
     }
 
