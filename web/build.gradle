@@ -79,7 +79,7 @@ task cleanResources(type: Delete) {
 
 asciidoctor {
     attributes "base-url": "https://api.job-room.ch/0.2"
-    attributes "api-url": "https://api.job-room.ch/jobAdvertisements/v1"
+    attributes "api-url": "http://test-api.job-room.ch"
     inputs.dir "api-docs"
 }
 

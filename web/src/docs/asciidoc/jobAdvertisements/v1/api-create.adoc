@@ -167,7 +167,7 @@ in the Job-Room public area if the publicDisplay flag is set, otherwise not.
 |===
 
 === Request
-`POST {api-url}`
+`POST {api-url}/jobAdvertisements/v1`
 
 [source,json]
 ----
