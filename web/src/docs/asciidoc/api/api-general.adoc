@@ -3,8 +3,7 @@ Last modified: May 3, 2018 | Version: 0.95
 
 == Contact
 
-* mediamatik@seco.admin.ch
-* anton.menninger@seco.admin.ch
+* jobroom-api@seco.admin.ch
 
 The Job-Room Jobs API provides an additional channel for employers to publish job advertisements to the Swiss public employment services system.
 It is an alternative to the web form available at https://www.job-room.ch/#/companies/jobpublication.

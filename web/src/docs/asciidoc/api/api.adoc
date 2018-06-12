@@ -1,4 +1,4 @@
-:contact-mail: jobroom-api@seco.admin.ch, anton.menninger@seco.admin.ch
+:contact-mail: jobroom-api@seco.admin.ch
 
 = Job-Room Jobs API Documentation
 Seco eGovernment Services
@@ -21,6 +21,8 @@ include::api-create.adoc[]
 include::api-getAll.adoc[]
 
 include::api-get.adoc[]
+
+include::api-update.adoc[]
 
 include::api-cancel.adoc[]
 

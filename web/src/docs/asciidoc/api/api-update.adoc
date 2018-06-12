@@ -1,0 +1,3 @@
+== Update a job advertisement
+
+At the moment, there is no update possible.
