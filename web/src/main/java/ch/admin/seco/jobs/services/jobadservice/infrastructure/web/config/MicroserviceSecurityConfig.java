@@ -73,7 +73,7 @@ public class MicroserviceSecurityConfig {
                     .antMatchers("/api/**").authenticated()
                     .antMatchers("/management/info").permitAll()
                     .antMatchers("/management/health").permitAll()
-                    .antMatchers("/management/**").hasAuthority(Role.SYSADMIN.getValue())
+                    .antMatchers("/management/**").hasAuthority(Role.ADMIN.getValue())
                     .antMatchers("/swagger-ui.html").permitAll()
                     .and()
                     .apply(securityConfigurerAdapter());
