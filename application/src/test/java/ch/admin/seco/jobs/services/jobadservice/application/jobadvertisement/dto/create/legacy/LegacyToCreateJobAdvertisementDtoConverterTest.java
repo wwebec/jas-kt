@@ -20,7 +20,7 @@ public class LegacyToCreateJobAdvertisementDtoConverterTest {
 	public void shouldConvertLegacyDto() {
 		// GIVEN
 		LegacyLocationDto legacyLocationDto = new LegacyLocationDto("locationPostalCode", "locationCity", "locationCountryCode", "locationAdditionalDetails");
-		LegacyLanguageSkillDto legacyLanguageSkillDto = new LegacyLanguageSkillDto("de", LegacyLanguageLevelEnum.BASIC_KNOWLEDGE, LegacyLanguageLevelEnum.BASIC_KNOWLEDGE);
+		LegacyLanguageSkillDto legacyLanguageSkillDto = new LegacyLanguageSkillDto("de", "BASIC_KNOWLEDGE", "basic_knowledge");
 		LegacyJobDto legacyJobDto = new LegacyJobDto(
 				"title",
 				"description",
