@@ -4,6 +4,10 @@ public class LegacyCancellationDto {
 
     private String reasonCode;
 
+    protected LegacyCancellationDto() {
+        // For reflection libs
+    }
+
     public LegacyCancellationDto(String reasonCode) {
         this.reasonCode = reasonCode;
     }

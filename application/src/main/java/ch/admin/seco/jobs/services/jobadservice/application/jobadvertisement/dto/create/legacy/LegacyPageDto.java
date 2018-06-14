@@ -8,6 +8,10 @@ public class LegacyPageDto {
     private LegacyPageLinks _links;
     private LegacyPage page;
 
+    protected LegacyPageDto() {
+        // For reflection libs
+    }
+
     public LegacyPageDto(List<LegacyJobAdvertisementDto> jobOffers, String self, String profile, String search, int size, long totalElements, int totalPage, int number) {
         this._embedded = new LegacyEmbedded(jobOffers);
         this._links = new LegacyPageLinks(self, profile, search);

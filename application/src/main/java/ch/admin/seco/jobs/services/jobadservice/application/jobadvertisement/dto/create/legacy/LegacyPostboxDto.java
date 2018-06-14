@@ -5,6 +5,10 @@ public class LegacyPostboxDto {
     private String locality;
     private String postalCode;
 
+    protected LegacyPostboxDto() {
+        // For reflection libs
+    }
+
     public LegacyPostboxDto(String number, String locality, String postalCode) {
         this.number = number;
         this.locality = locality;
