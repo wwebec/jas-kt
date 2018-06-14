@@ -4,6 +4,7 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebro
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.parseToLocalDate;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.StringUtils.hasText;
 
 import java.math.BigInteger;
@@ -49,9 +50,13 @@ public class JobAdvertisementFromAvamAssemblerV1 {
         return (value != null) ? value.booleanValue() : defaultValue;
     }
 
+    private static String safeTrimOrNull(String value) {
+        return (isNotBlank(value)) ? value.trim() : null;
+    }
+
     CreateJobAdvertisementFromAvamDto createCreateJobAdvertisementAvamDto(WSOsteEgov avamJobAdvertisement) {
         return new CreateJobAdvertisementFromAvamDto(
-                avamJobAdvertisement.getStellennummerAvam(),
+                safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 avamJobAdvertisement.getBezeichnung(),
                 avamJobAdvertisement.getBeschreibung(),
                 "de", // Not defined in this AVAM version
@@ -73,8 +78,8 @@ public class JobAdvertisementFromAvamAssemblerV1 {
 
     ApprovalDto createApprovaldDto(WSOsteEgov avamJobAdvertisement) {
         return new ApprovalDto(
-                avamJobAdvertisement.getStellennummerEgov(),
-                avamJobAdvertisement.getStellennummerAvam(),
+                safeTrimOrNull(avamJobAdvertisement.getStellennummerEgov()),
+                safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
                 false, // Not defined in this AVAM version
                 null); // Not defined in this AVAM version
@@ -82,8 +87,8 @@ public class JobAdvertisementFromAvamAssemblerV1 {
 
     RejectionDto createRejectionDto(WSOsteEgov avamJobAdvertisement) {
         return new RejectionDto(
-                avamJobAdvertisement.getStellennummerEgov(),
-                avamJobAdvertisement.getStellennummerAvam(),
+                safeTrimOrNull(avamJobAdvertisement.getStellennummerEgov()),
+                safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 null, // Not defined in this AVAM version
                 null, // Not defined in this AVAM version
                 null // Not defined in this AVAM version
@@ -92,8 +97,8 @@ public class JobAdvertisementFromAvamAssemblerV1 {
 
     CancellationDto createCancellationDto(WSOsteEgov avamJobAdvertisement) {
         return new CancellationDto(
-                avamJobAdvertisement.getStellennummerEgov(),
-                avamJobAdvertisement.getStellennummerAvam(),
+                safeTrimOrNull(avamJobAdvertisement.getStellennummerEgov()),
+                safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 parseToLocalDate(avamJobAdvertisement.getAbmeldeDatum()),
                 CANCELLATION_CODE.getRight(avamJobAdvertisement.getAbmeldeGrundCode())
         );

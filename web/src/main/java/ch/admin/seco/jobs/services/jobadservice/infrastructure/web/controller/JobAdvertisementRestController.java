@@ -51,6 +51,16 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.getByAccessToken(accessToken);
     }
 
+    @GetMapping("/byStellennummerEgov/{stellennummerEgov}")
+    public JobAdvertisementDto getOneByStellennummerEgov(@PathVariable String stellennummerEgov) throws AggregateNotFoundException {
+        return jobAdvertisementApplicationService.findByStellennummerEgov(stellennummerEgov);
+    }
+
+    @GetMapping("/byStellennummerAvam/{stellennummerAvam}")
+    public JobAdvertisementDto getOneByStellennummerAvam(@PathVariable String stellennummerAvam) throws AggregateNotFoundException {
+        return jobAdvertisementApplicationService.findByStellennummerAvam(stellennummerAvam);
+    }
+
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/{id}/cancel")
     public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
