@@ -70,11 +70,15 @@ public class LegacyToCreateJobAdvertisementDtoConverter {
         return legacyJobDto.getLanguageSkills().stream()
                 .map(legacyLanguageSkillDto -> new LanguageSkillDto(
                                 legacyLanguageSkillDto.getLanguage(),
-                                LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getRight(legacyLanguageSkillDto.getSpokenLevel()),
-                                LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getRight(legacyLanguageSkillDto.getWrittenLevel())
+                                LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getRight(safeString2LegacyLanguageLevelEnum(legacyLanguageSkillDto.getSpokenLevel())),
+                                LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getRight(safeString2LegacyLanguageLevelEnum(legacyLanguageSkillDto.getWrittenLevel()))
                         )
                 )
                 .collect(toList());
+    }
+
+    private static LegacyLanguageLevelEnum safeString2LegacyLanguageLevelEnum(String value) {
+        return (value != null) ? LegacyLanguageLevelEnum.valueOf(value.toUpperCase()) : LegacyLanguageLevelEnum.NO_KNOWLEDGE;
     }
 
     private static CreateLocationDto convertLocationDto(LegacyJobDto legacyJobDto) {

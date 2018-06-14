@@ -3,14 +3,14 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 public class LegacyLanguageSkillDto {
 
     private String language;
-    private LegacyLanguageLevelEnum spokenLevel;
-    private LegacyLanguageLevelEnum writtenLevel;
+    private String spokenLevel;
+    private String writtenLevel;
 
     protected LegacyLanguageSkillDto() {
         // For reflection libs
     }
 
-    public LegacyLanguageSkillDto(String language, LegacyLanguageLevelEnum spokenLevel, LegacyLanguageLevelEnum writtenLevel) {
+    public LegacyLanguageSkillDto(String language, String spokenLevel, String writtenLevel) {
         this.language = language;
         this.spokenLevel = spokenLevel;
         this.writtenLevel = writtenLevel;
@@ -24,19 +24,19 @@ public class LegacyLanguageSkillDto {
         this.language = language;
     }
 
-    public LegacyLanguageLevelEnum getSpokenLevel() {
+    public String getSpokenLevel() {
         return spokenLevel;
     }
 
-    public void setSpokenLevel(LegacyLanguageLevelEnum spokenLevel) {
+    public void setSpokenLevel(String spokenLevel) {
         this.spokenLevel = spokenLevel;
     }
 
-    public LegacyLanguageLevelEnum getWrittenLevel() {
+    public String getWrittenLevel() {
         return writtenLevel;
     }
 
-    public void setWrittenLevel(LegacyLanguageLevelEnum writtenLevel) {
+    public void setWrittenLevel(String writtenLevel) {
         this.writtenLevel = writtenLevel;
     }
 

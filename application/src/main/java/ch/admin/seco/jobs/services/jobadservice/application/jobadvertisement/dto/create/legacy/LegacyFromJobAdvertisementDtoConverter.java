@@ -3,7 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
-
 import org.springframework.data.domain.Page;
 import org.springframework.util.CollectionUtils;
 
@@ -121,8 +120,8 @@ public class LegacyFromJobAdvertisementDtoConverter {
         return languageSkills.stream()
                 .map(languageSkillDto -> new LegacyLanguageSkillDto(
                         languageSkillDto.getLanguageIsoCode(),
-                        LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getLeft(languageSkillDto.getSpokenLevel()),
-                        LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getLeft(languageSkillDto.getWrittenLevel())
+                        LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getLeft(languageSkillDto.getSpokenLevel()).toString(),
+                        LegacyLanguageLevelEnum.MAPPING_LANGUAGE_LEVEL.getLeft(languageSkillDto.getWrittenLevel()).toString()
                 ))
                 .collect(Collectors.toList());
     }
