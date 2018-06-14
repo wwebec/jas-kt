@@ -15,6 +15,14 @@ public class LegacyToCreateJobAdvertisementDtoConverter {
 
     private static final String DEFAULT_LANGUAGE_ISO_CODE = "de";
 
+    private static LegacyLanguageLevelEnum safeString2LegacyLanguageLevelEnum(String value) {
+        return (value != null) ? LegacyLanguageLevelEnum.valueOf(value.toUpperCase()) : LegacyLanguageLevelEnum.NO_KNOWLEDGE;
+    }
+
+    private static LegacyTitleEnum safeString2LegacyTitleEnum(String value) {
+        return (value != null) ? LegacyTitleEnum.valueOf(value.toUpperCase()) : LegacyTitleEnum.MISTER;
+    }
+
     public static CreateJobAdvertisementDto convert(LegacyCreateJobAdvertisementDto legacyCreateJobAdvertisementDto) {
         Condition.notNull(legacyCreateJobAdvertisementDto);
 
@@ -43,7 +51,7 @@ public class LegacyToCreateJobAdvertisementDtoConverter {
         }
 
         return new PublicContactDto(
-                LegacyTitleEnum.MAPPING_TITLE.getRight(contact.getTitle()),
+                LegacyTitleEnum.MAPPING_TITLE.getRight(safeString2LegacyTitleEnum(contact.getTitle())),
                 contact.getFirstName(),
                 contact.getLastName(),
                 contact.getPhoneNumber(),
@@ -75,10 +83,6 @@ public class LegacyToCreateJobAdvertisementDtoConverter {
                         )
                 )
                 .collect(toList());
-    }
-
-    private static LegacyLanguageLevelEnum safeString2LegacyLanguageLevelEnum(String value) {
-        return (value != null) ? LegacyLanguageLevelEnum.valueOf(value.toUpperCase()) : LegacyLanguageLevelEnum.NO_KNOWLEDGE;
     }
 
     private static CreateLocationDto convertLocationDto(LegacyJobDto legacyJobDto) {
@@ -168,7 +172,7 @@ public class LegacyToCreateJobAdvertisementDtoConverter {
         }
 
         return new ContactDto(
-                LegacyTitleEnum.MAPPING_TITLE.getRight(contact.getTitle()),
+                LegacyTitleEnum.MAPPING_TITLE.getRight(safeString2LegacyTitleEnum(contact.getTitle())),
                 contact.getFirstName(),
                 contact.getLastName(),
                 contact.getPhoneNumber(),

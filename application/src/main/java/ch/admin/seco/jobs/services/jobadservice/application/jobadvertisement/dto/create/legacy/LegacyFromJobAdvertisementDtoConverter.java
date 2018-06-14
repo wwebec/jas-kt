@@ -104,7 +104,7 @@ public class LegacyFromJobAdvertisementDtoConverter {
         }
 
         return new LegacyContactDto(
-                LegacyTitleEnum.MAPPING_TITLE.getLeft(publicContact.getSalutation()),
+                LegacyTitleEnum.MAPPING_TITLE.getLeft(publicContact.getSalutation()).toString(),
                 publicContact.getFirstName(),
                 publicContact.getLastName(),
                 publicContact.getPhone(),
