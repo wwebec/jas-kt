@@ -45,6 +45,10 @@ public class JobAdvertisementFromAvamAssemblerV1 {
     private static final Logger LOG = LoggerFactory.getLogger(JobAdvertisementFromAvamAssemblerV1.class);
     private static final EmailValidator emailValidator = new EmailValidator();
 
+    private static boolean safeBoolean(Boolean value, boolean defaultValue) {
+        return (value != null) ? value.booleanValue() : defaultValue;
+    }
+
     CreateJobAdvertisementFromAvamDto createCreateJobAdvertisementAvamDto(WSOsteEgov avamJobAdvertisement) {
         return new CreateJobAdvertisementFromAvamDto(
                 avamJobAdvertisement.getStellennummerAvam(),
@@ -112,8 +116,8 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 parseToLocalDate(avamJobAdvertisement.getStellenantritt()),
                 parseToLocalDate(avamJobAdvertisement.getVertragsdauer()),
                 false, // Not defined in this AVAM version
-                avamJobAdvertisement.isAbSofort(),
-                avamJobAdvertisement.isUnbefristet(),
+                safeBoolean(avamJobAdvertisement.isAbSofort(), avamJobAdvertisement.getStellenantritt() == null),
+                safeBoolean(avamJobAdvertisement.isUnbefristet(), avamJobAdvertisement.getVertragsdauer() == null),
                 workingTimePercentage.getMin(),
                 workingTimePercentage.getMax(),
                 createWorkForms(avamJobAdvertisement)

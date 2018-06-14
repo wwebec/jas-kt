@@ -118,8 +118,8 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 parseToLocalDate(avamJobAdvertisement.getStellenantritt()),
                 parseToLocalDate(avamJobAdvertisement.getVertragsdauer()),
                 safeBoolean(avamJobAdvertisement.isKurzeinsatz(), false),
-                avamJobAdvertisement.isAbSofort(),
-                avamJobAdvertisement.isUnbefristet(),
+                safeBoolean(avamJobAdvertisement.isAbSofort(), avamJobAdvertisement.getStellenantritt() == null),
+                safeBoolean(avamJobAdvertisement.isUnbefristet(), avamJobAdvertisement.getVertragsdauer() == null),
                 workingTimePercentage.getMin(),
                 workingTimePercentage.getMax(),
                 createWorkForms(avamJobAdvertisement)
