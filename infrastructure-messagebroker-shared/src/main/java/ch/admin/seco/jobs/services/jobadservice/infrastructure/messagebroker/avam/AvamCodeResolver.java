@@ -83,6 +83,13 @@ public class AvamCodeResolver {
             .put("4", WorkForm.NIGHT_WORK)
             .toImmutable();
 
+    public static final MappingBuilder<String, SourceSystem> SOURCE_SYSTEM = new MappingBuilder<String, SourceSystem>()
+            .put("Job-Room", SourceSystem.JOBROOM)
+            .put("API", SourceSystem.API)
+            .put("RAV", SourceSystem.RAV)
+            .put("EXTERN", SourceSystem.EXTERN)
+            .toImmutable();
+
     public static final MappingBuilder<String, CancellationCode> CANCELLATION_CODE = new MappingBuilder<String, CancellationCode>()
             .put("1", CancellationCode.OCCUPIED_JOBCENTER)
             .put("2", CancellationCode.OCCUPIED_AGENCY)

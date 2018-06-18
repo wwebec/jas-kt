@@ -8,6 +8,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.SOURCE_SYSTEM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.formatLocalDate;
 import static org.springframework.util.StringUtils.hasText;
 
@@ -81,7 +82,7 @@ public class AvamJobAdvertisementAssemblerV2 {
 
         avamJobAdvertisement.setMeldepflicht(jobAdvertisement.isReportingObligation());
         avamJobAdvertisement.setSperrfrist(formatLocalDate(jobAdvertisement.getReportingObligationEndDate()));
-        avamJobAdvertisement.setQuelleCode(jobAdvertisement.getSourceSystem().name());
+        avamJobAdvertisement.setQuelleCode(SOURCE_SYSTEM.getLeft(jobAdvertisement.getSourceSystem()));
 
         return avamJobAdvertisement;
     }
