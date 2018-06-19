@@ -57,6 +57,9 @@ The company that handles the recruitment. This information is published.
 | name | String(255) | The name of the company | Required
 | street | String(50) | | Optional
 | houseNumber | String(10) | | Optional
+| postOfficeBoxNumber | String(10) | | Optional
+| postOfficeBoxPostalCode | String(10) | | Optional
+| postOfficeBoxCity | String(255) | | Optional
 | postalCode | String(10) | | Required. Must be a valid swiss postal code if the company is located in Switzerland
 | city | String(50) | | Required
 | countryIsoCode | String(2) | | Required (ISO 3166-1 alpha-2)

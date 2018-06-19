@@ -1,7 +1,6 @@
 :contact-mail: jobroom-api@seco.admin.ch
-
-= Job-Room Jobs API Documentation
-Seco eGovernment Services
+= Job-Room Jobs API Documentation v1.0
+Seco eGovernment Services <{contact-mail}>
 :doctype: book
 :source-highlighter: highlightjs
 :toc: left
