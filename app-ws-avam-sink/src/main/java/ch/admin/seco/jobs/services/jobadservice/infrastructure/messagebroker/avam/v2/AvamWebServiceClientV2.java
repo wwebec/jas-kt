@@ -33,12 +33,16 @@ public class AvamWebServiceClientV2 implements AvamWebServiceClient {
     }
 
     public void register(JobAdvertisement jobAdvertisement) {
+        LOG.info("Start sending registration of jobAdvertisement " + jobAdvertisement.getId().getValue() + " to AVAM");
+        LOG.debug(jobAdvertisement.toString());
         AvamAction action = AvamAction.ANMELDUNG;
         TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, action);
         send(jobAdvertisement.getId(), action, tOsteEgov);
     }
 
     public void deregister(JobAdvertisement jobAdvertisement) {
+        LOG.info("Start sending deregister of jobAdvertisement " + jobAdvertisement.getId().getValue() + " to AVAM");
+        LOG.debug(jobAdvertisement.toString());
         AvamAction action = AvamAction.ABMELDUNG;
         TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, action);
         send(jobAdvertisement.getId(), action, tOsteEgov);
