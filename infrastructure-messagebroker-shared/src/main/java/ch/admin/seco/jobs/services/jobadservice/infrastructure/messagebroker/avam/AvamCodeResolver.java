@@ -79,8 +79,8 @@ public class AvamCodeResolver {
     public static final MappingBuilder<String, WorkForm> WORK_FORMS = new MappingBuilder<String, WorkForm>()
             .put("1", WorkForm.SUNDAY_AND_HOLIDAYS)
             .put("2", WorkForm.SHIFT_WORK)
-            .put("3", WorkForm.HOME_WORK)
-            .put("4", WorkForm.NIGHT_WORK)
+            .put("3", WorkForm.NIGHT_WORK)
+            .put("4", WorkForm.HOME_WORK)
             .toImmutable();
 
     public static final MappingBuilder<String, SourceSystem> SOURCE_SYSTEM = new MappingBuilder<String, SourceSystem>()
