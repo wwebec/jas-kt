@@ -448,6 +448,7 @@ public class JobAdvertisementApplicationService {
 
         return new JobAdvertisementCreator.Builder(currentUserContext.getAuditUser())
                 .setExternalReference(createJobAdvertisementDto.getExternalReference())
+                .setReportToAvam(createJobAdvertisementDto.isReportToAvam())
                 .setReportingObligation(reportingObligation)
                 .setJobCenterCode(jobCenterCode)
                 .setJobContent(jobContent)
