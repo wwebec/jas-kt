@@ -73,6 +73,7 @@ public class JobAdvertisementSearchService {
     private static final String PATH_WORKLOAD_PERCENTAGE_MAX = PATH_CTX + "jobContent.employment.workloadPercentageMax";
     private static final String PATH_WORKLOAD_TIME_PERCENTAGE_MIN = PATH_CTX + "jobContent.employment.workloadPercentageMin";
     private static final String PATH_REPORTING_OBLIGATION = PATH_CTX + "reportingObligation";
+    private static final String RELEVANCE = "_score";
     private static final int ONLINE_SINCE_DAYS = 60;
 
     private final CurrentUserContext currentUserContext;
@@ -174,7 +175,10 @@ public class JobAdvertisementSearchService {
             case date_desc:
                 return Sort.by(Sort.Order.desc(PATH_PUBLICATION_START_DATE));
             default:
-                return Sort.unsorted();
+                return Sort.by(
+                        Sort.Order.desc(RELEVANCE),
+                        Sort.Order.desc(PATH_PUBLICATION_START_DATE)
+                );
         }
     }
 
