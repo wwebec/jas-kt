@@ -25,20 +25,40 @@
           "password": {
             "type": "keyword"
           },
-          "email": {
-            "type": "text"
+          "companyName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "companyEmail": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "technicalContactName": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "technicalContactEmail": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
           },
           "active": {
             "type": "boolean"
-          },
-          "companyName": {
-            "type": "text"
-          },
-          "contactName": {
-            "type": "text"
-          },
-          "contactEmail": {
-            "type": "text"
           },
           "createDate": {
             "type": "date"
