@@ -2,6 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.wr
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishExpiredEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishRestrictedEvent;
@@ -28,13 +30,21 @@ public class IndexerEventListener {
 
     @TransactionalEventListener
     public void handle(JobAdvertisementPublishRestrictedEvent event) {
+        indexJobAdvertisement(event);
+    }
+
+    @TransactionalEventListener
+    public void handle(JobAdvertisementCreatedEvent event) {
+        indexJobAdvertisement(event);
+    }
+
+    private void indexJobAdvertisement(JobAdvertisementEvent event) {
         Optional<JobAdvertisement> jobAdvertisementOptional = this.jobAdvertisementJpaRepository.findById(event.getAggregateId());
         if (jobAdvertisementOptional.isPresent()) {
             this.jobAdvertisementElasticsearchRepository.save(new JobAdvertisementDocument(jobAdvertisementOptional.get()));
         } else {
             LOG.warn("JobAdvertisement not found for the given id: {}", event.getAggregateId());
         }
-
     }
 
     @TransactionalEventListener
