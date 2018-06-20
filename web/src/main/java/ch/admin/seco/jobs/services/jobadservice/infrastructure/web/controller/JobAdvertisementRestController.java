@@ -74,7 +74,7 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.findByStellennummerAvam(stellennummerAvam);
     }
 
-	@PreAuthorize("hasAnyAuthority('ROLE_PRIVATE_EMPLOYMENT_AGENT','ROLE_PUBLIC_EMPLOYMENT_SERVICE')")
+    @PreAuthorize("hasAnyAuthority('ROLE_PRIVATE_EMPLOYMENT_AGENT','ROLE_PUBLIC_EMPLOYMENT_SERVICE')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping("/{id}/cancel")
     public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
