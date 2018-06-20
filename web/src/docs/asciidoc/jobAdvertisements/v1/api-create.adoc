@@ -7,8 +7,8 @@
 |===
 | Path | Type | Description | Constraints | Notes
 
-| externalUrl | String | Link to the original website of the job ad | Optional | For jobs that fall under the reporting obligation, the ad must not be published elsewhere.
-| externalReference | String | Your internal reference to this job ad | Optional |
+| externalUrl | String(1024) | Link to the original website of the job ad | Optional | For jobs that fall under the reporting obligation, the ad must not be published elsewhere.
+| externalReference | String(255) | Your internal reference to this job ad | Optional |
 | reportToAvam | Boolean | Should the ad be transmitted to the PES (RAV)? | Required (`true` or `false`) | Use this option if you want a PES agent to know about your vacancy
 | contact | <<Contact>> | Contact person about the job ad | Required | Administrative contact, not for publication
 | jobDescriptions | Array<<<JobDescription>>> | Language specific title and description | Required 1..4 | The text of the job advertisement; may be multilingual
@@ -29,12 +29,12 @@ Provide an administrative contact (e. g. an HR employee); this contact is used f
 |===
 | Path | Type | Description | Constraints
 
-| languageIsoCode | String | The language of correspondence | Required (ISO 639-1), must be one of de, fr, it,en
-| salutation | String |  | Required (`MR` or `MS`)
-| firstName | String |  | Required
-| lastName | String |  | Required
-| phone | String |  | Required (Format: +41123456789)
-| email | String | Multiple comma separated addresses allowed | Required
+| languageIsoCode | String(5) | The language of correspondence | Required (ISO 639-1), must be one of de, fr, it,en
+| salutation | String(3) |  | Required (`MR` or `MS`)
+| firstName | String(50) |  | Required
+| lastName | String(50) |  | Required
+| phone | String(20) |  | Required (Format: +41123456789)
+| email | String(255) | Multiple comma separated addresses allowed | Required
 |===
 
 ==== JobDescription
@@ -43,9 +43,9 @@ The text of the job advertisement; may be multilingual
 |===
 | Path | Type | Description | Constraints
 
-| languageIsoCode | String | The language of the title and description | Required (ISO 639-1) but only de, fr, it or en
-| title | String | Job title or occupation | Required
-| description | String | Job description can contain basic HTML formatting as well as markdown convention | Required (Max 10'000 characters)
+| languageIsoCode | String(5) | The language of the title and description | Required (ISO 639-1) but only de, fr, it or en
+| title | String(255) | Job title or occupation | Required
+| description | String(12000) | Job description can contain basic HTML formatting as well as markdown convention | Required (Max 10'000 characters)
 |===
 
 ==== Company
@@ -54,16 +54,16 @@ The company that handles the recruitment. This information is published.
 |===
 | Path | Type | Description | Constraints
 
-| name | String | The name of the company | Required
-| street | String | | Optional
-| houseNumber | String | | Optional
-| postalCode | String | | Required. Must be a valid swiss postal code if the company is located in Switzerland
-| city | String | | Required
-| countryIsoCode | String | | Required (ISO 3166-1 alpha-2)
-| website | String | | Optional (Format: http://www.example.org)
-| phone | String | | Optional (Format: +41123456789)
-| email | String | | Optional
-| surrogate | String | Does the company act as a surrogate for the actual employer? | Required (`true` or `false`)
+| name | String(255) | The name of the company | Required
+| street | String(50) | | Optional
+| houseNumber | String(10) | | Optional
+| postalCode | String(10) | | Required. Must be a valid swiss postal code if the company is located in Switzerland
+| city | String(50) | | Required
+| countryIsoCode | String(2) | | Required (ISO 3166-1 alpha-2)
+| website | String(255) | | Optional (Format: http://www.example.org)
+| phone | String(20) | | Optional (Format: +41123456789)
+| email | String(255) | | Optional
+| surrogate | Boolean | Does the company act as a surrogate for the actual employer? | Required (`true` or `false`)
 |===
 
 ==== Employer
@@ -72,10 +72,10 @@ Must be provided if the company handling the recruitment is not the actual emplo
 |===
 | Path | Type | Description | Constraints
 
-| name | String | The name of the original company | Required
-| city | String | | Required
-| postalCode | String | | Required. Must be a valid swiss postal code if the company is located in Switzerland
-| countryIsoCode | String | | Required (ISO 3166-1 alpha-2)
+| name | String(255) | The name of the original company | Required
+| city | String(50) | | Required
+| postalCode | String(10) | | Required. Must be a valid swiss postal code if the company is located in Switzerland
+| countryIsoCode | String(2) | | Required (ISO 3166-1 alpha-2)
 |===
 
 ==== Employment
@@ -84,13 +84,13 @@ Employment metadata
 |===
 | Path | Type | Description | Constraints
 
-| startDate | String | When does the job start | Optional (Format: 2018-01-20)
-| endDate | String | When does the contract end | Optional (Format: 2018-01-20)
+| startDate | String(10) | When does the job start | Optional (Format: 2018-01-20)
+| endDate | String(10) | When does the contract end | Optional (Format: 2018-01-20)
 | shortEmployment | Boolean | Is the employment duration 14 days or less | Required (`true` or `false`)
 | immediately | Boolean | Does the job start immediately | Required (`true` or `false`) `true` only if no startDate is set
 | permanent | Boolean | Is the contract permanent | Required (`true` or `false`) `true` only if no endDate is set
-| workloadPercentageMin | String | | Required (10..100 less or equal workloadPercentageMax)
-| workloadPercentageMax | String | | Required (10..100 greater or equal workloadPercentageMin)
+| workloadPercentageMin | String(3) | | Required (10..100 less or equal workloadPercentageMax)
+| workloadPercentageMax | String(3) | | Required (10..100 greater or equal workloadPercentageMin)
 | workForms | Array<String> | Special work requirements | Optional (`SUNDAY_AND_HOLIDAYS`, `SHIFT_WORK`, `NIGHT_WORK`, `HOME_WORK`)
 |===
 
@@ -99,10 +99,10 @@ Employment metadata
 |===
 | Path | Type | Description | Constraints
 
-| postalCode | String | | Required. Must be a valid swiss postal code if the company is located in Switzerland
-| city | String | The (main) place of work | Required
-| countryIsoCode | String | | Required (ISO 3166-1 alpha-2)
-| remarks | String | More information about job location can be added as free text.
+| postalCode | String(10) | | Required. Must be a valid swiss postal code if the company is located in Switzerland
+| city | String(50) | The (main) place of work | Required
+| countryIsoCode | String(2) | | Required (ISO 3166-1 alpha-2)
+| remarks | String(255) | More information about job location can be added as free text.
 |===
 
 ==== Occupation
@@ -111,9 +111,9 @@ The ad must be coded to an occupation according ot the AVAM occupation list; thi
 |===
 | Path | Type | Description | Constraints
 
-| avamOccupationCode | String | <<AVAM occupation code>>  | Required
-| workExperience | String | | Optional (`LESS_THAN_1_YEAR`, `MORE_THAN_1_YEAR` or `MORE_THAN_3_YEARS`)
-| educationCode | String | <<AVAM education code>> | Optional
+| avamOccupationCode | String(16) | <<AVAM occupation code>>  | Required
+| workExperience | String(64) | | Optional (`LESS_THAN_1_YEAR`, `MORE_THAN_1_YEAR` or `MORE_THAN_3_YEARS`)
+| educationCode | String(8) | <<AVAM education code>> | Optional
 |===
 
 ==== LanguageSkill
@@ -121,9 +121,9 @@ The ad must be coded to an occupation according ot the AVAM occupation list; thi
 |===
 | Path | Type | Description | Constraints
 
-| languageIsoCode | String | | Required (ISO 639-1)
-| spokenLevel | String | | Required (`NONE`, `BASIC`, `INTERMEDIATE` or `PROFICIENT`) (see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels])
-| writtenLevel | String | | Required (`NONE`, `BASIC`, `INTERMEDIATE` or `PROFICIENT`) (see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels])
+| languageIsoCode | String(5) | | Required (ISO 639-1)
+| spokenLevel | String(64) | | Required (`NONE`, `BASIC`, `INTERMEDIATE` or `PROFICIENT`) (see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels])
+| writtenLevel | String(64) | | Required (`NONE`, `BASIC`, `INTERMEDIATE` or `PROFICIENT`) (see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels])
 |===
 
 ==== ApplyChannel
@@ -132,11 +132,11 @@ Provide at least one channel for applications.
 |===
 | Path | Type | Description | Constraints
 
-| formUrl | String | An online form where an applicant can apply | Optional (Format: http://www.example.org)
-| emailAddress | String | An email address where an applicant can send their application | Optional
-| phoneNumber | String | A phone number where an applicant can call | Optional (Format: +41123456789)
-| mailAddress | String | A post address where an applicant can send their application | Optional
-| additionalInfo | String | More application information can be added as free text. | Optional (Max 255 characters)
+| formUrl | String(1024) | An online form where an applicant can apply | Optional (Format: http://www.example.org)
+| emailAddress | String(255) | An email address where an applicant can send their application | Optional
+| phoneNumber | String(20) | A phone number where an applicant can call | Optional (Format: +41123456789)
+| mailAddress | String(255) | A post address where an applicant can send their application | Optional
+| additionalInfo | String(255) | More application information can be added as free text. | Optional (Max 255 characters)
 |===
 
 ==== PublicContact
@@ -145,11 +145,11 @@ Provide a public contact if you want to give applicants the opportunity to ask q
 |===
 | Path | Type | Description | Constraints
 
-| salutation | String |  | Required (`MR` or `MS`)
-| firstName | String |  | Required
-| lastName | String |  | Required
-| phone | String |  | Required (Format: +41123456789)
-| email | String |  | Required
+| salutation | String(3) |  | Required (`MR` or `MS`)
+| firstName | String(50) |  | Required
+| lastName | String(50) |  | Required
+| phone | String(20) |  | Optional (Format: +41123456789) (phone or email must be set)
+| email | String(255) |  | Optional (phone or email must be set)
 |===
 
 ==== Publication
@@ -160,14 +160,14 @@ in the Job-Room public area if the publicDisplay flag is set, otherwise not.
 |===
 | Path | Type | Description | Constraints
 
-| startDate | String | When does the advertisement publication start | Required (Format: 2018-01-20)
-| endDate | String | When does the advertisement publication end (max 60 days) | Optional (Format: 2018-01-20)
+| startDate | String(10) | When does the advertisement publication start | Required (Format: 2018-01-20)
+| endDate | String(10) | When does the advertisement publication end (max 60 days) | Optional (Format: 2018-01-20)
 | euresDisplay | Boolean | Should the job ad be displayed in Eures | Required (`true` or `false`)
 | publicDisplay | Boolean | Should the job ad be displayed in Job-Room public area | Required (`true` or `false`)
 |===
 
 === Request
-`POST <BASE_URL>/jobadvertisements`
+`POST {api-url}/jobAdvertisements/v1`
 
 [source,json]
 ----

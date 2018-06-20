@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api/jobAdvertisements/api/v1")
+@RequestMapping("/api/public/jobAdvertisements/v1")
 public class JobAdvertisementApiRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
@@ -27,25 +27,35 @@ public class JobAdvertisementApiRestController {
     }
 
     @PostMapping
-    public JobAdvertisementDto createFromApi(@RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
+    public JobAdvertisementDto createFromApi(
+            @RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto
+    ) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementDto);
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
 
-    @GetMapping(params = {"page", "size"})
-    public PageResource<JobAdvertisementDto> getJobAdvertisements(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "25") int size) {
-        return PageResource.of(jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size)));
+    @GetMapping
+    public PageResource<JobAdvertisementDto> getJobAdvertisements(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "25") int size
+    ) {
+        return PageResource.of(jobAdvertisementApplicationService.findOwnJobAdvertisements(PageRequest.of(page, size)));
     }
 
-    @GetMapping(path = "/{id}")
-    public JobAdvertisementDto getJobAdvertisement(@PathVariable String id) {
+    @GetMapping("/{id}")
+    public JobAdvertisementDto getJobAdvertisement(
+            @PathVariable String id
+    ) {
         return jobAdvertisementApplicationService.getById(new JobAdvertisementId(id));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping(path = "/{id}/cancel")
-    public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getReasonCode());
+    @PatchMapping("/{id}/cancel")
+    public void cancel(
+            @PathVariable String id,
+            @RequestBody CancellationResource cancellation
+    ) {
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode());
     }
 
 }

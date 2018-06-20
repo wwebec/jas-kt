@@ -114,8 +114,8 @@ public class JobAdvertisementFactory {
     private Owner toOwner(AuditUser auditUser) {
         if(auditUser != null) {
             return new Owner.Builder()
-                    .setUserId(auditUser.getExternalId())
-                    .setCompanyId(null) // FIXME get companyId
+                    .setUserId(auditUser.getUserId())
+                    .setCompanyId(auditUser.getCompanyId())
                     .setAccessToken(accessTokenGenerator.generateToken())
                     .build();
         } else {

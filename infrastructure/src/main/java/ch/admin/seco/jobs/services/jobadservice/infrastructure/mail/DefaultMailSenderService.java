@@ -1,23 +1,23 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import java.nio.charset.StandardCharsets;
-
-import javax.mail.MessagingException;
-import javax.mail.util.ByteArrayDataSource;
-
+import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
+import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
+import javax.mail.MessagingException;
+import javax.mail.util.ByteArrayDataSource;
+
+import java.net.IDN;
+import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 
 public class DefaultMailSenderService implements MailSenderService {
 
@@ -48,6 +48,7 @@ public class DefaultMailSenderService implements MailSenderService {
     public void send(MailSenderData mailSenderData) {
         Context context = new Context();
         context.setVariable("baseUrl", mailSenderProperties.getBaseUrl());
+        context.setVariable("linkToJobAdDetailPage", mailSenderProperties.getLinkToJobAdDetailPage());
         context.setVariable("user", null);
         context.setVariables(mailSenderData.getTemplateVariables());
         context.setLocale(mailSenderData.getLocale());
@@ -55,17 +56,19 @@ public class DefaultMailSenderService implements MailSenderService {
         final String from = mailSenderData.getFrom().orElse(mailSenderProperties.getFromAddress());
         final String[] bcc = mailSenderData.getBcc().orElse(mailSenderProperties.getBccAddress());
         final String subject = messageSource.getMessage(mailSenderData.getSubject(), null, mailSenderData.getSubject(), mailSenderData.getLocale());
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending email with MailSenderData={},\nBODY=\n{}", mailSenderData, content);
         }
+
         mailSender.send(mimeMessage -> {
             MimeMessageHelper message = new MimeMessageHelper(mimeMessage, !mailSenderData.getEmailAttachments().isEmpty(), CONTENT_ENCODING);
             message.setFrom(from);
             message.setReplyTo(from);
-            message.setBcc(bcc);
-            message.setTo(mailSenderData.getTo());
+            message.setBcc(encodeEmailAddresses(bcc));
+            message.setTo(encodeEmailAddresses(mailSenderData.getTo()));
             if(mailSenderData.getCc() != null) {
-                message.setCc(mailSenderData.getCc());
+                message.setCc(encodeEmailAddresses(mailSenderData.getCc()));
             }
             message.setSubject(subject);
             message.setText(content, true);
@@ -78,6 +81,14 @@ public class DefaultMailSenderService implements MailSenderService {
                 }
             });
         });
+    }
+
+    private String[] encodeEmailAddresses(String[] addresses) {
+        return addresses != null
+                ? Stream.of(addresses)
+                    .map(IDN::toASCII)
+                    .toArray(String[]::new)
+                : null;
     }
 
 }

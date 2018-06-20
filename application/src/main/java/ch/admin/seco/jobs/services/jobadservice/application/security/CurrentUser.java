@@ -6,7 +6,9 @@ import java.util.Set;
 
 public class CurrentUser {
 
-    private final String externalId;
+    private final String userId;
+
+    private final String userExternalId;
 
     private final String companyId;
 
@@ -18,8 +20,9 @@ public class CurrentUser {
 
     private final Set<String> authorities = new HashSet<>();
 
-    public CurrentUser(String externalId, String companyId, String firstName, String lastName, String email, Collection<String> authorities) {
-        this.externalId = externalId;
+    public CurrentUser(String userId, String userExternalId, String companyId, String firstName, String lastName, String email, Collection<String> authorities) {
+        this.userId = userId;
+        this.userExternalId = userExternalId;
         this.companyId = companyId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -27,8 +30,12 @@ public class CurrentUser {
         this.authorities.addAll(authorities);
     }
 
-    public String getExternalId() {
-        return externalId;
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getUserExternalId() {
+        return userExternalId;
     }
 
     public String getCompanyId() {

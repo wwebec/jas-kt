@@ -1,12 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.legacy;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-
-import javax.validation.constraints.NotNull;
-
 public class LegacyContactDto {
 
-    private LegacyTitleEnum title;
+    private String title;
     private String firstName;
     private String lastName;
     private String phoneNumber;
@@ -16,7 +12,7 @@ public class LegacyContactDto {
         // For reflection libs
     }
 
-    public LegacyContactDto(LegacyTitleEnum title, String firstName, String lastName, String phoneNumber, String email) {
+    public LegacyContactDto(String title, String firstName, String lastName, String phoneNumber, String email) {
         this.title = title;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -24,11 +20,11 @@ public class LegacyContactDto {
         this.email = email;
     }
 
-    public LegacyTitleEnum getTitle() {
+    public String getTitle() {
         return title;
     }
 
-    public void setTitle(LegacyTitleEnum title) {
+    public void setTitle(String title) {
         this.title = title;
     }
 

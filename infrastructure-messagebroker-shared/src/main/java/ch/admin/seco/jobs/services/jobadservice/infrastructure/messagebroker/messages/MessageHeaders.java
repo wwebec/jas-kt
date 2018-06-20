@@ -6,5 +6,6 @@ public class MessageHeaders {
     public static final String ACTION = "action";
     public static final String SOURCE_SYSTEM = "sourceSystem";
     public static final String TARGET_SYSTEM = "targetSystem";
+    public static final String PARTITION_KEY = "partitionKey";
 
 }

@@ -20,22 +20,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Component
 public class JobAdvertisementMailEventListener {
 
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementMailEventListener.class);
 
+    private static final String EMAIL_DELIMITER = "\\s*;\\s*";
+
     private static final String JOB_ADVERTISEMENT_CREATED_SUBJECT = "mail.jobAd.created.subject";
     private static final String JOB_ADVERTISEMENT_CREATED_TEMPLATE = "JobAdCreatedMail.html";
-    private static final String JOB_ADVERTISEMENT_CREATED_WITH_REPORTING_OBLIGATION_TEMPLATE = "JobAdCreatedMail_with_reporting_obligation.html";
     private static final String JOB_ADVERTISEMENT_REFINED_SUBJECT = "mail.jobAd.refined.subject";
     private static final String JOB_ADVERTISEMENT_REFINED_TEMPLATE = "JobAdRefinedMail.html";
-    private static final String JOB_ADVERTISEMENT_REFINED_WITH_REPORTING_OBLIGATION_TEMPLATE = "JobAdRefinedMail_with_reporting_obligation.html";
     private static final String JOB_ADVERTISEMENT_REJECTED_SUBJECT = "mail.jobAd.rejected.subject";
     private static final String JOB_ADVERTISEMENT_REJECTED_TEMPLATE = "JobAdRejectedMail.html";
     private static final String JOB_ADVERTISEMENT_CANCELLED_SUBJECT = "mail.jobAd.cancelled.subject";
@@ -46,7 +43,6 @@ public class JobAdvertisementMailEventListener {
     private final MailSenderService mailSenderService;
     private final MessageSource messageSource;
     private final JobCenterService jobCenterService;
-
 
     @Autowired
     public JobAdvertisementMailEventListener(JobAdvertisementRepository jobAdvertisementRepository, MailSenderService mailSenderService, MessageSource messageSource, JobCenterService jobCenterService) {
@@ -70,10 +66,10 @@ public class JobAdvertisementMailEventListener {
         variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
-                        .setTo(jobAdvertisement.getContact().getEmail())
+                        .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CREATED_SUBJECT,
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
-                        .setTemplateName(jobAdvertisement.isReportingObligation() ? JOB_ADVERTISEMENT_CREATED_WITH_REPORTING_OBLIGATION_TEMPLATE : JOB_ADVERTISEMENT_CREATED_TEMPLATE)
+                        .setTemplateName(JOB_ADVERTISEMENT_CREATED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(contactLocale)
                         .build()
@@ -94,10 +90,10 @@ public class JobAdvertisementMailEventListener {
         variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
-                        .setTo(jobAdvertisement.getContact().getEmail())
+                        .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REFINED_SUBJECT,
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
-                        .setTemplateName(jobAdvertisement.isReportingObligation() ? JOB_ADVERTISEMENT_REFINED_WITH_REPORTING_OBLIGATION_TEMPLATE : JOB_ADVERTISEMENT_REFINED_TEMPLATE)
+                        .setTemplateName(JOB_ADVERTISEMENT_REFINED_TEMPLATE)
                         .setTemplateVariables(variables)
                         .setLocale(contactLocale)
                         .build()
@@ -118,7 +114,7 @@ public class JobAdvertisementMailEventListener {
         variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
-                        .setTo(jobAdvertisement.getContact().getEmail())
+                        .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REJECTED_SUBJECT,
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_REJECTED_TEMPLATE)
@@ -142,7 +138,7 @@ public class JobAdvertisementMailEventListener {
         variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
-                        .setTo(jobAdvertisement.getContact().getEmail())
+                        .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
                         .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CANCELLED_SUBJECT,
                                 new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
                         .setTemplateName(JOB_ADVERTISEMENT_CANCELLED_TEMPLATE)
@@ -150,6 +146,10 @@ public class JobAdvertisementMailEventListener {
                         .setLocale(contactLocale)
                         .build()
         );
+    }
+
+    private static String[] parseMultipleAddresses(String emailAddress) {
+        return (emailAddress == null) ? null : emailAddress.split(EMAIL_DELIMITER);
     }
 
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {

@@ -1,12 +1,12 @@
 == Cancel a job advertisement
 
 === Request
-`PATCH <BASE_URL>/jobadvertisements/{id}/cancel`
+`PATCH {api-url}/jobAdvertisements/v1/{id}/cancel`
 
 [source,json]
 ----
 {
-    "reasonCode": "string"
+    "code": "string"
 }
 ----
 

@@ -1,10 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
 import ch.admin.seco.jobs.services.jobadservice.core.utils.MappingBuilder;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 
 /**
  * Mapping AVAM codes with the value of the application
@@ -82,7 +79,23 @@ public class AvamCodeResolver {
     public static final MappingBuilder<String, WorkForm> WORK_FORMS = new MappingBuilder<String, WorkForm>()
             .put("1", WorkForm.SUNDAY_AND_HOLIDAYS)
             .put("2", WorkForm.SHIFT_WORK)
-            .put("3", WorkForm.HOME_WORK)
-            .put("4", WorkForm.NIGHT_WORK)
+            .put("3", WorkForm.NIGHT_WORK)
+            .put("4", WorkForm.HOME_WORK)
+            .toImmutable();
+
+    public static final MappingBuilder<String, SourceSystem> SOURCE_SYSTEM = new MappingBuilder<String, SourceSystem>()
+            .put("Job-Room", SourceSystem.JOBROOM)
+            .put("API", SourceSystem.API)
+            .put("RAV", SourceSystem.RAV)
+            .put("EXTERN", SourceSystem.EXTERN)
+            .toImmutable();
+
+    public static final MappingBuilder<String, CancellationCode> CANCELLATION_CODE = new MappingBuilder<String, CancellationCode>()
+            .put("1", CancellationCode.OCCUPIED_JOBCENTER)
+            .put("2", CancellationCode.OCCUPIED_AGENCY)
+            .put("5", CancellationCode.OCCUPIED_JOBROOM)
+            .put("6", CancellationCode.OCCUPIED_OTHER)
+            .put("7", CancellationCode.NOT_OCCUPIED)
+            .put("0", CancellationCode.CHANGE_OR_REPOSE)
             .toImmutable();
 }

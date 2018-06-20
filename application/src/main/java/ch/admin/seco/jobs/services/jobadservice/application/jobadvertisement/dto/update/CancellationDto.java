@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.CancellationCode;
+
 import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
@@ -13,13 +15,13 @@ public class CancellationDto {
 
     private LocalDate date;
 
-    private String code;
+    private CancellationCode code;
 
     protected CancellationDto() {
         // For reflection libs
     }
 
-    public CancellationDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, String code) {
+    public CancellationDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, CancellationCode code) {
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.date = date;
@@ -50,11 +52,11 @@ public class CancellationDto {
         this.date = date;
     }
 
-    public String getCode() {
+    public CancellationCode getCode() {
         return code;
     }
 
-    public void setCode(String code) {
+    public void setCode(CancellationCode code) {
         this.code = code;
     }
 }

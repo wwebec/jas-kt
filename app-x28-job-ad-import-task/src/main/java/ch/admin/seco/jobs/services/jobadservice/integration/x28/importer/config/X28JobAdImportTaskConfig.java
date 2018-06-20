@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -18,6 +19,7 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.listener.ItemListenerSupport;
 import org.springframework.batch.core.listener.JobExecutionListenerSupport;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.item.ExecutionContext;
@@ -62,19 +64,20 @@ public class X28JobAdImportTaskConfig {
 
     @Bean
     public Job x28ImportJob(
-            StaxEventItemReader<Oste> xmlFileReader, X28JobAdWriter x28JobAdWriter) {
+            StaxEventItemReader<Oste> xmlFileReader, X28JobAdWriter x28JobAdWriter, X28Properties x28Properties) {
         return jobBuilderFactory.get("x28-jobad-xml-import")
                 .incrementer(new RunIdIncrementer())
                 .listener(new CleanupXmlFileJobExecutionListener())
                 .start(stepBuilderFactory
                         .get("download-from-sftp")
                         .allowStartIfComplete(true)
-                        .tasklet(downloadFromSftpServer())
+                        .tasklet(downloadFromSftpServer(x28Properties))
                         .build())
                 .on("NO_FILE").end()
                 .on("*")
                 .to(stepBuilderFactory
                         .get("send-to-job-ad-service")
+                        .listener(itemLoggerListener())
                         .<Oste, Oste>chunk(10)
                         .reader(xmlFileReader)
                         .writer(x28JobAdWriter)
@@ -84,8 +87,18 @@ public class X28JobAdImportTaskConfig {
     }
 
     @Bean
-    public Tasklet downloadFromSftpServer() {
+    public ItemLoggerListener itemLoggerListener() {
+        return new ItemLoggerListener();
+    }
+
+    @Bean
+    public Tasklet downloadFromSftpServer(X28Properties x28Properties) {
         return (contribution, chunkContext) -> {
+            LOG.info("Downloading from SFTP Server ('{}:{}/{}')",
+                    x28Properties.getHost(),
+                    x28Properties.getPort(),
+                    x28Properties.getRemoteDirectory());
+
             Message<File> x28JobAdDataFileMessage = x28JobAdDataFileMessageSource.receive();
             if ((x28JobAdDataFileMessage == null) || (x28JobAdDataFileMessage.getPayload() == null)) {
 
@@ -95,6 +108,9 @@ public class X28JobAdImportTaskConfig {
             }
 
             File originFile = x28JobAdDataFileMessage.getPayload();
+
+            LOG.info("Downloaded from SFTP Server file '{}'", originFile.getName());
+
             File xmlFile = unzip(originFile);
             if (!xmlFile.equals(originFile)) {
                 delete(originFile);
@@ -132,6 +148,8 @@ public class X28JobAdImportTaskConfig {
     }
 
     private void delete(File file) {
+        LOG.debug("Deleting file '{}'", file.getAbsolutePath());
+
         if (Files.isWritable(file.toPath())) {
             try {
                 Files.delete(file.toPath());
@@ -172,6 +190,31 @@ public class X28JobAdImportTaskConfig {
                 File xmlFile = (File) (jobExecution.getExecutionContext().get(PARAMETER_XML_FILE_PATH));
                 delete(xmlFile);
             }
+        }
+    }
+
+    private static class ItemLoggerListener extends ItemListenerSupport<Oste, Oste> {
+        private static final Logger LOGGER = LoggerFactory.getLogger(ItemLoggerListener.class);
+
+        @Override
+        public void afterRead(Oste item) {
+            LOGGER.debug("Successfully read x28 xml: {}", item);
+        }
+
+        @Override
+        public void onReadError(Exception ex) {
+            LOGGER.error("x28 read failure", ex);
+        }
+
+        @Override
+        public void afterWrite(List<? extends Oste> item) {
+            LOGGER.debug("x28 xml JobAdvertisements successfully sent: {}", item);
+        }
+
+        @Override
+        public void onWriteError(Exception ex, List<? extends Oste> item) {
+            LOGGER.error("x28 xml JobAdvertisement write failed: {}", item);
+            LOGGER.error("x28 xml JobAdvertisement write failure", ex);
         }
     }
 }

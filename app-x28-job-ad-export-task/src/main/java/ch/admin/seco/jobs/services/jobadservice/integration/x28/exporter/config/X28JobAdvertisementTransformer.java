@@ -25,7 +25,6 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
 
     @Override
     public Oste process(JobAdvertisement jobAdvertisement) {
-
         JobContent jobContent = jobAdvertisement.getJobContent();
         Oste x28JobAdvertisement = new Oste();
         x28JobAdvertisement.setOsteId(jobAdvertisement.getId().getValue());
@@ -81,8 +80,8 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
     private void mapEmployment(Employment employment, Oste x28JobAdvertisement) {
         if (employment != null) {
             x28JobAdvertisement.setAbSofort(employment.isImmediately());
-            x28JobAdvertisement.setPensumVon(Long.valueOf(employment.getWorkloadPercentageMin()));
-            x28JobAdvertisement.setPensumBis(Long.valueOf(employment.getWorkloadPercentageMax()));
+            x28JobAdvertisement.setPensumVon((long) employment.getWorkloadPercentageMin());
+            x28JobAdvertisement.setPensumBis((long) employment.getWorkloadPercentageMax());
         }
     }
 

@@ -1,6 +1,7 @@
 dependencies {
     compile project(':domain')
     compile 'org.springframework:spring-tx'
+    compile 'org.springframework.boot:spring-boot-starter-security'
 
     testCompile files(this.project(':core').sourceSets.test.output)
     testCompile 'org.springframework.boot:spring-boot-starter-test'

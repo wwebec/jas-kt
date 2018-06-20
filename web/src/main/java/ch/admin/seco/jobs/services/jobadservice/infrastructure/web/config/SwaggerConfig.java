@@ -53,6 +53,17 @@ class SwaggerConfig {
                     .paths(regex("/api/.*"))
                     .build()
                     .directModelSubstitute(LocalDate.class, java.sql.Date.class)
+                    .directModelSubstitute(LocalDateTime.class, java.util.Date.class);
+        }
+
+        @Bean
+        public Docket publicApiWithSecurity() {
+            return new Docket(DocumentationType.SWAGGER_2)
+                    .groupName("public-api")
+                    .select()
+                    .paths(regex("/api/.*"))
+                    .build()
+                    .directModelSubstitute(LocalDate.class, java.sql.Date.class)
                     .directModelSubstitute(LocalDateTime.class, java.util.Date.class)
                     .securityContexts(Collections.singletonList(securityContext()))
                     .securitySchemes(Collections.singletonList(apiKey()));

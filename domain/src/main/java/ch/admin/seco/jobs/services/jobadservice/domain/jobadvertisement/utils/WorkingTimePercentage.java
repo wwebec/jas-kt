@@ -20,7 +20,7 @@ public class WorkingTimePercentage {
 
     public static WorkingTimePercentage evaluate(Number min, Number max) {
         if (min == null && max == null) {
-            return new WorkingTimePercentage(100, 100);
+            return defaultPercentage();
         }
         if (min == null) {
             return new WorkingTimePercentage(max.intValue(), max.intValue());
@@ -29,6 +29,10 @@ public class WorkingTimePercentage {
             return new WorkingTimePercentage(min.intValue(), 100);
         }
         return new WorkingTimePercentage(min.intValue(), max.intValue());
+    }
+
+    public static WorkingTimePercentage defaultPercentage() {
+        return new WorkingTimePercentage(100, 100);
     }
 
 }

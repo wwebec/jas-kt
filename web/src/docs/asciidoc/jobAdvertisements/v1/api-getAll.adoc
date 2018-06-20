@@ -1,7 +1,7 @@
 == Get all job advertisements belonging to the owner
 
 === Request
-`GET <BASE_URL>/jobadvertisements?page=0&size25`
+`GET {api-url}/jobAdvertisements/v1?page=0&size25`
 
 [cols="10,10,10,70"]
 |===

@@ -20,7 +20,7 @@ public class LegacyToCreateJobAdvertisementDtoConverterTest {
 	public void shouldConvertLegacyDto() {
 		// GIVEN
 		LegacyLocationDto legacyLocationDto = new LegacyLocationDto("locationPostalCode", "locationCity", "locationCountryCode", "locationAdditionalDetails");
-		LegacyLanguageSkillDto legacyLanguageSkillDto = new LegacyLanguageSkillDto("de", LegacyLanguageLevelEnum.BASIC_KNOWLEDGE, LegacyLanguageLevelEnum.BASIC_KNOWLEDGE);
+		LegacyLanguageSkillDto legacyLanguageSkillDto = new LegacyLanguageSkillDto("de", "BASIC_KNOWLEDGE", "basic_knowledge");
 		LegacyJobDto legacyJobDto = new LegacyJobDto(
 				"title",
 				"description",
@@ -34,7 +34,7 @@ public class LegacyToCreateJobAdvertisementDtoConverterTest {
 				legacyLocationDto
 		);
 		LegacyCompanyDto legacyCompanyDto = new LegacyCompanyDto("companyName", "companyStreet", "companyHouseNumber", "companyPostalCode", "companyCity", new LegacyPostboxDto("postboxNumber", "postboxCity", "postboxPostalCode"), "companyCountryCode", "companyPhoneNumber", "companyEmail", "companyWebsite");
-		LegacyContactDto legacyContactDto = new LegacyContactDto(LegacyTitleEnum.MISTER, "contactFirstName", "contactLastName", "contactPhoneNumber", "contactEmail");
+		LegacyContactDto legacyContactDto = new LegacyContactDto("MISTER", "contactFirstName", "contactLastName", "contactPhoneNumber", "contactEmail");
 		LegacyCreateJobAdvertisementDto legacyCreateJobAdvertisementDto = new LegacyCreateJobAdvertisementDto(
 				LocalDate.of(2018, 1, 1),
 				LocalDate.of(2018, 2, 1),

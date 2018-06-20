@@ -1,23 +1,26 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
+import ch.admin.seco.jobs.services.jobadservice.Application;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.ApiUserApplicationService;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.CreateApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateDetailsApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdatePasswordApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateStatusApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserTestDataProvider;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchRequest;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchService;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserDocument;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserElasticsearchRepository;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.TestUtil;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.errors.ExceptionTranslator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -30,104 +33,152 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import ch.admin.seco.jobs.services.jobadservice.Application;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.ApiUserService;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.ChangeApiUserStatusDto;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.CreateApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserId;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchRequest;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchService;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserDocument;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserElasticsearchRepository;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.TestUtil;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.errors.ExceptionTranslator;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @ActiveProfiles("dev")
 public class ApiUserRestControllerIntTest {
-	private static final String API_API_USERS = "/api/apiUsers";
 
-	@Autowired
-	private ApiUserService apiUserService;
-	@Autowired
-	private ApiUserSearchService apiUserSearchService;
-	@Autowired
-	private ApiUserRepository apiUserRepository;
-	@Autowired
-	private ApiUserElasticsearchRepository apiUserElasticsearchRepository;
+    private static final String API_API_USERS = "/api/apiUsers";
 
-	@Autowired
-	private FormattingConversionService formattingConversionService;
-	@Autowired
-	private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
-	@Autowired
-	private ExceptionTranslator exceptionTranslator;
-	@Autowired
-	private MappingJackson2HttpMessageConverter jacksonMessageConverter;
+    private static final String JSON_PATH_ID = "$.id";
+    private static final String JSON_PATH_USERNAME = "$.username";
+    private static final String JSON_PATH_COMPANY_NAME = "$.companyName";
+    private static final String JSON_PATH_COMPANY_EMAIL = "$.companyEmail";
+    private static final String JSON_PATH_TECHNICAL_CONTACT_NAME = "$.technicalContactName";
+    private static final String JSON_PATH_TECHNICAL_CONTACT_EMAIL = "$.technicalContactEmail";
+    private static final String JSON_PATH_ACTIVE = "$.active";
+    private static final String JSON_PATH_CREATE_DATE = "$.createDate";
 
-	private MockMvc mockMvc;
+    private static final String JSON_PATH_LIST_ID = "$.[0].id";
+    private static final String JSON_PATH_LIST_USERNAME = "$.[0].username";
+    private static final String JSON_PATH_LIST_COMPANY_NAME = "$.[0].companyName";
+    private static final String JSON_PATH_LIST_COMPANY_EMAIL = "$.[0].companyEmail";
+    private static final String JSON_PATH_LIST_TECHNICAL_CONTACT_NAME = "$.[0].technicalContactName";
+    private static final String JSON_PATH_LIST_TECHNICAL_CONTACT_EMAIL = "$.[0].technicalContactEmail";
+    private static final String JSON_PATH_LIST_ACTIVE = "$.[0].active";
+    private static final String JSON_PATH_LIST_CREATE_DATE = "$.[0].createDate";
 
-	private ApiUser apiUser1;
-	private ApiUser apiUser2;
+    @Autowired
+    private ApiUserApplicationService apiUserApplicationService;
 
-	@Before
-	public void setUp() {
-		ApiUserRestController apiUserRestController =
-				new ApiUserRestController(apiUserService, apiUserSearchService);
+    @Autowired
+    private ApiUserSearchService apiUserSearchService;
 
-		this.mockMvc = MockMvcBuilders.standaloneSetup(apiUserRestController)
-				.setConversionService(formattingConversionService)
-				.setCustomArgumentResolvers(pageableArgumentResolver)
-				.setControllerAdvice(exceptionTranslator)
-				.setMessageConverters(jacksonMessageConverter)
-				.build();
+    @Autowired
+    private ApiUserRepository apiUserRepository;
 
-		apiUser1 = createApiUser(
-				"id1",
-				"alex",
-				"secret1",
-				true,
-				"Company1",
-				"email@email1",
-				"contactName1",
-				"contact@mail.com1",
-				LocalDate.of(2018, 5, 10));
+    @Autowired
+    private EventStore eventStore;
 
-		apiUser2 = createApiUser(
-				"id2",
-				"bob",
-				"secre2",
-				true,
-				"Company2",
-				"email@email2",
-				"contactName2",
-				"contact@mail.com2",
-				LocalDate.of(2018, 6, 22));
-	}
+    @Autowired
+    private ApiUserElasticsearchRepository apiUserElasticsearchRepository;
 
-	@After
-	public void tearDown() {
-		apiUserRepository.deleteAll();
-		apiUserElasticsearchRepository.deleteAll();
-	}
+    @Autowired
+    private FormattingConversionService formattingConversionService;
 
-	@Test
-	public void shouldSaveApiUser() throws Exception {
+    @Autowired
+    private PageableHandlerMethodArgumentResolver pageableArgumentResolver;
+
+    @Autowired
+    private ExceptionTranslator exceptionTranslator;
+
+    @Autowired
+    private MappingJackson2HttpMessageConverter jacksonMessageConverter;
+
+    private MockMvc mockMvc;
+
+    @Before
+    public void setUp() {
+        ApiUserRestController apiUserRestController =
+                new ApiUserRestController(apiUserApplicationService, apiUserSearchService, eventStore);
+
+        this.mockMvc = MockMvcBuilders.standaloneSetup(apiUserRestController)
+                .setConversionService(formattingConversionService)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setMessageConverters(jacksonMessageConverter)
+                .build();
+    }
+
+    @After
+    public void tearDown() {
+        apiUserRepository.deleteAll();
+        apiUserElasticsearchRepository.deleteAll();
+    }
+
+    @Test
+    public void shouldCreateApiUser() throws Exception {
+        // GIVEN
+        ApiUser expectedApiUser = ApiUserTestDataProvider.createApiUser01();
+        CreateApiUserDto createApiUserDto = new CreateApiUserDto(
+                expectedApiUser.getUsername(),
+                expectedApiUser.getPassword(),
+                expectedApiUser.getCompanyName(),
+                expectedApiUser.getCompanyEmail(),
+                expectedApiUser.getTechnicalContactName(),
+                expectedApiUser.getTechnicalContactEmail(),
+                expectedApiUser.isActive()
+        );
+        LocalDate expectedCreateDate = LocalDate.of(2018, 5, 10);
+        TimeMachine.useFixedClockAt(expectedCreateDate.atStartOfDay());
+
+        // WHEN
+        ResultActions resultActions = mockMvc.perform(
+                post(API_API_USERS)
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(createApiUserDto))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath(JSON_PATH_USERNAME).value(expectedApiUser.getUsername()))
+                .andExpect(jsonPath(JSON_PATH_COMPANY_NAME).value(expectedApiUser.getCompanyName()))
+                .andExpect(jsonPath(JSON_PATH_COMPANY_EMAIL).value(expectedApiUser.getCompanyEmail()))
+                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_NAME).value(expectedApiUser.getTechnicalContactName()))
+                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_EMAIL).value(expectedApiUser.getTechnicalContactEmail()))
+                .andExpect(jsonPath(JSON_PATH_ACTIVE).value(expectedApiUser.isActive()))
+                .andExpect(jsonPath(JSON_PATH_CREATE_DATE).value(expectedCreateDate.format(DateTimeFormatter.ISO_LOCAL_DATE)));
+
+        List<ApiUser> all = apiUserRepository.findAll();
+        assertThat(all).hasSize(1);
+        ApiUser apiUser = all.get(0);
+        assertThat(apiUser.getUsername()).isEqualTo(expectedApiUser.getUsername());
+        assertThat(apiUser.getCompanyName()).isEqualTo(expectedApiUser.getCompanyName());
+        assertThat(apiUser.getCompanyEmail()).isEqualTo(expectedApiUser.getCompanyEmail());
+        assertThat(apiUser.getTechnicalContactName()).isEqualTo(expectedApiUser.getTechnicalContactName());
+        assertThat(apiUser.getTechnicalContactEmail()).isEqualTo(expectedApiUser.getTechnicalContactEmail());
+        assertThat(apiUser.isActive()).isTrue();
+        assertThat(apiUser.getCreateDate()).isEqualTo(expectedCreateDate);
+
+        TimeMachine.reset();
+    }
+
+    @Test
+	public void shouldNotSaveApiUserWithSameUsername() throws Exception {
 		// GIVEN
-		CreateApiUserDto createApiUserDto = new CreateApiUserDto();
-		createApiUserDto.setUsername("user");
-		createApiUserDto.setPassword("secret");
-		createApiUserDto.setCompanyName("Company");
-		createApiUserDto.setEmail("email@email");
-		createApiUserDto.setActive(true);
-		createApiUserDto.setContactName("contactName");
-		createApiUserDto.setContactEmail("contact@mail.com");
-		TimeMachine.useFixedClockAt(LocalDateTime.of(2018, 5, 10, 0, 0));
+		ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+		storeDatabase(originalApiUser);
+		// FIXME New Test
+
+        CreateApiUserDto createApiUserDto = new CreateApiUserDto(
+                originalApiUser.getUsername(),
+                "password-new",
+                "companyName-new",
+                "companyEmail-new@example.com",
+                "technicalContactName-new",
+                "technicalContactEmail-new@example.com",
+                true
+        );
 
 		// WHEN
 		ResultActions resultActions = mockMvc.perform(
@@ -138,185 +189,184 @@ public class ApiUserRestControllerIntTest {
 
 		// THEN
 		resultActions
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+				.andExpect(status().is5xxServerError());
 
-				.andExpect(jsonPath("$.username").value("user"))
-				.andExpect(jsonPath("$.companyName").value("Company"))
-				.andExpect(jsonPath("$.email").value("email@email"))
-				.andExpect(jsonPath("$.active").value(true))
-				.andExpect(jsonPath("$.contactName").value("contactName"))
-				.andExpect(jsonPath("$.contactEmail").value("contact@mail.com"))
-				.andExpect(jsonPath("$.createDate").value("2018-05-10"));
-
-		List<ApiUser> all = apiUserRepository.findAll();
-		assertThat(all).hasSize(1);
-		assertThat(all.get(0).getUsername()).isEqualTo("user");
-		assertThat(all.get(0).getCompanyName()).isEqualTo("Company");
-		assertThat(all.get(0).getEmail()).isEqualTo("email@email");
-		assertThat(all.get(0).getActive()).isTrue();
-		assertThat(all.get(0).getContactName()).isEqualTo("contactName");
-		assertThat(all.get(0).getContactEmail()).isEqualTo("contact@mail.com");
-
-		TimeMachine.reset();
+        List<ApiUser> all = apiUserRepository.findAll();
+        assertThat(all).hasSize(1);
+        ApiUser apiUser = all.get(0);
+        assertThat(apiUser.getId()).isEqualTo(originalApiUser.getId());
 	}
 
 	@Test
-	public void shouldUpdateApiUser() throws Exception {
-		// GIVEN
-		saveApiUser(apiUser1);
+    public void shouldFindById() throws Exception {
+        // GIVEN
+        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        storeDatabase(originalApiUser);
 
-		UpdateApiUserDto updateApiUserDto = new UpdateApiUserDto();
-		updateApiUserDto.setId("id1");
-		updateApiUserDto.setUsername("user-new");
-		updateApiUserDto.setPassword("secret-new");
-		updateApiUserDto.setEmail("email@email-new");
-		updateApiUserDto.setActive(false);
-		updateApiUserDto.setCompanyName("Company-new");
-		updateApiUserDto.setContactName("contactName-new");
-		updateApiUserDto.setContactEmail("contact@mail.com-new");
+        // WHEN
+        ResultActions resultActions = mockMvc.perform(get(API_API_USERS + '/' + originalApiUser.getId().getValue()));
 
-		// WHEN
-		ResultActions resultActions = mockMvc.perform(
-				put(API_API_USERS)
-						.contentType(TestUtil.APPLICATION_JSON_UTF8)
-						.content(TestUtil.convertObjectToJsonBytes(updateApiUserDto))
-		);
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath(JSON_PATH_ID).value(originalApiUser.getId().getValue()))
+                .andExpect(jsonPath(JSON_PATH_USERNAME).value(originalApiUser.getUsername()))
+                .andExpect(jsonPath(JSON_PATH_COMPANY_NAME).value(originalApiUser.getCompanyName()))
+                .andExpect(jsonPath(JSON_PATH_COMPANY_EMAIL).value(originalApiUser.getCompanyEmail()))
+                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_NAME).value(originalApiUser.getTechnicalContactName()))
+                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_EMAIL).value(originalApiUser.getTechnicalContactEmail()))
+                .andExpect(jsonPath(JSON_PATH_ACTIVE).value(originalApiUser.isActive()))
+                .andExpect(jsonPath(JSON_PATH_CREATE_DATE).value(originalApiUser.getCreateDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
+    }
 
-		// THEN
-		resultActions
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+    @Test
+    public void shouldUpdateApiUserDetails() throws Exception {
+        // GIVEN
+        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        storeDatabase(originalApiUser);
 
-				.andExpect(jsonPath("$.id").value("id1"))
-				.andExpect(jsonPath("$.username").value("user-new"))
-				.andExpect(jsonPath("$.companyName").value("Company-new"))
-				.andExpect(jsonPath("$.email").value("email@email-new"))
-				.andExpect(jsonPath("$.active").value(false))
-				.andExpect(jsonPath("$.contactName").value("contactName-new"))
-				.andExpect(jsonPath("$.contactEmail").value("contact@mail.com-new"))
-				.andExpect(jsonPath("$.createDate").value("2018-05-10"));
+        UpdateDetailsApiUserDto updateDetailsApiUserDto = new UpdateDetailsApiUserDto(
+                "username-new",
+                "companyName-new",
+                "companyEmail-new@example.com",
+                "technicalContactName-new",
+                "technicalContactEmail-new@example.com"
+        );
 
-		List<ApiUser> all = apiUserRepository.findAll();
-		assertThat(all).hasSize(1);
-		assertThat(all.get(0).getId().getValue()).isEqualTo("id1");
-		assertThat(all.get(0).getUsername()).isEqualTo("user-new");
-		assertThat(all.get(0).getCompanyName()).isEqualTo("Company-new");
-		assertThat(all.get(0).getEmail()).isEqualTo("email@email-new");
-		assertThat(all.get(0).getActive()).isFalse();
-		assertThat(all.get(0).getContactName()).isEqualTo("contactName-new");
-		assertThat(all.get(0).getContactEmail()).isEqualTo("contact@mail.com-new");
-	}
+        // WHEN
+        ResultActions resultActions = mockMvc.perform(
+                put(API_API_USERS + '/' + originalApiUser.getId().getValue())
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(updateDetailsApiUserDto))
+        );
 
-	@Test
-	public void shouldFindById() throws Exception {
-		// GIVEN
-		ApiUser savedUser = saveApiUser(apiUser1);
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath(JSON_PATH_ID).value(originalApiUser.getId().getValue()))
+                .andExpect(jsonPath(JSON_PATH_USERNAME).value(updateDetailsApiUserDto.getUsername()))
+                .andExpect(jsonPath(JSON_PATH_COMPANY_NAME).value(updateDetailsApiUserDto.getCompanyName()))
+                .andExpect(jsonPath(JSON_PATH_COMPANY_EMAIL).value(updateDetailsApiUserDto.getCompanyEmail()))
+                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_NAME).value(updateDetailsApiUserDto.getTechnicalContactName()))
+                .andExpect(jsonPath(JSON_PATH_TECHNICAL_CONTACT_EMAIL).value(updateDetailsApiUserDto.getTechnicalContactEmail()))
+                .andExpect(jsonPath(JSON_PATH_ACTIVE).value(originalApiUser.isActive()))
+                .andExpect(jsonPath(JSON_PATH_CREATE_DATE).value(originalApiUser.getCreateDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
 
-		// WHEN
-		ResultActions resultActions = mockMvc.perform(get(API_API_USERS + '/' + savedUser.getId().getValue()));
+        ApiUser apiUser = apiUserRepository.findById(originalApiUser.getId()).get();
+        assertThat(apiUser.getId().getValue()).isEqualTo(originalApiUser.getId().getValue());
+        assertThat(apiUser.getUsername()).isEqualTo(updateDetailsApiUserDto.getUsername());
+        assertThat(apiUser.getCompanyName()).isEqualTo(updateDetailsApiUserDto.getCompanyName());
+        assertThat(apiUser.getCompanyEmail()).isEqualTo(updateDetailsApiUserDto.getCompanyEmail());
+        assertThat(apiUser.isActive()).isEqualTo(originalApiUser.isActive());
+        assertThat(apiUser.getTechnicalContactName()).isEqualTo(updateDetailsApiUserDto.getTechnicalContactName());
+        assertThat(apiUser.getTechnicalContactEmail()).isEqualTo(updateDetailsApiUserDto.getTechnicalContactEmail());
+        assertThat(apiUser.getCreateDate()).isEqualTo(originalApiUser.getCreateDate());
+    }
 
-		// THEN
-		resultActions
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+    @Test
+    public void shouldUpdateApiUserPassword() throws Exception {
+        // GIVEN
+        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        storeDatabase(originalApiUser);
 
-				.andExpect(jsonPath("$.username").value("alex"))
-				.andExpect(jsonPath("$.companyName").value("Company1"))
-				.andExpect(jsonPath("$.email").value("email@email1"))
-				.andExpect(jsonPath("$.contactName").value("contactName1"))
-				.andExpect(jsonPath("$.contactEmail").value("contact@mail.com1"))
-				.andExpect(jsonPath("$.createDate").value("2018-05-10"));
-	}
+        UpdatePasswordApiUserDto updatePasswordApiUserDto = new UpdatePasswordApiUserDto(
+                "password-new"
+        );
 
-	@Test
-	public void shouldChangeApiUserStatus() throws Exception {
-		// GIVEN
-		ApiUser savedUser = saveApiUser(apiUser1);
-		ChangeApiUserStatusDto changeApiUserStatusDto = new ChangeApiUserStatusDto(false);
+        // WHEN
+        mockMvc.perform(
+                put(API_API_USERS + '/' + originalApiUser.getId().getValue() + "/password")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(updatePasswordApiUserDto))
+        );
 
-		// WHEN
-		mockMvc.perform(
-				put(API_API_USERS + '/' + savedUser.getId().getValue() + "/active")
-						.contentType(TestUtil.APPLICATION_JSON_UTF8)
-						.content(TestUtil.convertObjectToJsonBytes(changeApiUserStatusDto))
-		);
+        // THEN
+        ApiUser apiUser = apiUserRepository.findById(originalApiUser.getId()).get();
+        assertThat(apiUser.getPassword()).isNotEqualTo(originalApiUser.getPassword());
+    }
 
-		// THEN
-		ApiUser apiUser = apiUserRepository.findById(savedUser.getId()).get();
-		assertThat(apiUser.getActive()).isFalse();
-	}
+    @Test
+    public void shouldUpdateApiUserStatus() throws Exception {
+        // GIVEN
+        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        storeDatabase(originalApiUser);
 
-	@Test
-	public void shouldFindApiUser() throws Exception {
-		// GIVEN
-		index(apiUser1);
-		index(apiUser2);
+        UpdateStatusApiUserDto updateStatusApiUserDto = new UpdateStatusApiUserDto(!originalApiUser.isActive());
 
-		ApiUserSearchRequest apiUserSearchRequest = new ApiUserSearchRequest("alex");
+        // WHEN
+        mockMvc.perform(
+                put(API_API_USERS + '/' + originalApiUser.getId().getValue() + "/active")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(updateStatusApiUserDto))
+        );
 
-		// WHEN
-		ResultActions resultActions = mockMvc.perform(
-				post(API_API_USERS + "/_search")
-						.contentType(TestUtil.APPLICATION_JSON_UTF8)
-						.content(TestUtil.convertObjectToJsonBytes(apiUserSearchRequest))
-		);
+        // THEN
+        ApiUser apiUser = apiUserRepository.findById(originalApiUser.getId()).get();
+        assertThat(apiUser.isActive()).isNotEqualTo(originalApiUser.isActive());
+    }
 
-		// THEN
-		resultActions
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(header().string("X-Total-Count", "1"))
+    @Test
+    public void shouldFindApiUser() throws Exception {
+        // GIVEN
+        ApiUser originalApiUser1 = ApiUserTestDataProvider.createApiUser01();
+        ApiUser originalApiUser2 = ApiUserTestDataProvider.createApiUser02();
+        storeElastic(originalApiUser1);
+        storeElastic(originalApiUser2);
 
-				.andExpect(jsonPath("$.[0].username").value("alex"))
-				.andExpect(jsonPath("$.[0].companyName").value("Company1"))
-				.andExpect(jsonPath("$.[0].email").value("email@email1"))
-				.andExpect(jsonPath("$.[0].contactName").value("contactName1"))
-				.andExpect(jsonPath("$.[0].contactEmail").value("contact@mail.com1"))
-				.andExpect(jsonPath("$.[0].createDate").value("2018-05-10"));
-	}
+        ApiUserSearchRequest apiUserSearchRequest = new ApiUserSearchRequest(originalApiUser1.getUsername());
 
-	@Test
-	public void shouldFindAllApiUsers() throws Exception {
-		// GIVEN
-		index(apiUser1);
-		index(apiUser2);
+        // WHEN
+        ResultActions resultActions = mockMvc.perform(
+                post(API_API_USERS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(apiUserSearchRequest))
+        );
 
-		ApiUserSearchRequest apiUserSearchRequest = new ApiUserSearchRequest("");
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "1"))
+                .andExpect(jsonPath(JSON_PATH_LIST_ID).value(originalApiUser1.getId().getValue()))
+                .andExpect(jsonPath(JSON_PATH_LIST_USERNAME).value(originalApiUser1.getUsername()))
+                .andExpect(jsonPath(JSON_PATH_LIST_COMPANY_NAME).value(originalApiUser1.getCompanyName()))
+                .andExpect(jsonPath(JSON_PATH_LIST_COMPANY_EMAIL).value(originalApiUser1.getCompanyEmail()))
+                .andExpect(jsonPath(JSON_PATH_LIST_TECHNICAL_CONTACT_NAME).value(originalApiUser1.getTechnicalContactName()))
+                .andExpect(jsonPath(JSON_PATH_LIST_TECHNICAL_CONTACT_EMAIL).value(originalApiUser1.getTechnicalContactEmail()))
+                .andExpect(jsonPath(JSON_PATH_LIST_ACTIVE).value(originalApiUser1.isActive()))
+                .andExpect(jsonPath(JSON_PATH_LIST_CREATE_DATE).value(originalApiUser1.getCreateDate().format(DateTimeFormatter.ISO_LOCAL_DATE)));
+    }
 
-		// WHEN
-		ResultActions resultActions = mockMvc.perform(
-				post(API_API_USERS + "/_search")
-						.contentType(TestUtil.APPLICATION_JSON_UTF8)
-						.content(TestUtil.convertObjectToJsonBytes(apiUserSearchRequest))
-		);
+    @Test
+    public void shouldFindAllApiUsers() throws Exception {
+        // GIVEN
+        storeElastic(ApiUserTestDataProvider.createApiUser01());
+        storeElastic(ApiUserTestDataProvider.createApiUser02());
 
-		// THEN
-		resultActions
-				.andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-				.andExpect(header().string("X-Total-Count", "2"));
-	}
+        ApiUserSearchRequest apiUserSearchRequest = new ApiUserSearchRequest("");
 
-	private void index(ApiUser apiUser) {
-		apiUserElasticsearchRepository.save(new ApiUserDocument(apiUser));
-	}
+        // WHEN
+        ResultActions resultActions = mockMvc.perform(
+                post(API_API_USERS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(apiUserSearchRequest))
+        );
 
-	private ApiUser saveApiUser(ApiUser apiUser) {
-		return apiUserRepository.saveAndFlush(apiUser);
-	}
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "2"));
+    }
 
-	private ApiUser createApiUser(String id, String username, String password, boolean active, String companyName, String email, String contactName, String contactEmail, LocalDate createDate) {
-		ApiUser.Builder builder = new ApiUser.Builder();
-		builder.setId(new ApiUserId(id));
-		builder.setUsername(username);
-		builder.setPassword(password);
-		builder.setActive(active);
-		builder.setCompanyName(companyName);
-		builder.setEmail(email);
-		builder.setContactName(contactName);
-		builder.setContactEmail(contactEmail);
-		builder.setCreateDate(createDate);
-		return new ApiUser(builder);
-	}
+    private ApiUser storeDatabase(ApiUser apiUser) {
+        return apiUserRepository.saveAndFlush(apiUser);
+    }
+
+    private void storeElastic(ApiUser apiUser) {
+        apiUserElasticsearchRepository.save(new ApiUserDocument(apiUser));
+    }
+
 }

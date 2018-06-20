@@ -4,7 +4,11 @@ import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 
 public class AuditUser {
 
-    private final String externalId;
+    private final String userId;
+
+    private final String userExternalId;
+
+    private final String companyId;
 
     private final String firstName;
 
@@ -12,15 +16,34 @@ public class AuditUser {
 
     private final String email;
 
-    public AuditUser(String externalId, String firstName, String lastName, String email) {
-        this.externalId = Condition.notBlank(externalId);
+    public AuditUser(String firstName, String lastName) {
+        this.userId = null;
+        this.userExternalId = null;
+        this.companyId = null;
+        this.firstName = Condition.notBlank(firstName);
+        this.lastName = Condition.notBlank(lastName);
+        this.email = null;
+    }
+
+    public AuditUser(String userId, String userExternalId, String companyId, String firstName, String lastName, String email) {
+        this.userId = Condition.notBlank(userId);
+        this.userExternalId = userExternalId;
+        this.companyId = companyId;
         this.firstName = Condition.notBlank(firstName);
         this.lastName = Condition.notBlank(lastName);
         this.email = Condition.notBlank(email);
     }
 
-    public String getExternalId() {
-        return externalId;
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getUserExternalId() {
+        return userExternalId;
+    }
+
+    public String getCompanyId() {
+        return companyId;
     }
 
     public String getFirstName() {

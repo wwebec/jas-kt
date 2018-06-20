@@ -1,7 +1,20 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import static ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants.PRIVATE_EMPLOYMENT_AGENT;
-import static ch.admin.seco.jobs.services.jobadservice.application.security.AuthoritiesConstants.PUBLIC_EMPLOYMENT_SERVICE;
+import static ch.admin.seco.jobs.services.jobadservice.application.security.Role.PRIVATE_EMPLOYMENT_AGENT;
+import static ch.admin.seco.jobs.services.jobadservice.application.security.Role.PUBLIC_EMPLOYMENT_SERVICE;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
@@ -14,13 +27,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.CancellationResource;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/jobAdvertisements")
@@ -29,20 +35,9 @@ public class JobAdvertisementRestController {
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
     private final EventStore eventStore;
 
-    @Autowired
     public JobAdvertisementRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService, EventStore eventStore) {
         this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
         this.eventStore = eventStore;
-    }
-
-    @GetMapping(path = "/testauth")
-    public void testAuth() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null) {
-            System.out.println(authentication.getDetails());
-            System.out.println(authentication.getPrincipal());
-            System.out.println(authentication.getPrincipal());
-        }
     }
 
     @PostMapping()
@@ -51,8 +46,11 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
 
-    @GetMapping(params = {"page", "size"})
-    public PageResource<JobAdvertisementDto> getAll(@RequestParam(name = "page", defaultValue = "0") int page, @RequestParam(name = "size", defaultValue = "25") int size) {
+    @GetMapping
+    public PageResource<JobAdvertisementDto> getAll(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "25") int size
+    ) {
         return PageResource.of(jobAdvertisementApplicationService.findAllPaginated(PageRequest.of(page, size)));
     }
 
@@ -66,17 +64,27 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.getByAccessToken(accessToken);
     }
 
-    @PreAuthorize("hasAnyAuthority('" + PRIVATE_EMPLOYMENT_AGENT + "','" + PUBLIC_EMPLOYMENT_SERVICE + "')")
+    @GetMapping("/byStellennummerEgov/{stellennummerEgov}")
+    public JobAdvertisementDto getOneByStellennummerEgov(@PathVariable String stellennummerEgov) throws AggregateNotFoundException {
+        return jobAdvertisementApplicationService.findByStellennummerEgov(stellennummerEgov);
+    }
+
+    @GetMapping("/byStellennummerAvam/{stellennummerAvam}")
+    public JobAdvertisementDto getOneByStellennummerAvam(@PathVariable String stellennummerAvam) throws AggregateNotFoundException {
+        return jobAdvertisementApplicationService.findByStellennummerAvam(stellennummerAvam);
+    }
+
+	@PreAuthorize("hasAnyAuthority('ROLE_PRIVATE_EMPLOYMENT_AGENT','ROLE_PUBLIC_EMPLOYMENT_SERVICE')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping(path = "/{id}/cancel")
+    @PatchMapping("/{id}/cancel")
     public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getReasonCode());
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode());
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(path = "/cancel/token/{token}")
     public void cancelByToken(@PathVariable String token, @RequestBody CancellationResource cancellation) {
-        jobAdvertisementApplicationService.cancelByToken(token, TimeMachine.now().toLocalDate(), cancellation.getReasonCode());
+        jobAdvertisementApplicationService.cancelByToken(token, TimeMachine.now().toLocalDate(), cancellation.getCode());
     }
 
     @GetMapping("/{id}/events")

@@ -12,6 +12,8 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
@@ -47,6 +49,8 @@ public class JobAdvertisementApplicationService {
 
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
 
+    private final CurrentUserContext currentUserContext;
+
     private final JobAdvertisementRepository jobAdvertisementRepository;
 
     private final JobAdvertisementFactory jobAdvertisementFactory;
@@ -60,12 +64,14 @@ public class JobAdvertisementApplicationService {
     private final JobCenterService jobCenterService;
 
     @Autowired
-    public JobAdvertisementApplicationService(JobAdvertisementRepository jobAdvertisementRepository,
+    public JobAdvertisementApplicationService(CurrentUserContext currentUserContext,
+                                              JobAdvertisementRepository jobAdvertisementRepository,
                                               JobAdvertisementFactory jobAdvertisementFactory,
                                               ReportingObligationService reportingObligationService,
                                               LocationService locationService,
                                               ProfessionService professionService,
                                               JobCenterService jobCenterService) {
+        this.currentUserContext = currentUserContext;
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
         this.reportingObligationService = reportingObligationService;
@@ -134,8 +140,7 @@ public class JobAdvertisementApplicationService {
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromAvamDto.getLanguageSkills()))
                 .build();
 
-        // TODO Add auditUser
-        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(currentUserContext.getAuditUser())
                 .setStellennummerAvam(createJobAdvertisementFromAvamDto.getStellennummerAvam())
                 .setReportingObligation(createJobAdvertisementFromAvamDto.isReportingObligation())
                 .setReportingObligationEndDate(createJobAdvertisementFromAvamDto.getReportingObligationEndDate())
@@ -163,8 +168,7 @@ public class JobAdvertisementApplicationService {
                 .map(this::enrichOccupationWithProfessionCodes)
                 .collect(toList());
 
-        // TODO Add auditUser
-        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
                 .setReportingObligation(jobAdvertisementDto.isReportingObligation(), jobAdvertisementDto.getReportingObligationEndDate())
                 .setJobCenterCode(jobAdvertisementDto.getJobCenterCode())
                 .setCompany(toCompany(jobAdvertisementDto.getCompany()))
@@ -214,13 +218,15 @@ public class JobAdvertisementApplicationService {
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkills()))
                 .build();
 
-        // TODO Add auditUser
         LocalDate publicationStartDate = createJobAdvertisementFromX28Dto.getPublicationStartDate();
+        if (publicationStartDate == null) {
+            publicationStartDate = TimeMachine.now().toLocalDate();
+        }
         LocalDate publicationEndDate = createJobAdvertisementFromX28Dto.getPublicationEndDate();
-        if(publicationEndDate == null) {
+        if (publicationEndDate == null) {
             publicationEndDate = publicationStartDate.plusDays(PUBLICATION_MAX_DAYS);
         }
-        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(null)
+        final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(currentUserContext.getAuditUser())
                 .setFingerprint(createJobAdvertisementFromX28Dto.getFingerprint())
                 .setJobContent(jobContent)
                 .setPublication(
@@ -246,8 +252,7 @@ public class JobAdvertisementApplicationService {
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
                 .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
 
-        // TODO Add auditUser
-        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(null)
+        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
                 .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint())
                 .setX28OccupationCodes(updateJobAdvertisementFromX28Dto.getX28OccupationCodes())
                 .build();
@@ -259,6 +264,19 @@ public class JobAdvertisementApplicationService {
     public List<JobAdvertisementDto> findAll() {
         List<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findAll();
         return jobAdvertisements.stream().map(JobAdvertisementDto::toDto).collect(toList());
+    }
+
+    public Page<JobAdvertisementDto> findOwnJobAdvertisements(Pageable pageable) {
+        CurrentUser currentUser = currentUserContext.getCurrentUser();
+        if (currentUser == null) {
+            return new PageImpl<>(Collections.EMPTY_LIST, pageable, 0);
+        }
+        Page<JobAdvertisement> jobAdvertisements = jobAdvertisementRepository.findOwnJobAdvertisements(pageable, currentUser.getUserId(), currentUser.getCompanyId());
+        return new PageImpl<>(
+                jobAdvertisements.getContent().stream().map(JobAdvertisementDto::toDto).collect(toList()),
+                jobAdvertisements.getPageable(),
+                jobAdvertisements.getTotalElements()
+        );
     }
 
     public Page<JobAdvertisementDto> findAllPaginated(Pageable pageable) {
@@ -311,18 +329,18 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
     }
 
-    public void cancel(JobAdvertisementId jobAdvertisementId, LocalDate date, String reasonCode) {
+    public void cancel(JobAdvertisementId jobAdvertisementId, LocalDate date, CancellationCode cancellationCode) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
-        jobAdvertisement.cancel(date, reasonCode);
+        jobAdvertisement.cancel(date, cancellationCode);
     }
 
-    public void cancelByToken(String token, LocalDate date, String reasonCode) {
+    public void cancelByToken(String token, LocalDate date, CancellationCode cancellationCode) {
         Condition.notNull(token, "token can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisementByAccessToken(token);
         LOG.debug("Starting cancel for token: '{}'", token);
-        jobAdvertisement.cancel(date, reasonCode);
+        jobAdvertisement.cancel(date, cancellationCode);
     }
 
     public void refining(JobAdvertisementId jobAdvertisementId) {
@@ -332,31 +350,20 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.refining();
     }
 
-    @Scheduled(cron = "${jobAdvertisement.checkBlackoutPolicyExpiration.cron}")
-    public void checkBlackoutPolicyExpiration() {
-        this.jobAdvertisementRepository
-                .findAllWhereBlackoutNeedToExpire(TimeMachine.now().toLocalDate())
-                .forEach(JobAdvertisement::expireBlackout);
-
-    }
-
-    @Scheduled(cron = "${jobAdvertisement.checkPublicationExpiration.cron}")
-    public void checkPublicationExpiration() {
-        this.jobAdvertisementRepository
-                .findAllWherePublicationNeedToExpire(TimeMachine.now().toLocalDate())
-                .forEach(JobAdvertisement::expirePublication);
-
-    }
-
     public void publish(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         LOG.debug("Starting publish for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+        publish(jobAdvertisement);
+    }
+
+    private void publish(JobAdvertisement jobAdvertisement) {
+        Condition.notNull(jobAdvertisement, "JobAdvertisement can't be null");
         if (jobAdvertisement.isReportingObligation() && REFINING.equals(jobAdvertisement.getStatus())) {
-            LOG.debug("Publish in restricted area for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
+            LOG.debug("Publish in restricted area for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
             jobAdvertisement.publishRestricted();
         } else {
-            LOG.debug("Publish in public area for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
+            LOG.debug("Publish in public area for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
             jobAdvertisement.publishPublic();
         }
     }
@@ -366,6 +373,30 @@ public class JobAdvertisementApplicationService {
         LOG.debug("Starting archive for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         jobAdvertisement.archive();
+    }
+
+    @Scheduled(cron = "${jobAdvertisement.checkPublicationStarts.cron}")
+    public void scheduledCheckPublicationStarts() {
+        this.jobAdvertisementRepository
+                .findAllWherePublicationShouldStart(TimeMachine.now().toLocalDate())
+                .forEach(this::publish);
+
+    }
+
+    @Scheduled(cron = "${jobAdvertisement.checkBlackoutPolicyExpiration.cron}")
+    public void scheduledCheckBlackoutPolicyExpiration() {
+        this.jobAdvertisementRepository
+                .findAllWhereBlackoutNeedToExpire(TimeMachine.now().toLocalDate())
+                .forEach(JobAdvertisement::expireBlackout);
+
+    }
+
+    @Scheduled(cron = "${jobAdvertisement.checkPublicationExpiration.cron}")
+    public void scheduledCheckPublicationExpiration() {
+        this.jobAdvertisementRepository
+                .findAllWherePublicationNeedToExpire(TimeMachine.now().toLocalDate())
+                .forEach(JobAdvertisement::expirePublication);
+
     }
 
     private void checkifJobAdvertisementAlreadExists(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
@@ -422,9 +453,9 @@ public class JobAdvertisementApplicationService {
 
         PublicationDto publicationDto = createJobAdvertisementDto.getPublication();
 
-        // TODO Add auditUser
-        return new JobAdvertisementCreator.Builder(null)
+        return new JobAdvertisementCreator.Builder(currentUserContext.getAuditUser())
                 .setExternalReference(createJobAdvertisementDto.getExternalReference())
+                .setReportToAvam(createJobAdvertisementDto.isReportToAvam())
                 .setReportingObligation(reportingObligation)
                 .setJobCenterCode(jobCenterCode)
                 .setJobContent(jobContent)
@@ -558,6 +589,7 @@ public class JobAdvertisementApplicationService {
                     .setPhone(companyDto.getPhone())
                     .setEmail(companyDto.getEmail())
                     .setWebsite(companyDto.getWebsite())
+                    .setSurrogate(companyDto.isSurrogate())
                     .build();
         }
         return null;

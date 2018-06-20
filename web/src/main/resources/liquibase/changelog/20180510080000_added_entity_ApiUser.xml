@@ -9,25 +9,25 @@
             <column name="ID" type="varchar(36)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="USERNAME" type="varchar(50)">
+            <column name="USERNAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="PASSWORD" type="varchar(60)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="EMAIL" type="varchar(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="ACTIVE" type="BOOLEAN">
+            <column name="PASSWORD" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
             <column name="COMPANY_NAME" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="CONTACT_NAME" type="varchar(50)">
+            <column name="COMPANY_EMAIL" type="varchar(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="CONTACT_EMAIL" type="varchar(255)">
+            <column name="TECHNICAL_CONTACT_NAME" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TECHNICAL_CONTACT_EMAIL" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTIVE" type="BOOLEAN">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATE_DATE" type="date">

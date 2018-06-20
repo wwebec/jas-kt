@@ -35,8 +35,8 @@ public class JWTFilterTest {
 
         // prepare request
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + JWTTokenGenerator
-                .generateToken("user-1", SECRET_KEY, 10, "ROLE_USER", "ROLE_PRIVATE_EMPLOYMENT_AGENT"));
+        request.addHeader("Authorization", "Bearer " + JWTTestTokenGenerator
+                .generateToken("username-1", SECRET_KEY, 3600, "ROLE_USER", "ROLE_PRIVATE_EMPLOYMENT_AGENT"));
 
         // execute
         jwtFilter.doFilter(request, new MockHttpServletResponse(), new MockFilterChain(mock(Servlet.class), jwtFilter));
@@ -45,7 +45,7 @@ public class JWTFilterTest {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         assertThat(authentication)
                 .describedAs("Authentication is null").isNotNull()
-                .describedAs("principal does not match").matches(auth -> "user-1".equals(((User) auth.getPrincipal()).getUsername()));
+                .describedAs("principal does not match").matches(auth -> "username-1".equals(((User) auth.getPrincipal()).getUsername()));
 
         // assert user roles
         assertThat(
@@ -61,7 +61,7 @@ public class JWTFilterTest {
 
         // prepare request
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + JWTTokenGenerator
+        request.addHeader("Authorization", "Bearer " + JWTTestTokenGenerator
                 .generateToken("user-1", "invalid-secret", 10));
 
         // execute
@@ -79,7 +79,7 @@ public class JWTFilterTest {
 
         // prepare request
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + JWTTokenGenerator
+        request.addHeader("Authorization", "Bearer " + JWTTestTokenGenerator
                 .generateToken("user-1", SECRET_KEY, -10));
 
         // execute

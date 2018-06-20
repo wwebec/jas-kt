@@ -21,6 +21,8 @@ public abstract class DomainEvent<T> {
 
     private final String aggregateType;
 
+    private String userId;
+
     private String userExternalId;
 
     private String userDisplayName;
@@ -31,12 +33,14 @@ public abstract class DomainEvent<T> {
 
     public DomainEvent(DomainEventType domainEventType, String aggregateType) {
         this.id = new DomainEventId();
+        this.registrationTime = TimeMachine.now();
         this.domainEventType = Condition.notNull(domainEventType);
         this.aggregateType = aggregateType;
-        this.registrationTime = TimeMachine.now();
     }
 
-    public abstract AggregateId<T> getAggregateId();
+    public DomainEventId getId() {
+        return id;
+    }
 
     public LocalDateTime getRegistrationTime() {
         return registrationTime;
@@ -46,34 +50,37 @@ public abstract class DomainEvent<T> {
         return domainEventType;
     }
 
+    public abstract AggregateId<T> getAggregateId();
+
+    public String getAggregateType() {
+        return aggregateType;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
     public String getUserExternalId() {
         return userExternalId;
-    }
-
-    public DomainEventId getId() {
-        return id;
-    }
-
-    public Map<String, Object> getAttributesMap() {
-        return Collections.unmodifiableMap(additionalAttributes);
     }
 
     public String getUserDisplayName() {
         return userDisplayName;
     }
 
-    public String getAggregateType() {
-        return aggregateType;
-    }
-
     public String getUserEmail() {
         return userEmail;
     }
 
+    public Map<String, Object> getAttributesMap() {
+        return Collections.unmodifiableMap(additionalAttributes);
+    }
+
     public void setAuditUser(AuditUser auditUser) {
         Condition.notNull(auditUser);
+        this.userId = auditUser.getUserId();
+        this.userExternalId = auditUser.getUserExternalId();
         this.userDisplayName = auditUser.getDisplayName();
-        this.userExternalId = auditUser.getExternalId();
         this.userEmail = auditUser.getEmail();
     }
 

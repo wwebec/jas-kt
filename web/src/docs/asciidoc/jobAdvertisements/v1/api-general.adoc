@@ -3,14 +3,13 @@ Last modified: May 3, 2018 | Version: 0.95
 
 == Contact
 
-* mediamatik@seco.admin.ch
-* anton.menninger@seco.admin.ch
+* jobroom-api@seco.admin.ch
 
 The Job-Room Jobs API provides an additional channel for employers to publish job advertisements to the Swiss public employment services system.
 It is an alternative to the web form available at https://www.job-room.ch/#/companies/jobpublication.
 
 This document describes the new version of the API which will go in production on July 1, 2018.
-The legacy API (described at http://api.job-room.ch/0.2/docs/index.html) will be decommissioned at the same time.
+The legacy API (described at {api-url}/api-docs/joboffers/index.html) will be decommissioned at the same time.
 The upgrade is necessary because of the _job vacancy registration requirement_ going into force on July 1.
 Companies that wish to use the jobs API will need to request access credentials.
 Those will be available once the test environment is available, which is expected by mid May.
@@ -51,10 +50,6 @@ JobRoom API exposes a simple way to manage job advertisements. It follows _RESTf
 * Pagination support
 
 The following chapters explain more precisely some of these concepts and provide examples in how to create, read, edit and cancel job offers.
-
-== Base URL
-
-<BASE_URL> = https://api.job-room.ch/jobadertisement/v1
 
 == HTTP verbs
 

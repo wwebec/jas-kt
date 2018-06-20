@@ -1,21 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.database.eventstore;
 
-import java.time.LocalDateTime;
-import java.util.Objects;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventType;
+
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 class StoredEvent {
@@ -24,19 +18,7 @@ class StoredEvent {
     private String id;
 
     @NotNull
-    private String aggregateType;
-
-    @NotEmpty
-    private String aggregateId;
-
-    @NotEmpty
-    private String userId;
-
-    @NotEmpty
-    private String userEmail;
-
-    @NotEmpty
-    private String userDisplayName;
+    private LocalDateTime registrationTime;
 
     @NotNull
     @Embedded
@@ -45,7 +27,18 @@ class StoredEvent {
     private DomainEventType domainEventType;
 
     @NotNull
-    private LocalDateTime registrationTime;
+    private String aggregateType;
+
+    @NotEmpty
+    private String aggregateId;
+
+    private String userId;
+
+    private String userExternalId;
+
+    private String userDisplayName;
+
+    private String userEmail;
 
     @Lob
     private String payload;
@@ -61,19 +54,32 @@ class StoredEvent {
 
     StoredEvent(DomainEvent domainEvent, String payload) {
         Condition.notNull(domainEvent);
-        this.id = domainEvent.getId().getValue();
-        this.aggregateId = domainEvent.getAggregateId().getValue();
-        this.userId = Condition.notNull(domainEvent.getUserExternalId());
-        this.userDisplayName = Condition.notNull(domainEvent.getUserDisplayName());
-        this.userEmail = Condition.notNull(domainEvent.getUserEmail());
-        this.domainEventType = domainEvent.getDomainEventType();
-        this.registrationTime = domainEvent.getRegistrationTime();
-        this.aggregateType = domainEvent.getAggregateType();
+        this.id = Condition.notBlank(domainEvent.getId().getValue());
+        this.registrationTime = Condition.notNull(domainEvent.getRegistrationTime());
+        this.domainEventType = Condition.notNull(domainEvent.getDomainEventType());
+        this.aggregateType = Condition.notBlank(domainEvent.getAggregateType());
+        this.aggregateId = Condition.notBlank(domainEvent.getAggregateId().getValue());
+        this.userId = domainEvent.getUserId();
+        this.userExternalId = domainEvent.getUserExternalId();
+        this.userDisplayName = domainEvent.getUserDisplayName();
+        this.userEmail = domainEvent.getUserEmail();
         this.payload = payload;
     }
 
     public String getId() {
         return id;
+    }
+
+    public LocalDateTime getRegistrationTime() {
+        return registrationTime;
+    }
+
+    public DomainEventType getDomainEventType() {
+        return domainEventType;
+    }
+
+    public String getAggregateType() {
+        return aggregateType;
     }
 
     public String getAggregateId() {
@@ -84,28 +90,20 @@ class StoredEvent {
         return userId;
     }
 
+    public String getUserExternalId() {
+        return userExternalId;
+    }
+
     public String getUserDisplayName() {
         return userDisplayName;
     }
 
-    public DomainEventType getDomainEventType() {
-        return domainEventType;
+    public String getUserEmail() {
+        return userEmail;
     }
 
     public String getPayload() {
         return payload;
-    }
-
-    public LocalDateTime getRegistrationTime() {
-        return registrationTime;
-    }
-
-    public String getAggregateType() {
-        return aggregateType;
-    }
-
-    public String getUserEmail() {
-        return userEmail;
     }
 
     @Override

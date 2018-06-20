@@ -6,6 +6,10 @@ public class LegacyPage {
     private int totalPage;
     private int number;
 
+    protected LegacyPage() {
+        // For reflection libs
+    }
+
     public LegacyPage(int size, long totalElements, int totalPage, int number) {
         this.size = size;
         this.totalElements = totalElements;

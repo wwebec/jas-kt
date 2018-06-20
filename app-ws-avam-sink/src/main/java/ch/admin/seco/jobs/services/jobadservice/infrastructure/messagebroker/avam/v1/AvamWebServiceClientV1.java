@@ -1,8 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.ws.client.core.WebServiceTemplate;
-
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
@@ -12,8 +9,14 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.Delive
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.DeliverOsteResponse;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.TOsteEgov;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.WSCredentials;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ws.client.core.WebServiceTemplate;
 
 public class AvamWebServiceClientV1 implements AvamWebServiceClient {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AvamWebServiceClientV1.class);
 
     private static final String AVAM_RESPONSE_OK = "NK_AVAM: OK";
 
@@ -30,12 +33,16 @@ public class AvamWebServiceClientV1 implements AvamWebServiceClient {
     }
 
     public void register(JobAdvertisement jobAdvertisement) {
+        LOG.info("Start sending registration of jobAdvertisement " + jobAdvertisement.getId().getValue() + " to AVAM");
+        LOG.debug(jobAdvertisement.toString());
         AvamAction action = AvamAction.ANMELDUNG;
         TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, action);
         send(jobAdvertisement.getId(), action, tOsteEgov);
     }
 
     public void deregister(JobAdvertisement jobAdvertisement) {
+        LOG.info("Start sending deregister of jobAdvertisement " + jobAdvertisement.getId().getValue() + " to AVAM");
+        LOG.debug(jobAdvertisement.toString());
         AvamAction action = AvamAction.ABMELDUNG;
         TOsteEgov tOsteEgov = assembler.toOsteEgov(jobAdvertisement, action);
         send(jobAdvertisement.getId(), action, tOsteEgov);

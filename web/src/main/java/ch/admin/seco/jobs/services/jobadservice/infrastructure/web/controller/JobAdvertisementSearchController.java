@@ -12,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchRequest;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchService;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.PeaJobAdvertisementSearchRequest;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.util.PaginationUtil;
 
 @RestController
@@ -49,6 +51,16 @@ public class JobAdvertisementSearchController {
                 //todo: Discuss where to put the HTML cleanup. This is suboptimal concerning performance
                 .map(this::sanitizeJobDescription);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(resultPage, "/api/_search/jobs");
+        return new ResponseEntity<>(resultPage.getContent(), headers, HttpStatus.OK);
+    }
+
+    @PostMapping("/_search/pea")
+    @Timed
+    public ResponseEntity<List<JobAdvertisementDto>> searchPeaJobs(
+            @RequestBody @Valid PeaJobAdvertisementSearchRequest searchRequest, Pageable pageable) {
+
+        Page<JobAdvertisementDto> resultPage = jobAdvertisementSearchService.searchPeaJobAdvertisements(searchRequest, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(resultPage, "/api/_search/pea");
         return new ResponseEntity<>(resultPage.getContent(), headers, HttpStatus.OK);
     }
 

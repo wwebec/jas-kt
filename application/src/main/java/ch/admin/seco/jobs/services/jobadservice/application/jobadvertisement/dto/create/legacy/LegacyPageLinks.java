@@ -5,6 +5,10 @@ public class LegacyPageLinks {
     private LegacyHref profile;
     private LegacyHref search;
 
+    protected LegacyPageLinks() {
+        // For reflection libs
+    }
+
     public LegacyPageLinks(String self, String profile, String search) {
         this.self = new LegacyHref(self);
         this.profile = new LegacyHref(profile);

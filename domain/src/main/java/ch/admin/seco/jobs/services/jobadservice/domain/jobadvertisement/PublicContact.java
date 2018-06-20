@@ -4,7 +4,6 @@ import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 import javax.persistence.*;
-import java.util.Locale;
 import java.util.Objects;
 
 @Embeddable
@@ -30,8 +29,9 @@ public class PublicContact implements ValueObject<PublicContact> {
         this.salutation = Condition.notNull(builder.salutation, "Salutation can't be null");
         this.firstName = Condition.notBlank(builder.firstName, "First name can't be blank");
         this.lastName = Condition.notBlank(builder.lastName, "Last name can't be blank");
-        this.phone = Condition.notBlank(builder.phone, "Phone can't be blank");
-        this.email = Condition.notBlank(builder.email, "Email can't be blank");
+        Condition.anyNotBlank("Phone and email can't be blank", builder.phone, builder.email);
+        this.phone = builder.phone;
+        this.email = builder.email;
     }
 
     public Salutation getSalutation() {
@@ -88,7 +88,6 @@ public class PublicContact implements ValueObject<PublicContact> {
         private String lastName;
         private String phone;
         private String email;
-        private Locale language;
 
         public Builder() {
         }

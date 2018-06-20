@@ -10,6 +10,7 @@ import static org.springframework.ws.test.server.RequestCreators.withPayload;
 
 import java.io.IOException;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.CancellationCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -148,7 +149,7 @@ public class AvamEndpointV2Test {
         assertThat(cancellationDto.getStellennummerEgov()).isEqualTo("EGOV-0004");
         assertThat(cancellationDto.getStellennummerAvam()).isEqualTo("AVAM-0004");
         assertThat(cancellationDto.getDate()).isEqualTo("2018-03-04");
-        assertThat(cancellationDto.getCode()).isEqualTo("CANCEL-CODE");
+        assertThat(cancellationDto.getCode()).isEqualTo(CancellationCode.OCCUPIED_JOBCENTER);
     }
 
 

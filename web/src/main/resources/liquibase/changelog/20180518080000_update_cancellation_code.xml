@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20180518080000" author="olko">
+        <modifyDataType columnName="CANCELLATION_CODE"
+                        newDataType="VARCHAR(255)"
+                        tableName="JOB_ADVERTISEMENT"/>
+    </changeSet>
+
+</databaseChangeLog>
