@@ -258,7 +258,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void reject(String stellennummerAvam, LocalDate date, String code, String reason) {
-        this.stellennummerAvam = Condition.notBlank(stellennummerAvam);
+        this.stellennummerAvam = stellennummerAvam;
         this.rejectionDate = Condition.notNull(date);
         this.rejectionCode = Condition.notBlank(code);
         this.rejectionReason = reason;
