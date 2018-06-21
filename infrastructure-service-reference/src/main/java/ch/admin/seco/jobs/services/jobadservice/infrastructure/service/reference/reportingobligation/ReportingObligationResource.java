@@ -39,4 +39,13 @@ public class ReportingObligationResource {
     public void setLabel(String label) {
         this.label = label;
     }
+
+    @Override
+    public String toString() {
+        return "ReportingObligationResource{" +
+                "hasReportingObligation=" + hasReportingObligation +
+                ", professionCode=" + professionCode +
+                ", label='" + label + '\'' +
+                '}';
+    }
 }
