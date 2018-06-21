@@ -29,4 +29,12 @@ public class ProfessionCodeResource {
     public void setCodeType(ProfessionCodeType codeType) {
         this.codeType = codeType;
     }
+
+    @Override
+    public String toString() {
+        return "ProfessionCodeResource{" +
+                "code='" + code + '\'' +
+                ", codeType=" + codeType +
+                '}';
+    }
 }
