@@ -53,9 +53,9 @@ public class JobAdvertisementSearchService {
 
     private static final String PATH_CTX = "jobAdvertisement.";
     private static final String PATH_AVAM_JOB_ID = PATH_CTX + "stellennummerAvam";
+    private static final String PATH_EGOV_JOB_ID = PATH_CTX + "stellennummerEgov";
     private static final String PATH_COMPANY_NAME = PATH_CTX + "jobContent.company.name";
     private static final String PATH_DESCRIPTION = PATH_CTX + "jobContent.jobDescriptions.description";
-    private static final String PATH_EGOV_JOB_ID = PATH_CTX + "fingerprint";
     private static final String PATH_LOCATION_CANTON_CODE = PATH_CTX + "jobContent.location.cantonCode";
     private static final String PATH_LOCATION_COMMUNAL_CODE = PATH_CTX + "jobContent.location.communalCode";
     private static final String PATH_LOCATION_REGION_CODE = PATH_CTX + "jobContent.location.regionCode";
