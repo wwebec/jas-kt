@@ -329,17 +329,10 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.reject(rejectionDto.getStellennummerAvam(), rejectionDto.getDate(), rejectionDto.getCode(), rejectionDto.getReason());
     }
 
-    public void cancel(JobAdvertisementId jobAdvertisementId, LocalDate date, CancellationCode cancellationCode) {
+    public void cancel(JobAdvertisementId jobAdvertisementId, LocalDate date, CancellationCode cancellationCode, String token) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
-        jobAdvertisement.cancel(date, cancellationCode);
-    }
-
-    public void cancelByToken(String token, LocalDate date, CancellationCode cancellationCode) {
-        Condition.notNull(token, "token can't be null");
-        JobAdvertisement jobAdvertisement = getJobAdvertisementByAccessToken(token);
-        LOG.debug("Starting cancel for token: '{}'", token);
         jobAdvertisement.cancel(date, cancellationCode);
     }
 

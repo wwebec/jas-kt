@@ -1,21 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import static ch.admin.seco.jobs.services.jobadservice.application.security.Role.PRIVATE_EMPLOYMENT_AGENT;
-import static ch.admin.seco.jobs.services.jobadservice.application.security.Role.PUBLIC_EMPLOYMENT_SERVICE;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
@@ -27,6 +11,10 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.CancellationResource;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/jobAdvertisements")
@@ -74,17 +62,12 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.findByStellennummerAvam(stellennummerAvam);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_PRIVATE_EMPLOYMENT_AGENT','ROLE_PUBLIC_EMPLOYMENT_SERVICE')")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping("/{id}/cancel")
-    public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode());
-    }
 
+    @PatchMapping("/{id}/cancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping(path = "/cancel/token/{token}")
-    public void cancelByToken(@PathVariable String token, @RequestBody CancellationResource cancellation) {
-        jobAdvertisementApplicationService.cancelByToken(token, TimeMachine.now().toLocalDate(), cancellation.getCode());
+    @PreAuthorize("@jobAdvertisementAuthorizationService.canCancel(id, token)")
+    public void cancel(@PathVariable String id, @RequestParam(required = false) String token, @RequestBody CancellationResource cancellation) {
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode(), token);
     }
 
     @GetMapping("/{id}/events")
