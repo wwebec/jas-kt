@@ -23,6 +23,7 @@ public class JobAdvertisementAuthorizationService {
         this.currentUserContext = currentUserContext;
     }
 
+    // FIXME parameter is JobAdvertisementId and token
     public boolean canCancel(String jobAdvertisementId, String token) {
         Optional<JobAdvertisement> jobAdvertisement = this.jobAdvertisementRepository.findById(new JobAdvertisementId(jobAdvertisementId));
         if (!jobAdvertisement.isPresent()) {
@@ -34,6 +35,7 @@ public class JobAdvertisementAuthorizationService {
             return hasToken(jobAdvertisement.get(), token);
         }
 
+        // FIXME ROLE_API and from AVAM return true
         return isOwner(jobAdvertisement.get(), currentUser);
 
     }
