@@ -57,7 +57,7 @@ public class JobAdvertisementLegacyApiRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping(path = "/{id}/cancel", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public void cancel(@PathVariable String id, LegacyCancellationDto cancellationDto) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), determinCancellationCode(cancellationDto.getReasonCode()));
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), determinCancellationCode(cancellationDto.getReasonCode()), null);
     }
 
     private CancellationCode determinCancellationCode(String reasonCode) {

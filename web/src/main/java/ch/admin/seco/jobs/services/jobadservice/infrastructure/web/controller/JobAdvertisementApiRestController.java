@@ -55,7 +55,7 @@ public class JobAdvertisementApiRestController {
             @PathVariable String id,
             @RequestBody CancellationResource cancellation
     ) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode());
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode(), null);
     }
 
 }

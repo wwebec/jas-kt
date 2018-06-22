@@ -13,6 +13,7 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.re
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -61,10 +62,12 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.findByStellennummerAvam(stellennummerAvam);
     }
 
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+
     @PatchMapping("/{id}/cancel")
-    public void cancel(@PathVariable String id, @RequestBody CancellationResource cancellation) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode());
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("@jobAdvertisementAuthorizationService.canCancel(id, token)")
+    public void cancel(@PathVariable String id, @RequestParam(required = false) String token, @RequestBody CancellationResource cancellation) {
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode(), token);
     }
 
     @GetMapping("/{id}/events")
