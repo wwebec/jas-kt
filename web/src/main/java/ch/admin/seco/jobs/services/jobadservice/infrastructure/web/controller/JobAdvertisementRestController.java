@@ -65,7 +65,7 @@ public class JobAdvertisementRestController {
 
     @PatchMapping("/{id}/cancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("@jobAdvertisementAuthorizationService.canCancel(id, token)")
+    @PreAuthorize("@jobAdvertisementAuthorizationService.canCancel(#id, #token)")
     public void cancel(@PathVariable String id, @RequestParam(required = false) String token, @RequestBody CancellationResource cancellation) {
         jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode(), token);
     }
