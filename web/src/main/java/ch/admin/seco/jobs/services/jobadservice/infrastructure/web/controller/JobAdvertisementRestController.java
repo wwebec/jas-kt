@@ -1,8 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import static ch.admin.seco.jobs.services.jobadservice.application.security.Role.PRIVATE_EMPLOYMENT_AGENT;
-import static ch.admin.seco.jobs.services.jobadservice.application.security.Role.PUBLIC_EMPLOYMENT_SERVICE;
-
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -82,9 +79,9 @@ public class JobAdvertisementRestController {
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PatchMapping(path = "/cancel/token/{token}")
-    public void cancelByToken(@PathVariable String token, @RequestBody CancellationResource cancellation) {
-        jobAdvertisementApplicationService.cancelByToken(token, TimeMachine.now().toLocalDate(), cancellation.getCode());
+    @PatchMapping(path = "/{id}/cancel", params = "token")
+    public void cancelByToken(@PathVariable String id, @RequestParam String token, @RequestBody CancellationResource cancellation) {
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode(), token);
     }
 
     @GetMapping("/{id}/events")

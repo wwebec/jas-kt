@@ -336,9 +336,15 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.cancel(date, cancellationCode);
     }
 
-    public void cancelByToken(String token, LocalDate date, CancellationCode cancellationCode) {
+    public void cancel(JobAdvertisementId jobAdvertisementId, LocalDate date, CancellationCode cancellationCode, String token) {
         Condition.notNull(token, "token can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisementByAccessToken(token);
+        if (!jobAdvertisement.getId().equals(jobAdvertisementId)) {
+            String errorMessage = String.format("Provided jobAdvertisementId ('%s') do not match jobAdvertisement found by token = '%s'",
+                    jobAdvertisementId.getValue(), token);
+            LOG.error(errorMessage);
+            throw new JobAdvertisementCancellationException(errorMessage);
+        }
         LOG.debug("Starting cancel for token: '{}'", token);
         jobAdvertisement.cancel(date, cancellationCode);
     }
