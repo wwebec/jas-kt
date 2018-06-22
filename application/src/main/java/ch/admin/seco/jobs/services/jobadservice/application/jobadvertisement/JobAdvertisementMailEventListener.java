@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -134,7 +135,7 @@ public class JobAdvertisementMailEventListener {
         }
         final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
         Map<String, Object> variables = new HashMap<>();
-        variables.put("jobAdvertisement", jobAdvertisement);
+        variables.put("stellennummerEgov", jobAdvertisement.getStellennummerEgov());
         variables.put("jobCenter", jobCenter);
         mailSenderService.send(
                 new MailSenderData.Builder()
