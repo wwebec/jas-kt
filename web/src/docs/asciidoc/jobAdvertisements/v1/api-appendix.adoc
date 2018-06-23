@@ -1,6 +1,24 @@
 == Code lists
 
-== Salutations
+=== Formats
+
+==== Dates
+
+The dates are send as string in the ISO 8601 format YYYY-MM-DD
+
+==== Languages
+
+The languages are send as string with the ISO 639-1 code (e.g. "de")
+
+==== Countries
+
+The Countries are send as string with the ISO 3166-1 alpha-2 (e.g. "ch")
+
+==== Phone numbers
+
+The phone numbers are send as string in the format "+41123456789"
+
+=== Salutations
 
 [cols="20,80"]
 |===
@@ -10,7 +28,7 @@
 | MS |
 |===
 
-== Work forms
+=== Work forms
 
 [cols="20,80"]
 |===
@@ -22,7 +40,7 @@
 | HOME_WORK |
 |===
 
-== Work experience
+=== Work experience
 
 [cols="20,80"]
 |===
@@ -33,7 +51,7 @@
 | MORE_THAN_3_YEARS |
 |===
 
-== Spoken and written levels
+=== Spoken and written levels
 
 [cols="20,80"]
 |===
@@ -46,7 +64,7 @@
 |===
 see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Languages#Common_reference_levels[Common reference levels]
 
-== Cancellation reason codes
+=== Cancellation reason codes
 
 [cols="20,50,50,50,50"]
 |===
@@ -61,7 +79,7 @@ see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Lan
 |===
 
 
-== AVAM education code
+=== AVAM education code
 
 [cols="20,50,50,50,50"]
 |===
@@ -84,7 +102,7 @@ see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Lan
 |180    |  Doktorat universitäre Hochschule oder äquivalent | Doctorate from a university or equivalent | Doctorat HEU ou équivalent | Dottorato scuola univ./poli. o equivalente
 |===
 
-== AVAM occupation code
+=== AVAM occupation code
 Refer to separate Excel sheet. The AVAM occupation list comprises > 4000 occupations with labels in three languages.
 Each is assigned to an SBN occupation group. The occupation code is required to determine whether
-a job vacancy falls under the registration requirement.
+a job vacancy falls under the registration requirement. link:AVAM-Berufsliste-Juni-2018.xlsx[Download occupations Excel sheet]
