@@ -31,7 +31,7 @@ public class AccessTokenGenerator {
     }
 
     private String toBase64(byte[] bytes) {
-        return (bytes != null) ? Base64.getEncoder().encodeToString(bytes) : null;
+        return (bytes != null) ? Base64.getUrlEncoder().encodeToString(bytes) : null;
     }
 
 }
