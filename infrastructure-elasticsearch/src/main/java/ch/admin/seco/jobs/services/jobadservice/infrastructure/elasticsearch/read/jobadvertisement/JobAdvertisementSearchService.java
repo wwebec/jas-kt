@@ -105,8 +105,8 @@ public class JobAdvertisementSearchService {
                 .build();
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("query: ", searchQuery.getQuery());
-            LOG.trace("filter: ", searchQuery.getFilter());
+            LOG.trace("query: {}", searchQuery.getQuery());
+            LOG.trace("filter: {}", searchQuery.getFilter());
         }
 
         return elasticsearchTemplate.query(searchQuery, response -> {
