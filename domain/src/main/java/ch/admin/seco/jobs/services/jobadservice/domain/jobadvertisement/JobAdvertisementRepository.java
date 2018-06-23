@@ -44,15 +44,8 @@ public interface JobAdvertisementRepository extends JpaRepository<JobAdvertiseme
     @QueryHints({
             @QueryHint(name = HINT_FETCH_SIZE, value = "1000"),
             @QueryHint(name = HINT_CACHE_MODE, value = "IGNORE")})
-    @Query("select j from JobAdvertisement j " +
-            "where j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED " +
-            "or j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC ")
-    Stream<JobAdvertisement> streamAllPublished();
-
-    @Query("select count(j.id) from JobAdvertisement j " +
-            "where j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED " +
-            "or j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC ")
-    long countPublished();
+    @Query("select j from JobAdvertisement j")
+    Stream<JobAdvertisement> streamAll();
 
     @Query("select j from JobAdvertisement j where j.owner.userId = :userId or j.owner.companyId = :companyId")
     Page<JobAdvertisement> findOwnJobAdvertisements(Pageable pageable, @Param("userId") String userId, @Param("companyId") String companyId);

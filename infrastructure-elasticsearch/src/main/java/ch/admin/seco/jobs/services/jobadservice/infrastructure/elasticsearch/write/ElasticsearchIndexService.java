@@ -71,7 +71,7 @@ public class ElasticsearchIndexService {
     @Async
     @Transactional(readOnly = true)
     public void reindexAll() {
-        reindexForClass(JobAdvertisementDocument.class, jobAdvertisementRepository, jobAdvertisementElasticsearchRepository, JobAdvertisementDocument::new, "streamAllPublished");
+        reindexForClass(JobAdvertisementDocument.class, jobAdvertisementRepository, jobAdvertisementElasticsearchRepository, JobAdvertisementDocument::new, "streamAll");
         reindexForClass(ApiUserDocument.class, apiUserRepository, apiUserElasticsearchRepository, ApiUserDocument::new, "streamAll");
 
         log.info("Elasticsearch: Successfully performed reindexing");
