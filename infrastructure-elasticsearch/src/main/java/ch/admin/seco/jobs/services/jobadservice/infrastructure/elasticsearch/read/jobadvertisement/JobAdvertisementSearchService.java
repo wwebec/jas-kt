@@ -347,8 +347,8 @@ public class JobAdvertisementSearchService {
     private BoolQueryBuilder restrictedJobsFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         BoolQueryBuilder restrictedJobsFilter = boolQuery();
 
-        if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT) && jobSearchRequest.getDisplayRestricted() != null) {
-            restrictedJobsFilter.must(termsQuery(PATH_REPORTING_OBLIGATION, jobSearchRequest.getDisplayRestricted()));
+        if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT) && Boolean.TRUE.equals(jobSearchRequest.getDisplayRestricted())) {
+            restrictedJobsFilter.must(termsQuery(PATH_REPORTING_OBLIGATION, true));
         }
 
         return restrictedJobsFilter;
