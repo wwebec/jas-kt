@@ -4,6 +4,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
 import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementDocument;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementElasticsearchRepository;
@@ -40,8 +41,7 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.J
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.ElasticsearchIndexService.INDEX_NAME_JOB_ADVERTISEMENT;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.ElasticsearchIndexService.TYPE_JOB_ADVERTISEMENT;
-import static org.apache.commons.lang3.ArrayUtils.isEmpty;
-import static org.apache.commons.lang3.ArrayUtils.isNotEmpty;
+import static org.apache.commons.lang3.ArrayUtils.*;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -76,7 +76,6 @@ public class JobAdvertisementSearchService {
     private static final String PATH_SOURCE_SYSTEM = PATH_CTX + "sourceSystem";
     private static final String PATH_WORKLOAD_PERCENTAGE_MAX = PATH_CTX + "jobContent.employment.workloadPercentageMax";
     private static final String PATH_WORKLOAD_TIME_PERCENTAGE_MIN = PATH_CTX + "jobContent.employment.workloadPercentageMin";
-    private static final String PATH_REPORTING_OBLIGATION = PATH_CTX + "reportingObligation";
     private static final String RELEVANCE = "_score";
     private static final int ONLINE_SINCE_DAYS = 60;
 
@@ -279,8 +278,7 @@ public class JobAdvertisementSearchService {
 
     private QueryBuilder createFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         return mustAll(
-                visibilityFilter(),
-                restrictedJobsFilter(jobSearchRequest),
+                visibilityFilter(jobSearchRequest),
                 publicationStartDateFilter(jobSearchRequest),
                 localityFilter(jobSearchRequest),
                 workingTimeFilter(jobSearchRequest),
@@ -332,26 +330,24 @@ public class JobAdvertisementSearchService {
         return localityFilter;
     }
 
-    private BoolQueryBuilder visibilityFilter() {
+    private BoolQueryBuilder visibilityFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         BoolQueryBuilder visibilityFilter = boolQuery();
 
+        final JobAdvertisementStatus[] visibleStatuses;
+
         if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT)) {
-            visibilityFilter.must(termsQuery(PATH_STATUS, PUBLISHED_RESTRICTED.toString(), PUBLISHED_PUBLIC.toString()));
+            if (Boolean.TRUE.equals(jobSearchRequest.getDisplayRestricted())) {
+                visibleStatuses = toArray(PUBLISHED_RESTRICTED);
+            } else {
+                visibleStatuses = toArray(PUBLISHED_RESTRICTED, PUBLISHED_PUBLIC);
+            }
         } else {
-            visibilityFilter.must(termsQuery(PATH_STATUS, PUBLISHED_PUBLIC.toString()));
+            visibleStatuses = toArray(PUBLISHED_PUBLIC);
         }
+
+        visibilityFilter.must(termsQuery(PATH_STATUS, toStringArray(visibleStatuses)));
 
         return visibilityFilter;
-    }
-
-    private BoolQueryBuilder restrictedJobsFilter(JobAdvertisementSearchRequest jobSearchRequest) {
-        BoolQueryBuilder restrictedJobsFilter = boolQuery();
-
-        if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT) && Boolean.TRUE.equals(jobSearchRequest.getDisplayRestricted())) {
-            restrictedJobsFilter.must(termsQuery(PATH_REPORTING_OBLIGATION, true));
-        }
-
-        return restrictedJobsFilter;
     }
 
     private BoolQueryBuilder workingTimeFilter(JobAdvertisementSearchRequest jobSearchRequest) {
