@@ -1,8 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
 import ch.admin.seco.jobs.services.jobadservice.Application;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
+import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementDocument;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementElasticsearchRepository;
@@ -14,6 +17,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.format.support.FormattingConversionService;
 import org.springframework.http.MediaType;
@@ -30,6 +34,8 @@ import java.util.Collections;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -49,7 +55,11 @@ public class JobAdvertisementSearchControllerIntTest {
     private JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository;
 
     @Autowired
-    private JobAdvertisementSearchService jobAdvertisementSearchService;
+    private ElasticsearchTemplate elasticsearchTemplate;
+
+    @Autowired
+    private ElasticsearchConfiguration.CustomEntityMapper customEntityMapper;
+
 
     @Autowired
     private FormattingConversionService formattingConversionService;
@@ -63,12 +73,23 @@ public class JobAdvertisementSearchControllerIntTest {
     @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
+    private JobAdvertisementSearchService jobAdvertisementSearchService;
+
+    private CurrentUserContext mockCurrentUserContext;
+
     private MockMvc mockMvc;
 
     @Before
     public void setUp() {
         this.jobAdvertisementElasticsearchRepository.deleteAll();
         this.jobAdvertisementJpaRepository.deleteAll();
+        this.mockCurrentUserContext = mock(CurrentUserContext.class);
+
+        this.jobAdvertisementSearchService = new JobAdvertisementSearchService(mockCurrentUserContext,
+                this.elasticsearchTemplate,
+                this.customEntityMapper,
+                this.jobAdvertisementElasticsearchRepository
+        );
 
         JobAdvertisementSearchController jobAdvertisementSearchController
                 = new JobAdvertisementSearchController(jobAdvertisementSearchService);
@@ -440,6 +461,7 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldFilterByDisplayRestricted() throws Exception {
         // GIVEN
+        when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
         index(createJob(JOB_ADVERTISEMENT_ID_01));
         index(createRestrictedJob(JOB_ADVERTISEMENT_ID_02));
         index(createJob(JOB_ADVERTISEMENT_ID_03));
@@ -463,8 +485,7 @@ public class JobAdvertisementSearchControllerIntTest {
         ;
     }
 
-    //@Test
-    // FIXME Not working the TestingCurrentUserContext
+    @Test
     public void shouldNotShowRestrictedJobsForAnonymusUsers() throws Exception {
         // GIVEN
         index(createRestrictedJob(JOB_ADVERTISEMENT_ID_01));
@@ -489,8 +510,9 @@ public class JobAdvertisementSearchControllerIntTest {
     }
 
     @Test
-    public void shouldNotShowRestrictedJobsForJobSeekers() throws Exception {
+    public void shouldShowRestrictedJobsForJobSeekers() throws Exception {
         // GIVEN
+        when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
         index(createRestrictedJob(JOB_ADVERTISEMENT_ID_01));
         index(createJob(JOB_ADVERTISEMENT_ID_02));
         index(createRestrictedJob(JOB_ADVERTISEMENT_ID_03));
@@ -509,9 +531,9 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "3"))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
         ;
     }
 

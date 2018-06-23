@@ -16,6 +16,8 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
 import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -50,6 +52,8 @@ public class JobAdvertisementSearchService {
         date_asc,
         date_desc
     }
+
+    private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementSearchService.class);
 
     private static final String PATH_CTX = "jobAdvertisement.";
     private static final String PATH_AVAM_JOB_ID = PATH_CTX + "stellennummerAvam";
@@ -99,6 +103,11 @@ public class JobAdvertisementSearchService {
                 .withIndices(INDEX_NAME_JOB_ADVERTISEMENT)
                 .withTypes(TYPE_JOB_ADVERTISEMENT)
                 .build();
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("query: ", searchQuery.getQuery());
+            LOG.trace("filter: ", searchQuery.getFilter());
+        }
 
         return elasticsearchTemplate.query(searchQuery, response -> {
             AggregatedPage<JobAdvertisementDocument> searchResults = resultsMapper.mapResults(response, JobAdvertisementDocument.class, pageable);
