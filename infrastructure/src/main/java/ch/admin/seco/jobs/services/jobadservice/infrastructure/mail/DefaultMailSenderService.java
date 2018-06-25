@@ -3,6 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.mail.util.IDNEmailAddressConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -15,7 +16,6 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 import javax.mail.MessagingException;
 import javax.mail.util.ByteArrayDataSource;
 
-import java.net.IDN;
 import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
@@ -33,6 +33,8 @@ public class DefaultMailSenderService implements MailSenderService {
 
     private final MessageSource messageSource;
 
+    private IDNEmailAddressConverter idnEmailAddressConverter;
+
     DefaultMailSenderService(SpringTemplateEngine templateEngine,
                              JavaMailSender mailSender,
                              MailSenderProperties mailSenderProperties,
@@ -41,6 +43,7 @@ public class DefaultMailSenderService implements MailSenderService {
         this.mailSender = mailSender;
         this.mailSenderProperties = mailSenderProperties;
         this.messageSource = messageSource;
+        this.idnEmailAddressConverter = new IDNEmailAddressConverter();
     }
 
     @Async
@@ -86,7 +89,7 @@ public class DefaultMailSenderService implements MailSenderService {
     private String[] encodeEmailAddresses(String[] addresses) {
         return addresses != null
                 ? Stream.of(addresses)
-                    .map(IDN::toASCII)
+                    .map(idnEmailAddressConverter::toASCII)
                     .toArray(String[]::new)
                 : null;
     }
