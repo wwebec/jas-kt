@@ -149,11 +149,11 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchPeaJobsWithoutJobTitleInRequest() throws Exception {
         // GIVEN
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
         PeaJobAdvertisementSearchRequest request = new PeaJobAdvertisementSearchRequest();
-        request.setCompanyName("company-1");
+        request.setCompanyId("company-1");
 
         // WHEN
         ResultActions resultActions = mockMvc.perform(
@@ -172,12 +172,12 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchPeaJobsByPublicationDate() throws Exception {
         // GIVEN
-        index(createJobWithCompanyNameAndPublicationStartDate(JOB_ADVERTISEMENT_ID_01, "company-1", LocalDate.now().minusDays(30)));
-        index(createJobWithCompanyNameAndPublicationStartDate(JOB_ADVERTISEMENT_ID_02, "company-1", LocalDate.now().minusDays(7)));
-        index(createJobWithCompanyNameAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, "company-1", LocalDate.now()));
+        index(createJobWithOwnerAndPublicationStartDate(JOB_ADVERTISEMENT_ID_01, "company-1", LocalDate.now().minusDays(30)));
+        index(createJobWithOwnerAndPublicationStartDate(JOB_ADVERTISEMENT_ID_02, "company-1", LocalDate.now().minusDays(7)));
+        index(createJobWithOwnerAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, "company-1", LocalDate.now()));
         index(createJob(JOB_ADVERTISEMENT_ID_04));
         PeaJobAdvertisementSearchRequest request = new PeaJobAdvertisementSearchRequest();
-        request.setCompanyName("company-1");
+        request.setCompanyId("company-1");
         request.setOnlineSinceDays(7);
 
         // WHEN
@@ -197,12 +197,12 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchPeaJobsByJobTitle() throws Exception {
         // GIVEN
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_04, "javascript developer", "javascript developer", "company-3"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_04, "javascript developer", "javascript developer", "company-3"));
         PeaJobAdvertisementSearchRequest request = new PeaJobAdvertisementSearchRequest();
-        request.setCompanyName("company-1");
+        request.setCompanyId("company-1");
         request.setJobTitle("developer");
 
         // WHEN
@@ -590,7 +590,7 @@ public class JobAdvertisementSearchControllerIntTest {
 
     }
 
-    private JobAdvertisement createJobWithCompanyNameAndPublicationStartDate(JobAdvertisementId jobAdvertisementId, String companyName, LocalDate startDate) {
+    private JobAdvertisement createJobWithOwnerAndPublicationStartDate(JobAdvertisementId jobAdvertisementId, String companyId, LocalDate startDate) {
         Publication publication = new Publication.Builder()
                 .setStartDate(startDate)
                 .setEndDate(startDate.plusDays(5))
@@ -600,11 +600,11 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
+                .setOwner(createOwnerWithCompanyId(jobAdvertisementId, companyId))
                 .setPublication(publication)
                 .setJobContent(new JobContent.Builder()
                         .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
-                        .setCompany(createCompany(companyName))
+                        .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
                         .setEmployment(createEmployment())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
@@ -684,24 +684,33 @@ public class JobAdvertisementSearchControllerIntTest {
         return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM);
     }
 
-    private JobAdvertisement createJobWithDescriptionAndCompanyName(JobAdvertisementId jobAdvertisementId, String title, String description, String companyName) {
-        return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM, createCompany(companyName));
+    private JobAdvertisement createJobWithDescriptionAndOwnerCompanyId(JobAdvertisementId jobAdvertisementId, String title, String description, String companyId) {
+        Owner owner = createOwnerWithCompanyId(jobAdvertisementId, companyId);
+        return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM, owner);
+    }
+
+    private Owner createOwnerWithCompanyId(JobAdvertisementId jobAdvertisementId, String companyId) {
+        return new Owner.Builder()
+            .setAccessToken(String.format("access-token-%s", jobAdvertisementId.getValue()))
+            .setCompanyId(companyId)
+            .setUserId(String.format("user-id-%s", jobAdvertisementId.getValue()))
+            .build();
     }
 
     private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem) {
-        return createJobWithDescription(jobAdvertisementId, title, description, sourceSystem, createCompany(jobAdvertisementId));
+        return createJobWithDescription(jobAdvertisementId, title, description, sourceSystem, createOwner(jobAdvertisementId));
     }
 
-    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, Company company) {
+    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, Owner owner) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(sourceSystem)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
+                .setOwner(owner)
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
                         .setJobDescriptions(Collections.singletonList(createJobDescription(title, description)))
-                        .setCompany(company)
+                        .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
                         .setEmployment(createEmployment())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
