@@ -17,7 +17,6 @@ public class CreateJobAdvertisementFromAvamDto {
     @NotEmpty
     private String title;
 
-    @NotEmpty
     private String description;
 
     @NotBlank

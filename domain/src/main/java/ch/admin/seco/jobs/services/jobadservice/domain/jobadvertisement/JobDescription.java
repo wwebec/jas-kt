@@ -27,7 +27,7 @@ public class JobDescription implements ValueObject<JobDescription> {
     public JobDescription(Builder builder) {
         this.language = Condition.notNull(builder.language, "Language can't be null");
         this.title = Condition.notBlank(builder.title, "Title can't be blank");
-        this.description = Condition.notBlank(builder.description, "Description can't be blank");
+        this.description = builder.description;
     }
 
     public Locale getLanguage() {
