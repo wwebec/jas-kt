@@ -18,7 +18,6 @@ public class UpdateJobAdvertisementFromAvamDto {
     @NotEmpty
     private String title;
 
-    @NotEmpty
     private String description;
 
     @NotBlank

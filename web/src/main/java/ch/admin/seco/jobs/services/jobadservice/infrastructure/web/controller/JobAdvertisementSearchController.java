@@ -1,33 +1,28 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.Valid;
-
-import com.codahale.metrics.annotation.Timed;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
-
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchRequest;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchService;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.PeaJobAdvertisementSearchRequest;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.util.PaginationUtil;
+import com.codahale.metrics.annotation.Timed;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.util.StringUtils.hasText;
 
 @RestController
 @RequestMapping("/api/jobAdvertisements")
@@ -75,11 +70,14 @@ public class JobAdvertisementSearchController {
 
     private JobAdvertisementDto sanitizeJobDescription(JobAdvertisementDto jobAdvertisementDto) {
         for (JobDescriptionDto jobDescriptionDto : jobAdvertisementDto.getJobContent().getJobDescriptions()) {
-            String sanitizedDescription = Jsoup.clean(
-                    jobDescriptionDto.getDescription(),
-                    "",
-                    new Whitelist().addTags("em"),
-                    new Document.OutputSettings().prettyPrint(false));
+            String sanitizedDescription = "";
+            if (hasText(jobDescriptionDto.getDescription())) {
+                sanitizedDescription = Jsoup.clean(
+                        jobDescriptionDto.getDescription(),
+                        "",
+                        new Whitelist().addTags("em"),
+                        new Document.OutputSettings().prettyPrint(false));
+            }
             jobDescriptionDto.setDescription(sanitizedDescription);
         }
 
