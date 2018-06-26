@@ -234,6 +234,9 @@
           },
           "status": {
             "type": "keyword"
+          },
+          "stellennummerEgov": {
+            "type": "keyword"
           }
         }
       }
