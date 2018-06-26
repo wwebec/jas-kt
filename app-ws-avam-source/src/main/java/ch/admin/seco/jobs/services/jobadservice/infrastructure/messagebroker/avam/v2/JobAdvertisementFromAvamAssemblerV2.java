@@ -6,6 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
@@ -66,8 +67,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 createCreateLocationDto(avamJobAdvertisement),
                 createOccupationDtos(avamJobAdvertisement),
                 createLanguageSkillDtos(avamJobAdvertisement),
-                createPublicationDto(avamJobAdvertisement),
-                createWorkForms(avamJobAdvertisement)
+                createPublicationDto(avamJobAdvertisement)
         );
     }
 
@@ -77,7 +77,26 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
                 avamJobAdvertisement.isMeldepflicht(),
-                parseToLocalDate(avamJobAdvertisement.getSperrfrist()));
+                parseToLocalDate(avamJobAdvertisement.getSperrfrist()),
+                new UpdateJobAdvertisementFromAvamDto(
+                        safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
+                        avamJobAdvertisement.getBezeichnung(),
+                        avamJobAdvertisement.getBeschreibung(),
+                        "de", // Not defined in this AVAM version
+                        avamJobAdvertisement.isMeldepflicht(),
+                        parseToLocalDate(avamJobAdvertisement.getSperrfrist()),
+                        avamJobAdvertisement.getArbeitsamtBereich(),
+                        parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
+                        createEmploymentDto(avamJobAdvertisement),
+                        createApplyChannelDto(avamJobAdvertisement),
+                        createCompanyDto(avamJobAdvertisement),
+                        createContactDto(avamJobAdvertisement),
+                        createCreateLocationDto(avamJobAdvertisement),
+                        createOccupationDtos(avamJobAdvertisement),
+                        createLanguageSkillDtos(avamJobAdvertisement),
+                        createPublicationDto(avamJobAdvertisement)
+                )
+        );
     }
 
     RejectionDto createRejectionDto(WSOsteEgov avamJobAdvertisement) {

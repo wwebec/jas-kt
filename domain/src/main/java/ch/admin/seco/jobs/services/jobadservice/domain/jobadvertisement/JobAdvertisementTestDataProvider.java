@@ -32,7 +32,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
         return jobAdvertisements;
     }
 
-    private JobAdvertisement createJob01() {
+   private JobAdvertisement createJob01() {
         List<JobDescription> jobDescriptions = Collections.singletonList(new JobDescription.Builder()
                 .setLanguage(Locale.GERMAN)
                 .setTitle("Job number 1")
@@ -47,7 +47,6 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
                 .setStatus(JobAdvertisementStatus.CREATED)
                 .setJobContent(jobContent)
                 .build();
-
     }
 
     public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId) {
@@ -55,7 +54,6 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     }
 
     public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId, JobDescription jobDescription, Occupation occupation, Location location) {
-
         return new JobContent.Builder()
                 .setJobDescriptions(Collections.singletonList(jobDescription))
                 .setCompany(createCompany(jobAdvertisementId))
@@ -73,8 +71,6 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
                                               Occupation occupation, Location location, Employment employment) {
         JobDescription jobDescription = createJobDescription(title, description);
         PublicContact publicContact = createPublicContact(jobAdvertisementId);
-
-
         return new JobContent.Builder()
                 .setJobDescriptions(Collections.singletonList(jobDescription))
                 .setCompany(createCompany(jobAdvertisementId))
@@ -151,7 +147,6 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     public static JobDescription createJobDescription(JobAdvertisementId jobAdvertisementId) {
         String title = String.format("title-%s", jobAdvertisementId.getValue());
         String description = String.format("description-%s", jobAdvertisementId.getValue());
-
         return new JobDescription.Builder()
                 .setLanguage(Locale.GERMAN)
                 .setTitle(title)
@@ -164,10 +159,10 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
                 .setRemarks("remarks")
                 .setCity("city")
                 .setPostalCode("postalCode")
-                .setCommunalCode("communalCode")
-                .setRegionCode("regionCode")
-                .setCantonCode("cantonCode")
-                .setCountryIsoCode("ch")
+                .setCommunalCode(null)
+                .setRegionCode(null)
+                .setCantonCode("BE")
+                .setCountryIsoCode("CH")
                 .build();
     }
 
