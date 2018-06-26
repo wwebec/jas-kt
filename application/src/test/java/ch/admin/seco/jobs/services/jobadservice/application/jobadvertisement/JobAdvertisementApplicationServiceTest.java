@@ -287,7 +287,8 @@ public class JobAdvertisementApplicationServiceTest {
         // given
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(
                 JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.INSPECTING, null));
-        ApprovalDto approvalDto = new ApprovalDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), true, LocalDate.of(2018, 10, 1));
+        // FIXME param UpdateJobAdvertisement
+        ApprovalDto approvalDto = new ApprovalDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), true, LocalDate.of(2018, 10, 1), null);
 
         // when
         sut.approve(approvalDto);
