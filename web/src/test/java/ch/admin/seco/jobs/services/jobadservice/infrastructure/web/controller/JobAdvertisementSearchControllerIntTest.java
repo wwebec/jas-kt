@@ -555,7 +555,7 @@ public class JobAdvertisementSearchControllerIntTest {
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
         searchRequest.setPermanent(false);
         searchRequest.setWorkloadPercentageMin(70);
-        searchRequest.setCantonCodes(new String[]{"cantonCode"});
+        searchRequest.setCantonCodes(new String[]{"BE"});
         searchRequest.setProfessionCodes(new ProfessionCode[]{new ProfessionCode(ProfessionCodeType.AVAM, "avamOccupationCode")});
         searchRequest.setKeywords(new String[]{"title"});
 
