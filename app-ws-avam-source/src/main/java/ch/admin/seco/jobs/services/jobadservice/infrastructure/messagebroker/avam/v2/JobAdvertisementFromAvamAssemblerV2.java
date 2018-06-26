@@ -67,8 +67,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 createCreateLocationDto(avamJobAdvertisement),
                 createOccupationDtos(avamJobAdvertisement),
                 createLanguageSkillDtos(avamJobAdvertisement),
-                createPublicationDto(avamJobAdvertisement),
-                createWorkForms(avamJobAdvertisement)
+                createPublicationDto(avamJobAdvertisement)
         );
     }
 
@@ -95,8 +94,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                         createCreateLocationDto(avamJobAdvertisement),
                         createOccupationDtos(avamJobAdvertisement),
                         createLanguageSkillDtos(avamJobAdvertisement),
-                        createPublicationDto(avamJobAdvertisement),
-                        createWorkForms(avamJobAdvertisement)
+                        createPublicationDto(avamJobAdvertisement)
                 )
         );
     }

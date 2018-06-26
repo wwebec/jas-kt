@@ -2,7 +2,6 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -10,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 
 public class UpdateJobAdvertisementFromAvamDto {
 
@@ -58,8 +56,6 @@ public class UpdateJobAdvertisementFromAvamDto {
     @NotNull
     private PublicationDto publication;
 
-    private Set<WorkForm> workForm;
-
     protected UpdateJobAdvertisementFromAvamDto() {
         // For reflection libs
     }
@@ -67,8 +63,7 @@ public class UpdateJobAdvertisementFromAvamDto {
     public UpdateJobAdvertisementFromAvamDto(String stellennummerAvam, String title,
                                              String description, String languageIsoCode, boolean reportingObligation, LocalDate reportingObligationEndDate, String jobCenterCode, LocalDate approvalDate, EmploymentDto employment,
                                              ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
-                                             List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication,
-                                             Set<WorkForm> workForm) {
+                                             List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication) {
         this.stellennummerAvam = stellennummerAvam;
         this.title = title;
         this.description = description;
@@ -85,7 +80,6 @@ public class UpdateJobAdvertisementFromAvamDto {
         this.occupations = occupations;
         this.languageSkills = languageSkills;
         this.publication = publication;
-        this.workForm = workForm;
     }
 
     public String getStellennummerAvam() {
@@ -216,11 +210,4 @@ public class UpdateJobAdvertisementFromAvamDto {
         this.publication = publication;
     }
 
-    public Set<WorkForm> getWorkForm() {
-        return workForm;
-    }
-
-    public void setWorkForm(Set<WorkForm> workForm) {
-        this.workForm = workForm;
-    }
 }

@@ -11,6 +11,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
@@ -37,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.INSPECTING;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
 import static java.util.stream.Collectors.toList;
 
@@ -319,7 +321,35 @@ public class JobAdvertisementApplicationService {
         Condition.notNull(approvalDto.getStellennummerEgov(), "StellennummerEgov can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(approvalDto.getStellennummerEgov());
         LOG.debug("Starting approve for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
-        jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
+        // FIXME This is a workaround when updating after approved, until AVAM add an actionType on there message.
+        if(jobAdvertisement.getStatus().equals(INSPECTING)) {
+            jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
+        }
+
+        UpdateJobAdvertisementFromAvamDto updateJobAdvertisement = approvalDto.getUpdateJobAdvertisement();
+
+        Condition.notNull(updateJobAdvertisement.getLocation(), "Location can't be null");
+        Location location = toLocation(updateJobAdvertisement.getLocation());
+        location = locationService.enrichCodes(location);
+
+        Condition.notEmpty(updateJobAdvertisement.getOccupations(), "Occupations can't be empty");
+        List<Occupation> occupations = updateJobAdvertisement.getOccupations().stream()
+                .map(this::toOccupation)
+                .map(this::enrichOccupationWithProfessionCodes)
+                .collect(toList());
+
+        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
+                .setJobCenterCode(updateJobAdvertisement.getJobCenterCode())
+                .setCompany(toCompany(updateJobAdvertisement.getCompany()))
+                .setEmployment(toEmployment(updateJobAdvertisement.getEmployment()))
+                .setLocation(location)
+                .setOccupations(occupations)
+                .setLanguageSkills(toLanguageSkills(updateJobAdvertisement.getLanguageSkills()))
+                .setApplyChannel(toApplyChannel(updateJobAdvertisement.getApplyChannel()))
+                .setContact(toContact(updateJobAdvertisement.getContact()))
+                .setPublication(toPublication(updateJobAdvertisement.getPublication()))
+                .build();
+        jobAdvertisement.update(updater);
     }
 
     public void reject(RejectionDto rejectionDto) {
