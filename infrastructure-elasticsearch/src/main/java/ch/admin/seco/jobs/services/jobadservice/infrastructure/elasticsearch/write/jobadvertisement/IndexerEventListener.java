@@ -6,6 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionalEventListener;
 
@@ -13,54 +14,29 @@ import java.util.Optional;
 
 @Component("job-advertisement-event-listener")
 public class IndexerEventListener {
-    private static Logger LOG = LoggerFactory.getLogger(IndexerEventListener.class);
+	private static Logger LOG = LoggerFactory.getLogger(IndexerEventListener.class);
 
-    private JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository;
-    private JobAdvertisementRepository jobAdvertisementJpaRepository;
+	private JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository;
 
-    public IndexerEventListener(JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository,
-                                JobAdvertisementRepository jobAdvertisementJpaRepository) {
-        this.jobAdvertisementElasticsearchRepository = jobAdvertisementElasticsearchRepository;
-        this.jobAdvertisementJpaRepository = jobAdvertisementJpaRepository;
-    }
+	private JobAdvertisementRepository jobAdvertisementJpaRepository;
 
-    @TransactionalEventListener
-    public void handle(JobAdvertisementCreatedEvent event) {
-        indexJobAdvertisement(event);
-    }
+	public IndexerEventListener(JobAdvertisementElasticsearchRepository jobAdvertisementElasticsearchRepository,
+			JobAdvertisementRepository jobAdvertisementJpaRepository) {
+		this.jobAdvertisementElasticsearchRepository = jobAdvertisementElasticsearchRepository;
+		this.jobAdvertisementJpaRepository = jobAdvertisementJpaRepository;
+	}
 
-    @TransactionalEventListener
-    public void handle(JobAdvertisementPublishRestrictedEvent event) {
-        indexJobAdvertisement(event);
-    }
+	@TransactionalEventListener
+	public void handle(JobAdvertisementEvent event) {
+		indexJobAdvertisement(event);
+	}
 
-    @TransactionalEventListener
-    public void handle(JobAdvertisementPublishPublicEvent event) {
-        Optional<JobAdvertisement> jobAdvertisementOptional = this.jobAdvertisementJpaRepository.findById(event.getAggregateId());
-        if (jobAdvertisementOptional.isPresent()) {
-            this.jobAdvertisementElasticsearchRepository.save(new JobAdvertisementDocument(jobAdvertisementOptional.get()));
-        } else {
-            this.jobAdvertisementElasticsearchRepository.deleteById(event.getAggregateId().getValue());
-        }
-    }
-
-    @TransactionalEventListener
-    public void handle(JobAdvertisementCancelledEvent event) {
-        indexJobAdvertisement(event);
-    }
-
-    @TransactionalEventListener
-    public void handle(JobAdvertisementPublishExpiredEvent event) {
-        final String id = event.getAggregateId().getValue();
-        this.jobAdvertisementElasticsearchRepository.deleteById(id);
-    }
-
-    private void indexJobAdvertisement(JobAdvertisementEvent event) {
-        Optional<JobAdvertisement> jobAdvertisementOptional = this.jobAdvertisementJpaRepository.findById(event.getAggregateId());
-        if (jobAdvertisementOptional.isPresent()) {
-            this.jobAdvertisementElasticsearchRepository.save(new JobAdvertisementDocument(jobAdvertisementOptional.get()));
-        } else {
-            LOG.warn("JobAdvertisement not found for the given id: {}", event.getAggregateId());
-        }
-    }
+	private void indexJobAdvertisement(JobAdvertisementEvent event) {
+		Optional<JobAdvertisement> jobAdvertisementOptional = this.jobAdvertisementJpaRepository.findById(event.getAggregateId());
+		if (jobAdvertisementOptional.isPresent()) {
+			this.jobAdvertisementElasticsearchRepository.save(new JobAdvertisementDocument(jobAdvertisementOptional.get()));
+		} else {
+			LOG.warn("JobAdvertisement not found for the given id: {}", event.getAggregateId());
+		}
+	}
 }
