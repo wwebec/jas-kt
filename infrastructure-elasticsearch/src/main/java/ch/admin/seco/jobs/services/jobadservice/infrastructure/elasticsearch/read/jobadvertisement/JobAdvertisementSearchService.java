@@ -59,6 +59,7 @@ public class JobAdvertisementSearchService {
     private static final String PATH_AVAM_JOB_ID = PATH_CTX + "stellennummerAvam";
     private static final String PATH_EGOV_JOB_ID = PATH_CTX + "stellennummerEgov";
     private static final String PATH_COMPANY_NAME = PATH_CTX + "jobContent.company.name";
+    private static final String PATH_OWNER_COMPANY_ID = PATH_CTX + "owner.companyId";
     private static final String PATH_DESCRIPTION = PATH_CTX + "jobContent.jobDescriptions.description";
     private static final String PATH_LOCATION_CANTON_CODE = PATH_CTX + "jobContent.location.cantonCode";
     private static final String PATH_LOCATION_COMMUNAL_CODE = PATH_CTX + "jobContent.location.communalCode";
@@ -143,7 +144,7 @@ public class JobAdvertisementSearchService {
         QueryBuilder filter = mustAll(
                 titleFilter(searchRequest),
                 publicationStartDatePeaFilter(searchRequest),
-                companyFilter(searchRequest.getCompanyName()),
+                ownerFilter(searchRequest.getCompanyId()),
                 statusFilter
         );
 
@@ -303,6 +304,16 @@ public class JobAdvertisementSearchService {
 
         return companyFilter;
     }
+
+	private BoolQueryBuilder ownerFilter(String companyId) {
+		BoolQueryBuilder companyFilter = boolQuery();
+
+		if (isNotBlank(companyId)) {
+			companyFilter.must(termQuery(PATH_OWNER_COMPANY_ID, companyId));
+		}
+
+		return companyFilter;
+	}
 
     private BoolQueryBuilder contractTypeFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         BoolQueryBuilder contractTypeFilter = boolQuery();
