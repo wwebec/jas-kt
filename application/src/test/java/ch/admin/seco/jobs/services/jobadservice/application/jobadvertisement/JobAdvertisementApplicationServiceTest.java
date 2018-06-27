@@ -189,7 +189,7 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.REFINING);
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.RAV);
 
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_REFINING.getDomainEventType());
+        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
     }
 
     @Test

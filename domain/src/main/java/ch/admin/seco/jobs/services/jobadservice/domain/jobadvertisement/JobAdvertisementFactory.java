@@ -9,7 +9,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementApprovedEvent;
 
 @Component
 public class JobAdvertisementFactory {
@@ -89,7 +89,7 @@ public class JobAdvertisementFactory {
                 .build();
 
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
-        DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(newJobAdvertisement));
+        DomainEventPublisher.publish(new JobAdvertisementApprovedEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 
