@@ -414,6 +414,16 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
+        if(updater.hasAnyChangesIn(SECTION_JOBDESCRIPTION)) {
+            if(this.getJobContent().getJobDescriptions().size() > 0) {
+                JobDescription jobDescription = this.getJobContent().getJobDescriptions().get(0);
+                if (hasChanged(jobDescription.getTitle(), updater.getTitle()) || hasChanged(jobDescription.getDescription(), updater.getDescription())) {
+                    jobDescription.updateTitleAndDescription(updater.getTitle(), updater.getDescription());
+                    hasChangedAnything = true;
+                }
+            }
+        }
+
         if (updater.hasAnyChangesIn(SECTION_JOB_CENTER_CODE) && hasChanged(this.jobCenterCode, updater.getJobCenterCode())) {
             this.jobCenterCode = updater.getJobCenterCode();
             hasChangedAnything = true;
