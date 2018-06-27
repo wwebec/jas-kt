@@ -42,6 +42,11 @@ public class JobDescription implements ValueObject<JobDescription> {
         return description;
     }
 
+    void updateTitleAndDescription(String title, String description) {
+        this.title = Condition.notBlank(title, "Title can't be blank");
+        this.description = description;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

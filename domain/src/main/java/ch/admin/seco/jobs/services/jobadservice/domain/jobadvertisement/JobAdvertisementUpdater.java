@@ -12,6 +12,7 @@ public class JobAdvertisementUpdater {
     static final String SECTION_FINGERPRINT = "SECTION_FINGERPRINT";
     static final String SECTION_X28_OCCUPATION_CODES = "SECTION_X28_OCCUPATION_CODES";
     static final String SECTION_REPORTING_OBLIGATION = "SECTION_REPORTING_OBLIGATION";
+    static final String SECTION_JOBDESCRIPTION = "SECTION_JOBDESCRIPTION";
     static final String SECTION_PUBLICATION = "SECTION_PUBLICATION";
     static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
     static final String SECTION_JOB_CENTER_CODE = "SECTION_JOB_CENTER_CODE";
@@ -33,6 +34,10 @@ public class JobAdvertisementUpdater {
     private boolean reportingObligation;
 
     private LocalDate reportingObligationEndDate;
+
+    private String title;
+
+    private String description;
 
     private Employment employment;
 
@@ -59,6 +64,8 @@ public class JobAdvertisementUpdater {
         this.x28OccupationCodes = builder.x28OccupationCodes;
         this.reportingObligation = builder.reportingObligation;
         this.reportingObligationEndDate = builder.reportingObligationEndDate;
+        this.title = builder.title;
+        this.description = builder.description;
         this.employment = builder.employment;
         this.jobCenterCode = builder.jobCenterCode;
         this.applyChannel = builder.applyChannel;
@@ -92,6 +99,14 @@ public class JobAdvertisementUpdater {
 
     public LocalDate getReportingObligationEndDate() {
         return reportingObligationEndDate;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public Employment getEmployment() {
@@ -138,6 +153,8 @@ public class JobAdvertisementUpdater {
         private String x28OccupationCodes;
         private boolean reportingObligation;
         private LocalDate reportingObligationEndDate;
+        private String title;
+        private String description;
         private Employment employment;
         private String jobCenterCode;
         private ApplyChannel applyChannel;
@@ -172,6 +189,13 @@ public class JobAdvertisementUpdater {
             this.changedSections.add(SECTION_REPORTING_OBLIGATION);
             this.reportingObligation = reportingObligation;
             this.reportingObligationEndDate = reportingObligationEndDate;
+            return this;
+        }
+
+        public Builder setJobDescription(String title, String description) {
+            this.changedSections.add(SECTION_JOBDESCRIPTION);
+            this.title = title;
+            this.description = description;
             return this;
         }
 

@@ -293,33 +293,34 @@ public class JobAdvertisementApplicationService {
             jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
         }
         UpdateJobAdvertisementFromAvamDto updateJobAdvertisement = approvalDto.getUpdateJobAdvertisement();
-        jobAdvertisement.update(prepareUpdatedFromAvam(updateJobAdvertisement));
+        jobAdvertisement.update(prepareUpdaterFromAvam(updateJobAdvertisement));
     }
 
-    private JobAdvertisementUpdater prepareUpdaterFromAvam(CreateJobAdvertisementFromAvamDto jobAdvertisementDto) {
-        Condition.notNull(jobAdvertisementDto.getLocation(), "Location can't be null");
-        Location location = toLocation(jobAdvertisementDto.getLocation());
+    private JobAdvertisementUpdater prepareUpdaterFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisement) {
+        Condition.notNull(createJobAdvertisement.getLocation(), "Location can't be null");
+        Location location = toLocation(createJobAdvertisement.getLocation());
         location = locationService.enrichCodes(location);
 
-        List<OccupationDto> occupationDtos = jobAdvertisementDto.getOccupations();
+        List<OccupationDto> occupationDtos = createJobAdvertisement.getOccupations();
         Condition.notEmpty(occupationDtos, "Occupations can't be empty");
         List<Occupation> occupations = enrichAndToOccupations(occupationDtos);
 
         return new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
-                .setReportingObligation(jobAdvertisementDto.isReportingObligation(), jobAdvertisementDto.getReportingObligationEndDate())
-                .setJobCenterCode(jobAdvertisementDto.getJobCenterCode())
-                .setCompany(toCompany(jobAdvertisementDto.getCompany()))
-                .setEmployment(toEmployment(jobAdvertisementDto.getEmployment()))
+                .setJobDescription(createJobAdvertisement.getTitle(), createJobAdvertisement.getDescription())
+                .setReportingObligation(createJobAdvertisement.isReportingObligation(), createJobAdvertisement.getReportingObligationEndDate())
+                .setJobCenterCode(createJobAdvertisement.getJobCenterCode())
+                .setCompany(toCompany(createJobAdvertisement.getCompany()))
+                .setEmployment(toEmployment(createJobAdvertisement.getEmployment()))
                 .setLocation(location)
                 .setOccupations(occupations)
-                .setLanguageSkills(toLanguageSkills(jobAdvertisementDto.getLanguageSkills()))
-                .setApplyChannel(toApplyChannel(jobAdvertisementDto.getApplyChannel()))
-                .setContact(toContact(jobAdvertisementDto.getContact()))
-                .setPublication(toPublication(jobAdvertisementDto.getPublication()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisement.getLanguageSkills()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisement.getApplyChannel()))
+                .setContact(toContact(createJobAdvertisement.getContact()))
+                .setPublication(toPublication(createJobAdvertisement.getPublication()))
                 .build();
     }
 
-    private JobAdvertisementUpdater prepareUpdatedFromAvam(UpdateJobAdvertisementFromAvamDto updateJobAdvertisement) {
+    private JobAdvertisementUpdater prepareUpdaterFromAvam(UpdateJobAdvertisementFromAvamDto updateJobAdvertisement) {
         Condition.notNull(updateJobAdvertisement.getLocation(), "Location can't be null");
         Location location = toLocation(updateJobAdvertisement.getLocation());
         location = locationService.enrichCodes(location);
@@ -329,6 +330,7 @@ public class JobAdvertisementApplicationService {
         List<Occupation> occupations = enrichAndToOccupations(occupationDtos);
 
         return new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
+                .setJobDescription(updateJobAdvertisement.getTitle(), updateJobAdvertisement.getDescription())
                 .setJobCenterCode(updateJobAdvertisement.getJobCenterCode())
                 .setCompany(toCompany(updateJobAdvertisement.getCompany()))
                 .setEmployment(toEmployment(updateJobAdvertisement.getEmployment()))
