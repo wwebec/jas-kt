@@ -41,6 +41,7 @@ import java.util.Optional;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.INSPECTING;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 
 @Service
 @Transactional(rollbackFor = {Exception.class})
@@ -541,7 +542,7 @@ public class JobAdvertisementApplicationService {
         if (jobDescriptionDtos != null) {
             return jobDescriptionDtos.stream()
                     .map(jobDescriptionDto -> new JobDescription.Builder()
-                            .setLanguage(new Locale(jobDescriptionDto.getLanguageIsoCode()))
+                            .setLanguage(hasText(jobDescriptionDto.getLanguageIsoCode()) ? new Locale(jobDescriptionDto.getLanguageIsoCode()) : Locale.GERMAN)
                             .setTitle(jobDescriptionDto.getTitle())
                             .setDescription(jobDescriptionDto.getDescription())
                             .build()
