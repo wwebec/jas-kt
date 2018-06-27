@@ -74,7 +74,7 @@ public class JobAdvertisementFactory {
     public JobAdvertisement createFromAvam(JobAdvertisementCreator creator) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
-                .setStatus(JobAdvertisementStatus.REFINING)
+                .setStatus(JobAdvertisementStatus.APPROVED)
                 .setSourceSystem(SourceSystem.RAV)
                 .setStellennummerAvam(creator.getStellennummerAvam())
                 .setReportingObligation(creator.isReportingObligation())

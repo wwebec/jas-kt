@@ -186,7 +186,7 @@ public class JobAdvertisementApplicationServiceTest {
         //Validate
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
         assertThat(jobAdvertisement).isNotNull();
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.REFINING);
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.RAV);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
