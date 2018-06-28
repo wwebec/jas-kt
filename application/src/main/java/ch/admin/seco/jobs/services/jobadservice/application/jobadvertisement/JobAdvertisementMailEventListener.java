@@ -1,32 +1,27 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
+import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
+import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
+import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCancelledEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefinedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRejectedEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCancelledEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefinedEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRejectedEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class JobAdvertisementMailEventListener {
@@ -64,9 +59,12 @@ public class JobAdvertisementMailEventListener {
         if (jobAdvertisement.getSourceSystem().equals(SourceSystem.API)) {
             return;
         }
+        if (hasNoContactEmail(jobAdvertisement.getContact())) {
+            return;
+        }
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CREATED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
-        if(jobAdvertisement.getContact() != null) {
+        if (jobAdvertisement.getContact() != null) {
             contactLocale = jobAdvertisement.getContact().getLanguage();
         }
         final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
@@ -91,9 +89,12 @@ public class JobAdvertisementMailEventListener {
         if (jobAdvertisement.getSourceSystem().equals(SourceSystem.API) && (jobAdvertisement.getStellennummerAvam() == null)) {
             return;
         }
+        if (hasNoContactEmail(jobAdvertisement.getContact())) {
+            return;
+        }
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
-        if(jobAdvertisement.getContact() != null) {
+        if (jobAdvertisement.getContact() != null) {
             contactLocale = jobAdvertisement.getContact().getLanguage();
         }
         final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
@@ -114,10 +115,16 @@ public class JobAdvertisementMailEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onRejected(JobAdvertisementRejectedEvent event) {
-        LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REJECTED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
+        if (jobAdvertisement.getSourceSystem().equals(SourceSystem.API) && (jobAdvertisement.getStellennummerAvam() == null)) {
+            return;
+        }
+        if (hasNoContactEmail(jobAdvertisement.getContact())) {
+            return;
+        }
+        LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REJECTED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
-        if(jobAdvertisement.getContact() != null) {
+        if (jobAdvertisement.getContact() != null) {
             contactLocale = jobAdvertisement.getContact().getLanguage();
         }
         final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
@@ -142,9 +149,12 @@ public class JobAdvertisementMailEventListener {
         if (jobAdvertisement.getSourceSystem().equals(SourceSystem.API) && (jobAdvertisement.getStellennummerAvam() == null)) {
             return;
         }
+        if (hasNoContactEmail(jobAdvertisement.getContact())) {
+            return;
+        }
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
-        if(jobAdvertisement.getContact() != null) {
+        if (jobAdvertisement.getContact() != null) {
             contactLocale = jobAdvertisement.getContact().getLanguage();
         }
         final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
@@ -161,6 +171,10 @@ public class JobAdvertisementMailEventListener {
                         .setLocale(contactLocale)
                         .build()
         );
+    }
+
+    private boolean hasNoContactEmail(Contact contact) {
+        return ((contact == null) || (contact.getEmail() == null));
     }
 
     private static String[] parseMultipleAddresses(String emailAddress) {

@@ -48,6 +48,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class JobAdvertisementApplicationService {
 
     public static final int PUBLICATION_MAX_DAYS = 60;
+
     public static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
 
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
@@ -346,9 +347,9 @@ public class JobAdvertisementApplicationService {
 
     private List<Occupation> enrichAndToOccupations(List<OccupationDto> occupationDtos) {
         return occupationDtos.stream()
-                    .map(this::toOccupation)
-                    .map(this::enrichOccupationWithProfessionCodes)
-                    .collect(toList());
+                .map(this::toOccupation)
+                .map(this::enrichOccupationWithProfessionCodes)
+                .collect(toList());
     }
 
     public void reject(RejectionDto rejectionDto) {
