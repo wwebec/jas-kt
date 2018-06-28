@@ -138,8 +138,11 @@ public class JobAdvertisementMailEventListener {
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     void onCancelled(JobAdvertisementCancelledEvent event) {
-        LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
+        if (jobAdvertisement.getSourceSystem().equals(SourceSystem.API) && (jobAdvertisement.getStellennummerAvam() == null)) {
+            return;
+        }
+        LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
         if(jobAdvertisement.getContact() != null) {
             contactLocale = jobAdvertisement.getContact().getLanguage();
