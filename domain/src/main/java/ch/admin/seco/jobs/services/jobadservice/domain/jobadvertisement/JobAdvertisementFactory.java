@@ -76,6 +76,7 @@ public class JobAdvertisementFactory {
                 .setId(new JobAdvertisementId())
                 .setStatus(JobAdvertisementStatus.APPROVED)
                 .setSourceSystem(SourceSystem.RAV)
+                .setStellennummerEgov(stellennummerEgovGenerator.nextStringValue())
                 .setStellennummerAvam(creator.getStellennummerAvam())
                 .setReportingObligation(creator.isReportingObligation())
                 .setReportingObligationEndDate(creator.getReportingObligationEndDate())
