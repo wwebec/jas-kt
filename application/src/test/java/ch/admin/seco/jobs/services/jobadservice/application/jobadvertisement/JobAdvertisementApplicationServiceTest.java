@@ -196,10 +196,13 @@ public class JobAdvertisementApplicationServiceTest {
     public void createFromX28() {
         //Prepare
         CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto(
+                null,
+                null,
                 "title",
                 "description",
                 "fingerprint",
                 "url",
+                null,
                 new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
                 new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
                 new CreateLocationDto("remarks", "city", "postalCode", "CH"),
@@ -226,10 +229,13 @@ public class JobAdvertisementApplicationServiceTest {
     public void createFromX28WithEmptyCountry() {
         //Prepare
         CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto(
+                null,
+                null,
                 "title",
                 "description",
                 "fingerprint",
                 "url",
+                null,
                 new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
                 new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
                 new CreateLocationDto(null, "city", "postalCode", null),

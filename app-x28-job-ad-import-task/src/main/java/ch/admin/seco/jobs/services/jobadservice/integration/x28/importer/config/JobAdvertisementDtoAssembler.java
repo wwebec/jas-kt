@@ -5,6 +5,7 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebro
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -16,37 +17,46 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.safety.Whitelist;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 
 class JobAdvertisementDtoAssembler {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobAdvertisementDtoAssembler.class);
+
     private static final Pattern COUNTRY_ZIPCODE_CITY_PATTERN = Pattern.compile("\\b(([A-Z]{2,3})?[ -]+)?(\\d{4,5})? ?([\\wäöüéèàâôÄÖÜÉÈÀ /.-]+)");
     private static final Pattern CITY_CANTON_PATTERN = Pattern.compile("(.* |^)\\(?([A-Z]{2})\\)?( \\d)?$");
     private static final String LICHTENSTEIN_ISO_CODE = "LI";
     private static final String ORACLE_DATE_FORMAT = "yyyy-MM-dd-HH.mm.ss.SSSSSS";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(ORACLE_DATE_FORMAT);
+    private static final EmailValidator EMAIL_VALIDATOR = new EmailValidator();
 
-    CreateJobAdvertisementFromX28Dto createFromX28(Oste x28JobAdvertisement) {
+    CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto(Oste x28JobAdvertisement) {
         return new CreateJobAdvertisementFromX28Dto(
+                x28JobAdvertisement.getStellennummerEGov(),
+                x28JobAdvertisement.getStellennummerAvam(),
                 sanitize(x28JobAdvertisement.getBezeichnung()),
                 sanitize(x28JobAdvertisement.getBeschreibung()),
                 x28JobAdvertisement.getFingerprint(),
                 x28JobAdvertisement.getUrl(),
+                createContact(x28JobAdvertisement),
                 createEmployment(x28JobAdvertisement),
                 createCompany(x28JobAdvertisement),
                 createLocation(x28JobAdvertisement),
@@ -80,14 +90,6 @@ class JobAdvertisementDtoAssembler {
             );
         }
         return null;
-    }
-
-    UpdateJobAdvertisementFromX28Dto updateFromX28(Oste x28JobAdvertisement) {
-        return new UpdateJobAdvertisementFromX28Dto(
-                x28JobAdvertisement.getStellennummerEGov(),
-                x28JobAdvertisement.getFingerprint(),
-                createProfessionCodes(x28JobAdvertisement)
-        );
     }
 
     private String createProfessionCodes(Oste x28JobAdvertisement) {
@@ -157,6 +159,24 @@ class JobAdvertisementDtoAssembler {
         );
     }
 
+    private ContactDto createContact(Oste x28JobAdvertisement) {
+        if (hasText(x28JobAdvertisement.getKpAnredeCode()) ||
+                hasText(x28JobAdvertisement.getKpVorname()) ||
+                hasText(x28JobAdvertisement.getKpName()) ||
+                hasText(x28JobAdvertisement.getKpTelefonNr()) ||
+                hasText(x28JobAdvertisement.getKpEMail())) {
+            return new ContactDto(
+                    hasText(x28JobAdvertisement.getKpAnredeCode()) ? AvamCodeResolver.SALUTATIONS.getRight(x28JobAdvertisement.getKpAnredeCode()) : Salutation.MR,
+                    x28JobAdvertisement.getKpVorname(),
+                    x28JobAdvertisement.getKpName(),
+                    sanitizePhoneNumber(x28JobAdvertisement.getKpTelefonNr(), x28JobAdvertisement),
+                    sanitizeEmail(x28JobAdvertisement.getKpEMail(), x28JobAdvertisement),
+                    "de" // Not defined in this AVAM version
+            );
+        }
+        return null;
+    }
+
     private EmploymentDto createEmployment(Oste x28JobAdvertisement) {
         LocalDate startDate = parseDate(x28JobAdvertisement.getStellenantritt());
         LocalDate endDate = parseDate(x28JobAdvertisement.getVertragsdauer());
@@ -182,6 +202,39 @@ class JobAdvertisementDtoAssembler {
             return sanitizedText.replaceAll("[^\\p{InBasic_Latin}\\p{InLatin-1Supplement}]", "-");
         }
         return text;
+    }
+
+    /*
+     * Check for a valid phone number and remove remarks.
+     */
+    private String sanitizePhoneNumber(String phone, Oste x28JobAdvertisement) {
+        if (hasText(phone)) {
+            try {
+                Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().parse(phone, "CH");
+                if (PhoneNumberUtil.getInstance().isValidNumber(phoneNumber)) {
+                    return PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+                }
+            } catch (NumberParseException e) {
+                LOGGER.warn("JobAd fingerprint: {} has invalid phone number: {}", x28JobAdvertisement.getFingerprint(), phone);
+                String[] phoneParts = phone.split("[^\\d\\(\\)\\+ ]");
+                if (phoneParts.length > 1) {
+                    return sanitizePhoneNumber(phoneParts[0], x28JobAdvertisement);
+                }
+            }
+        }
+        return null;
+    }
+
+    private String sanitizeEmail(String testObject, Oste x28JobAdvertisement) {
+        if (hasText(testObject)) {
+            String email = trimAllWhitespace(testObject).replace("'", "");
+            if (EMAIL_VALIDATOR.isValid(email, null)) {
+                return email;
+            } else {
+                LOGGER.warn("JobAd fingerprint: {} has invalid email: {}", x28JobAdvertisement.getFingerprint(), testObject);
+            }
+        }
+        return null;
     }
 
     private CreateLocationDto extractLocation(String localityText) {

@@ -186,6 +186,7 @@ public class JobAdvertisementApplicationService {
                 .setX28OccupationCodes(createJobAdvertisementFromX28Dto.getProfessionCodes())
                 .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
                 .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
+                .setPublicContact(toPublicContact(createJobAdvertisementFromX28Dto.getContact()))
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkills()))
                 .build();
 
@@ -198,8 +199,11 @@ public class JobAdvertisementApplicationService {
             publicationEndDate = publicationStartDate.plusDays(PUBLICATION_MAX_DAYS);
         }
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(currentUserContext.getAuditUser())
+                .setStellennummerEgov(createJobAdvertisementFromX28Dto.getStellennummerEgov())
+                .setStellennummerAvam(createJobAdvertisementFromX28Dto.getStellennummerAvam())
                 .setFingerprint(createJobAdvertisementFromX28Dto.getFingerprint())
                 .setJobContent(jobContent)
+                .setContact(toContact(createJobAdvertisementFromX28Dto.getContact()))
                 .setPublication(
                         new Publication.Builder()
                                 .setStartDate(publicationStartDate)

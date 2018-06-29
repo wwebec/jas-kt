@@ -1,9 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -12,6 +9,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class CreateJobAdvertisementFromX28Dto {
+
+    private String stellennummerEgov;
+
+    private String stellennummerAvam;
 
     @NotBlank
     private String title;
@@ -23,6 +24,8 @@ public class CreateJobAdvertisementFromX28Dto {
     private String fingerprint;
 
     private String externalUrl;
+
+    private ContactDto contact;
 
     @NotNull
     private EmploymentDto employment;
@@ -48,11 +51,14 @@ public class CreateJobAdvertisementFromX28Dto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromX28Dto(String title, String description, String fingerprint, String externalUrl, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate) {
+    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title, String description, String fingerprint, String externalUrl, ContactDto contact, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate) {
+        this.stellennummerEgov = stellennummerEgov;
+        this.stellennummerAvam = stellennummerAvam;
         this.title = title;
         this.description = description;
         this.fingerprint = fingerprint;
         this.externalUrl = externalUrl;
+        this.contact = contact;
         this.employment = employment;
         this.company = company;
         this.location = location;
@@ -61,6 +67,22 @@ public class CreateJobAdvertisementFromX28Dto {
         this.languageSkills = languageSkills;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
+    }
+
+    public String getStellennummerEgov() {
+        return stellennummerEgov;
+    }
+
+    public void setStellennummerEgov(String stellennummerEgov) {
+        this.stellennummerEgov = stellennummerEgov;
+    }
+
+    public String getStellennummerAvam() {
+        return stellennummerAvam;
+    }
+
+    public void setStellennummerAvam(String stellennummerAvam) {
+        this.stellennummerAvam = stellennummerAvam;
     }
 
     public String getTitle() {
@@ -93,6 +115,14 @@ public class CreateJobAdvertisementFromX28Dto {
 
     public void setExternalUrl(String externalUrl) {
         this.externalUrl = externalUrl;
+    }
+
+    public ContactDto getContact() {
+        return contact;
+    }
+
+    public void setContact(ContactDto contact) {
+        this.contact = contact;
     }
 
     public EmploymentDto getEmployment() {
