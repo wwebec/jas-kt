@@ -218,7 +218,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void update(JobAdvertisementUpdater updater) {
-        checkIfEndStatus();
         if (applyUpdates(updater)) {
             DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED, this));
         }
@@ -341,12 +340,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 ", contact=" + contact +
                 ", publication=" + publication +
                 '}';
-    }
-
-    private void checkIfEndStatus() {
-        if (this.status.isInAnyStates(JobAdvertisementStatus.REJECTED, JobAdvertisementStatus.CANCELLED, JobAdvertisementStatus.ARCHIVED)) {
-            throw new IllegalStateException(String.format("JobAdvertisement must not be in a end status like: %s", this.status));
-        }
     }
 
     private void checkViolations() {
