@@ -99,6 +99,8 @@ public class JobAdvertisementFactory {
                 .setId(new JobAdvertisementId())
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setSourceSystem(findSourceSystemForExtern(creator))
+                .setStellennummerEgov(creator.getStellennummerEgov())
+                .setStellennummerAvam(creator.getStellennummerAvam())
                 .setFingerprint(creator.getFingerprint())
                 .setReportToAvam(false)
                 .setJobContent(creator.getJobContent())
