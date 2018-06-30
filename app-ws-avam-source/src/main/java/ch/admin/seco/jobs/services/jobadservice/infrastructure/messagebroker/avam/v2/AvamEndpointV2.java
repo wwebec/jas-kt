@@ -103,7 +103,8 @@ public class AvamEndpointV2 {
     }
 
     private boolean isFromJobroom(WSOsteEgov avamJobAdvertisement) {
-        return hasText(avamJobAdvertisement.getQuelleCode()) && avamJobAdvertisement.getQuelleCode().equals(AvamCodeResolver.SOURCE_SYSTEM.getLeft(SourceSystem.JOBROOM));
+        return (AvamCodeResolver.SOURCE_SYSTEM.getLeft(SourceSystem.JOBROOM).equals(avamJobAdvertisement.getQuelleCode())
+                || AvamCodeResolver.SOURCE_SYSTEM.getLeft(SourceSystem.API).equals(avamJobAdvertisement.getQuelleCode()));
     }
 
     private InsertOsteResponse response(String returnCode) {
