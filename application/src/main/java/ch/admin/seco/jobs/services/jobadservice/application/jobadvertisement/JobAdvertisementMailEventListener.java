@@ -190,8 +190,8 @@ public class JobAdvertisementMailEventListener {
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
     }
 
-    private String nullSafeFormatLocalDate(LocalDate reportingObligationEndDate) {
-        return (reportingObligationEndDate != null) ? reportingObligationEndDate.format(DATE_FORMATTER) : null;
+    private String nullSafeFormatLocalDate(LocalDate date) {
+        return (date != null) ? date.format(DATE_FORMATTER) : null;
     }
 
 }
