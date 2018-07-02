@@ -73,7 +73,6 @@ public class JobAdvertisementMailEventListener {
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         variables.put("jobCenter", jobCenter);
-        variables.put("reportingObligationEndDate",(jobAdvertisement.getReportingObligationEndDate() != null) ? jobAdvertisement.getReportingObligationEndDate().format(DATE_FORMATTER) : null);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
@@ -104,7 +103,7 @@ public class JobAdvertisementMailEventListener {
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         variables.put("jobCenter", jobCenter);
-        variables.put("reportingObligationEndDate",(jobAdvertisement.getReportingObligationEndDate() != null) ? jobAdvertisement.getReportingObligationEndDate().format(DATE_FORMATTER) : null);
+        variables.put("reportingObligationEndDate", formattedReportingObligationEndDateOrNull(jobAdvertisement));
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
@@ -188,6 +187,10 @@ public class JobAdvertisementMailEventListener {
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
+    }
+
+    private String formattedReportingObligationEndDateOrNull(JobAdvertisement jobAdvertisement) {
+        return (jobAdvertisement.getReportingObligationEndDate() != null) ? jobAdvertisement.getReportingObligationEndDate().format(DATE_FORMATTER) : null;
     }
 
 }
