@@ -29,6 +29,7 @@ import java.util.Optional;
 public class JobAdvertisementMailEventListener {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementMailEventListener.class);
 
     private static final String EMAIL_DELIMITER = "\\s*;\\s*";
