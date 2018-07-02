@@ -18,6 +18,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -26,6 +28,8 @@ import java.util.Optional;
 @Component
 public class JobAdvertisementMailEventListener {
 
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementMailEventListener.class);
 
     private static final String EMAIL_DELIMITER = "\\s*;\\s*";
@@ -101,6 +105,7 @@ public class JobAdvertisementMailEventListener {
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         variables.put("jobCenter", jobCenter);
+        variables.put("reportingObligationEndDate", nullSafeFormatLocalDate(jobAdvertisement.getReportingObligationEndDate()));
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
@@ -184,6 +189,10 @@ public class JobAdvertisementMailEventListener {
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));
+    }
+
+    private String nullSafeFormatLocalDate(LocalDate date) {
+        return (date != null) ? date.format(DATE_FORMATTER) : null;
     }
 
 }
