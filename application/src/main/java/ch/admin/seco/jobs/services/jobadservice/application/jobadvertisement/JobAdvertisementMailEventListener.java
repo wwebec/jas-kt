@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.Optional;
 @Component
 public class JobAdvertisementMailEventListener {
 
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementMailEventListener.class);
 
     private static final String EMAIL_DELIMITER = "\\s*;\\s*";
@@ -71,6 +73,7 @@ public class JobAdvertisementMailEventListener {
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         variables.put("jobCenter", jobCenter);
+        variables.put("reportingObligationEndDate",(jobAdvertisement.getReportingObligationEndDate() != null) ? jobAdvertisement.getReportingObligationEndDate().format(DATE_FORMATTER) : null);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
@@ -101,6 +104,7 @@ public class JobAdvertisementMailEventListener {
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         variables.put("jobCenter", jobCenter);
+        variables.put("reportingObligationEndDate",(jobAdvertisement.getReportingObligationEndDate() != null) ? jobAdvertisement.getReportingObligationEndDate().format(DATE_FORMATTER) : null);
         mailSenderService.send(
                 new MailSenderData.Builder()
                         .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
