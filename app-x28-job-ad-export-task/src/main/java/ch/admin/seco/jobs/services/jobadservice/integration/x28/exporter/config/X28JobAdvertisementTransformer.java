@@ -6,17 +6,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import org.springframework.batch.item.ItemProcessor;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobContent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.PublicContact;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadexport.Oste;
 
 public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertisement, Oste> {
@@ -32,6 +24,7 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
         x28JobAdvertisement.setStellennummerEGov(jobAdvertisement.getStellennummerEgov());
         x28JobAdvertisement.setFingerprint(jobAdvertisement.getFingerprint());
         x28JobAdvertisement.setArbeitsamtbereich(jobAdvertisement.getJobCenterCode());
+
         mapTitleAndDescription(jobContent.getJobDescriptions(), x28JobAdvertisement);
         mapOccupation(jobContent.getOccupations(), x28JobAdvertisement);
         mapLocation(jobContent.getLocation(), x28JobAdvertisement);
@@ -39,6 +32,7 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
         mapEmployment(jobContent.getEmployment(), x28JobAdvertisement);
         mapPublicContact(jobContent.getPublicContact(), x28JobAdvertisement);
         mapLanguageSkills(jobContent.getLanguageSkills(), x28JobAdvertisement);
+
         return x28JobAdvertisement;
     }
 
@@ -47,32 +41,32 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
             if (languageSkills.size() >= 1) {
                 LanguageSkill languageSkill = languageSkills.get(0);
                 x28JobAdvertisement.setSk1SpracheCode(languageSkill.getLanguageIsoCode());
-                x28JobAdvertisement.setSk1SchriftlichCode(languageSkill.getWrittenLevel().name());
-                x28JobAdvertisement.setSk1MuendlichCode(languageSkill.getSpokenLevel().name());
+                x28JobAdvertisement.setSk1SchriftlichCode(safeString(languageSkill.getWrittenLevel()));
+                x28JobAdvertisement.setSk1MuendlichCode(safeString(languageSkill.getSpokenLevel()));
             }
             if (languageSkills.size() >= 2) {
                 LanguageSkill languageSkill = languageSkills.get(1);
                 x28JobAdvertisement.setSk2SpracheCode(languageSkill.getLanguageIsoCode());
-                x28JobAdvertisement.setSk2SchriftlichCode(languageSkill.getWrittenLevel().name());
-                x28JobAdvertisement.setSk2MuendlichCode(languageSkill.getSpokenLevel().name());
+                x28JobAdvertisement.setSk2SchriftlichCode(safeString(languageSkill.getWrittenLevel()));
+                x28JobAdvertisement.setSk2MuendlichCode(safeString(languageSkill.getSpokenLevel()));
             }
             if (languageSkills.size() >= 3) {
                 LanguageSkill languageSkill = languageSkills.get(2);
                 x28JobAdvertisement.setSk3SpracheCode(languageSkill.getLanguageIsoCode());
-                x28JobAdvertisement.setSk3SchriftlichCode(languageSkill.getWrittenLevel().name());
-                x28JobAdvertisement.setSk3MuendlichCode(languageSkill.getSpokenLevel().name());
+                x28JobAdvertisement.setSk3SchriftlichCode(safeString(languageSkill.getWrittenLevel()));
+                x28JobAdvertisement.setSk3MuendlichCode(safeString(languageSkill.getSpokenLevel()));
             }
             if (languageSkills.size() >= 4) {
                 LanguageSkill languageSkill = languageSkills.get(3);
                 x28JobAdvertisement.setSk4SpracheCode(languageSkill.getLanguageIsoCode());
-                x28JobAdvertisement.setSk4SchriftlichCode(languageSkill.getWrittenLevel().name());
-                x28JobAdvertisement.setSk4MuendlichCode(languageSkill.getSpokenLevel().name());
+                x28JobAdvertisement.setSk4SchriftlichCode(safeString(languageSkill.getWrittenLevel()));
+                x28JobAdvertisement.setSk4MuendlichCode(safeString(languageSkill.getSpokenLevel()));
             }
             if (languageSkills.size() >= 5) {
                 LanguageSkill languageSkill = languageSkills.get(4);
                 x28JobAdvertisement.setSk5SpracheCode(languageSkill.getLanguageIsoCode());
-                x28JobAdvertisement.setSk5SchriftlichCode(languageSkill.getWrittenLevel().name());
-                x28JobAdvertisement.setSk5MuendlichCode(languageSkill.getSpokenLevel().name());
+                x28JobAdvertisement.setSk5SchriftlichCode(safeString(languageSkill.getWrittenLevel()));
+                x28JobAdvertisement.setSk5MuendlichCode(safeString(languageSkill.getSpokenLevel()));
             }
         }
     }
@@ -87,8 +81,15 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
 
     private void mapPublication(Publication publication, Oste x28JobAdvertisement) {
         if (publication != null) {
-            x28JobAdvertisement.setAnmeldeDatum(DATE_FORMATTER.format(publication.getStartDate().atStartOfDay()));
-            x28JobAdvertisement.setGueltigkeit(DATE_FORMATTER.format(publication.getEndDate().atStartOfDay().plusDays(1).minus(1, ChronoUnit.SECONDS)));
+
+            if (publication.getStartDate() != null) {
+                x28JobAdvertisement.setAnmeldeDatum(DATE_FORMATTER.format(publication.getStartDate().atStartOfDay()));
+            }
+
+            if (publication.getEndDate() != null) {
+                x28JobAdvertisement.setGueltigkeit(DATE_FORMATTER.format(publication.getEndDate().atStartOfDay().plusDays(1).minus(1, ChronoUnit.SECONDS)));
+            }
+
             x28JobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
             x28JobAdvertisement.setEuresPublikation(publication.isEuresDisplay());
         }
@@ -119,32 +120,48 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
                 Occupation occupation = occupations.get(0);
                 x28JobAdvertisement.setBq1AvamBerufNr(occupation.getAvamOccupationCode());
                 x28JobAdvertisement.setBq1AusbildungCode(occupation.getEducationCode());
-                x28JobAdvertisement.setBq1ErfahrungCode(occupation.getWorkExperience().toString());
+                x28JobAdvertisement.setBq1ErfahrungCode(safeString(occupation.getWorkExperience()));
             }
 
             if (occupations.size() >= 2) {
                 Occupation occupation = occupations.get(1);
                 x28JobAdvertisement.setBq2AvamBerufNr(occupation.getAvamOccupationCode());
                 x28JobAdvertisement.setBq2AusbildungCode(occupation.getEducationCode());
-                x28JobAdvertisement.setBq2ErfahrungCode(occupation.getWorkExperience().toString());
+                x28JobAdvertisement.setBq2ErfahrungCode(safeString(occupation.getWorkExperience()));
             }
 
             if (occupations.size() >= 3) {
                 Occupation occupation = occupations.get(1);
                 x28JobAdvertisement.setBq3AvamBerufNr(occupation.getAvamOccupationCode());
                 x28JobAdvertisement.setBq3AusbildungCode(occupation.getEducationCode());
-                x28JobAdvertisement.setBq3ErfahrungCode(occupation.getWorkExperience().toString());
+                x28JobAdvertisement.setBq3ErfahrungCode(safeString(occupation.getWorkExperience()));
             }
         }
     }
 
     private void mapPublicContact(PublicContact publicContact, Oste x28JobAdvertisement) {
         if (publicContact != null) {
-            x28JobAdvertisement.setKpAnredeCode(publicContact.getSalutation().toString());
+            x28JobAdvertisement.setKpAnredeCode(safeString(publicContact.getSalutation()));
             x28JobAdvertisement.setKpName(publicContact.getLastName());
             x28JobAdvertisement.setKpVorname(publicContact.getFirstName());
             x28JobAdvertisement.setKpEMail(publicContact.getEmail());
             x28JobAdvertisement.setKpTelefonNr(publicContact.getPhone());
         }
+    }
+
+    private static String safeString(LanguageLevel languageLevel) {
+        if (languageLevel != null) {
+            return languageLevel.name();
+        }
+
+        return null;
+    }
+
+    private static String safeString(Object object) {
+        if (object != null) {
+            return object.toString();
+        }
+
+        return null;
     }
 }
