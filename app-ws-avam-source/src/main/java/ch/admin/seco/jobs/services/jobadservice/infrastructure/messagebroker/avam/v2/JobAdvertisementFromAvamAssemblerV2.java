@@ -130,7 +130,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                     avamJobAdvertisement.getKpName(),
                     sanitizePhoneNumber(avamJobAdvertisement.getKpTelefonNr(), avamJobAdvertisement),
                     sanitizeEmail(avamJobAdvertisement.getKpEmail(), avamJobAdvertisement),
-                    "de" // Not defined in this AVAM version
+                    "" // Not defined in this AVAM version
             );
         }
         return null;
