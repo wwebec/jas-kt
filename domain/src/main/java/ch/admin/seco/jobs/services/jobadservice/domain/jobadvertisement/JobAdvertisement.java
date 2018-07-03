@@ -352,16 +352,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 employment.getStartDate()
         );
         violations.addIfTrue(
-                employment.isImmediately() && (employment.getStartDate() != null),
-                "Immediately can't be true if startDate %s is set",
-                employment.getStartDate()
-        );
-        violations.addIfTrue(
-                employment.isPermanent() && (employment.getEndDate() != null),
-                "Permanent can't be true if endDate %s is set",
-                employment.getEndDate()
-        );
-        violations.addIfTrue(
                 (employment.getWorkloadPercentageMin() <= 0) || (employment.getWorkloadPercentageMin() > 100),
                 "WorkloadPercentageMin %d is out of range [1..100]",
                 employment.getWorkloadPercentageMin()
