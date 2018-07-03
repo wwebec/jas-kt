@@ -9,7 +9,7 @@
         <p th:text="#{mail.jobAd.refined.body.paragraph1(${jobAdvertisement.stellennummerEgov})}"></p>
         <em th:if="${jobAdvertisement.reportingObligation}" th:text="#{mail.jobAd.refined.body.reporting.obligation}"></em>
         <br>
-        <b th:if="${jobAdvertisement.reportingObligation}" th:text="#{mail.jobAd.refined.body.reporting.obligation.date(${reportingObligationEndDate})}"></b>
+        <strong th:if="${jobAdvertisement.reportingObligation}" th:text="#{mail.jobAd.refined.body.reporting.obligation.date(${reportingObligationEndDate})}"></strong>
         <p th:text="#{mail.jobAd.refined.body.paragraph2}"></p>
         <div th:text="${jobCenter?.address?.name}"></div>
         <span th:text="${jobCenter?.address?.street}"></span>

@@ -11,8 +11,8 @@
     <em th:if="${jobAdvertisement.reportingObligation}"
         th:text="#{mail.jobAd.refined.body.reporting.obligation_de}"></em>
     <br>
-    <b th:if="${jobAdvertisement.reportingObligation}"
-       th:text="#{mail.jobAd.refined.body.reporting.obligation.date_de(${reportingObligationEndDate})}"></b>
+    <strong th:if="${jobAdvertisement.reportingObligation}"
+       th:text="#{mail.jobAd.refined.body.reporting.obligation.date_de(${reportingObligationEndDate})}"></strong>
     <p th:text="#{mail.jobAd.refined.body.paragraph2_de}"></p>
     <div th:text="${jobCenter?.address?.name}"></div>
     <span th:text="${jobCenter?.address?.street}"></span>
@@ -40,8 +40,8 @@
     <em th:if="${jobAdvertisement.reportingObligation}"
        th:text="#{mail.jobAd.refined.body.reporting.obligation_fr}"></em>
     <br>
-    <b th:if="${jobAdvertisement.reportingObligation}"
-        th:text="#{mail.jobAd.refined.body.reporting.obligation.date_fr(${reportingObligationEndDate})}"></b>
+    <strong th:if="${jobAdvertisement.reportingObligation}"
+        th:text="#{mail.jobAd.refined.body.reporting.obligation.date_fr(${reportingObligationEndDate})}"></strong>
     <p th:text="#{mail.jobAd.refined.body.paragraph2_fr}"></p>
     <div th:text="${jobCenter?.address?.name}"></div>
     <span th:text="${jobCenter?.address?.street}"></span>
@@ -70,8 +70,8 @@
     <em th:if="${jobAdvertisement.reportingObligation}"
         th:text="#{mail.jobAd.refined.body.reporting.obligation_it}"></em>
     <br>
-    <b th:if="${jobAdvertisement.reportingObligation}"
-       th:text="#{mail.jobAd.refined.body.reporting.obligation.date_it(${reportingObligationEndDate})}"></b>
+    <strong th:if="${jobAdvertisement.reportingObligation}"
+       th:text="#{mail.jobAd.refined.body.reporting.obligation.date_it(${reportingObligationEndDate})}"></strong>
     <p th:text="#{mail.jobAd.refined.body.paragraph2_it}"></p>
     <div th:text="${jobCenter?.address?.name}"></div>
     <span th:text="${jobCenter?.address?.street}"></span>
@@ -95,10 +95,10 @@
 <br>
 <hr>
 <br>
-<p th:text="#{mail.jobAd.footer.paragraph1_multilanguage}"></p>
-<div th:text="#{mail.jobAd.footer.details1_multilanguage}"></div>
-<div th:text="#{mail.jobAd.footer.details2_multilanguage}"></div>
-<div th:text="#{mail.jobAd.footer.details3_multilanguage}"></div>
+<p th:text="#{mail.jobAd.footer.paragraph1_multilingual}"></p>
+<div th:text="#{mail.jobAd.footer.details1_multilingual}"></div>
+<div th:text="#{mail.jobAd.footer.details2_multilingual}"></div>
+<div th:text="#{mail.jobAd.footer.details3_multilingual}"></div>
 <br>
 </body>
 </html>
