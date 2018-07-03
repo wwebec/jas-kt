@@ -66,6 +66,10 @@ public class Contact implements ValueObject<Contact> {
         return language;
     }
 
+    void setLanguage(Locale language) {
+        this.language = language;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

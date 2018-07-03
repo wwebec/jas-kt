@@ -6,9 +6,7 @@
     </head>
     <body>
         <p th:text="#{mail.jobAd.cancelled.header}"></p>
-        <div th:text="#{mail.jobAd.cancelled.body.paragraph1.prefix}"></div>&nbsp;
-        <div th:text="${stellennummerEgov}"></div>&nbsp;
-        <div th:text="#{mail.jobAd.cancelled.body.paragraph1.suffix}"></div>
+        <p th:text="#{mail.jobAd.cancelled.body.paragraph1(${jobAdvertisement.stellennummerEgov})}"></p>
         <p th:text="#{mail.jobAd.cancelled.body.paragraph2}"></p>
         <div th:text="${jobCenter?.address?.name}"></div>
         <span th:text="${jobCenter?.address?.street}"></span>

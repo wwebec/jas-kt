@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Objects;
 
 import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
@@ -443,8 +444,21 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         if (updater.hasAnyChangesIn(SECTION_CONTACT) && hasChanged(this.contact, updater.getContact())) {
-            this.contact = updater.getContact();
-            hasChangedAnything = true;
+            if((this.contact != null) && (updater.getContact() != null)) {
+                Locale language = this.contact.getLanguage();
+                this.contact = updater.getContact();
+                this.contact.setLanguage(language);
+                if(hasChanged(this.contact.getSalutation(), updater.getContact().getSalutation()) ||
+                        hasChanged(this.contact.getFirstName(), updater.getContact().getFirstName()) ||
+                        hasChanged(this.contact.getLastName(), updater.getContact().getLastName()) ||
+                        hasChanged(this.contact.getEmail(), updater.getContact().getEmail()) ||
+                        hasChanged(this.contact.getPhone(), updater.getContact().getPhone())) {
+                    hasChangedAnything = true;
+                }
+            } else {
+                this.contact = updater.getContact();
+                hasChangedAnything = true;
+            }
         }
 
         if(updater.hasAnyChangesIn(SECTION_PUBLICATION) && hasChanged(this.publication, updater.getPublication())) {
