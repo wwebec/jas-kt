@@ -170,7 +170,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 avamJobAdvertisement.getUntPostfach(),
                 avamJobAdvertisement.getUntPostfachPlz(),
                 avamJobAdvertisement.getUntPostfachOrt(),
-                avamJobAdvertisement.getUntTelefon(),
+                sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement),
                 avamJobAdvertisement.getUntEmail(),
                 avamJobAdvertisement.getUntUrl(),
                 false
