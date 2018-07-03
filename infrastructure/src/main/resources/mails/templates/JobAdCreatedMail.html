@@ -8,9 +8,10 @@
         <p th:text="#{mail.jobAd.created.header}"></p>
         <p th:text="#{mail.jobAd.created.body.paragraph1}"></p>
         <p th:text="#{mail.jobAd.created.body.paragraph2}"></p>
-        <em th:if="${jobAdvertisement.reportingObligation}" th:text="#{mail.jobAd.created.body.reporting.obligation}"></em>
-        <br>
-        <span th:text="#{mail.jobAd.created.body.paragraph3}"></span>
+        <p th:if="${jobAdvertisement.reportingObligation}">
+            <em th:text="#{mail.jobAd.created.body.reporting.obligation}"></em>
+        </p>
+        <p th:text="#{mail.jobAd.created.body.paragraph3}"></p>
         <div th:text="${jobCenter?.address?.name}"></div>
         <span th:text="${jobCenter?.address?.street}"></span>
         <span th:text="${jobCenter?.address?.houseNumber}"></span>
