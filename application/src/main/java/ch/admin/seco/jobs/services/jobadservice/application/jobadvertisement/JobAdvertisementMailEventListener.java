@@ -38,10 +38,14 @@ public class JobAdvertisementMailEventListener {
     private static final String JOB_ADVERTISEMENT_CREATED_TEMPLATE = "JobAdCreatedMail.html";
     private static final String JOB_ADVERTISEMENT_REFINED_SUBJECT = "mail.jobAd.refined.subject";
     private static final String JOB_ADVERTISEMENT_REFINED_TEMPLATE = "JobAdRefinedMail.html";
+    private static final String JOB_ADVERTISEMENT_REFINED_MULTILANGUAGE_SUBJECT = "mail.jobAd.refined.subject_multilanguage";
+    private static final String JOB_ADVERTISEMENT_REFINED_MULTILANGUAGE_TEMPLATE = "JobAdRefinedMail_multilanguage.html";
     private static final String JOB_ADVERTISEMENT_REJECTED_SUBJECT = "mail.jobAd.rejected.subject";
     private static final String JOB_ADVERTISEMENT_REJECTED_TEMPLATE = "JobAdRejectedMail.html";
     private static final String JOB_ADVERTISEMENT_CANCELLED_SUBJECT = "mail.jobAd.cancelled.subject";
     private static final String JOB_ADVERTISEMENT_CANCELLED_TEMPLATE = "JobAdCancelledMail.html";
+    private static final String JOB_ADVERTISEMENT_CANCELLED_MULTILANGUAGE_SUBJECT = "mail.jobAd.cancelled.subject_multilanguage";
+    private static final String JOB_ADVERTISEMENT_CANCELLED_MULTILANGUAGE_TEMPLATE = "JobAdCancelledMail_multilanguage.html";
     private static final String DEFAULT_LANGUAGE = "";
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
@@ -97,25 +101,37 @@ public class JobAdvertisementMailEventListener {
             return;
         }
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
-        Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
-        if (jobAdvertisement.getContact() != null) {
-            contactLocale = jobAdvertisement.getContact().getLanguage();
-        }
         final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
         Map<String, Object> variables = new HashMap<>();
         variables.put("jobAdvertisement", jobAdvertisement);
         variables.put("jobCenter", jobCenter);
         variables.put("reportingObligationEndDate", nullSafeFormatLocalDate(jobAdvertisement.getReportingObligationEndDate()));
-        mailSenderService.send(
-                new MailSenderData.Builder()
-                        .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
-                        .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REFINED_SUBJECT,
-                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
-                        .setTemplateName(JOB_ADVERTISEMENT_REFINED_TEMPLATE)
-                        .setTemplateVariables(variables)
-                        .setLocale(contactLocale)
-                        .build()
-        );
+	    Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
+	    if (isNullSafeAndNotBlankString(jobAdvertisement)) {
+		    contactLocale = jobAdvertisement.getContact().getLanguage();
+		    mailSenderService.send(
+				    new MailSenderData.Builder()
+						    .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
+						    .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REFINED_SUBJECT,
+								    new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
+						    .setTemplateName(JOB_ADVERTISEMENT_REFINED_TEMPLATE)
+						    .setTemplateVariables(variables)
+						    .setLocale(contactLocale)
+						    .build()
+		    );
+	    } else {
+		    mailSenderService.send(
+				    new MailSenderData.Builder()
+						    .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
+						    .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REFINED_MULTILANGUAGE_SUBJECT,
+								    new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
+						    .setTemplateName(JOB_ADVERTISEMENT_REFINED_MULTILANGUAGE_TEMPLATE)
+						    .setTemplateVariables(variables)
+						    .setLocale(contactLocale)
+						    .build()
+		    );
+	    }
+
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -158,27 +174,42 @@ public class JobAdvertisementMailEventListener {
             return;
         }
         LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
-        Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
-        if (jobAdvertisement.getContact() != null) {
-            contactLocale = jobAdvertisement.getContact().getLanguage();
-        }
         final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
         Map<String, Object> variables = new HashMap<>();
         variables.put("stellennummerEgov", jobAdvertisement.getStellennummerEgov());
         variables.put("jobCenter", jobCenter);
-        mailSenderService.send(
-                new MailSenderData.Builder()
-                        .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
-                        .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CANCELLED_SUBJECT,
-                                new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
-                        .setTemplateName(JOB_ADVERTISEMENT_CANCELLED_TEMPLATE)
-                        .setTemplateVariables(variables)
-                        .setLocale(contactLocale)
-                        .build()
-        );
+	    Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
+	    if (isNullSafeAndNotBlankString(jobAdvertisement)) {
+		    contactLocale = jobAdvertisement.getContact().getLanguage();
+		    mailSenderService.send(
+				    new MailSenderData.Builder()
+						    .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
+						    .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CANCELLED_SUBJECT,
+								    new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
+						    .setTemplateName(JOB_ADVERTISEMENT_CANCELLED_TEMPLATE)
+						    .setTemplateVariables(variables)
+						    .setLocale(contactLocale)
+						    .build()
+		    );
+	    } else {
+		    mailSenderService.send(
+				    new MailSenderData.Builder()
+						    .setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
+						    .setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CANCELLED_MULTILANGUAGE_SUBJECT,
+								    new Object[]{jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
+						    .setTemplateName(JOB_ADVERTISEMENT_CANCELLED_MULTILANGUAGE_TEMPLATE)
+						    .setTemplateVariables(variables)
+						    .setLocale(contactLocale)
+						    .build());
+	    }
+
     }
 
-    private boolean hasNoContactEmail(Contact contact) {
+	private boolean isNullSafeAndNotBlankString(JobAdvertisement jobAdvertisement) {
+		return jobAdvertisement.getContact() != null && !jobAdvertisement.getContact().getLanguage().toString().equals("");
+	}
+
+	private boolean hasNoContactEmail(Contact contact) {
         return ((contact == null) || (contact.getEmail() == null));
     }
 
