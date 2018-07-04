@@ -175,7 +175,7 @@ public class JobAdvertisementMailEventListener {
 		LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
 		final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
 		Map<String, Object> variables = new HashMap<>();
-		variables.put("stellennummerEgov", jobAdvertisement.getStellennummerEgov());
+		variables.put("jobAdvertisement", jobAdvertisement);
 		variables.put("jobCenter", jobCenter);
 		Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
 		String subject = JOB_ADVERTISEMENT_CANCELLED_MULTILINGUAL_SUBJECT;
