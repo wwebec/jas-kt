@@ -37,8 +37,10 @@
             <br>
             <span th:text="${jobCenter?.address?.zipCode}"></span>
             <span th:text="${jobCenter?.address?.city}"></span>
+            <br>
             <span th:text="#{mail.jobAd.cancelled.body.addressblock.tel_fr}"></span>
             <span th:text="${jobCenter?.phone}"></span>
+            <br>
             <span th:text="#{mail.jobAd.cancelled.body.addressblock.fax_fr}"></span>
             <span th:text="${jobCenter?.fax}"></span>
             <br>
@@ -63,6 +65,7 @@
             <br>
             <span th:text="#{mail.jobAd.cancelled.body.addressblock.fax_it}"></span>
             <span th:text="${jobCenter?.fax}"></span>
+            <br>
             <span th:text="#{mail.jobAd.cancelled.body.addressblock.email_it}"></span>
             <span th:text="${jobCenter?.email}"></span>
         </div>
