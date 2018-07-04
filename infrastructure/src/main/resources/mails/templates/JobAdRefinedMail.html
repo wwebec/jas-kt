@@ -6,8 +6,8 @@
     </head>
     <body>
         <p th:text="#{mail.jobAd.refined.header}"></p>
-        <p th:text="#{mail.jobAd.refined.body.paragraph1(${jobAdvertisement.stellennummerEgov})}"></p>
-        <p th:if="${jobAdvertisement.reportingObligation}">
+        <p th:text="#{mail.jobAd.refined.body.paragraph1(${stellennummer})}"></p>
+        <p th:if="${reportingObligation}">
             <em th:text="#{mail.jobAd.refined.body.reporting.obligation}"></em><br>
             <br>
             <strong th:text="#{mail.jobAd.refined.body.reporting.obligation.date(${reportingObligationEndDate})}"></strong>
@@ -29,8 +29,8 @@
         <span th:text="#{mail.jobAd.refined.body.addressblock.email}"></span>
         <span th:text="${jobCenter?.email}"></span>
         <p th:text="#{mail.jobAd.refined.body.paragraph4}"></p>
-        <a th:href="@{|${linkToJobAdDetailPage}${jobAdvertisement.id.value}#{mail.jobAd.token.string}${jobAdvertisement.owner.accessToken}|}"
-           th:text="@{|${linkToJobAdDetailPage}${jobAdvertisement.id.value}#{mail.jobAd.token.string}${jobAdvertisement.owner.accessToken}|}"></a>
+        <a th:href="@{|${linkToJobAdDetailPage}${jobAdvertisementId}#{mail.jobAd.token.string}${accessToken}|}"
+           th:text="@{|${linkToJobAdDetailPage}${jobAdvertisementId}#{mail.jobAd.token.string}${accessToken}|}"></a>
         <p th:text="#{mail.jobAd.footer.paragraph1}"></p>
         <div th:text="#{mail.jobAd.footer.details1}"></div>
         <div th:text="#{mail.jobAd.footer.details2}"></div>
