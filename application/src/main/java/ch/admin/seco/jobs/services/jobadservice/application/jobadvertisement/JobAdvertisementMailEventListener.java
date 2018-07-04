@@ -83,14 +83,18 @@ public class JobAdvertisementMailEventListener {
 			contactLocale = jobAdvertisement.getContact().getLanguage();
 		}
 		final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
+		final String stellennummer = extractStellennummer(jobAdvertisement);
 		Map<String, Object> variables = new HashMap<>();
-		variables.put("jobAdvertisement", jobAdvertisement);
+		variables.put("stellennummer", stellennummer);
+		variables.put("reportingObligation", jobAdvertisement.isReportingObligation());
+		variables.put("jobAdvertisementId", jobAdvertisement.getId().getValue());
+		variables.put("accessToken", jobAdvertisement.getOwner().getAccessToken());
 		variables.put("jobCenter", jobCenter);
 		mailSenderService.send(
 				new MailSenderData.Builder()
 						.setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
 						.setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CREATED_SUBJECT,
-								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
+								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), stellennummer}, contactLocale))
 						.setTemplateName(JOB_ADVERTISEMENT_CREATED_TEMPLATE)
 						.setTemplateVariables(variables)
 						.setLocale(contactLocale)
@@ -109,10 +113,14 @@ public class JobAdvertisementMailEventListener {
 		}
 		LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
 		final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
+		final String stellennummer = extractStellennummer(jobAdvertisement);
 		Map<String, Object> variables = new HashMap<>();
-		variables.put("jobAdvertisement", jobAdvertisement);
-		variables.put("jobCenter", jobCenter);
+		variables.put("stellennummer", stellennummer);
+		variables.put("reportingObligation", jobAdvertisement.isReportingObligation());
 		variables.put("reportingObligationEndDate", nullSafeFormatLocalDate(jobAdvertisement.getReportingObligationEndDate()));
+		variables.put("jobAdvertisementId", jobAdvertisement.getId().getValue());
+		variables.put("accessToken", jobAdvertisement.getOwner().getAccessToken());
+		variables.put("jobCenter", jobCenter);
 		Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
 		String subject = JOB_ADVERTISEMENT_REFINED_MULTILINGUAL_SUBJECT;
 		String template = JOB_ADVERTISEMENT_REFINED_MULTILINGUAL_TEMPLATE;
@@ -125,7 +133,7 @@ public class JobAdvertisementMailEventListener {
 				new MailSenderData.Builder()
 						.setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
 						.setSubject(messageSource.getMessage(subject,
-								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
+								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), stellennummer}, contactLocale))
 						.setTemplateName(template)
 						.setTemplateVariables(variables)
 						.setLocale(contactLocale)
@@ -148,14 +156,16 @@ public class JobAdvertisementMailEventListener {
 			contactLocale = jobAdvertisement.getContact().getLanguage();
 		}
 		final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
+		final String stellennummer = extractStellennummer(jobAdvertisement);
 		Map<String, Object> variables = new HashMap<>();
-		variables.put("jobAdvertisement", jobAdvertisement);
+		variables.put("stellennummer", stellennummer);
+		variables.put("rejectionReason", jobAdvertisement.getRejectionReason());
 		variables.put("jobCenter", jobCenter);
 		mailSenderService.send(
 				new MailSenderData.Builder()
 						.setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
 						.setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REJECTED_SUBJECT,
-								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
+								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), stellennummer}, contactLocale))
 						.setTemplateName(JOB_ADVERTISEMENT_REJECTED_TEMPLATE)
 						.setTemplateVariables(variables)
 						.setLocale(contactLocale)
@@ -174,8 +184,9 @@ public class JobAdvertisementMailEventListener {
 		}
 		LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
 		final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
+		final String stellennummer = extractStellennummer(jobAdvertisement);
 		Map<String, Object> variables = new HashMap<>();
-		variables.put("jobAdvertisement", jobAdvertisement);
+		variables.put("stellennummer", stellennummer);
 		variables.put("jobCenter", jobCenter);
 		Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
 		String subject = JOB_ADVERTISEMENT_CANCELLED_MULTILINGUAL_SUBJECT;
@@ -189,12 +200,22 @@ public class JobAdvertisementMailEventListener {
 				new MailSenderData.Builder()
 						.setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
 						.setSubject(messageSource.getMessage(subject,
-								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), jobAdvertisement.getStellennummerEgov()}, contactLocale))
+								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), stellennummer}, contactLocale))
 						.setTemplateName(template)
 						.setTemplateVariables(variables)
 						.setLocale(contactLocale)
 						.build()
 		);
+	}
+
+	private String extractStellennummer(JobAdvertisement jobAdvertisement) {
+		if(jobAdvertisement.getStellennummerEgov() != null) {
+			return jobAdvertisement.getStellennummerEgov();
+		}
+		if(jobAdvertisement.getStellennummerAvam() != null) {
+			return jobAdvertisement.getStellennummerAvam();
+		}
+		return null;
 	}
 
 	private boolean hasContactLanguage(JobAdvertisement jobAdvertisement) {
