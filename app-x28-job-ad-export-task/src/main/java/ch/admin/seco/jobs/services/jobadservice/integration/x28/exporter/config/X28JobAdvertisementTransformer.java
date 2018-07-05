@@ -39,9 +39,11 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
     }
 
     private void mapApplyChannel(ApplyChannel applyChannel, Oste x28JobAdvertisement) {
-        x28JobAdvertisement.setBewerbungSchriftlich(isNotBlank(applyChannel.getMailAddress()));
-        x28JobAdvertisement.setBewerbungElektronisch(isNotBlank(applyChannel.getFormUrl()) || isNotBlank(applyChannel.getEmailAddress()));
-        x28JobAdvertisement.setBewerbungTelefonisch(isNotBlank(applyChannel.getPhoneNumber()));
+        if (applyChannel != null) {
+            x28JobAdvertisement.setBewerbungSchriftlich(isNotBlank(applyChannel.getMailAddress()));
+            x28JobAdvertisement.setBewerbungElektronisch(isNotBlank(applyChannel.getFormUrl()) || isNotBlank(applyChannel.getEmailAddress()));
+            x28JobAdvertisement.setBewerbungTelefonisch(isNotBlank(applyChannel.getPhoneNumber()));
+        }
     }
 
     private void mapCompany(Company company, Oste x28JobAdvertisement) {
