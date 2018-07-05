@@ -50,9 +50,9 @@ import static org.springframework.util.StringUtils.hasText;
 @Transactional(rollbackFor = {Exception.class})
 public class JobAdvertisementApplicationService {
 
-	private static final int PUBLICATION_MAX_DAYS = 60;
+	public static final int PUBLICATION_MAX_DAYS = 60;
 
-	private static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
+	public static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
 
 	private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
 
