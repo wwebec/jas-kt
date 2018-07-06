@@ -293,7 +293,12 @@ public class JobAdvertisementSearchService {
     private BoolQueryBuilder publicationTypeFilter() {
         final BoolQueryBuilder publicationTypeFilter = boolQuery();
 
-        if (!this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT)) {
+        if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT)) {
+            publicationTypeFilter.must(boolQuery()
+                    .should(termQuery(PATH_PUBLICATION_PUBLIC_DISPLAY, true))
+                    .should(termQuery(PATH_PUBLICATION_RESTRICTED_DISPLAY, true))
+            );
+        } else {
             publicationTypeFilter.must(termQuery(PATH_PUBLICATION_PUBLIC_DISPLAY, true));
             publicationTypeFilter.mustNot(termQuery(PATH_PUBLICATION_RESTRICTED_DISPLAY, true));
         }
@@ -305,7 +310,6 @@ public class JobAdvertisementSearchService {
         int onlineSince = Optional.ofNullable(jobSearchRequest.getOnlineSince()).orElse(ONLINE_SINCE_DAYS);
         String publicationStartDate = String.format("now-%sd/d", onlineSince);
 
-        // todo filter by the last action
         return boolQuery().must(rangeQuery(PATH_PUBLICATION_START_DATE).gte(publicationStartDate));
     }
 
