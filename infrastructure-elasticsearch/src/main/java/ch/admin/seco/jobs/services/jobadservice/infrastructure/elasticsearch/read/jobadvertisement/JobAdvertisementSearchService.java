@@ -71,6 +71,8 @@ public class JobAdvertisementSearchService {
     private static final String PATH_OCCUPATIONS_SBN5_CODE = PATH_OCCUPATIONS + ".sbn5Code";
     private static final String PATH_X28_CODE = PATH_CTX + "jobContent.x28OccupationCodes";
     private static final String PATH_PERMANENT = PATH_CTX + "jobContent.employment.permanent";
+    private static final String PATH_PUBLICATION_RESTRICTED_DISPLAY = PATH_CTX + "publication.restrictedDisplay";
+    private static final String PATH_PUBLICATION_PUBLIC_DISPLAY = PATH_CTX + "publication.publicDisplay";
     private static final String PATH_PUBLICATION_START_DATE = PATH_CTX + "publication.startDate";
     private static final String PATH_TITLE = PATH_CTX + "jobContent.jobDescriptions.title";
     private static final String PATH_STATUS = PATH_CTX + "status";
@@ -280,6 +282,7 @@ public class JobAdvertisementSearchService {
     private QueryBuilder createFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         return mustAll(
                 visibilityFilter(jobSearchRequest),
+                publicationTypeFilter(),
                 publicationStartDateFilter(jobSearchRequest),
                 localityFilter(jobSearchRequest),
                 workingTimeFilter(jobSearchRequest),
@@ -287,11 +290,26 @@ public class JobAdvertisementSearchService {
                 companyFilter(jobSearchRequest.getCompanyName()));
     }
 
+    private BoolQueryBuilder publicationTypeFilter() {
+        final BoolQueryBuilder publicationTypeFilter = boolQuery();
+
+        if (this.currentUserContext.hasRole(Role.JOBSEEKER_CLIENT)) {
+            publicationTypeFilter.must(boolQuery()
+                    .should(termQuery(PATH_PUBLICATION_PUBLIC_DISPLAY, true))
+                    .should(termQuery(PATH_PUBLICATION_RESTRICTED_DISPLAY, true))
+            );
+        } else {
+            publicationTypeFilter.must(termQuery(PATH_PUBLICATION_PUBLIC_DISPLAY, true));
+            publicationTypeFilter.mustNot(termQuery(PATH_PUBLICATION_RESTRICTED_DISPLAY, true));
+        }
+
+        return publicationTypeFilter;
+    }
+
     private BoolQueryBuilder publicationStartDateFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         int onlineSince = Optional.ofNullable(jobSearchRequest.getOnlineSince()).orElse(ONLINE_SINCE_DAYS);
         String publicationStartDate = String.format("now-%sd/d", onlineSince);
 
-        // todo filter by the last action
         return boolQuery().must(rangeQuery(PATH_PUBLICATION_START_DATE).gte(publicationStartDate));
     }
 
@@ -305,15 +323,15 @@ public class JobAdvertisementSearchService {
         return companyFilter;
     }
 
-	private BoolQueryBuilder ownerFilter(String companyId) {
-		BoolQueryBuilder companyFilter = boolQuery();
+    private BoolQueryBuilder ownerFilter(String companyId) {
+        BoolQueryBuilder companyFilter = boolQuery();
 
-		if (isNotBlank(companyId)) {
-			companyFilter.must(termQuery(PATH_OWNER_COMPANY_ID, companyId));
-		}
+        if (isNotBlank(companyId)) {
+            companyFilter.must(termQuery(PATH_OWNER_COMPANY_ID, companyId));
+        }
 
-		return companyFilter;
-	}
+        return companyFilter;
+    }
 
     private BoolQueryBuilder contractTypeFilter(JobAdvertisementSearchRequest jobSearchRequest) {
         BoolQueryBuilder contractTypeFilter = boolQuery();

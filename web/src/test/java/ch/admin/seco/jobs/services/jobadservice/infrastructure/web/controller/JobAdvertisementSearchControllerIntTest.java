@@ -486,6 +486,141 @@ public class JobAdvertisementSearchControllerIntTest {
     }
 
     @Test
+    public void shouldShowPublicationWithRestrictedDisplayForJobSeeker() throws Exception {
+        // GIVEN
+        when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
+        index(createJob(JOB_ADVERTISEMENT_ID_01));
+        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02)); //1 1
+        index(createJob(JOB_ADVERTISEMENT_ID_03));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "3"))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
+        ;
+
+    }
+
+    @Test
+    public void shouldNotShowPublicationWithRestrictedDisplayForAnonymusUsers() throws Exception {
+        // GIVEN
+        index(createJob(JOB_ADVERTISEMENT_ID_01));
+        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02)); //1 1
+        index(createJob(JOB_ADVERTISEMENT_ID_03));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "2"))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
+        ;
+
+    }
+
+    @Test
+    public void shouldNotShowPublicatonWithoutPublicDisplayForAnonymusUsers() throws Exception {
+        // GIVEN
+        index(createJob(JOB_ADVERTISEMENT_ID_01));
+        index(createJobWithPublicationWithoutPublicDisplay(JOB_ADVERTISEMENT_ID_02));  //1 0
+        index(createJob(JOB_ADVERTISEMENT_ID_03));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "2"))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
+        ;
+
+    }
+
+
+    @Test
+    public void shouldShowWithoutPublicDisplayAndWithRestrictedDisplayForJobSeeker() throws Exception {
+        // GIVEN
+        when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
+        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));   //0 0
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "1"))
+                .andExpect(jsonPath("$.*.id").value(JOB_ADVERTISEMENT_ID_02.getValue()))
+        ;
+
+    }
+
+    @Test
+    public void shouldNotShowWithoutPublicDisplayAndWithRestrictedDisplayForAnonymusUser() throws Exception {
+        // GIVEN
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
+        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));   //0 0
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "0"))
+        ;
+    }
+
+    @Test
     public void shouldNotShowRestrictedJobsForAnonymusUsers() throws Exception {
         // GIVEN
         index(createRestrictedJob(JOB_ADVERTISEMENT_ID_01));
@@ -616,6 +751,72 @@ public class JobAdvertisementSearchControllerIntTest {
 
     }
 
+
+    private JobAdvertisement createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(false, false))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
+                .build();
+
+    }
+
+    private JobAdvertisement createJobWithPublicDisplayAndWithRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(true, true))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
+                .build();
+
+    }
+
+    private JobAdvertisement createJobWithoutPublicDisplayAndWithRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(false, true))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
+                .build();
+
+    }
+
+    private JobAdvertisement createJobWithPublicDisplayAndWithoutRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(true, false))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
+                .build();
+
+    }
+
+    private JobAdvertisement createJobWithPublicationWithoutPublicDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(false, true))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
+                .build();
+
+    }
+
     private JobAdvertisement createRestrictedJob(JobAdvertisementId jobAdvertisementId) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
@@ -691,10 +892,10 @@ public class JobAdvertisementSearchControllerIntTest {
 
     private Owner createOwnerWithCompanyId(JobAdvertisementId jobAdvertisementId, String companyId) {
         return new Owner.Builder()
-            .setAccessToken(String.format("access-token-%s", jobAdvertisementId.getValue()))
-            .setCompanyId(companyId)
-            .setUserId(String.format("user-id-%s", jobAdvertisementId.getValue()))
-            .build();
+                .setAccessToken(String.format("access-token-%s", jobAdvertisementId.getValue()))
+                .setCompanyId(companyId)
+                .setUserId(String.format("user-id-%s", jobAdvertisementId.getValue()))
+                .build();
     }
 
     private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem) {
