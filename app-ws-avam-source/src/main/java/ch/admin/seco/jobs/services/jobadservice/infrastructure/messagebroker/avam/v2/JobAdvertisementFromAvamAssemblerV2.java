@@ -160,6 +160,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
     }
 
     private CompanyDto createCompanyDto(WSOsteEgov avamJobAdvertisement) {
+        // This fields are also used for ApplChannel from AVAM
         return new CompanyDto(
                 avamJobAdvertisement.getUntName(),
                 avamJobAdvertisement.getUntStrasse(),
@@ -170,9 +171,9 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 avamJobAdvertisement.getUntPostfach(),
                 avamJobAdvertisement.getUntPostfachPlz(),
                 avamJobAdvertisement.getUntPostfachOrt(),
-                sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement),
-                avamJobAdvertisement.getUntEmail(),
-                avamJobAdvertisement.getUntUrl(),
+                null, // This is only used for ApplyChannel from AVAM
+                null, // This is only used for ApplyChannel from AVAM
+                null, // This is only used for ApplyChannel from AVAM
                 false
         );
     }
