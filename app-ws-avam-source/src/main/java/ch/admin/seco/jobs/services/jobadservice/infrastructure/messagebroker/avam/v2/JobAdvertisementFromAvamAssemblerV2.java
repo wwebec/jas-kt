@@ -160,6 +160,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
     }
 
     private CompanyDto createCompanyDto(WSOsteEgov avamJobAdvertisement) {
+        // This fields are also used for ApplChannel from AVAM
         return new CompanyDto(
                 avamJobAdvertisement.getUntName(),
                 avamJobAdvertisement.getUntStrasse(),
@@ -170,19 +171,19 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 avamJobAdvertisement.getUntPostfach(),
                 avamJobAdvertisement.getUntPostfachPlz(),
                 avamJobAdvertisement.getUntPostfachOrt(),
-                sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement),
-                avamJobAdvertisement.getUntEmail(),
-                avamJobAdvertisement.getUntUrl(),
+                null, // This is only used for ApplyChannel from AVAM
+                null, // This is only used for ApplyChannel from AVAM
+                null, // This is only used for ApplyChannel from AVAM
                 false
         );
     }
 
     private ApplyChannelDto createApplyChannelDto(WSOsteEgov avamJobAdvertisement) {
         return new ApplyChannelDto(
-                createApplyMailAddress(avamJobAdvertisement),
-                sanitizeEmail(avamJobAdvertisement.getUntEmail(), avamJobAdvertisement),
-                sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement),
-                sanitizeUrl(avamJobAdvertisement.getUntUrl(), avamJobAdvertisement),
+                avamJobAdvertisement.isBewerSchriftlich() ? createApplyMailAddress(avamJobAdvertisement) : null,
+                avamJobAdvertisement.isBewerElektronisch() ? sanitizeEmail(avamJobAdvertisement.getUntEmail(), avamJobAdvertisement) : null,
+                avamJobAdvertisement.isBewerTelefonisch() ? sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement) : null,
+                avamJobAdvertisement.isBewerElektronisch() ? sanitizeUrl(avamJobAdvertisement.getUntUrl(), avamJobAdvertisement) : null,
                 avamJobAdvertisement.getBewerAngaben()
         );
     }
