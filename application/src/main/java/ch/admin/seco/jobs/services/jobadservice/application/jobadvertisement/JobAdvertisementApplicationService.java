@@ -281,9 +281,19 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.map(JobAdvertisementDto::toDto).orElse(null);
     }
 
+    public JobAdvertisementDto getByStellennummerAvam(String stellennummerAvam) {
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(stellennummerAvam);
+        return JobAdvertisementDto.toDto(jobAdvertisement);
+    }
+
     public JobAdvertisementDto findByStellennummerEgov(String stellennummerEgov) {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov);
         return jobAdvertisement.map(JobAdvertisementDto::toDto).orElse(null);
+    }
+
+    public JobAdvertisementDto getByStellennummerEgov(String stellennummerEgov) {
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(stellennummerEgov);
+        return JobAdvertisementDto.toDto(jobAdvertisement);
     }
 
     public void inspect(JobAdvertisementId jobAdvertisementId) {
@@ -514,6 +524,11 @@ public class JobAdvertisementApplicationService {
     private JobAdvertisement getJobAdvertisementByStellennummerEgov(String stellennummerEgov) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.EXTERNAL_ID, stellennummerEgov));
+    }
+
+    private JobAdvertisement getJobAdvertisementByStellennummerAvam(String stellennummerAvam) throws AggregateNotFoundException {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam);
+        return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.EXTERNAL_ID, stellennummerAvam));
     }
 
     private JobAdvertisement getJobAdvertisementByAccessToken(String accessToken) {
