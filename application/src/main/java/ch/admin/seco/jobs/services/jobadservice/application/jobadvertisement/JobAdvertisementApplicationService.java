@@ -296,9 +296,10 @@ public class JobAdvertisementApplicationService {
         return JobAdvertisementDto.toDto(jobAdvertisement);
     }
 
-    public JobAdvertisementDto findByFingerprint(String fingerprint) {
+    public JobAdvertisementDto getByFingerprint(String fingerprint) {
         final Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByFingerprint(fingerprint);
-        return jobAdvertisement.map(JobAdvertisementDto::toDto).orElse(null);
+        return jobAdvertisement.map(JobAdvertisementDto::toDto)
+                .orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.EXTERNAL_ID, fingerprint));
     }
 
     public void inspect(JobAdvertisementId jobAdvertisementId) {

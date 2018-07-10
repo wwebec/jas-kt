@@ -64,7 +64,7 @@ public class JobAdvertisementRestController {
 
     @GetMapping("/byFingerprint/{fingerprint}")
     public JobAdvertisementDto getOneByFingerprint(@PathVariable String fingerprint) {
-        return jobAdvertisementApplicationService.findByFingerprint(fingerprint);
+        return jobAdvertisementApplicationService.getByFingerprint(fingerprint);
     }
 
     @PatchMapping("/{id}/cancel")
