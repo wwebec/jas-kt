@@ -3,16 +3,22 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ApiJobDescriptionDto {
 
+    @Size(max=5)
+    @Pattern(regexp = "[a-z]{2}")
     private String languageIsoCode;
 
     @NotBlank
+    @Size(max=255)
     private String title;
 
+    @Size(max=12000)
     private String description;
 
     protected ApiJobDescriptionDto() {

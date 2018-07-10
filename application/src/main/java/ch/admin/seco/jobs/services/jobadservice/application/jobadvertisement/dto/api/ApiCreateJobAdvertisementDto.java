@@ -2,14 +2,17 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
-public class CreateApiJobAdvertisementDto {
+public class ApiCreateJobAdvertisementDto {
 
     private boolean reportToAvam;
 
+    @Size(max = 1024)
     private String externalUrl;
 
+    @Size(max = 255)
     private String externalReference;
 
     @NotNull
@@ -42,11 +45,11 @@ public class CreateApiJobAdvertisementDto {
 
     private ApiPublicContactDto publicContact;
 
-    protected CreateApiJobAdvertisementDto() {
+    protected ApiCreateJobAdvertisementDto() {
         // For reflection libs
     }
 
-    public CreateApiJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ApiContactDto contact, ApiPublicationDto publication, List<ApiJobDescriptionDto> jobDescriptions, ApiCompanyDto company, ApiEmployerDto employer, ApiEmploymentDto employment, ApiCreateLocationDto location, ApiOccupationDto occupation, List<ApiLanguageSkillDto> languageSkills, ApiApplyChannelDto applyChannel, ApiPublicContactDto publicContact) {
+    public ApiCreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ApiContactDto contact, ApiPublicationDto publication, List<ApiJobDescriptionDto> jobDescriptions, ApiCompanyDto company, ApiEmployerDto employer, ApiEmploymentDto employment, ApiCreateLocationDto location, ApiOccupationDto occupation, List<ApiLanguageSkillDto> languageSkills, ApiApplyChannelDto applyChannel, ApiPublicContactDto publicContact) {
         this.reportToAvam = reportToAvam;
         this.externalUrl = externalUrl;
         this.externalReference = externalReference;

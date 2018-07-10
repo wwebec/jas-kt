@@ -4,14 +4,22 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupati
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ApiOccupationDto {
 
     @NotEmpty
+    @Size(max=16)
+    @Pattern(regexp = "[0-9]*")
     private String avamOccupationCode;
+
     private WorkExperience workExperience;
+
+    @Size(max=8)
+    @Pattern(regexp = "[0-9]*")
     private String educationCode;
 
     protected ApiOccupationDto() {

@@ -1,0 +1,13 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="just" id="20180710080000-1">
+        <modifyDataType tableName="JOB_ADVERTISEMENT" columnName="COMPANY_CITY" newDataType="VARCHAR(100)"/>
+        <modifyDataType tableName="JOB_ADVERTISEMENT" columnName="COMPANY_POST_OFFICE_BOX_CITY" newDataType="VARCHAR(100)"/>
+        <modifyDataType tableName="JOB_ADVERTISEMENT" columnName="EMPLOYER_CITY" newDataType="VARCHAR(100)"/>
+        <modifyDataType tableName="JOB_ADVERTISEMENT" columnName="EMPLOYER_COUNTRY_ISO_CODE" newDataType="VARCHAR(2)"/>
+    </changeSet>
+
+</databaseChangeLog>

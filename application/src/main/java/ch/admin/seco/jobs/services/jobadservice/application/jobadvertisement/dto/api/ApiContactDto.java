@@ -1,6 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
-import ch.admin.seco.jobs.services.jobadservice.application.common.validations.EnumContainValue;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 
@@ -9,7 +8,6 @@ import javax.validation.constraints.*;
 public class ApiContactDto {
 
     @NotNull
-    @EnumContainValue(enumClazz = Salutation.class)
     private Salutation salutation;
 
     @NotBlank

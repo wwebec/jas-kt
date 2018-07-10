@@ -3,24 +3,51 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 public class ApiCompanyDto {
 
     @NotBlank
+    @Size(max=255)
     private String name;
+
+    @Size(max=50)
     private String street;
+
+    @Size(max=10)
     private String houseNumber;
+
     @NotBlank
+    @Size(max=10)
     private String postalCode;
+
     @NotBlank
+    @Size(max=100)
     private String city;
+
+    @Size(max=2)
+    @Pattern(regexp = "[a-z]{2}")
     private String countryIsoCode;
+
+    @Size(max=10)
     private String postOfficeBoxNumber;
+
+    @Size(max=10)
     private String postOfficeBoxPostalCode;
+
+    @Size(max=100)
     private String postOfficeBoxCity;
+
+    @Size(max=20)
     private String phone;
+
+    @Size(max=255)
     private String email;
+
+    @Size(max=255)
     private String website;
+
     private boolean surrogate;
 
     protected ApiCompanyDto() {

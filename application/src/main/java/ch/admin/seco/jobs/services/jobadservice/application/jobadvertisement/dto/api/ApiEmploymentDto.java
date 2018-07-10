@@ -3,18 +3,32 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Set;
 
 public class ApiEmploymentDto {
 
     private LocalDate startDate;
+
     private LocalDate endDate;
+
     private boolean shortEmployment;
+
     private boolean immediately;
+
     private boolean permanent;
+
+    @Min(10)
+    @Max(100)
     private int workloadPercentageMin;
+
+    @Min(10)
+    @Max(100)
     private int workloadPercentageMax;
+
     private Set<WorkForm> workForms;
 
     protected ApiEmploymentDto() {
