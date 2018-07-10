@@ -1,15 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.exporter.config;
 
-import static org.springframework.util.CollectionUtils.isEmpty;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadexport.Oste;
+import org.springframework.batch.item.ItemProcessor;
 
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import org.springframework.batch.item.ItemProcessor;
-
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadexport.Oste;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertisement, Oste> {
     private static final String ORACLE_DATE_FORMAT = "yyyy-MM-dd-HH.mm.ss.SSSSSS";
@@ -32,8 +32,35 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
         mapEmployment(jobContent.getEmployment(), x28JobAdvertisement);
         mapPublicContact(jobContent.getPublicContact(), x28JobAdvertisement);
         mapLanguageSkills(jobContent.getLanguageSkills(), x28JobAdvertisement);
+        mapCompany(jobContent.getCompany(), x28JobAdvertisement);
+        mapApplyChannel(jobContent.getApplyChannel(), x28JobAdvertisement);
 
         return x28JobAdvertisement;
+    }
+
+    private void mapApplyChannel(ApplyChannel applyChannel, Oste x28JobAdvertisement) {
+        if (applyChannel != null) {
+            x28JobAdvertisement.setBewerbungSchriftlich(isNotBlank(applyChannel.getMailAddress()));
+            x28JobAdvertisement.setBewerbungElektronisch(isNotBlank(applyChannel.getFormUrl()) || isNotBlank(applyChannel.getEmailAddress()));
+            x28JobAdvertisement.setBewerbungTelefonisch(isNotBlank(applyChannel.getPhoneNumber()));
+        }
+    }
+
+    private void mapCompany(Company company, Oste x28JobAdvertisement) {
+        x28JobAdvertisement.setUntName(company.getName());
+        x28JobAdvertisement.setUntTelefon(company.getPhone());
+        x28JobAdvertisement.setUntEMail(company.getEmail());
+        x28JobAdvertisement.setUntUrl(company.getWebsite());
+
+        x28JobAdvertisement.setUntLand(company.getCountryIsoCode());
+        x28JobAdvertisement.setUntPlz(company.getPostalCode());
+        x28JobAdvertisement.setUntOrt(company.getCity());
+        x28JobAdvertisement.setUntStrasse(company.getStreet());
+        x28JobAdvertisement.setUntHausNr(company.getHouseNumber());
+
+        x28JobAdvertisement.setUntPostfach(company.getPostOfficeBoxNumber());
+        x28JobAdvertisement.setUntPostfachPlz(company.getPostOfficeBoxPostalCode());
+        x28JobAdvertisement.setUntPostfachOrt(company.getPostOfficeBoxCity());
     }
 
     private void mapLanguageSkills(List<LanguageSkill> languageSkills, Oste x28JobAdvertisement) {

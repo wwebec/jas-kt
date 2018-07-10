@@ -144,9 +144,6 @@ public class JobAdvertisementMailEventListener {
 	@TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 	void onRejected(JobAdvertisementRejectedEvent event) {
 		final JobAdvertisement jobAdvertisement = getJobAdvertisement(event.getAggregateId());
-		if (jobAdvertisement.getSourceSystem().equals(SourceSystem.API) && (jobAdvertisement.getStellennummerAvam() == null)) {
-			return;
-		}
 		if (hasNoContactEmail(jobAdvertisement.getContact())) {
 			return;
 		}

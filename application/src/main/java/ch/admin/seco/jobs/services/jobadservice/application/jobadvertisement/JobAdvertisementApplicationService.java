@@ -21,8 +21,10 @@ import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -69,12 +72,12 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(CurrentUserContext currentUserContext,
-                                              JobAdvertisementRepository jobAdvertisementRepository,
-                                              JobAdvertisementFactory jobAdvertisementFactory,
-                                              ReportingObligationService reportingObligationService,
-                                              LocationService locationService,
-                                              ProfessionService professionService,
-                                              JobCenterService jobCenterService) {
+            JobAdvertisementRepository jobAdvertisementRepository,
+            JobAdvertisementFactory jobAdvertisementFactory,
+            ReportingObligationService reportingObligationService,
+            LocationService locationService,
+            ProfessionService professionService,
+            JobCenterService jobCenterService) {
         this.currentUserContext = currentUserContext;
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
@@ -540,7 +543,10 @@ public class JobAdvertisementApplicationService {
         Condition.notNull(location, "Location can't be null");
         String avamOccupationCode = occupation.getAvamOccupationCode();
         String cantonCode = location.getCantonCode();
-        return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
+        if (COUNTRY_ISO_CODE_SWITZERLAND.equals(location.getCountryIsoCode())) {
+            return reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
+        }
+        return false;
     }
 
     private List<JobDescription> toJobDescriptions(List<JobDescriptionDto> jobDescriptionDtos) {

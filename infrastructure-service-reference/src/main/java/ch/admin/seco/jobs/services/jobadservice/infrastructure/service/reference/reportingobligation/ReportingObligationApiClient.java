@@ -15,7 +15,7 @@ public interface ReportingObligationApiClient {
     ReportingObligationResource hasReportingObligation(
             @PathVariable("codeType") ProfessionCodeType professionCodeType,
             @PathVariable("code") String professionCode,
-            @RequestParam("cantonCode") String cantonCode
+            @RequestParam(value = "cantonCode", required = false) String cantonCode
     );
 
 }

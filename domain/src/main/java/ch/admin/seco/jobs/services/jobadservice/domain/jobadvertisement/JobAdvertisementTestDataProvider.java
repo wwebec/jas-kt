@@ -32,7 +32,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
         return jobAdvertisements;
     }
 
-   private JobAdvertisement createJob01() {
+    private JobAdvertisement createJob01() {
         List<JobDescription> jobDescriptions = Collections.singletonList(new JobDescription.Builder()
                 .setLanguage(Locale.GERMAN)
                 .setTitle("Job number 1")
@@ -195,7 +195,13 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     }
 
     public static Publication createPublication() {
+        return createPublication(true, false);
+    }
+
+    public static Publication createPublication(boolean publicDisplay, boolean restrictedDisplay) {
         return new Publication.Builder()
+                .setRestrictedDisplay(restrictedDisplay)
+                .setPublicDisplay(publicDisplay)
                 .setStartDate(TimeMachine.now().toLocalDate())
                 .setEndDate(TimeMachine.now().plusDays(5).toLocalDate())
                 .build();
