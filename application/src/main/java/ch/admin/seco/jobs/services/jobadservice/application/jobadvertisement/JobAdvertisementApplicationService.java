@@ -296,6 +296,12 @@ public class JobAdvertisementApplicationService {
         return JobAdvertisementDto.toDto(jobAdvertisement);
     }
 
+    public JobAdvertisementDto getByFingerprint(String fingerprint) {
+        final Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByFingerprint(fingerprint);
+        return jobAdvertisement.map(JobAdvertisementDto::toDto)
+                .orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.EXTERNAL_ID, fingerprint));
+    }
+
     public void inspect(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         LOG.debug("Starting inspect for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());
