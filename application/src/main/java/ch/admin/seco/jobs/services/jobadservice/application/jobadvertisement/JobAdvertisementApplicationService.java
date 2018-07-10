@@ -308,6 +308,11 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.map(JobAdvertisementDto::toDto).orElse(null);
     }
 
+    public JobAdvertisementDto findByFingerprint(String fingerprint) {
+        final Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByFingerprint(fingerprint);
+        return jobAdvertisement.map(JobAdvertisementDto::toDto).orElse(null);
+    }
+
     public void inspect(JobAdvertisementId jobAdvertisementId) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         LOG.debug("Starting inspect for JobAdvertisementId: '{}'", jobAdvertisementId.getValue());

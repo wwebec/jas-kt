@@ -62,6 +62,10 @@ public class JobAdvertisementRestController {
         return jobAdvertisementApplicationService.findByStellennummerAvam(stellennummerAvam);
     }
 
+    @GetMapping("/byFingerprint/{fingerprint}")
+    public JobAdvertisementDto getOneByFingerprint(@PathVariable String fingerprint) {
+        return jobAdvertisementApplicationService.findByFingerprint(fingerprint);
+    }
 
     @PatchMapping("/{id}/cancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
