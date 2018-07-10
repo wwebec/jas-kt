@@ -98,7 +98,7 @@ public class X28JobAdImportTaskTest {
 
         Message<String> message2 = (Message<String>) messageCollector.forChannel(source.output()).poll();
         assertThat(message2).isNotNull();
-        assertThat(message2.getHeaders().get(ACTION)).isEqualTo(UPDATE_FROM_X28.name());
+        assertThat(message2.getHeaders().get(ACTION)).isEqualTo(CREATE_FROM_X28.name());
         UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto =
                 updateJobAdvertisementFromX28DtoJacksonTester.parse(message2.getPayload()).getObject();
         assertThat(updateJobAdvertisementFromX28Dto.getFingerprint())

@@ -22,7 +22,7 @@ import java.util.Optional;
 @Component
 public class JobAdvertisementEventListener {
 
-    private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementMailEventListener.class);
+    private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementEventListener.class);
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;

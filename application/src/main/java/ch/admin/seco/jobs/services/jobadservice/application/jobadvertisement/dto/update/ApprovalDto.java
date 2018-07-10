@@ -19,16 +19,20 @@ public class ApprovalDto {
 
     private LocalDate reportingObligationEndDate;
 
+    private UpdateJobAdvertisementFromAvamDto updateJobAdvertisementDto;
+
+
     protected ApprovalDto() {
         // For reflection libs
     }
 
-    public ApprovalDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
+    public ApprovalDto(String stellennummerEgov, String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate, UpdateJobAdvertisementFromAvamDto updateJobAdvertisementDto) {
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.date = date;
         this.reportingObligation = reportingObligation;
         this.reportingObligationEndDate = reportingObligationEndDate;
+        this.updateJobAdvertisementDto = updateJobAdvertisementDto;
     }
 
     public String getStellennummerEgov() {
@@ -69,5 +73,13 @@ public class ApprovalDto {
 
     public void setReportingObligationEndDate(LocalDate reportingObligationEndDate) {
         this.reportingObligationEndDate = reportingObligationEndDate;
+    }
+
+    public UpdateJobAdvertisementFromAvamDto getUpdateJobAdvertisement() {
+        return updateJobAdvertisementDto;
+    }
+
+    public void setUpdateJobAdvertisement(UpdateJobAdvertisementFromAvamDto updateJobAdvertisementDto) {
+        this.updateJobAdvertisementDto = updateJobAdvertisementDto;
     }
 }

@@ -130,7 +130,7 @@ public class AvamJobAdvertisementAssemblerV2 {
             return;
         }
         avamJobAdvertisement.setBewerSchriftlich(hasText(applyChannel.getMailAddress()));
-        avamJobAdvertisement.setBewerElektronisch(hasText(applyChannel.getEmailAddress()));
+        avamJobAdvertisement.setBewerElektronisch(hasText(applyChannel.getEmailAddress()) || hasText(applyChannel.getFormUrl()));
         avamJobAdvertisement.setUntEmail(applyChannel.getEmailAddress());
         avamJobAdvertisement.setUntUrl(applyChannel.getFormUrl()); // actually used for 'Online Bewerbung' instead 'home page'
         avamJobAdvertisement.setBewerTelefonisch(hasText(applyChannel.getPhoneNumber()));

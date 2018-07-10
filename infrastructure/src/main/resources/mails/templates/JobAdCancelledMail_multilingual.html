@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}"/>
+    </head>
+    <body>
+        <div>
+            <p th:text="#{mail.jobAd.cancelled.header_de}"></p>
+            <p th:text="#{mail.jobAd.cancelled.body.paragraph1_de(${stellennummer})}"></p>
+            <p th:text="#{mail.jobAd.cancelled.body.paragraph2_de}"></p>
+            <div th:text="${jobCenter?.address?.name}"></div>
+            <span th:text="${jobCenter?.address?.street}"></span>
+            <span th:text="${jobCenter?.address?.houseNumber}"></span>
+            <br>
+            <span th:text="${jobCenter?.address?.zipCode}"></span>
+            <span th:text="${jobCenter?.address?.city}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.cancelled.body.addressblock.tel_de}"></span>
+            <span th:text="${jobCenter?.phone}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.cancelled.body.addressblock.fax_de}"></span>
+            <span th:text="${jobCenter?.fax}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.cancelled.body.addressblock.email_de}"></span>
+            <span th:text="${jobCenter?.email}"></span>
+        </div>
+        <br>
+        <hr>
+        <div>
+            <p th:text="#{mail.jobAd.cancelled.header_fr}"></p>
+            <p th:text="#{mail.jobAd.cancelled.body.paragraph1_fr(${stellennummer})}"></p>
+            <p th:text="#{mail.jobAd.cancelled.body.paragraph2_fr}"></p>
+            <div th:text="${jobCenter?.address?.name}"></div>
+            <span th:text="${jobCenter?.address?.street}"></span>
+            <span th:text="${jobCenter?.address?.houseNumber}"></span>
+            <br>
+            <span th:text="${jobCenter?.address?.zipCode}"></span>
+            <span th:text="${jobCenter?.address?.city}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.cancelled.body.addressblock.tel_fr}"></span>
+            <span th:text="${jobCenter?.phone}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.cancelled.body.addressblock.fax_fr}"></span>
+            <span th:text="${jobCenter?.fax}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.cancelled.body.addressblock.email_fr}"></span>
+            <span th:text="${jobCenter?.email}"></span>
+        </div>
+        <br>
+        <hr>
+        <div>
+            <p th:text="#{mail.jobAd.cancelled.header_it}"></p>
+            <p th:text="#{mail.jobAd.cancelled.body.paragraph1_it(${stellennummer})}"></p>
+            <p th:text="#{mail.jobAd.cancelled.body.paragraph2_it}"></p>
+            <div th:text="${jobCenter?.address?.name}"></div>
+            <span th:text="${jobCenter?.address?.street}"></span>
+            <span th:text="${jobCenter?.address?.houseNumber}"></span>
+            <br>
+            <span th:text="${jobCenter?.address?.zipCode}"></span>
+            <span th:text="${jobCenter?.address?.city}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.cancelled.body.addressblock.tel_it}"></span>
+            <span th:text="${jobCenter?.phone}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.cancelled.body.addressblock.fax_it}"></span>
+            <span th:text="${jobCenter?.fax}"></span>
+            <br>
+            <span th:text="#{mail.jobAd.cancelled.body.addressblock.email_it}"></span>
+            <span th:text="${jobCenter?.email}"></span>
+        </div>
+        <br>
+        <hr>
+        <br>
+        <p th:text="#{mail.jobAd.footer.paragraph1_multilingual}"></p>
+        <div th:text="#{mail.jobAd.footer.details1_multilingual}"></div>
+        <div th:text="#{mail.jobAd.footer.details2_multilingual}"></div>
+        <div th:text="#{mail.jobAd.footer.details3_multilingual}"></div>
+        <br>
+    </body>
+</html>

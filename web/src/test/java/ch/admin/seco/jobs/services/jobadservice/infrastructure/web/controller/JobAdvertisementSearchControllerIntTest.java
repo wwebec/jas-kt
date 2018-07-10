@@ -149,11 +149,11 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchPeaJobsWithoutJobTitleInRequest() throws Exception {
         // GIVEN
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
         PeaJobAdvertisementSearchRequest request = new PeaJobAdvertisementSearchRequest();
-        request.setCompanyName("company-1");
+        request.setCompanyId("company-1");
 
         // WHEN
         ResultActions resultActions = mockMvc.perform(
@@ -172,12 +172,12 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchPeaJobsByPublicationDate() throws Exception {
         // GIVEN
-        index(createJobWithCompanyNameAndPublicationStartDate(JOB_ADVERTISEMENT_ID_01, "company-1", LocalDate.now().minusDays(30)));
-        index(createJobWithCompanyNameAndPublicationStartDate(JOB_ADVERTISEMENT_ID_02, "company-1", LocalDate.now().minusDays(7)));
-        index(createJobWithCompanyNameAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, "company-1", LocalDate.now()));
+        index(createJobWithOwnerAndPublicationStartDate(JOB_ADVERTISEMENT_ID_01, "company-1", LocalDate.now().minusDays(30)));
+        index(createJobWithOwnerAndPublicationStartDate(JOB_ADVERTISEMENT_ID_02, "company-1", LocalDate.now().minusDays(7)));
+        index(createJobWithOwnerAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, "company-1", LocalDate.now()));
         index(createJob(JOB_ADVERTISEMENT_ID_04));
         PeaJobAdvertisementSearchRequest request = new PeaJobAdvertisementSearchRequest();
-        request.setCompanyName("company-1");
+        request.setCompanyId("company-1");
         request.setOnlineSinceDays(7);
 
         // WHEN
@@ -197,12 +197,12 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchPeaJobsByJobTitle() throws Exception {
         // GIVEN
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
-        index(createJobWithDescriptionAndCompanyName(JOB_ADVERTISEMENT_ID_04, "javascript developer", "javascript developer", "company-3"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
+        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_04, "javascript developer", "javascript developer", "company-3"));
         PeaJobAdvertisementSearchRequest request = new PeaJobAdvertisementSearchRequest();
-        request.setCompanyName("company-1");
+        request.setCompanyId("company-1");
         request.setJobTitle("developer");
 
         // WHEN
@@ -486,6 +486,141 @@ public class JobAdvertisementSearchControllerIntTest {
     }
 
     @Test
+    public void shouldShowPublicationWithRestrictedDisplayForJobSeeker() throws Exception {
+        // GIVEN
+        when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
+        index(createJob(JOB_ADVERTISEMENT_ID_01));
+        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02)); //1 1
+        index(createJob(JOB_ADVERTISEMENT_ID_03));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "3"))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
+        ;
+
+    }
+
+    @Test
+    public void shouldNotShowPublicationWithRestrictedDisplayForAnonymusUsers() throws Exception {
+        // GIVEN
+        index(createJob(JOB_ADVERTISEMENT_ID_01));
+        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02)); //1 1
+        index(createJob(JOB_ADVERTISEMENT_ID_03));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "2"))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
+        ;
+
+    }
+
+    @Test
+    public void shouldNotShowPublicatonWithoutPublicDisplayForAnonymusUsers() throws Exception {
+        // GIVEN
+        index(createJob(JOB_ADVERTISEMENT_ID_01));
+        index(createJobWithPublicationWithoutPublicDisplay(JOB_ADVERTISEMENT_ID_02));  //1 0
+        index(createJob(JOB_ADVERTISEMENT_ID_03));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "2"))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
+        ;
+
+    }
+
+
+    @Test
+    public void shouldShowWithoutPublicDisplayAndWithRestrictedDisplayForJobSeeker() throws Exception {
+        // GIVEN
+        when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
+        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));   //0 0
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "1"))
+                .andExpect(jsonPath("$.*.id").value(JOB_ADVERTISEMENT_ID_02.getValue()))
+        ;
+
+    }
+
+    @Test
+    public void shouldNotShowWithoutPublicDisplayAndWithRestrictedDisplayForAnonymusUser() throws Exception {
+        // GIVEN
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
+        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));   //0 0
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "0"))
+        ;
+    }
+
+    @Test
     public void shouldNotShowRestrictedJobsForAnonymusUsers() throws Exception {
         // GIVEN
         index(createRestrictedJob(JOB_ADVERTISEMENT_ID_01));
@@ -555,7 +690,7 @@ public class JobAdvertisementSearchControllerIntTest {
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
         searchRequest.setPermanent(false);
         searchRequest.setWorkloadPercentageMin(70);
-        searchRequest.setCantonCodes(new String[]{"cantonCode"});
+        searchRequest.setCantonCodes(new String[]{"BE"});
         searchRequest.setProfessionCodes(new ProfessionCode[]{new ProfessionCode(ProfessionCodeType.AVAM, "avamOccupationCode")});
         searchRequest.setKeywords(new String[]{"title"});
 
@@ -590,7 +725,7 @@ public class JobAdvertisementSearchControllerIntTest {
 
     }
 
-    private JobAdvertisement createJobWithCompanyNameAndPublicationStartDate(JobAdvertisementId jobAdvertisementId, String companyName, LocalDate startDate) {
+    private JobAdvertisement createJobWithOwnerAndPublicationStartDate(JobAdvertisementId jobAdvertisementId, String companyId, LocalDate startDate) {
         Publication publication = new Publication.Builder()
                 .setStartDate(startDate)
                 .setEndDate(startDate.plusDays(5))
@@ -600,11 +735,11 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
+                .setOwner(createOwnerWithCompanyId(jobAdvertisementId, companyId))
                 .setPublication(publication)
                 .setJobContent(new JobContent.Builder()
                         .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
-                        .setCompany(createCompany(companyName))
+                        .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
                         .setEmployment(createEmployment())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
@@ -612,6 +747,72 @@ public class JobAdvertisementSearchControllerIntTest {
                         .setLocation(createLocation())
                         .setOccupations(Collections.singletonList(createOccupation()))
                         .build())
+                .build();
+
+    }
+
+
+    private JobAdvertisement createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(false, false))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
+                .build();
+
+    }
+
+    private JobAdvertisement createJobWithPublicDisplayAndWithRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(true, true))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
+                .build();
+
+    }
+
+    private JobAdvertisement createJobWithoutPublicDisplayAndWithRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(false, true))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
+                .build();
+
+    }
+
+    private JobAdvertisement createJobWithPublicDisplayAndWithoutRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(true, false))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
+                .build();
+
+    }
+
+    private JobAdvertisement createJobWithPublicationWithoutPublicDisplay(JobAdvertisementId jobAdvertisementId) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setPublication(createPublication(false, true))
+                .setJobContent(createJobContent(jobAdvertisementId))
+                .setReportingObligation(true)
                 .build();
 
     }
@@ -684,24 +885,33 @@ public class JobAdvertisementSearchControllerIntTest {
         return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM);
     }
 
-    private JobAdvertisement createJobWithDescriptionAndCompanyName(JobAdvertisementId jobAdvertisementId, String title, String description, String companyName) {
-        return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM, createCompany(companyName));
+    private JobAdvertisement createJobWithDescriptionAndOwnerCompanyId(JobAdvertisementId jobAdvertisementId, String title, String description, String companyId) {
+        Owner owner = createOwnerWithCompanyId(jobAdvertisementId, companyId);
+        return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM, owner);
+    }
+
+    private Owner createOwnerWithCompanyId(JobAdvertisementId jobAdvertisementId, String companyId) {
+        return new Owner.Builder()
+                .setAccessToken(String.format("access-token-%s", jobAdvertisementId.getValue()))
+                .setCompanyId(companyId)
+                .setUserId(String.format("user-id-%s", jobAdvertisementId.getValue()))
+                .build();
     }
 
     private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem) {
-        return createJobWithDescription(jobAdvertisementId, title, description, sourceSystem, createCompany(jobAdvertisementId));
+        return createJobWithDescription(jobAdvertisementId, title, description, sourceSystem, createOwner(jobAdvertisementId));
     }
 
-    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, Company company) {
+    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, Owner owner) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(sourceSystem)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
+                .setOwner(owner)
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
                         .setJobDescriptions(Collections.singletonList(createJobDescription(title, description)))
-                        .setCompany(company)
+                        .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
                         .setEmployment(createEmployment())
                         .setPublicContact(createPublicContact(jobAdvertisementId))

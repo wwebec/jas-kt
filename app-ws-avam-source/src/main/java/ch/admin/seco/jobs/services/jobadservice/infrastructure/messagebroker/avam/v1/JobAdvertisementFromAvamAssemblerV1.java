@@ -71,8 +71,7 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 createCreateLocationDto(avamJobAdvertisement),
                 createOccupationDtos(avamJobAdvertisement),
                 createLanguageSkillDtos(avamJobAdvertisement),
-                createPublicationDto(avamJobAdvertisement),
-                createWorkForms(avamJobAdvertisement)
+                createPublicationDto(avamJobAdvertisement)
         );
     }
 
@@ -82,6 +81,7 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
                 false, // Not defined in this AVAM version
+                null,
                 null); // Not defined in this AVAM version
     }
 

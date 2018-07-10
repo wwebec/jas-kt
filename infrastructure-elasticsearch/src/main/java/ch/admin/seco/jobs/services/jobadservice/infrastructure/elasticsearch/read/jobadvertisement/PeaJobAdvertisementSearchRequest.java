@@ -13,7 +13,7 @@ public class PeaJobAdvertisementSearchRequest {
 	private Integer onlineSinceDays;
 
 	@NotBlank
-	private String companyName;
+	private String companyId;
 
 	public String getJobTitle() {
 		return jobTitle;
@@ -31,11 +31,11 @@ public class PeaJobAdvertisementSearchRequest {
 		this.onlineSinceDays = onlineSinceDays;
 	}
 
-	public String getCompanyName() {
-		return companyName;
+	public String getCompanyId() {
+		return companyId;
 	}
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 }

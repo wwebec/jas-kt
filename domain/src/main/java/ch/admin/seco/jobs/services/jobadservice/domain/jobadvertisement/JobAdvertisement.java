@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.Objects;
 
 import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.hasChanged;
@@ -128,7 +129,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.cancellationCode = builder.cancellationCode;
         this.jobContent = Condition.notNull(builder.jobContent);
         this.owner = Condition.notNull(builder.owner);
-        this.contact = builder.contact; // FIXME Mandatory when legacy API is removed and field from AVAM is required!
+        this.contact = builder.contact;
         this.publication = Condition.notNull(builder.publication);
         checkViolations();
     }
@@ -218,7 +219,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void update(JobAdvertisementUpdater updater) {
-        checkIfEndStatus();
         if (applyUpdates(updater)) {
             DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED, this));
         }
@@ -343,12 +343,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 '}';
     }
 
-    private void checkIfEndStatus() {
-        if (this.status.isInAnyStates(JobAdvertisementStatus.REJECTED, JobAdvertisementStatus.CANCELLED, JobAdvertisementStatus.ARCHIVED)) {
-            throw new IllegalStateException(String.format("JobAdvertisement must not be in a end status like: %s", this.status));
-        }
-    }
-
     private void checkViolations() {
         Violations violations = new Violations();
         Employment employment = jobContent.getEmployment();
@@ -357,16 +351,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 "Employment endDate %s is before startDate %s",
                 employment.getEndDate(),
                 employment.getStartDate()
-        );
-        violations.addIfTrue(
-                employment.isImmediately() && (employment.getStartDate() != null),
-                "Immediately can't be true if startDate %s is set",
-                employment.getStartDate()
-        );
-        violations.addIfTrue(
-                employment.isPermanent() && (employment.getEndDate() != null),
-                "Permanent can't be true if endDate %s is set",
-                employment.getEndDate()
         );
         violations.addIfTrue(
                 (employment.getWorkloadPercentageMin() <= 0) || (employment.getWorkloadPercentageMin() > 100),
@@ -414,6 +398,16 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             hasChangedAnything = true;
         }
 
+        if(updater.hasAnyChangesIn(SECTION_JOBDESCRIPTION)) {
+            if(this.getJobContent().getJobDescriptions().size() > 0) {
+                JobDescription jobDescription = this.getJobContent().getJobDescriptions().get(0);
+                if (hasChanged(jobDescription.getTitle(), updater.getTitle()) || hasChanged(jobDescription.getDescription(), updater.getDescription())) {
+                    jobDescription.updateTitleAndDescription(updater.getTitle(), updater.getDescription());
+                    hasChangedAnything = true;
+                }
+            }
+        }
+
         if (updater.hasAnyChangesIn(SECTION_JOB_CENTER_CODE) && hasChanged(this.jobCenterCode, updater.getJobCenterCode())) {
             this.jobCenterCode = updater.getJobCenterCode();
             hasChangedAnything = true;
@@ -450,8 +444,21 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         if (updater.hasAnyChangesIn(SECTION_CONTACT) && hasChanged(this.contact, updater.getContact())) {
-            this.contact = updater.getContact();
-            hasChangedAnything = true;
+            if((this.contact != null) && (updater.getContact() != null)) {
+                Locale language = this.contact.getLanguage();
+                this.contact = updater.getContact();
+                this.contact.setLanguage(language);
+                if(hasChanged(this.contact.getSalutation(), updater.getContact().getSalutation()) ||
+                        hasChanged(this.contact.getFirstName(), updater.getContact().getFirstName()) ||
+                        hasChanged(this.contact.getLastName(), updater.getContact().getLastName()) ||
+                        hasChanged(this.contact.getEmail(), updater.getContact().getEmail()) ||
+                        hasChanged(this.contact.getPhone(), updater.getContact().getPhone())) {
+                    hasChangedAnything = true;
+                }
+            } else {
+                this.contact = updater.getContact();
+                hasChangedAnything = true;
+            }
         }
 
         if(updater.hasAnyChangesIn(SECTION_PUBLICATION) && hasChanged(this.publication, updater.getPublication())) {

@@ -8,7 +8,9 @@
         <p th:text="#{mail.jobAd.created.header}"></p>
         <p th:text="#{mail.jobAd.created.body.paragraph1}"></p>
         <p th:text="#{mail.jobAd.created.body.paragraph2}"></p>
-        <em th:if="${jobAdvertisement.reportingObligation}" th:text="#{mail.jobAd.created.body.reporting.obligation}"></em>
+        <p th:if="${reportingObligation}">
+            <em th:text="#{mail.jobAd.created.body.reporting.obligation}"></em>
+        </p>
         <p th:text="#{mail.jobAd.created.body.paragraph3}"></p>
         <div th:text="${jobCenter?.address?.name}"></div>
         <span th:text="${jobCenter?.address?.street}"></span>
@@ -26,9 +28,8 @@
         <span th:text="#{mail.jobAd.created.body.addressblock.email}"></span>
         <span th:text="${jobCenter?.email}"></span>
         <p th:text="#{mail.jobAd.created.body.paragraph4}"></p>
-        <br>
-        <a th:href="@{|${linkToJobAdDetailPage}${jobAdvertisement.id.value}#{mail.jobAd.token.string}${jobAdvertisement.owner.accessToken}|}"
-           th:text="@{|${linkToJobAdDetailPage}${jobAdvertisement.id.value}#{mail.jobAd.token.string}${jobAdvertisement.owner.accessToken}|}"></a>
+        <a th:href="@{|${linkToJobAdDetailPage}${jobAdvertisementId}#{mail.jobAd.token.string}${accessToken}|}"
+           th:text="@{|${linkToJobAdDetailPage}${jobAdvertisementId}#{mail.jobAd.token.string}${accessToken}|}"></a>
         <p th:text="#{mail.jobAd.footer.paragraph1}"></p>
         <div th:text="#{mail.jobAd.footer.details1}"></div>
         <div th:text="#{mail.jobAd.footer.details2}"></div>

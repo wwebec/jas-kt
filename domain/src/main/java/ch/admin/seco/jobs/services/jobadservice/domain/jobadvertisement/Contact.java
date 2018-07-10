@@ -35,10 +35,10 @@ public class Contact implements ValueObject<Contact> {
 
     public Contact(Builder builder) {
         this.salutation = Condition.notNull(builder.salutation, "Salutation can't be null");
-        this.firstName = Condition.notBlank(builder.firstName, "First name can't be blank");
-        this.lastName = Condition.notBlank(builder.lastName, "Last name can't be blank");
-        this.phone = Condition.notBlank(builder.phone, "Phone can't be blank");
-        this.email = Condition.notBlank(builder.email, "Email can't be blank");
+        this.firstName = builder.firstName;
+        this.lastName = builder.lastName;
+        this.phone = builder.phone;
+        this.email = builder.email;
         this.language = Condition.notNull(builder.language, "Language can't be null");
     }
 
@@ -64,6 +64,10 @@ public class Contact implements ValueObject<Contact> {
 
     public Locale getLanguage() {
         return language;
+    }
+
+    void setLanguage(Locale language) {
+        this.language = language;
     }
 
     @Override

@@ -6,6 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
@@ -66,8 +67,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 createCreateLocationDto(avamJobAdvertisement),
                 createOccupationDtos(avamJobAdvertisement),
                 createLanguageSkillDtos(avamJobAdvertisement),
-                createPublicationDto(avamJobAdvertisement),
-                createWorkForms(avamJobAdvertisement)
+                createPublicationDto(avamJobAdvertisement)
         );
     }
 
@@ -77,7 +77,26 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
                 avamJobAdvertisement.isMeldepflicht(),
-                parseToLocalDate(avamJobAdvertisement.getSperrfrist()));
+                parseToLocalDate(avamJobAdvertisement.getSperrfrist()),
+                new UpdateJobAdvertisementFromAvamDto(
+                        safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
+                        avamJobAdvertisement.getBezeichnung(),
+                        avamJobAdvertisement.getBeschreibung(),
+                        "de", // Not defined in this AVAM version
+                        avamJobAdvertisement.isMeldepflicht(),
+                        parseToLocalDate(avamJobAdvertisement.getSperrfrist()),
+                        avamJobAdvertisement.getArbeitsamtBereich(),
+                        parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
+                        createEmploymentDto(avamJobAdvertisement),
+                        createApplyChannelDto(avamJobAdvertisement),
+                        createCompanyDto(avamJobAdvertisement),
+                        createContactDto(avamJobAdvertisement),
+                        createCreateLocationDto(avamJobAdvertisement),
+                        createOccupationDtos(avamJobAdvertisement),
+                        createLanguageSkillDtos(avamJobAdvertisement),
+                        createPublicationDto(avamJobAdvertisement)
+                )
+        );
     }
 
     RejectionDto createRejectionDto(WSOsteEgov avamJobAdvertisement) {
@@ -111,7 +130,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                     avamJobAdvertisement.getKpName(),
                     sanitizePhoneNumber(avamJobAdvertisement.getKpTelefonNr(), avamJobAdvertisement),
                     sanitizeEmail(avamJobAdvertisement.getKpEmail(), avamJobAdvertisement),
-                    "de" // Not defined in this AVAM version
+                    "" // Not defined in this AVAM version
             );
         }
         return null;
@@ -141,6 +160,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
     }
 
     private CompanyDto createCompanyDto(WSOsteEgov avamJobAdvertisement) {
+        // This fields are also used for ApplChannel from AVAM
         return new CompanyDto(
                 avamJobAdvertisement.getUntName(),
                 avamJobAdvertisement.getUntStrasse(),
@@ -151,19 +171,19 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 avamJobAdvertisement.getUntPostfach(),
                 avamJobAdvertisement.getUntPostfachPlz(),
                 avamJobAdvertisement.getUntPostfachOrt(),
-                avamJobAdvertisement.getUntTelefon(),
-                avamJobAdvertisement.getUntEmail(),
-                avamJobAdvertisement.getUntUrl(),
+                null, // This is only used for ApplyChannel from AVAM
+                null, // This is only used for ApplyChannel from AVAM
+                null, // This is only used for ApplyChannel from AVAM
                 false
         );
     }
 
     private ApplyChannelDto createApplyChannelDto(WSOsteEgov avamJobAdvertisement) {
         return new ApplyChannelDto(
-                createApplyMailAddress(avamJobAdvertisement),
-                sanitizeEmail(avamJobAdvertisement.getUntEmail(), avamJobAdvertisement),
-                sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement),
-                sanitizeUrl(avamJobAdvertisement.getUntUrl(), avamJobAdvertisement),
+                avamJobAdvertisement.isBewerSchriftlich() ? createApplyMailAddress(avamJobAdvertisement) : null,
+                avamJobAdvertisement.isBewerElektronisch() ? sanitizeEmail(avamJobAdvertisement.getUntEmail(), avamJobAdvertisement) : null,
+                avamJobAdvertisement.isBewerTelefonisch() ? sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement) : null,
+                avamJobAdvertisement.isBewerElektronisch() ? sanitizeUrl(avamJobAdvertisement.getUntUrl(), avamJobAdvertisement) : null,
                 avamJobAdvertisement.getBewerAngaben()
         );
     }
@@ -222,8 +242,8 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 avamJobAdvertisement.isEuresAnonym(),
                 avamJobAdvertisement.isPublikation(),
                 avamJobAdvertisement.isAnonym(),
-                avamJobAdvertisement.isLoginAnonym(),
-                avamJobAdvertisement.isLoginPublikation()
+                avamJobAdvertisement.isLoginPublikation(),
+                avamJobAdvertisement.isLoginAnonym()
         );
     }
 

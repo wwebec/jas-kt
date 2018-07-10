@@ -1,6 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
 
 import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamSource;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.InsertOste;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.InsertOsteResponse;
@@ -84,24 +86,25 @@ public class AvamEndpointV2 {
         }
     }
 
-    private boolean isCreatedFromAvam(WSOsteEgov avamJobAdvertisement) {
-        return !isCancelled(avamJobAdvertisement);
+    private boolean isRejected(WSOsteEgov avamJobAdvertisement) {
+        return isFromJobroom(avamJobAdvertisement) && (avamJobAdvertisement.getAblehnungGrundCode() != null);
     }
 
     private boolean isCancelled(WSOsteEgov avamJobAdvertisement) {
         return hasText(avamJobAdvertisement.getAbmeldeGrundCode());
     }
 
-    private boolean isRejected(WSOsteEgov avamJobAdvertisement) {
-        return isFromJobroom(avamJobAdvertisement) && (avamJobAdvertisement.getAblehnungGrundCode() != null);
-    }
-
     private boolean isApproved(WSOsteEgov avamJobAdvertisement) {
         return isFromJobroom(avamJobAdvertisement);
     }
 
+    private boolean isCreatedFromAvam(WSOsteEgov avamJobAdvertisement) {
+        return !isCancelled(avamJobAdvertisement);
+    }
+
     private boolean isFromJobroom(WSOsteEgov avamJobAdvertisement) {
-        return hasText(avamJobAdvertisement.getStellennummerEgov());
+        return (AvamCodeResolver.SOURCE_SYSTEM.getLeft(SourceSystem.JOBROOM).equals(avamJobAdvertisement.getQuelleCode())
+                || AvamCodeResolver.SOURCE_SYSTEM.getLeft(SourceSystem.API).equals(avamJobAdvertisement.getQuelleCode()));
     }
 
     private InsertOsteResponse response(String returnCode) {

@@ -11,6 +11,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
@@ -20,8 +21,10 @@ import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -31,20 +34,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.INSPECTING;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REFINING;
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
 
 @Service
 @Transactional(rollbackFor = {Exception.class})
 public class JobAdvertisementApplicationService {
 
     public static final int PUBLICATION_MAX_DAYS = 60;
+
     public static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
 
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
@@ -65,12 +72,12 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(CurrentUserContext currentUserContext,
-                                              JobAdvertisementRepository jobAdvertisementRepository,
-                                              JobAdvertisementFactory jobAdvertisementFactory,
-                                              ReportingObligationService reportingObligationService,
-                                              LocationService locationService,
-                                              ProfessionService professionService,
-                                              JobCenterService jobCenterService) {
+            JobAdvertisementRepository jobAdvertisementRepository,
+            JobAdvertisementFactory jobAdvertisementFactory,
+            ReportingObligationService reportingObligationService,
+            LocationService locationService,
+            ProfessionService professionService,
+            JobCenterService jobCenterService) {
         this.currentUserContext = currentUserContext;
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
@@ -107,7 +114,10 @@ public class JobAdvertisementApplicationService {
 
         Optional<JobAdvertisement> existingJobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(createJobAdvertisementFromAvamDto.getStellennummerAvam());
         if (existingJobAdvertisement.isPresent()) {
-            return updateFromAvam(existingJobAdvertisement.get(), createJobAdvertisementFromAvamDto);
+            JobAdvertisement jobAdvertisement = existingJobAdvertisement.get();
+            LOG.debug("Update StellennummerAvam '{}' from AVAM", createJobAdvertisementFromAvamDto.getStellennummerAvam());
+            jobAdvertisement.update(prepareUpdaterFromAvam(createJobAdvertisementFromAvamDto));
+            return jobAdvertisement.getId();
         }
 
         LOG.debug("Create StellennummerAvam: {}", createJobAdvertisementFromAvamDto.getStellennummerAvam());
@@ -118,10 +128,7 @@ public class JobAdvertisementApplicationService {
         location = locationService.enrichCodes(location);
 
         Condition.notEmpty(createJobAdvertisementFromAvamDto.getOccupations(), "Occupations can't be empty");
-        List<Occupation> occupations = createJobAdvertisementFromAvamDto.getOccupations().stream()
-                .map(this::toOccupation)
-                .map(this::enrichOccupationWithProfessionCodes)
-                .collect(toList());
+        List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromAvamDto.getOccupations());
 
         JobContent jobContent = new JobContent.Builder()
                 .setJobDescriptions(Collections.singletonList(
@@ -155,36 +162,6 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.getId();
     }
 
-    public JobAdvertisementId updateFromAvam(JobAdvertisement jobAdvertisement, CreateJobAdvertisementFromAvamDto jobAdvertisementDto) {
-        LOG.debug("Update StellennummerAvam '{}' from AVAM", jobAdvertisementDto.getStellennummerAvam());
-
-        Condition.notNull(jobAdvertisementDto.getLocation(), "Location can't be null");
-        Location location = toLocation(jobAdvertisementDto.getLocation());
-        location = locationService.enrichCodes(location);
-
-        Condition.notEmpty(jobAdvertisementDto.getOccupations(), "Occupations can't be empty");
-        List<Occupation> occupations = jobAdvertisementDto.getOccupations().stream()
-                .map(this::toOccupation)
-                .map(this::enrichOccupationWithProfessionCodes)
-                .collect(toList());
-
-        JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
-                .setReportingObligation(jobAdvertisementDto.isReportingObligation(), jobAdvertisementDto.getReportingObligationEndDate())
-                .setJobCenterCode(jobAdvertisementDto.getJobCenterCode())
-                .setCompany(toCompany(jobAdvertisementDto.getCompany()))
-                .setEmployment(toEmployment(jobAdvertisementDto.getEmployment()))
-                .setLocation(location)
-                .setOccupations(occupations)
-                .setLanguageSkills(toLanguageSkills(jobAdvertisementDto.getLanguageSkills()))
-                .setApplyChannel(toApplyChannel(jobAdvertisementDto.getApplyChannel()))
-                .setContact(toContact(jobAdvertisementDto.getContact()))
-                .setPublication(toPublication(jobAdvertisementDto.getPublication()))
-                .build();
-
-        jobAdvertisement.update(updater);
-        return jobAdvertisement.getId();
-    }
-
     public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
         LOG.debug("Start creating new job ad from X28");
 
@@ -196,10 +173,7 @@ public class JobAdvertisementApplicationService {
         Location location = toLocation(createJobAdvertisementFromX28Dto.getLocation());
         location = locationService.enrichCodes(location);
 
-        List<Occupation> occupations = createJobAdvertisementFromX28Dto.getOccupations().stream()
-                .map(this::toOccupation)
-                .map(this::enrichOccupationWithProfessionCodes)
-                .collect(toList());
+        List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromX28Dto.getOccupations());
 
         JobContent jobContent = new JobContent.Builder()
                 .setJobDescriptions(Collections.singletonList(
@@ -215,6 +189,7 @@ public class JobAdvertisementApplicationService {
                 .setX28OccupationCodes(createJobAdvertisementFromX28Dto.getProfessionCodes())
                 .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
                 .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
+                .setPublicContact(toPublicContact(createJobAdvertisementFromX28Dto.getContact()))
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkills()))
                 .build();
 
@@ -227,8 +202,11 @@ public class JobAdvertisementApplicationService {
             publicationEndDate = publicationStartDate.plusDays(PUBLICATION_MAX_DAYS);
         }
         final JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(currentUserContext.getAuditUser())
+                .setStellennummerEgov(createJobAdvertisementFromX28Dto.getStellennummerEgov())
+                .setStellennummerAvam(createJobAdvertisementFromX28Dto.getStellennummerAvam())
                 .setFingerprint(createJobAdvertisementFromX28Dto.getFingerprint())
                 .setJobContent(jobContent)
+                .setContact(toContact(createJobAdvertisementFromX28Dto.getContact()))
                 .setPublication(
                         new Publication.Builder()
                                 .setStartDate(publicationStartDate)
@@ -303,9 +281,19 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.map(JobAdvertisementDto::toDto).orElse(null);
     }
 
+    public JobAdvertisementDto getByStellennummerAvam(String stellennummerAvam) {
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerAvam(stellennummerAvam);
+        return JobAdvertisementDto.toDto(jobAdvertisement);
+    }
+
     public JobAdvertisementDto findByStellennummerEgov(String stellennummerEgov) {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov);
         return jobAdvertisement.map(JobAdvertisementDto::toDto).orElse(null);
+    }
+
+    public JobAdvertisementDto getByStellennummerEgov(String stellennummerEgov) {
+        JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(stellennummerEgov);
+        return JobAdvertisementDto.toDto(jobAdvertisement);
     }
 
     public JobAdvertisementDto findByFingerprint(String fingerprint) {
@@ -324,7 +312,66 @@ public class JobAdvertisementApplicationService {
         Condition.notNull(approvalDto.getStellennummerEgov(), "StellennummerEgov can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisementByStellennummerEgov(approvalDto.getStellennummerEgov());
         LOG.debug("Starting approve for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
-        jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
+        // FIXME This is a workaround when updating after approved, until AVAM add an actionType on there message.
+        if (jobAdvertisement.getStatus().equals(INSPECTING)) {
+            jobAdvertisement.approve(approvalDto.getStellennummerAvam(), approvalDto.getDate(), approvalDto.isReportingObligation(), approvalDto.getReportingObligationEndDate());
+        }
+        UpdateJobAdvertisementFromAvamDto updateJobAdvertisement = approvalDto.getUpdateJobAdvertisement();
+        jobAdvertisement.update(prepareUpdaterFromAvam(updateJobAdvertisement));
+    }
+
+    private JobAdvertisementUpdater prepareUpdaterFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisement) {
+        Condition.notNull(createJobAdvertisement.getLocation(), "Location can't be null");
+        Location location = toLocation(createJobAdvertisement.getLocation());
+        location = locationService.enrichCodes(location);
+
+        List<OccupationDto> occupationDtos = createJobAdvertisement.getOccupations();
+        Condition.notEmpty(occupationDtos, "Occupations can't be empty");
+        List<Occupation> occupations = enrichAndToOccupations(occupationDtos);
+
+        return new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
+                .setJobDescription(createJobAdvertisement.getTitle(), createJobAdvertisement.getDescription())
+                .setReportingObligation(createJobAdvertisement.isReportingObligation(), createJobAdvertisement.getReportingObligationEndDate())
+                .setJobCenterCode(createJobAdvertisement.getJobCenterCode())
+                .setCompany(toCompany(createJobAdvertisement.getCompany()))
+                .setEmployment(toEmployment(createJobAdvertisement.getEmployment()))
+                .setLocation(location)
+                .setOccupations(occupations)
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisement.getLanguageSkills()))
+                .setApplyChannel(toApplyChannel(createJobAdvertisement.getApplyChannel()))
+                .setContact(toContact(createJobAdvertisement.getContact()))
+                .setPublication(toPublication(createJobAdvertisement.getPublication()))
+                .build();
+    }
+
+    private JobAdvertisementUpdater prepareUpdaterFromAvam(UpdateJobAdvertisementFromAvamDto updateJobAdvertisement) {
+        Condition.notNull(updateJobAdvertisement.getLocation(), "Location can't be null");
+        Location location = toLocation(updateJobAdvertisement.getLocation());
+        location = locationService.enrichCodes(location);
+
+        List<OccupationDto> occupationDtos = updateJobAdvertisement.getOccupations();
+        Condition.notEmpty(occupationDtos, "Occupations can't be empty");
+        List<Occupation> occupations = enrichAndToOccupations(occupationDtos);
+
+        return new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
+                .setJobDescription(updateJobAdvertisement.getTitle(), updateJobAdvertisement.getDescription())
+                .setJobCenterCode(updateJobAdvertisement.getJobCenterCode())
+                .setCompany(toCompany(updateJobAdvertisement.getCompany()))
+                .setEmployment(toEmployment(updateJobAdvertisement.getEmployment()))
+                .setLocation(location)
+                .setOccupations(occupations)
+                .setLanguageSkills(toLanguageSkills(updateJobAdvertisement.getLanguageSkills()))
+                .setApplyChannel(toApplyChannel(updateJobAdvertisement.getApplyChannel()))
+                .setContact(toContact(updateJobAdvertisement.getContact()))
+                .setPublication(toPublication(updateJobAdvertisement.getPublication()))
+                .build();
+    }
+
+    private List<Occupation> enrichAndToOccupations(List<OccupationDto> occupationDtos) {
+        return occupationDtos.stream()
+                .map(this::toOccupation)
+                .map(this::enrichOccupationWithProfessionCodes)
+                .collect(toList());
     }
 
     public void reject(RejectionDto rejectionDto) {
@@ -484,6 +531,11 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.EXTERNAL_ID, stellennummerEgov));
     }
 
+    private JobAdvertisement getJobAdvertisementByStellennummerAvam(String stellennummerAvam) throws AggregateNotFoundException {
+        Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(stellennummerAvam);
+        return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.EXTERNAL_ID, stellennummerAvam));
+    }
+
     private JobAdvertisement getJobAdvertisementByAccessToken(String accessToken) {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findOneByAccessToken(accessToken);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, AggregateNotFoundException.IndentifierType.ACCESS_TOKEN, accessToken));
@@ -511,14 +563,17 @@ public class JobAdvertisementApplicationService {
         Condition.notNull(location, "Location can't be null");
         String avamOccupationCode = occupation.getAvamOccupationCode();
         String cantonCode = location.getCantonCode();
-        return (cantonCode != null) && reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
+        if (COUNTRY_ISO_CODE_SWITZERLAND.equals(location.getCountryIsoCode())) {
+            return reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, avamOccupationCode, cantonCode);
+        }
+        return false;
     }
 
     private List<JobDescription> toJobDescriptions(List<JobDescriptionDto> jobDescriptionDtos) {
         if (jobDescriptionDtos != null) {
             return jobDescriptionDtos.stream()
                     .map(jobDescriptionDto -> new JobDescription.Builder()
-                            .setLanguage(new Locale(jobDescriptionDto.getLanguageIsoCode()))
+                            .setLanguage(hasText(jobDescriptionDto.getLanguageIsoCode()) ? new Locale(jobDescriptionDto.getLanguageIsoCode()) : Locale.GERMAN)
                             .setTitle(jobDescriptionDto.getTitle())
                             .setDescription(jobDescriptionDto.getDescription())
                             .build()

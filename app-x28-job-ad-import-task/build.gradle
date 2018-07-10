@@ -14,6 +14,8 @@ dependencies {
     compile 'org.springframework.integration:spring-integration-sftp'
     compile 'org.springframework:spring-oxm'
 
+    compile 'com.googlecode.libphonenumber:libphonenumber'
+
     compile 'com.h2database:h2'
     compile 'org.postgresql:postgresql'
 

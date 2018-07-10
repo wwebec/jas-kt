@@ -17,7 +17,6 @@ public class JobDescriptionDto {
     @NotBlank
     private String title;
 
-    @NotBlank
     private String description;
 
     protected JobDescriptionDto() {

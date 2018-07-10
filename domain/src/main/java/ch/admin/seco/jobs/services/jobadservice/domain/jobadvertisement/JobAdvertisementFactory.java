@@ -9,7 +9,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCreatedEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementPublishPublicEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementRefiningEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementApprovedEvent;
 
 @Component
 public class JobAdvertisementFactory {
@@ -74,7 +74,7 @@ public class JobAdvertisementFactory {
     public JobAdvertisement createFromAvam(JobAdvertisementCreator creator) {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
-                .setStatus(JobAdvertisementStatus.REFINING)
+                .setStatus(JobAdvertisementStatus.APPROVED)
                 .setSourceSystem(SourceSystem.RAV)
                 .setStellennummerAvam(creator.getStellennummerAvam())
                 .setReportingObligation(creator.isReportingObligation())
@@ -89,7 +89,7 @@ public class JobAdvertisementFactory {
                 .build();
 
         JobAdvertisement newJobAdvertisement = jobAdvertisementRepository.save(jobAdvertisement);
-        DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(newJobAdvertisement));
+        DomainEventPublisher.publish(new JobAdvertisementApprovedEvent(newJobAdvertisement));
         return newJobAdvertisement;
     }
 
@@ -97,7 +97,9 @@ public class JobAdvertisementFactory {
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
                 .setId(new JobAdvertisementId())
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setSourceSystem(SourceSystem.EXTERN)
+                .setSourceSystem(findSourceSystemForExtern(creator))
+                .setStellennummerEgov(creator.getStellennummerEgov())
+                .setStellennummerAvam(creator.getStellennummerAvam())
                 .setFingerprint(creator.getFingerprint())
                 .setReportToAvam(false)
                 .setJobContent(creator.getJobContent())
@@ -123,6 +125,16 @@ public class JobAdvertisementFactory {
                     .setAccessToken(accessTokenGenerator.generateToken())
                     .build();
         }
+    }
+
+    private SourceSystem findSourceSystemForExtern(JobAdvertisementCreator creator){
+        if(creator.getStellennummerEgov() != null) {
+            return SourceSystem.JOBROOM;
+        }
+        if(creator.getStellennummerAvam() != null) {
+            return SourceSystem.RAV;
+        }
+        return SourceSystem.EXTERN;
     }
 
 }
