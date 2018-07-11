@@ -6,6 +6,7 @@ import javax.validation.constraints.Size;
 
 public class ApiCreateLocationDto {
 
+    @Size(max=50)
     private String remarks;
 
     @NotBlank
