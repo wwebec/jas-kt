@@ -24,7 +24,7 @@ public class ApiContactDto {
     private String phone;
 
     @NotBlank
-    @Size(max=255)
+    @Size(max=50)
     @Email
     private String email;
 

@@ -2,12 +2,25 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 public class ApiApplyChannelDto {
 
+    @Size(max=255)
     private String mailAddress;
+
+    @Size(max=50)
     private String emailAddress;
+
+    @Size(max=20)
+    @Pattern(regexp = "[+][0-9]{11,}")
     private String phoneNumber;
+
+    @Size(max=255)
     private String formUrl;
+
+    @Size(max=255)
     private String additionalInfo;
 
     protected ApiApplyChannelDto() {

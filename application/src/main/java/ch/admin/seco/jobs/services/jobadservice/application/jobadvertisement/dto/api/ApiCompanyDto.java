@@ -42,7 +42,7 @@ public class ApiCompanyDto {
     @Size(max=20)
     private String phone;
 
-    @Size(max=255)
+    @Size(max=50)
     private String email;
 
     @Size(max=255)

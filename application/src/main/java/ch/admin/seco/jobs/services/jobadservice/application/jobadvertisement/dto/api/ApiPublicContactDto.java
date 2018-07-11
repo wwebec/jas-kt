@@ -3,8 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.PublicContact;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 
 public class ApiPublicContactDto {
 
@@ -12,15 +11,19 @@ public class ApiPublicContactDto {
     private Salutation salutation;
 
     @NotBlank
+    @Size(max=50)
     private String firstName;
 
     @NotBlank
+    @Size(max=50)
     private String lastName;
 
-    @NotBlank
+    @Size(max=20)
+    @Pattern(regexp = "[+][0-9]{11,}")
     private String phone;
 
-    @NotBlank
+    @Size(max=50)
+    @Email
     private String email;
 
     protected ApiPublicContactDto() {
