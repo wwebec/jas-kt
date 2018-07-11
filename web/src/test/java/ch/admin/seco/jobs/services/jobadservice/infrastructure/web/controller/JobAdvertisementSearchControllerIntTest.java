@@ -486,12 +486,14 @@ public class JobAdvertisementSearchControllerIntTest {
     }
 
     @Test
-    public void shouldShowPublicationWithRestrictedDisplayForJobSeeker() throws Exception {
+    public void shouldFilterByPublicationForJobSeeker() throws Exception {
         // GIVEN
         when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
-        index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02)); //1 1
-        index(createJob(JOB_ADVERTISEMENT_ID_03));
+        //-------------------------------------------------------------------------------publicDisplay  restrictedDisplay
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
+        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
+        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));         //1 1
+        index(createJobWithPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_04));      //1 0
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -507,19 +509,21 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "3"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_04.getValue())))
         ;
 
     }
 
     @Test
-    public void shouldNotShowPublicationWithRestrictedDisplayForAnonymusUsers() throws Exception {
+    public void shouldFilterByPublicationForAnonymusUser() throws Exception {
         // GIVEN
-        index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02)); //1 1
-        index(createJob(JOB_ADVERTISEMENT_ID_03));
+        //-------------------------------------------------------------------------------publicDisplay  restrictedDisplay
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
+        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
+        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));         //1 1
+        index(createJobWithPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_04));      //1 0
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -535,89 +539,10 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "2"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
                 .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_04.getValue())))
         ;
 
-    }
-
-    @Test
-    public void shouldNotShowPublicatonWithoutPublicDisplayForAnonymusUsers() throws Exception {
-        // GIVEN
-        index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJobWithPublicationWithoutPublicDisplay(JOB_ADVERTISEMENT_ID_02));  //1 0
-        index(createJob(JOB_ADVERTISEMENT_ID_03));
-
-        // WHEN
-        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
-
-        ResultActions resultActions = mockMvc.perform(
-                post(API_JOB_ADVERTISEMENTS + "/_search")
-                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
-        );
-
-        // THEN
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(header().string("X-Total-Count", "2"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
-        ;
-
-    }
-
-
-    @Test
-    public void shouldShowWithoutPublicDisplayAndWithRestrictedDisplayForJobSeeker() throws Exception {
-        // GIVEN
-        when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
-        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
-        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
-        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));   //0 0
-
-        // WHEN
-        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
-
-        ResultActions resultActions = mockMvc.perform(
-                post(API_JOB_ADVERTISEMENTS + "/_search")
-                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
-        );
-
-        // THEN
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(header().string("X-Total-Count", "1"))
-                .andExpect(jsonPath("$.*.id").value(JOB_ADVERTISEMENT_ID_02.getValue()))
-        ;
-
-    }
-
-    @Test
-    public void shouldNotShowWithoutPublicDisplayAndWithRestrictedDisplayForAnonymusUser() throws Exception {
-        // GIVEN
-        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
-        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
-        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));   //0 0
-
-        // WHEN
-        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
-
-        ResultActions resultActions = mockMvc.perform(
-                post(API_JOB_ADVERTISEMENTS + "/_search")
-                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
-                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
-        );
-
-        // THEN
-        resultActions
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-                .andExpect(header().string("X-Total-Count", "0"))
-        ;
     }
 
     @Test
