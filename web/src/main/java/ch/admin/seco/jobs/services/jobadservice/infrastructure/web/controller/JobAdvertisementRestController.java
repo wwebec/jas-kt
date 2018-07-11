@@ -54,14 +54,18 @@ public class JobAdvertisementRestController {
 
     @GetMapping("/byStellennummerEgov/{stellennummerEgov}")
     public JobAdvertisementDto getOneByStellennummerEgov(@PathVariable String stellennummerEgov) throws AggregateNotFoundException {
-        return jobAdvertisementApplicationService.findByStellennummerEgov(stellennummerEgov);
+        return jobAdvertisementApplicationService.getByStellennummerEgov(stellennummerEgov);
     }
 
     @GetMapping("/byStellennummerAvam/{stellennummerAvam}")
     public JobAdvertisementDto getOneByStellennummerAvam(@PathVariable String stellennummerAvam) throws AggregateNotFoundException {
-        return jobAdvertisementApplicationService.findByStellennummerAvam(stellennummerAvam);
+        return jobAdvertisementApplicationService.getByStellennummerAvam(stellennummerAvam);
     }
 
+    @GetMapping("/byFingerprint/{fingerprint}")
+    public JobAdvertisementDto getOneByFingerprint(@PathVariable String fingerprint) {
+        return jobAdvertisementApplicationService.getByFingerprint(fingerprint);
+    }
 
     @PatchMapping("/{id}/cancel")
     @ResponseStatus(HttpStatus.NO_CONTENT)
