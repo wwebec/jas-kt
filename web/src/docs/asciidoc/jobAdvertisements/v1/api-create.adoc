@@ -34,7 +34,7 @@ Provide an administrative contact (e. g. an HR employee); this contact is used f
 | firstName | String(50) |  | Required
 | lastName | String(50) |  | Required
 | phone | String(20) |  | Required (Format: +41123456789)
-| email | String(255) | Multiple comma separated addresses allowed | Required
+| email | String(50) | Multiple comma separated addresses allowed | Required
 |===
 
 ==== JobDescription
@@ -59,13 +59,13 @@ The company that handles the recruitment. This information is published.
 | houseNumber | String(10) | | Optional
 | postOfficeBoxNumber | String(10) | | Optional
 | postOfficeBoxPostalCode | String(10) | | Optional
-| postOfficeBoxCity | String(255) | | Optional
+| postOfficeBoxCity | String(100) | | Optional
 | postalCode | String(10) | | Required. Must be a valid swiss postal code if the company is located in Switzerland
-| city | String(50) | | Required
+| city | String(100) | | Required
 | countryIsoCode | String(2) | | Required (ISO 3166-1 alpha-2)
 | website | String(255) | | Optional (Format: http://www.example.org)
 | phone | String(20) | | Optional (Format: +41123456789)
-| email | String(255) | | Optional
+| email | String(50) | | Optional
 | surrogate | Boolean | Does the company act as a surrogate for the actual employer? | Required (`true` or `false`)
 |===
 
@@ -76,7 +76,7 @@ Must be provided if the company handling the recruitment is not the actual emplo
 | Path | Type | Description | Constraints
 
 | name | String(255) | The name of the original company | Required
-| city | String(50) | | Required
+| city | String(100) | | Required
 | postalCode | String(10) | | Required. Must be a valid swiss postal code if the company is located in Switzerland
 | countryIsoCode | String(2) | | Required (ISO 3166-1 alpha-2)
 |===
@@ -135,8 +135,8 @@ Provide at least one channel for applications.
 |===
 | Path | Type | Description | Constraints
 
-| formUrl | String(1024) | An online form where an applicant can apply | Optional (Format: http://www.example.org)
-| emailAddress | String(255) | An email address where an applicant can send their application | Optional
+| formUrl | String(255) | An online form where an applicant can apply | Optional (Format: http://www.example.org)
+| emailAddress | String(50) | An email address where an applicant can send their application | Optional
 | phoneNumber | String(20) | A phone number where an applicant can call | Optional (Format: +41123456789)
 | mailAddress | String(255) | A post address where an applicant can send their application | Optional
 | additionalInfo | String(255) | More application information can be added as free text. | Optional (Max 255 characters)
@@ -152,7 +152,7 @@ Provide a public contact if you want to give applicants the opportunity to ask q
 | firstName | String(50) |  | Required
 | lastName | String(50) |  | Required
 | phone | String(20) |  | Optional (Format: +41123456789) (phone or email must be set)
-| email | String(255) |  | Optional (phone or email must be set)
+| email | String(50) |  | Optional (phone or email must be set)
 |===
 
 ==== Publication

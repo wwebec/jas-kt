@@ -41,6 +41,7 @@ public class ApiCreateJobAdvertisementDto {
 
     private List<ApiLanguageSkillDto> languageSkills;
 
+    @NotNull
     private ApiApplyChannelDto applyChannel;
 
     private ApiPublicContactDto publicContact;
