@@ -161,7 +161,17 @@ public class AvamJobAdvertisementAssemblerV2 {
         avamJobAdvertisement.setKpVorname(contact.getFirstName());
         avamJobAdvertisement.setKpName(contact.getLastName());
         avamJobAdvertisement.setKpTelefonNr(contact.getPhone());
-        avamJobAdvertisement.setKpEmail(contact.getEmail());
+        // FIXME: Temparory fix for mulitple email-addresses. to be remove after 01.09.2018 or handled otherwise
+        avamJobAdvertisement.setKpEmail(fetchFirstEmail(contact.getEmail()));
+        //avamJobAdvertisement.setKpEmail(contact.getEmail());
+    }
+
+    static String fetchFirstEmail(String email) {
+        if (hasText(email)) {
+            String[] tokens = email.split(",\\s*");
+            return tokens[0];
+        }
+        return null;
     }
 
     private void fillLocation(TOsteEgov avamJobAdvertisement, Location location) {
