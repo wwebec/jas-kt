@@ -171,7 +171,7 @@ public class AvamJobAdvertisementAssemblerV2 {
         avamJobAdvertisement.setArbeitsOrtText(location.getRemarks());
         avamJobAdvertisement.setArbeitsOrtOrt(location.getCity());
         avamJobAdvertisement.setArbeitsOrtPlz(location.getPostalCode());
-        avamJobAdvertisement.setArbeitsOrtGemeinde(location.getCommunalCode());
+        //avamJobAdvertisement.setArbeitsOrtGemeindeNr(location.getCommunalCode());
         avamJobAdvertisement.setArbeitsOrtLand(location.getCountryIsoCode());
     }
 
