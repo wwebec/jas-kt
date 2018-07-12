@@ -131,8 +131,7 @@ public class JobContent implements ValueObject<JobContent> {
         this.publicContact = builder.publicContact;
         this.applyChannel = builder.applyChannel;
         this.location = builder.location;
-        // FIXME reinsert occupation condition, when the legacy API is deleted
-        //this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
+        this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
         this.occupations = builder.occupations;
     }
 
