@@ -300,7 +300,6 @@ public class JobAdvertisementSearchService {
             );
         } else {
             publicationTypeFilter.must(termQuery(PATH_PUBLICATION_PUBLIC_DISPLAY, true));
-            publicationTypeFilter.mustNot(termQuery(PATH_PUBLICATION_RESTRICTED_DISPLAY, true));
         }
 
         return publicationTypeFilter;
