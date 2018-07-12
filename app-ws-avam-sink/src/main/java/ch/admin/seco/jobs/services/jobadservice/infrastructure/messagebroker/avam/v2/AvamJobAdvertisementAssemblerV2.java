@@ -52,7 +52,7 @@ public class AvamJobAdvertisementAssemblerV2 {
         //TODO: Review if we need to check nullability
         Assert.notNull(publication, "jobAdvertisement.getPublication can not be null");
 
-        avamJobAdvertisement.setGueltigkeit(formatLocalDate(publication.getEndDate()));
+        avamJobAdvertisement.setGueltigkeit(null);
 
         avamJobAdvertisement.setEures(publication.isEuresDisplay());
         avamJobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
