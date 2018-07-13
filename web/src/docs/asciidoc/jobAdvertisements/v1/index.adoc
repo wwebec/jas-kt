@@ -9,15 +9,24 @@ Seco eGovernment Services <{contact-mail}>
 :sectnums:
 :sectnumlevels: 2
 
-= Preparation for Go-Live of Job-Room V2.1 and Jobs API V1.0
+= Access credentials
 
-- In preparation of Go-Live, on June 27, the Job-Room will be taken offline and the legacy Jobs API will be disabled.
-- On July 1, the Job-Room 2.1 will go live together with the Jobs API V1.0.
+- For testing use (link:{api-url}/jobAdvertisements/v1[{api-url}/jobAdvertisements/v1]). Test users apiuser01 to apiuser99
+are available (password same as user name). Do NOT use any confidetnial data in the test environment but DO use real postal codes.
 - The URL for the productive API is https://api.job-room.ch/jobAdvertisements/v1
 - If you have integrated and tested the Jobs API and wish to request productive access credentials:
 * Send a message with subject "Job-Room API access" to jobroom-api@seco.admin.ch
 * Specify the company name, address and email, at least one technical contact person with email address and phone number, and user name. Please also specify the expected volume of job registrations.
 * The technical contact will receive an email with further instructions.
+
+= Important updates
+Please do not use html tags in job advertisements. Use Markdown formating instead. The reason is that job center agents
+can see the ad only in text mode and the html tags make them difficult to read.
+
+For markdown, refer to
+* http://en.wikipedia.org/wiki/Markdown
+* http://zaclem01.github.io/angular-markdown-previewer/
+* htpp://html2markdown.bayn.es
 
 = General
 

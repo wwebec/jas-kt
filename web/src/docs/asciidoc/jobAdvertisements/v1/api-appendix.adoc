@@ -24,12 +24,9 @@ The phone numbers are send as string in the format "+41123456789"
 |===
 | Value | Description
 
-| CREATED | The job advertisement was created
 | INSPECTING | The job ad has been passed to AVAM system
-| APPROVED | The job ad has been approved in the AVAM system
 | REJECTED | The job ad has been rejected in the AVAM system
-| REFINING | The job ad is waiting for refinements
-| PUBLISHED_RESTRICTED | The job ad is only displayed for logged in user (cause reporting obligation)
+| PUBLISHED_RESTRICTED | The job ad is only displayed for logged in user (due to reporting obligation)
 | PUBLISHED_PUBLIC | The job ad is displayed for everyone
 | CANCELLED | The job ad has been cancelled
 | ARCHIVED | The publication reached his end of life and is archived

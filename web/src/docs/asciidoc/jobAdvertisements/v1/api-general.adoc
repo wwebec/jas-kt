@@ -1,12 +1,8 @@
 
-The Job-Room Jobs API (link:{api-url}/jobAdvertisements/v1[{api-url}/jobAdvertisements/v1]) provides an additional channel for employers to publish job advertisements to the Swiss public employment services system.
+The Job-Room Jobs API https://api.job-room.ch/jobAdvertisements/v1 provides an additional channel for employers to publish job advertisements to the Swiss public employment services system.
 It is an alternative to the web form available at https://www.job-room.ch/#/companies/jobpublication.
 
-This document describes the new version of the API which will go in production on July 1, 2018.
-The legacy API (described at {api-url}/api-docs/joboffers/index.html) will be decommissioned at the same time.
-The upgrade is necessary because of the _job vacancy registration requirement_ going into force on July 1.
 Companies that wish to use the jobs API will need to request access credentials.
-Those will be available once the test environment is available, which is expected by mid May.
 
 For technical questions regarding the jobs API, use the contact addresses above. Please provide the name of the company and a technical contact person.
 For nontechnical questions (e. g. legal, administrative) regarding the job registration requirement, please refer to https://www.arbeit.swiss/secoalv/en/home/menue/unternehmen/stellenmeldepflicht.html.
@@ -26,7 +22,7 @@ The registration process via the Jobs interface (API) is as follows:
 * All vacancies reported to the API must have an occupation code. Based on that code, the system determines whether the job falls under the registration requirement. link:AVAM-Berufsliste-Juni-2018.xlsx[Download occupations Excel sheet]
 * If no: the job ad is directly published on Job-Room and will be visible and searchable to the public. The maximum publication period is 60 days. Job ads can at any time be canceled via the API.
 * If yes: the job ad is transmitted to the database of the Swiss public employment service (PES), called AVAM. It is then reviewed and approved by a PES agent (there can be a delay). It may also be rejected, for example if information is insufficient.
-* After the ad is approved or rejected, an email to the contact person is generated with information about the registration requirementn.
+* After the ad is approved or rejected, an email to the contact person is generated with information about the registration requirement.
 * The ad may not be published elsewhere for a period of five work days from the date of approval. The end date of that period is indicated in the email message.
 * During the blackout period, the ad is not visible to the public, only to registered jobseekers.
 * After the blackout period, the ad is available to the public on Job-Room. The employer may opt out of this.

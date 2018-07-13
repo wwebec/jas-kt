@@ -34,7 +34,7 @@ Provide an administrative contact (e. g. an HR employee); this contact is used f
 | firstName | String(50) |  | Required
 | lastName | String(50) |  | Required
 | phone | String(20) |  | Required (Format: +41123456789)
-| email | String(50) | Only one addresses allowed | Required
+| email | String(50) | Only one valid address allowed | Required
 |===
 
 ==== JobDescription
@@ -45,7 +45,7 @@ The text of the job advertisement; may be multilingual
 
 | languageIsoCode | String(5) | The language of the title and description | Required (ISO 639-1) but only de, fr, it or en
 | title | String(255) | Job title or occupation | Required
-| description | String(12000) | Job description can contain basic HTML formatting as well as markdown convention | Required (Max 10'000 characters)
+| description | String(12000) | Job description cannot contain html formatting. Use markdown formating instead | Required (Max 10'000 characters)
 |===
 
 ==== Company
@@ -139,7 +139,7 @@ Provide at least one channel for applications.
 | emailAddress | String(50) | An email address where an applicant can send their application | Optional
 | phoneNumber | String(20) | A phone number where an applicant can call | Optional (Format: +41123456789)
 | mailAddress | String(255) | A post address where an applicant can send their application | Optional
-| additionalInfo | String(255) | More application information can be added as free text. | Optional (Max 255 characters)
+| additionalInfo | String(255) | Currently not used, will be ignored | Optional (do not use)
 |===
 
 ==== PublicContact
