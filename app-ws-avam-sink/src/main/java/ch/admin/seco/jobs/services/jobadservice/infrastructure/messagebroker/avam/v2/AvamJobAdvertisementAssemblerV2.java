@@ -52,7 +52,7 @@ public class AvamJobAdvertisementAssemblerV2 {
         //TODO: Review if we need to check nullability
         Assert.notNull(publication, "jobAdvertisement.getPublication can not be null");
 
-        avamJobAdvertisement.setGueltigkeit(formatLocalDate(publication.getEndDate()));
+        avamJobAdvertisement.setGueltigkeit(null);
 
         avamJobAdvertisement.setEures(publication.isEuresDisplay());
         avamJobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
@@ -161,7 +161,17 @@ public class AvamJobAdvertisementAssemblerV2 {
         avamJobAdvertisement.setKpVorname(contact.getFirstName());
         avamJobAdvertisement.setKpName(contact.getLastName());
         avamJobAdvertisement.setKpTelefonNr(contact.getPhone());
-        avamJobAdvertisement.setKpEmail(contact.getEmail());
+        // FIXME: Temparory fix for mulitple email-addresses. to be remove after 01.09.2018 or handled otherwise
+        avamJobAdvertisement.setKpEmail(fetchFirstEmail(contact.getEmail()));
+        //avamJobAdvertisement.setKpEmail(contact.getEmail());
+    }
+
+    static String fetchFirstEmail(String email) {
+        if (hasText(email)) {
+            String[] tokens = email.split(",\\s*");
+            return tokens[0];
+        }
+        return null;
     }
 
     private void fillLocation(TOsteEgov avamJobAdvertisement, Location location) {
@@ -171,7 +181,7 @@ public class AvamJobAdvertisementAssemblerV2 {
         avamJobAdvertisement.setArbeitsOrtText(location.getRemarks());
         avamJobAdvertisement.setArbeitsOrtOrt(location.getCity());
         avamJobAdvertisement.setArbeitsOrtPlz(location.getPostalCode());
-        avamJobAdvertisement.setArbeitsOrtGemeinde(location.getCommunalCode());
+        //avamJobAdvertisement.setArbeitsOrtGemeindeNr(location.getCommunalCode());
         avamJobAdvertisement.setArbeitsOrtLand(location.getCountryIsoCode());
     }
 
