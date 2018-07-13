@@ -79,4 +79,10 @@ public class JobAdvertisementRestController {
         return PageResource.of(eventStore.findByAggregateId(id, JobAdvertisement.class.getSimpleName(), 0, 100));
     }
 
+    @PostMapping("/{id}/retry/inspect")
+    @PreAuthorize("hasRole(T(ch.admin.seco.jobs.services.jobadservice.application.security.Role).SYSADMIN.value)")
+    public void retryInspect(@PathVariable String id) {
+        jobAdvertisementApplicationService.inspect(new JobAdvertisementId(id));
+    }
+
 }
