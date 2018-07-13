@@ -34,7 +34,7 @@ Provide an administrative contact (e. g. an HR employee); this contact is used f
 | firstName | String(50) |  | Required
 | lastName | String(50) |  | Required
 | phone | String(20) |  | Required (Format: +41123456789)
-| email | String(50) | Multiple comma separated addresses allowed | Required
+| email | String(50) | Only one addresses allowed | Required
 |===
 
 ==== JobDescription
@@ -65,7 +65,7 @@ The company that handles the recruitment. This information is published.
 | countryIsoCode | String(2) | | Required (ISO 3166-1 alpha-2)
 | website | String(255) | | Optional (Format: http://www.example.org)
 | phone | String(20) | | Optional (Format: +41123456789)
-| email | String(50) | | Optional
+| email | String(50) | Only one addresses allowed | Optional
 | surrogate | Boolean | Does the company act as a surrogate for the actual employer? | Required (`true` or `false`)
 |===
 
