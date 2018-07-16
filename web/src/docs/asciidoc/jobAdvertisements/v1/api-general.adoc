@@ -39,7 +39,7 @@ JobRoom API exposes a simple way to manage job advertisements. It follows _RESTf
 * Explicit HTTP status codes
 * Pagination support
 
-The following chapters explain more precisely some of these concepts and provide examples in how to create, read, edit and cancel job offers.
+The following chapters explain more precisely some of these concepts and provide examples in how to create, read, and cancel job offers.
 
 == HTTP verbs
 

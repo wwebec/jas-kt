@@ -21,15 +21,16 @@ Seco eGovernment Services <{contact-mail}>
 * Specify the company name, address and email, at least one technical contact person with email address and phone number, and user name. Please also specify the expected volume of job registrations.
 * The technical contact will receive an email with further instructions.
 
-= Important updates
-Please do not use html tags in job advertisements. Use Markdown formating instead. The reason is that job center agents
-can see the ad only in text mode and the html tags make them difficult to read.
+= Important notes
+- Please do not use html tags in job advertisements. Use Markdown formating instead. The reason is that job center agents
+can see the ad only in text mode and the html tags make them difficult to read. Some markdown references you might find helpful:
+* http://en.wikipedia.org/wiki/Markdown
+* http://zaclem01.github.io/angular-markdown-previewer/
+* http://html2markdown.bayn.es
 
-Some markdown references you might find helpful:
-
-- http://en.wikipedia.org/wiki/Markdown
-- http://zaclem01.github.io/angular-markdown-previewer/
-- http://html2markdown.bayn.es
+- It is not possible currently to cancel a job advertisement in status INSPECTING.
+Only cancel job ads in status PUBLISHED_RESTRICTED or PUBLISHED_PUBLIC.
+- Updating a job ad is currently not supported. 
 
 = General
 
