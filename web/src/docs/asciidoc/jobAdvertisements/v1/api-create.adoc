@@ -9,7 +9,7 @@
 
 | externalUrl | String(1024) | Link to the original website of the job ad | Optional | For jobs that fall under the reporting obligation, the ad must not be published elsewhere.
 | externalReference | String(255) | Your internal reference to this job ad | Optional |
-| reportToAvam | Boolean | Should the ad be transmitted to the PES (RAV)? | Required (`true` or `false`) | Use this option if you want a PES agent to know about your vacancy
+| reportToAvam | Boolean | Should the ad be transmitted to the PES (RAV)? | Required (`true` or `false`) | Usually false. Use this option if you want a PES agent to know about your vacancy
 | contact | <<Contact>> | Contact person about the job ad | Required | Administrative contact, not for publication
 | jobDescriptions | Array<<<JobDescription>>> | Language specific title and description | Required 1..4 | The text of the job advertisement; may be multilingual
 | company | <<Company>> | The company that handles the recruitment | Required | May be a private employment agency acting as surrogate
@@ -24,7 +24,9 @@
 |===
 
 ==== Contact
-Provide an administrative contact (e. g. an HR employee); this contact is used for email notifications concerning the reporting obligation
+Provide an administrative contact (e. g. an HR employee).
+
+Important: this contact is used for email notifications concerning the reporting obligation
 [cols="30,10,30,30"]
 |===
 | Path | Type | Description | Constraints
@@ -34,7 +36,7 @@ Provide an administrative contact (e. g. an HR employee); this contact is used f
 | firstName | String(50) |  | Required
 | lastName | String(50) |  | Required
 | phone | String(20) |  | Required (Format: +41123456789)
-| email | String(50) | Only one addresses allowed | Required
+| email | String(50) | Only one valid address allowed | Required
 |===
 
 ==== JobDescription
@@ -45,7 +47,7 @@ The text of the job advertisement; may be multilingual
 
 | languageIsoCode | String(5) | The language of the title and description | Required (ISO 639-1) but only de, fr, it or en
 | title | String(255) | Job title or occupation | Required
-| description | String(12000) | Job description can contain basic HTML formatting as well as markdown convention | Required (Max 10'000 characters)
+| description | String(10'000) | Job description cannot contain html formatting. Use markdown formating instead | Required (Max 10'000 characters)
 |===
 
 ==== Company
@@ -139,7 +141,7 @@ Provide at least one channel for applications.
 | emailAddress | String(50) | An email address where an applicant can send their application | Optional
 | phoneNumber | String(20) | A phone number where an applicant can call | Optional (Format: +41123456789)
 | mailAddress | String(255) | A post address where an applicant can send their application | Optional
-| additionalInfo | String(255) | More application information can be added as free text. | Optional (Max 255 characters)
+| additionalInfo | String(255) | Currently not used, will be ignored | Optional (do not use)
 |===
 
 ==== PublicContact

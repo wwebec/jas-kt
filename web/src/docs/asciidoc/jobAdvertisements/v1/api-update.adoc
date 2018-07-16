@@ -1,3 +1,3 @@
 == Update a job advertisement
 
-Update possible not available at the moment but planned for the next release.
+Update possibility not available at the moment but planned for the next release.
