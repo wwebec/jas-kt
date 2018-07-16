@@ -27,7 +27,7 @@ public class ApiCompanyDto {
     private String city;
 
     @Size(max=2)
-    @Pattern(regexp = "[a-z]{2}")
+    @Pattern(regexp = "[A-Z]{2}")
     private String countryIsoCode;
 
     @Size(max=10)

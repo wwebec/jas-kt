@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -15,35 +16,45 @@ public class ApiCreateJobAdvertisementDto {
     @Size(max = 255)
     private String externalReference;
 
+    @Valid
     @NotNull
     private ApiContactDto contact;
 
+    @Valid
     @NotNull
     private ApiPublicationDto publication;
 
-    @NotNull
+    @Valid
     @NotEmpty
     private List<ApiJobDescriptionDto> jobDescriptions;
 
+    @Valid
     @NotNull
     private ApiCompanyDto company;
 
+    @Valid
     private ApiEmployerDto employer;
 
+    @Valid
     @NotNull
     private ApiEmploymentDto employment;
 
+    @Valid
     @NotNull
     private ApiCreateLocationDto location;
 
+    @Valid
     @NotNull
     private ApiOccupationDto occupation;
 
+    @Valid
     private List<ApiLanguageSkillDto> languageSkills;
 
+    @Valid
     @NotNull
     private ApiApplyChannelDto applyChannel;
 
+    @Valid
     private ApiPublicContactDto publicContact;
 
     protected ApiCreateJobAdvertisementDto() {

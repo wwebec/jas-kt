@@ -12,6 +12,7 @@
         <modifyDataType tableName="JOB_ADVERTISEMENT" columnName="COMPANY_POST_OFFICE_BOX_CITY" newDataType="VARCHAR(100)"/>
         <modifyDataType tableName="JOB_ADVERTISEMENT" columnName="EMPLOYER_CITY" newDataType="VARCHAR(100)"/>
         <modifyDataType tableName="JOB_ADVERTISEMENT" columnName="EMPLOYER_COUNTRY_ISO_CODE" newDataType="VARCHAR(2)"/>
+        <modifyDataType tableName="JOB_ADVERTISEMENT" columnName="APPLY_CHANNEL_FORM_URL" newDataType="VARCHAR(255)"/>
     </changeSet>
 
 </databaseChangeLog>

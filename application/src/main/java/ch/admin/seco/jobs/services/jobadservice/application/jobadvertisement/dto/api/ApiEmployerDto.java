@@ -22,7 +22,7 @@ public class ApiEmployerDto {
 
     @NotBlank
     @Size(max = 2)
-    @Pattern(regexp = "[a-z]{2}")
+    @Pattern(regexp = "[A-Z]{2}")
     private String countryIsoCode;
 
     protected ApiEmployerDto() {
