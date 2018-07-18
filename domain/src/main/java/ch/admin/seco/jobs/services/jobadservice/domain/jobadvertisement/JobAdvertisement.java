@@ -5,6 +5,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.core.validations.Violations;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.changes.ChangeLog;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.*;
 
 import javax.persistence.*;
@@ -219,8 +220,9 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void update(JobAdvertisementUpdater updater) {
-        if (applyUpdates(updater)) {
-            DomainEventPublisher.publish(new JobAdvertisementEvent(JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED, this));
+        ChangeLog changeLog = applyUpdates(updater);
+        if (!changeLog.isEmpty()) {
+            DomainEventPublisher.publish(new JobAdvertisementUpdatedEvent(this, changeLog));
         }
     }
 
@@ -377,100 +379,98 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         Condition.isTrue(violations.isEmpty(), String.valueOf(violations.getMessages()));
     }
 
-    private boolean applyUpdates(JobAdvertisementUpdater updater) {
-        boolean hasChangedAnything = false;
+    private ChangeLog applyUpdates(JobAdvertisementUpdater updater) {
+        ChangeLog changeLog = new ChangeLog();
 
         if (updater.hasAnyChangesIn(SECTION_FINGERPRINT) && hasChanged(fingerprint, updater.getFingerprint())) {
+            changeLog.add("fingerprint", fingerprint, updater.getFingerprint());
             fingerprint = updater.getFingerprint();
-            hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_X28_OCCUPATION_CODES) && hasChanged(getJobContent().getX28OccupationCodes(), updater.getX28OccupationCodes())) {
+        if (updater.hasAnyChangesIn(SECTION_X28_OCCUPATION_CODES) && hasChanged(jobContent.getX28OccupationCodes(), updater.getX28OccupationCodes())) {
+            changeLog.add("x28OccupationCodes", jobContent.getX28OccupationCodes(), updater.getX28OccupationCodes());
             getJobContent().setX28OccupationCodes(updater.getX28OccupationCodes());
-            hasChangedAnything = true;
         }
 
         if (updater.hasAnyChangesIn(SECTION_REPORTING_OBLIGATION) && (
-                hasChanged(this.reportingObligation, updater.isReportingObligation()) ||
-                        hasChanged(this.reportingObligationEndDate, updater.getReportingObligationEndDate()))) {
-            this.reportingObligation = updater.isReportingObligation();
-            this.reportingObligationEndDate = updater.getReportingObligationEndDate();
-            hasChangedAnything = true;
+                hasChanged(reportingObligation, updater.isReportingObligation()) ||
+                        hasChanged(reportingObligationEndDate, updater.getReportingObligationEndDate()))) {
+            changeLog.add("reportingObligation", reportingObligation, updater.isReportingObligation());
+            reportingObligation = updater.isReportingObligation();
+            changeLog.add("reportingObligationEndDate", reportingObligationEndDate, updater.getReportingObligationEndDate());
+            reportingObligationEndDate = updater.getReportingObligationEndDate();
         }
 
         if(updater.hasAnyChangesIn(SECTION_JOBDESCRIPTION)) {
-            if(this.getJobContent().getJobDescriptions().size() > 0) {
-                JobDescription jobDescription = this.getJobContent().getJobDescriptions().get(0);
+            if(jobContent.getJobDescriptions().size() > 0) {
+                JobDescription jobDescription = jobContent.getJobDescriptions().get(0);
                 if (hasChanged(jobDescription.getTitle(), updater.getTitle()) || hasChanged(jobDescription.getDescription(), updater.getDescription())) {
+                    changeLog.add("title", jobDescription.getTitle(), updater.getTitle());
+                    changeLog.add("description", jobDescription.getDescription(), updater.getDescription());
                     jobDescription.updateTitleAndDescription(updater.getTitle(), updater.getDescription());
-                    hasChangedAnything = true;
                 }
             }
         }
 
-        if (updater.hasAnyChangesIn(SECTION_JOB_CENTER_CODE) && hasChanged(this.jobCenterCode, updater.getJobCenterCode())) {
+        if (updater.hasAnyChangesIn(SECTION_JOB_CENTER_CODE) && hasChanged(jobCenterCode, updater.getJobCenterCode())) {
+            changeLog.add("jobCenterCode", jobCenterCode, updater.getJobCenterCode());
             this.jobCenterCode = updater.getJobCenterCode();
-            hasChangedAnything = true;
         }
 
-        if (updater.hasAnyChangesIn(SECTION_COMPANY) && hasChanged(this.getJobContent().getCompany(), updater.getCompany())) {
-            this.getJobContent().setCompany(updater.getCompany());
-            hasChangedAnything = true;
+        if (updater.hasAnyChangesIn(SECTION_COMPANY) && hasChanged(jobContent.getCompany(), updater.getCompany())) {
+            changeLog.add("company", jobContent.getCompany(), updater.getCompany());
+            jobContent.setCompany(updater.getCompany());
         }
 
-        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && hasChanged(this.getJobContent().getEmployment(), updater.getEmployment())) {
-            this.getJobContent().setEmployment(updater.getEmployment());
-            hasChangedAnything = true;
+        if (updater.hasAnyChangesIn(SECTION_EMPLOYMENT) && hasChanged(jobContent.getEmployment(), updater.getEmployment())) {
+            changeLog.add("employment", jobContent.getEmployment(), updater.getEmployment());
+            jobContent.setEmployment(updater.getEmployment());
         }
 
-        if (updater.hasAnyChangesIn(SECTION_LOCATION) && hasChanged(this.getJobContent().getLocation(), updater.getLocation())) {
-            this.getJobContent().setLocation(updater.getLocation());
-            hasChangedAnything = true;
+        if (updater.hasAnyChangesIn(SECTION_LOCATION) && hasChanged(jobContent.getLocation(), updater.getLocation())) {
+            changeLog.add("location", jobContent.getLocation(), updater.getLocation());
+            jobContent.setLocation(updater.getLocation());
         }
 
-        if (updater.hasAnyChangesIn(SECTION_OCCUPATIONS) && hasChangedContent(this.getJobContent().getOccupations(), updater.getOccupations())) {
-            this.getJobContent().setOccupations(updater.getOccupations());
-            hasChangedAnything = true;
+        if (updater.hasAnyChangesIn(SECTION_OCCUPATIONS) && hasChangedContent(jobContent.getOccupations(), updater.getOccupations())) {
+            changeLog.add("occupations", jobContent.getOccupations(), updater.getOccupations());
+            jobContent.setOccupations(updater.getOccupations());
         }
 
-        if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(this.getJobContent().getLanguageSkills(), updater.getLanguageSkills())) {
-            this.getJobContent().setLanguageSkills(updater.getLanguageSkills());
-            hasChangedAnything = true;
+        if (updater.hasAnyChangesIn(SECTION_LANGUAGE_SKILLS) && hasChangedContent(jobContent.getLanguageSkills(), updater.getLanguageSkills())) {
+            changeLog.add("languageSkills", jobContent.getLanguageSkills(), updater.getLanguageSkills());
+            jobContent.setLanguageSkills(updater.getLanguageSkills());
         }
 
-        if (updater.hasAnyChangesIn(SECTION_APPLY_CHANNEL) && hasChanged(this.getJobContent().getApplyChannel(), updater.getApplyChannel())) {
-            this.getJobContent().setApplyChannel(updater.getApplyChannel());
-            hasChangedAnything = true;
+        if (updater.hasAnyChangesIn(SECTION_APPLY_CHANNEL) && hasChanged(jobContent.getApplyChannel(), updater.getApplyChannel())) {
+            changeLog.add("applyChannel", jobContent.getApplyChannel(), updater.getApplyChannel());
+            jobContent.setApplyChannel(updater.getApplyChannel());
         }
 
-        if (updater.hasAnyChangesIn(SECTION_CONTACT) && hasChanged(this.contact, updater.getContact())) {
-            if((this.contact != null) && (updater.getContact() != null)) {
-                Locale language = this.contact.getLanguage();
-                this.contact = updater.getContact();
-                this.contact.setLanguage(language);
-                if(hasChanged(this.contact.getSalutation(), updater.getContact().getSalutation()) ||
-                        hasChanged(this.contact.getFirstName(), updater.getContact().getFirstName()) ||
-                        hasChanged(this.contact.getLastName(), updater.getContact().getLastName()) ||
-                        hasChanged(this.contact.getEmail(), updater.getContact().getEmail()) ||
-                        hasChanged(this.contact.getPhone(), updater.getContact().getPhone())) {
-                    hasChangedAnything = true;
+        if (updater.hasAnyChangesIn(SECTION_CONTACT) && hasChanged(contact, updater.getContact())) {
+            if((contact != null) && (updater.getContact() != null)) {
+                if(hasChanged(contact.getSalutation(), updater.getContact().getSalutation()) ||
+                        hasChanged(contact.getFirstName(), updater.getContact().getFirstName()) ||
+                        hasChanged(contact.getLastName(), updater.getContact().getLastName()) ||
+                        hasChanged(contact.getEmail(), updater.getContact().getEmail()) ||
+                        hasChanged(contact.getPhone(), updater.getContact().getPhone())) {
+                    changeLog.add("contact", contact, updater.getContact());
+                    Locale language = contact.getLanguage();
+                    contact = updater.getContact();
+                    contact.setLanguage(language);
                 }
             } else {
-                this.contact = updater.getContact();
-                hasChangedAnything = true;
+                changeLog.add("contact", contact, updater.getContact());
+                contact = updater.getContact();
             }
         }
 
-        if(updater.hasAnyChangesIn(SECTION_PUBLICATION) && hasChanged(this.publication, updater.getPublication())) {
-            this.publication = updater.getPublication();
-            hasChangedAnything = true;
+        if(updater.hasAnyChangesIn(SECTION_PUBLICATION) && hasChanged(publication, updater.getPublication())) {
+            changeLog.add("publication", publication, updater.getPublication());
+            publication = updater.getPublication();
         }
 
-        if (hasChangedAnything) {
-            // FIXME Auditor
-            //applyUpdater(updater.getAuditUser());
-        }
-        return hasChangedAnything;
+        return changeLog;
     }
 
     public static final class Builder {
