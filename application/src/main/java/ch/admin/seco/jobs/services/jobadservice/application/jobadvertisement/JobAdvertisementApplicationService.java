@@ -5,6 +5,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ApiCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
@@ -21,10 +22,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -34,7 +33,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -72,12 +70,12 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(CurrentUserContext currentUserContext,
-            JobAdvertisementRepository jobAdvertisementRepository,
-            JobAdvertisementFactory jobAdvertisementFactory,
-            ReportingObligationService reportingObligationService,
-            LocationService locationService,
-            ProfessionService professionService,
-            JobCenterService jobCenterService) {
+                                              JobAdvertisementRepository jobAdvertisementRepository,
+                                              JobAdvertisementFactory jobAdvertisementFactory,
+                                              ReportingObligationService reportingObligationService,
+                                              LocationService locationService,
+                                              ProfessionService professionService,
+                                              JobCenterService jobCenterService) {
         this.currentUserContext = currentUserContext;
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
@@ -467,23 +465,18 @@ public class JobAdvertisementApplicationService {
         Location location = toLocation(createJobAdvertisementDto.getLocation());
         location = locationService.enrichCodes(location);
 
+        Condition.notNull(createJobAdvertisementDto.getOccupation(), "Occupation can't be null");
+
+        Occupation occupation = toOccupation(createJobAdvertisementDto.getOccupation());
+        occupation = enrichOccupationWithProfessionCodes(occupation);
+        List<Occupation> occupations = Collections.singletonList(occupation);
+
+        boolean reportingObligation = checkReportingObligation(
+                occupation,
+                location
+        );
+
         String jobCenterCode = jobCenterService.findJobCenterCode(location.getCountryIsoCode(), location.getPostalCode());
-
-        List<Occupation> occupations = null;
-        boolean reportingObligation = false;
-
-        if (createJobAdvertisementDto.getOccupation() != null) {
-            Occupation occupation = toOccupation(createJobAdvertisementDto.getOccupation());
-            // FIXME remove this if, when the legacy API is deleted
-            if (occupation != null) {
-                occupation = enrichOccupationWithProfessionCodes(occupation);
-                reportingObligation = checkReportingObligation(
-                        occupation,
-                        location
-                );
-            }
-            occupations = Collections.singletonList(occupation);
-        }
 
         JobContent jobContent = new JobContent.Builder()
                 .setExternalUrl(createJobAdvertisementDto.getExternalUrl())

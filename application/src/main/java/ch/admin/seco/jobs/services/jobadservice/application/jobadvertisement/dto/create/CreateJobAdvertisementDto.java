@@ -35,8 +35,7 @@ public class CreateJobAdvertisementDto {
     @NotNull
     private CreateLocationDto location;
 
-    // TODO add the NotNull, when the legacy API is deleted
-    // @NotNull
+    @NotNull
     private OccupationDto occupation;
 
     private List<LanguageSkillDto> languageSkills;

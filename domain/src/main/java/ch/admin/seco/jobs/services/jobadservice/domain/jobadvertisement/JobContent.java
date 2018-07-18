@@ -86,6 +86,7 @@ public class JobContent implements ValueObject<JobContent> {
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
+    @NotEmpty
     private List<Occupation> occupations;
 
     @ElementCollection
@@ -131,9 +132,7 @@ public class JobContent implements ValueObject<JobContent> {
         this.publicContact = builder.publicContact;
         this.applyChannel = builder.applyChannel;
         this.location = builder.location;
-        // FIXME reinsert occupation condition, when the legacy API is deleted
-        //this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
-        this.occupations = builder.occupations;
+        this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
     }
 
     public String getExternalUrl() {

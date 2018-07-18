@@ -2,6 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ApiCreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ConvertApiToNormalCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
@@ -28,8 +30,9 @@ public class JobAdvertisementApiRestController {
 
     @PostMapping
     public JobAdvertisementDto createFromApi(
-            @RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto
+            @RequestBody @Valid ApiCreateJobAdvertisementDto apiCreateJobAdvertisementDto
     ) throws AggregateNotFoundException {
+        CreateJobAdvertisementDto createJobAdvertisementDto = ConvertApiToNormalCreateJobAdvertisementDto.convert(apiCreateJobAdvertisementDto);
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementDto);
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
