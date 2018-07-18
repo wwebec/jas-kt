@@ -36,9 +36,6 @@ public class Company implements ValueObject<Company> {
         this.houseNumber = builder.houseNumber;
         this.postalCode = builder.postalCode;
         this.city = builder.city;
-        // FIXME Add constrains when legacy API is removed!
-//        this.postalCode = Condition.notBlank(builder.postalCode, "Postal code of a company can't be null");
-//        this.city = Condition.notBlank(builder.city, "City of a company can't be null");
         //this.countryIsoCode = Condition.notBlank(builder.countryIsoCode, "Country of a company can't be null");
         //todo: Review the countryIsoCode, because most of the jobs from x28 do not have country.
         this.countryIsoCode = builder.countryIsoCode;

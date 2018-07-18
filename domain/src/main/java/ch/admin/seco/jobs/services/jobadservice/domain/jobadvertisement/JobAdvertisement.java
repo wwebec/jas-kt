@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -26,6 +27,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     @AttributeOverride(name = "value", column = @Column(name = "ID"))
     @Valid
     private JobAdvertisementId id;
+
+    private LocalDateTime createdTime;
+
+    private LocalDateTime updatedTime;
 
     @NotNull
     @Enumerated(EnumType.STRING)
@@ -112,6 +117,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     private JobAdvertisement(Builder builder) {
         this.id = Condition.notNull(builder.id, "Id can't be null");
+        this.createdTime = TimeMachine.now();
+        this.updatedTime = TimeMachine.now();
         this.status = Condition.notNull(builder.status, "Status can't be null");
         this.sourceSystem = Condition.notNull(builder.sourceSystem, "Source system can't be null");
         this.externalReference = builder.externalReference;
@@ -137,6 +144,14 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
 
     public JobAdvertisementId getId() {
         return id;
+    }
+
+    public LocalDateTime getCreatedTime() {
+        return createdTime;
+    }
+
+    public LocalDateTime getUpdatedTime() {
+        return updatedTime;
     }
 
     public JobAdvertisementStatus getStatus() {
@@ -222,6 +237,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     public void update(JobAdvertisementUpdater updater) {
         ChangeLog changeLog = applyUpdates(updater);
         if (!changeLog.isEmpty()) {
+            this.updatedTime = TimeMachine.now();
             DomainEventPublisher.publish(new JobAdvertisementUpdatedEvent(this, changeLog));
         }
     }
@@ -230,6 +246,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         Condition.notBlank(this.stellennummerEgov, "StellennummerEgov can't be null");
 
         this.status = status.validateTransitionTo(JobAdvertisementStatus.INSPECTING);
+        this.updatedTime = TimeMachine.now();
         DomainEventPublisher.publish(new JobAdvertisementInspectingEvent(this));
     }
 
@@ -242,6 +259,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.reportingObligation = reportingObligation;
         this.reportingObligationEndDate = reportingObligationEndDate;
         this.status = status.validateTransitionTo(JobAdvertisementStatus.APPROVED);
+        this.updatedTime = TimeMachine.now();
         DomainEventPublisher.publish(new JobAdvertisementApprovedEvent(this));
     }
 
@@ -265,6 +283,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.rejectionCode = Condition.notBlank(code);
         this.rejectionReason = reason;
         this.status = status.validateTransitionTo(JobAdvertisementStatus.REJECTED);
+        this.updatedTime = TimeMachine.now();
         DomainEventPublisher.publish(new JobAdvertisementRejectedEvent(this));
     }
 
@@ -272,11 +291,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         this.cancellationDate = Condition.notNull(date);
         this.cancellationCode = Condition.notNull(cancellationCode);
         this.status = status.validateTransitionTo(JobAdvertisementStatus.CANCELLED);
+        this.updatedTime = TimeMachine.now();
         DomainEventPublisher.publish(new JobAdvertisementCancelledEvent(this));
     }
 
     public void refining() {
         this.status = status.validateTransitionTo(JobAdvertisementStatus.REFINING);
+        this.updatedTime = TimeMachine.now();
         DomainEventPublisher.publish(new JobAdvertisementRefiningEvent(this));
         // FIXME: shortcut, because the x28-api is not yet ready. to bee handel when api is implemented
         DomainEventPublisher.publish(new JobAdvertisementRefinedEvent(this));
@@ -286,6 +307,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         Condition.notNull(reportingObligationEndDate, "Reporting obligation end date is missing");
 
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_RESTRICTED);
+        this.updatedTime = TimeMachine.now();
         DomainEventPublisher.publish(new JobAdvertisementPublishRestrictedEvent(this));
     }
 
@@ -293,11 +315,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         Condition.notNull(getPublication().getEndDate(), "Publication end date is missing");
 
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
+        this.updatedTime = TimeMachine.now();
         DomainEventPublisher.publish(new JobAdvertisementPublishPublicEvent(this));
     }
 
     public void archive() {
         this.status = status.validateTransitionTo(JobAdvertisementStatus.ARCHIVED);
+        this.updatedTime = TimeMachine.now();
         DomainEventPublisher.publish(new JobAdvertisementArchivedEvent(this));
     }
 
