@@ -10,6 +10,7 @@
 | externalUrl | String(1024) | Link to the original website of the job ad | Optional | For jobs that fall under the reporting obligation, the ad must not be published elsewhere.
 | externalReference | String(255) | Your internal reference to this job ad | Optional |
 | reportToAvam | Boolean | Should the ad be transmitted to the PES (RAV)? | Required (`true` or `false`) | Usually false. Use this option if you want a PES agent to know about your vacancy
+| numberOfJobs | String(3) | The number of jobs | Optional |
 | contact | <<Contact>> | Contact person about the job ad | Required | Administrative contact, not for publication
 | jobDescriptions | Array<<<JobDescription>>> | Language specific title and description | Required 1..4 | The text of the job advertisement; may be multilingual
 | company | <<Company>> | The company that handles the recruitment | Required | May be a private employment agency acting as surrogate

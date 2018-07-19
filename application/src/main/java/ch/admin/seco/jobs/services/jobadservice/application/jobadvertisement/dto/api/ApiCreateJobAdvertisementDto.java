@@ -3,6 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class ApiCreateJobAdvertisementDto {
     private ApiPublicationDto publication;
 
     @Size(max = 3)
+    @Pattern(regexp = "[0-9]*")
     private String numberOfJobs;
 
     @Valid
