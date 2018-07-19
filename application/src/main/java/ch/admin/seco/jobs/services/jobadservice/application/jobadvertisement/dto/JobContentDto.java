@@ -7,6 +7,7 @@ import java.util.List;
 public class JobContentDto {
 
     private String externalUrl;
+    private String numberOfJobs;
     private List<JobDescriptionDto> jobDescriptions;
     private CompanyDto company;
     private EmploymentDto employment;
@@ -26,6 +27,14 @@ public class JobContentDto {
 
     public void setExternalUrl(String externalUrl) {
         this.externalUrl = externalUrl;
+    }
+
+    public String getNumberOfJobs() {
+        return numberOfJobs;
+    }
+
+    public void setNumberOfJobs(String numberOfJobs) {
+        this.numberOfJobs = numberOfJobs;
     }
 
     public List<JobDescriptionDto> getJobDescriptions() {
@@ -95,6 +104,7 @@ public class JobContentDto {
     public static JobContentDto toDto(JobContent jobContent) {
         JobContentDto jobContentDto = new JobContentDto();
         jobContentDto.setExternalUrl(jobContent.getExternalUrl());
+        jobContentDto.setNumberOfJobs(jobContent.getNumberOfJobs());
         jobContentDto.setJobDescriptions(JobDescriptionDto.toDto(jobContent.getJobDescriptions()));
         jobContentDto.setCompany(CompanyDto.toDto(jobContent.getCompany()));
         jobContentDto.setEmployment(EmploymentDto.toDto(jobContent.getEmployment()));

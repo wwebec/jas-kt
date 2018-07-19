@@ -24,6 +24,7 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
         x28JobAdvertisement.setStellennummerEGov(jobAdvertisement.getStellennummerEgov());
         x28JobAdvertisement.setFingerprint(jobAdvertisement.getFingerprint());
         x28JobAdvertisement.setArbeitsamtbereich(jobAdvertisement.getJobCenterCode());
+        x28JobAdvertisement.setGleicheOste(jobContent.getNumberOfJobs());
 
         mapTitleAndDescription(jobContent.getJobDescriptions(), x28JobAdvertisement);
         mapOccupation(jobContent.getOccupations(), x28JobAdvertisement);

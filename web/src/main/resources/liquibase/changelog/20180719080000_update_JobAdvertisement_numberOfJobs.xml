@@ -1,0 +1,12 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="just" id="20180719080000-1">
+        <addColumn tableName="JOB_ADVERTISEMENT">
+            <column name="NUMBER_OF_JOBS" type="VARCHAR(5)" />
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

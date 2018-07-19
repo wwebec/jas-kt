@@ -41,6 +41,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v1.WSOsteEgov;
 
+@Deprecated
 public class JobAdvertisementFromAvamAssemblerV1 {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobAdvertisementFromAvamAssemblerV1.class);
@@ -60,6 +61,7 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 avamJobAdvertisement.getBezeichnung(),
                 avamJobAdvertisement.getBeschreibung(),
                 "de", // Not defined in this AVAM version
+                avamJobAdvertisement.getGleicheOste(),
                 false,
                 null,
                 avamJobAdvertisement.getArbeitsamtBereich(),

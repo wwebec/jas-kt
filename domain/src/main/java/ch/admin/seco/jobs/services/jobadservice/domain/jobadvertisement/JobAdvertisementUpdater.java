@@ -11,6 +11,7 @@ public class JobAdvertisementUpdater {
 
     static final String SECTION_FINGERPRINT = "SECTION_FINGERPRINT";
     static final String SECTION_X28_OCCUPATION_CODES = "SECTION_X28_OCCUPATION_CODES";
+    static final String SECTION_NUMBER_OF_JOBS = "SECTION_NUMBER_OF_JOBS";
     static final String SECTION_REPORTING_OBLIGATION = "SECTION_REPORTING_OBLIGATION";
     static final String SECTION_JOBDESCRIPTION = "SECTION_JOBDESCRIPTION";
     static final String SECTION_PUBLICATION = "SECTION_PUBLICATION";
@@ -30,6 +31,8 @@ public class JobAdvertisementUpdater {
     private String fingerprint;
 
     private String x28OccupationCodes;
+
+    private String numberOfJobs;
 
     private boolean reportingObligation;
 
@@ -62,6 +65,7 @@ public class JobAdvertisementUpdater {
         this.auditUser = builder.auditUser;
         this.fingerprint = builder.fingerprint;
         this.x28OccupationCodes = builder.x28OccupationCodes;
+        this.numberOfJobs = builder.numberOfJobs;
         this.reportingObligation = builder.reportingObligation;
         this.reportingObligationEndDate = builder.reportingObligationEndDate;
         this.title = builder.title;
@@ -91,6 +95,10 @@ public class JobAdvertisementUpdater {
 
     public String getX28OccupationCodes() {
         return x28OccupationCodes;
+    }
+
+    public String getNumberOfJobs() {
+        return numberOfJobs;
     }
 
     public boolean isReportingObligation() {
@@ -151,6 +159,7 @@ public class JobAdvertisementUpdater {
         private AuditUser auditUser;
         private String fingerprint;
         private String x28OccupationCodes;
+        private String numberOfJobs;
         private boolean reportingObligation;
         private LocalDate reportingObligationEndDate;
         private String title;
@@ -182,6 +191,12 @@ public class JobAdvertisementUpdater {
         public Builder setX28OccupationCodes(String x28OccupationCodes) {
             this.changedSections.add(SECTION_X28_OCCUPATION_CODES);
             this.x28OccupationCodes = x28OccupationCodes;
+            return this;
+        }
+
+        public Builder setNumberOfJobs(String numberOfJobs) {
+            this.changedSections.add(SECTION_NUMBER_OF_JOBS);
+            this.numberOfJobs = numberOfJobs;
             return this;
         }
 

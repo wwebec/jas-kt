@@ -76,6 +76,7 @@ public class AvamJobAdvertisementAssemblerV2 {
         avamJobAdvertisement.setBezeichnung(defaultJobDescription.getTitle());
         avamJobAdvertisement.setBeschreibung(defaultJobDescription.getDescription());
 
+        avamJobAdvertisement.setGleicheOste(jobContent.getNumberOfJobs());
         fillEmployment(avamJobAdvertisement, jobContent.getEmployment());
         fillApplyChannel(avamJobAdvertisement, jobContent.getApplyChannel());
         fillCompany(avamJobAdvertisement, jobContent.getCompany());

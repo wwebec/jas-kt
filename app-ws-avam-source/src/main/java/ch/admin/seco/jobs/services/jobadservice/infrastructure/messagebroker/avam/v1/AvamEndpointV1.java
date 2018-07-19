@@ -24,6 +24,7 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v1
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v1.InsertOsteResponse;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v1.WSOsteEgov;
 
+@Deprecated
 @Endpoint
 @Profile(ProfileRegistry.AVAM_WSDL_V1)
 public class AvamEndpointV1 {

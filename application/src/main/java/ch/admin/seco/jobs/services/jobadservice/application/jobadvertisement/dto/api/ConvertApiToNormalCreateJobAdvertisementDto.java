@@ -16,6 +16,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
                 apiCreateDto.getExternalReference(),
                 convertContact(apiCreateDto.getContact()),
                 convertPublication(apiCreateDto.getPublication()),
+                apiCreateDto.getNumberOfJobs(),
                 convertJobDescriptions(apiCreateDto.getJobDescriptions()),
                 convertCompany(apiCreateDto.getCompany()),
                 convertEmployer(apiCreateDto.getEmployer()),

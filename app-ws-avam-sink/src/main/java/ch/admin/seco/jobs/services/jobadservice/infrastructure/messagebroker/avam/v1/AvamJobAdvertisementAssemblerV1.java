@@ -12,6 +12,7 @@ import java.util.List;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.formatLocalDate;
 import static org.springframework.util.StringUtils.hasText;
 
+@Deprecated
 public class AvamJobAdvertisementAssemblerV1 {
 
     private static boolean safeBoolean(Boolean value) {

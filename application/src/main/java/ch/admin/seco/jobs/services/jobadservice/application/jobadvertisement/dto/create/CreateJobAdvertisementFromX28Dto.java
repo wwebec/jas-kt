@@ -20,6 +20,8 @@ public class CreateJobAdvertisementFromX28Dto {
     @NotBlank
     private String description;
 
+    private String numberOfJobs;
+
     @NotBlank
     private String fingerprint;
 
@@ -51,11 +53,12 @@ public class CreateJobAdvertisementFromX28Dto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title, String description, String fingerprint, String externalUrl, ContactDto contact, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate) {
+    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title, String description, String numberOfJobs, String fingerprint, String externalUrl, ContactDto contact, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate) {
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.title = title;
         this.description = description;
+        this.numberOfJobs = numberOfJobs;
         this.fingerprint = fingerprint;
         this.externalUrl = externalUrl;
         this.contact = contact;
@@ -99,6 +102,14 @@ public class CreateJobAdvertisementFromX28Dto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getNumberOfJobs() {
+        return numberOfJobs;
+    }
+
+    public void setNumberOfJobs(String numberOfJobs) {
+        this.numberOfJobs = numberOfJobs;
     }
 
     public String getFingerprint() {

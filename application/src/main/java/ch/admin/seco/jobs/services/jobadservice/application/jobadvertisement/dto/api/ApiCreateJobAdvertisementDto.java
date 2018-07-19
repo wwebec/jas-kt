@@ -24,6 +24,9 @@ public class ApiCreateJobAdvertisementDto {
     @NotNull
     private ApiPublicationDto publication;
 
+    @Size(max = 3)
+    private String numberOfJobs;
+
     @Valid
     @NotEmpty
     private List<ApiJobDescriptionDto> jobDescriptions;
@@ -61,12 +64,13 @@ public class ApiCreateJobAdvertisementDto {
         // For reflection libs
     }
 
-    public ApiCreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ApiContactDto contact, ApiPublicationDto publication, List<ApiJobDescriptionDto> jobDescriptions, ApiCompanyDto company, ApiEmployerDto employer, ApiEmploymentDto employment, ApiCreateLocationDto location, ApiOccupationDto occupation, List<ApiLanguageSkillDto> languageSkills, ApiApplyChannelDto applyChannel, ApiPublicContactDto publicContact) {
+    public ApiCreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ApiContactDto contact, ApiPublicationDto publication, String numberOfJobs, List<ApiJobDescriptionDto> jobDescriptions, ApiCompanyDto company, ApiEmployerDto employer, ApiEmploymentDto employment, ApiCreateLocationDto location, ApiOccupationDto occupation, List<ApiLanguageSkillDto> languageSkills, ApiApplyChannelDto applyChannel, ApiPublicContactDto publicContact) {
         this.reportToAvam = reportToAvam;
         this.externalUrl = externalUrl;
         this.externalReference = externalReference;
         this.contact = contact;
         this.publication = publication;
+        this.numberOfJobs = numberOfJobs;
         this.jobDescriptions = jobDescriptions;
         this.company = company;
         this.employer = employer;
@@ -116,6 +120,14 @@ public class ApiCreateJobAdvertisementDto {
 
     public void setPublication(ApiPublicationDto publication) {
         this.publication = publication;
+    }
+
+    public String getNumberOfJobs() {
+        return numberOfJobs;
+    }
+
+    public void setNumberOfJobs(String numberOfJobs) {
+        this.numberOfJobs = numberOfJobs;
     }
 
     public List<ApiJobDescriptionDto> getJobDescriptions() {

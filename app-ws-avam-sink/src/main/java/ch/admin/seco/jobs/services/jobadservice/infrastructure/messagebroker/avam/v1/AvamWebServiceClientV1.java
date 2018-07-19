@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+@Deprecated
 public class AvamWebServiceClientV1 implements AvamWebServiceClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(AvamWebServiceClientV1.class);
