@@ -417,8 +417,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         if (updater.hasAnyChangesIn(SECTION_NUMBER_OF_JOBS) && hasChanged(jobContent.getNumberOfJobs(), updater.getNumberOfJobs())) {
+            changeLog.add("numberOfJobs", jobContent.getNumberOfJobs(), updater.getNumberOfJobs());
             jobContent.setNumberOfJobs(updater.getNumberOfJobs());
-            hasChangedAnything = true;
         }
 
         if (updater.hasAnyChangesIn(SECTION_REPORTING_OBLIGATION) && (
