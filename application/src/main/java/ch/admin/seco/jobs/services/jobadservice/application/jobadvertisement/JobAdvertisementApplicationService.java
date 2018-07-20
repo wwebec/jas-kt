@@ -129,6 +129,7 @@ public class JobAdvertisementApplicationService {
         List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromAvamDto.getOccupations());
 
         JobContent jobContent = new JobContent.Builder()
+                .setNumberOfJobs(createJobAdvertisementFromAvamDto.getNumberOfJobs())
                 .setJobDescriptions(Collections.singletonList(
                         new JobDescription.Builder()
                                 .setLanguage(Locale.GERMAN)
@@ -174,6 +175,7 @@ public class JobAdvertisementApplicationService {
         List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromX28Dto.getOccupations());
 
         JobContent jobContent = new JobContent.Builder()
+                .setNumberOfJobs(createJobAdvertisementFromX28Dto.getNumberOfJobs())
                 .setJobDescriptions(Collections.singletonList(
                         new JobDescription.Builder()
                                 .setLanguage(Locale.GERMAN)
@@ -329,6 +331,7 @@ public class JobAdvertisementApplicationService {
         List<Occupation> occupations = enrichAndToOccupations(occupationDtos);
 
         return new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
+                .setNumberOfJobs(createJobAdvertisement.getNumberOfJobs())
                 .setJobDescription(createJobAdvertisement.getTitle(), createJobAdvertisement.getDescription())
                 .setReportingObligation(createJobAdvertisement.isReportingObligation(), createJobAdvertisement.getReportingObligationEndDate())
                 .setJobCenterCode(createJobAdvertisement.getJobCenterCode())
@@ -353,6 +356,7 @@ public class JobAdvertisementApplicationService {
         List<Occupation> occupations = enrichAndToOccupations(occupationDtos);
 
         return new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
+                .setNumberOfJobs(updateJobAdvertisement.getNumberOfJobs())
                 .setJobDescription(updateJobAdvertisement.getTitle(), updateJobAdvertisement.getDescription())
                 .setJobCenterCode(updateJobAdvertisement.getJobCenterCode())
                 .setCompany(toCompany(updateJobAdvertisement.getCompany()))
@@ -479,6 +483,7 @@ public class JobAdvertisementApplicationService {
         String jobCenterCode = jobCenterService.findJobCenterCode(location.getCountryIsoCode(), location.getPostalCode());
 
         JobContent jobContent = new JobContent.Builder()
+                .setNumberOfJobs(createJobAdvertisementDto.getNumberOfJobs())
                 .setExternalUrl(createJobAdvertisementDto.getExternalUrl())
                 .setJobDescriptions(toJobDescriptions(createJobAdvertisementDto.getJobDescriptions()))
                 .setLocation(location)

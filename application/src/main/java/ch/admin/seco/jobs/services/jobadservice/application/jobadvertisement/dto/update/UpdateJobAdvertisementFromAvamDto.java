@@ -24,6 +24,8 @@ public class UpdateJobAdvertisementFromAvamDto {
     @Pattern(regexp = "[a-z]{2}")
     private String languageIsoCode;
 
+    private String numberOfJobs;
+
     private boolean reportingObligation;
 
     private LocalDate reportingObligationEndDate;
@@ -59,14 +61,15 @@ public class UpdateJobAdvertisementFromAvamDto {
         // For reflection libs
     }
 
-    public UpdateJobAdvertisementFromAvamDto(String stellennummerAvam, String title,
-                                             String description, String languageIsoCode, boolean reportingObligation, LocalDate reportingObligationEndDate, String jobCenterCode, LocalDate approvalDate, EmploymentDto employment,
-                                             ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
+    public UpdateJobAdvertisementFromAvamDto(String stellennummerAvam, String title, String description, String languageIsoCode, String numberOfJobs,
+                                             boolean reportingObligation, LocalDate reportingObligationEndDate, String jobCenterCode, LocalDate approvalDate,
+                                             EmploymentDto employment, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
                                              List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication) {
         this.stellennummerAvam = stellennummerAvam;
         this.title = title;
         this.description = description;
         this.languageIsoCode = languageIsoCode;
+        this.numberOfJobs = numberOfJobs;
         this.reportingObligation = reportingObligation;
         this.reportingObligationEndDate = reportingObligationEndDate;
         this.jobCenterCode = jobCenterCode;
@@ -111,6 +114,14 @@ public class UpdateJobAdvertisementFromAvamDto {
 
     public void setLanguageIsoCode(String languageIsoCode) {
         this.languageIsoCode = languageIsoCode;
+    }
+
+    public String getNumberOfJobs() {
+        return numberOfJobs;
+    }
+
+    public void setNumberOfJobs(String numberOfJobs) {
+        this.numberOfJobs = numberOfJobs;
     }
 
     public boolean isReportingObligation() {

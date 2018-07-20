@@ -416,6 +416,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             getJobContent().setX28OccupationCodes(updater.getX28OccupationCodes());
         }
 
+        if (updater.hasAnyChangesIn(SECTION_NUMBER_OF_JOBS) && hasChanged(jobContent.getNumberOfJobs(), updater.getNumberOfJobs())) {
+            jobContent.setNumberOfJobs(updater.getNumberOfJobs());
+            hasChangedAnything = true;
+        }
+
         if (updater.hasAnyChangesIn(SECTION_REPORTING_OBLIGATION) && (
                 hasChanged(reportingObligation, updater.isReportingObligation()) ||
                         hasChanged(reportingObligationEndDate, updater.getReportingObligationEndDate()))) {
