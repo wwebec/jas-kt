@@ -20,6 +20,8 @@ public class CreateJobAdvertisementDto {
     @NotNull
     private PublicationDto publication;
 
+    private String numberOfJobs;
+
     @NotNull
     @NotEmpty
     private List<JobDescriptionDto> jobDescriptions;
@@ -48,12 +50,13 @@ public class CreateJobAdvertisementDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ContactDto contact, PublicationDto publication, List<JobDescriptionDto> jobDescriptions, CompanyDto company, EmployerDto employer, EmploymentDto employment, CreateLocationDto location, OccupationDto occupation, List<LanguageSkillDto> languageSkills, ApplyChannelDto applyChannel, PublicContactDto publicContact) {
+    public CreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ContactDto contact, PublicationDto publication, String numberOfJobs, List<JobDescriptionDto> jobDescriptions, CompanyDto company, EmployerDto employer, EmploymentDto employment, CreateLocationDto location, OccupationDto occupation, List<LanguageSkillDto> languageSkills, ApplyChannelDto applyChannel, PublicContactDto publicContact) {
         this.reportToAvam = reportToAvam;
         this.externalUrl = externalUrl;
         this.externalReference = externalReference;
         this.contact = contact;
         this.publication = publication;
+        this.numberOfJobs = numberOfJobs;
         this.jobDescriptions = jobDescriptions;
         this.company = company;
         this.employer = employer;
@@ -103,6 +106,14 @@ public class CreateJobAdvertisementDto {
 
     public void setPublication(PublicationDto publication) {
         this.publication = publication;
+    }
+
+    public String getNumberOfJobs() {
+        return numberOfJobs;
+    }
+
+    public void setNumberOfJobs(String numberOfJobs) {
+        this.numberOfJobs = numberOfJobs;
     }
 
     public List<JobDescriptionDto> getJobDescriptions() {

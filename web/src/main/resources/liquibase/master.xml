@@ -12,4 +12,5 @@
     <include file="classpath:/liquibase/changelog/20180522080000_fixes_entity_StoredEvent.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180522080000_added_constraint_ApiUser.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180710080000_update_JobAdvertisement.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20180719080000_update_JobAdvertisement_numberOfJobs.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>

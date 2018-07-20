@@ -3,6 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 
@@ -23,6 +24,10 @@ public class ApiCreateJobAdvertisementDto {
     @Valid
     @NotNull
     private ApiPublicationDto publication;
+
+    @Size(max = 3)
+    @Pattern(regexp = "[0-9]*")
+    private String numberOfJobs;
 
     @Valid
     @NotEmpty
@@ -61,12 +66,13 @@ public class ApiCreateJobAdvertisementDto {
         // For reflection libs
     }
 
-    public ApiCreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ApiContactDto contact, ApiPublicationDto publication, List<ApiJobDescriptionDto> jobDescriptions, ApiCompanyDto company, ApiEmployerDto employer, ApiEmploymentDto employment, ApiCreateLocationDto location, ApiOccupationDto occupation, List<ApiLanguageSkillDto> languageSkills, ApiApplyChannelDto applyChannel, ApiPublicContactDto publicContact) {
+    public ApiCreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ApiContactDto contact, ApiPublicationDto publication, String numberOfJobs, List<ApiJobDescriptionDto> jobDescriptions, ApiCompanyDto company, ApiEmployerDto employer, ApiEmploymentDto employment, ApiCreateLocationDto location, ApiOccupationDto occupation, List<ApiLanguageSkillDto> languageSkills, ApiApplyChannelDto applyChannel, ApiPublicContactDto publicContact) {
         this.reportToAvam = reportToAvam;
         this.externalUrl = externalUrl;
         this.externalReference = externalReference;
         this.contact = contact;
         this.publication = publication;
+        this.numberOfJobs = numberOfJobs;
         this.jobDescriptions = jobDescriptions;
         this.company = company;
         this.employer = employer;
@@ -116,6 +122,14 @@ public class ApiCreateJobAdvertisementDto {
 
     public void setPublication(ApiPublicationDto publication) {
         this.publication = publication;
+    }
+
+    public String getNumberOfJobs() {
+        return numberOfJobs;
+    }
+
+    public void setNumberOfJobs(String numberOfJobs) {
+        this.numberOfJobs = numberOfJobs;
     }
 
     public List<ApiJobDescriptionDto> getJobDescriptions() {

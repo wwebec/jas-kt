@@ -17,6 +17,7 @@ import org.springframework.xml.xsd.XsdSchema;
 
 import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
 
+@Deprecated
 @EnableWs
 @Configuration
 @Profile(ProfileRegistry.AVAM_WSDL_V1)
