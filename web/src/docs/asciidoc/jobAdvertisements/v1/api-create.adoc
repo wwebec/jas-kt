@@ -181,6 +181,7 @@ in the Job-Room public area if the publicDisplay flag is set, otherwise not.
     "externalUrl": "string",
     "externalReference": "string",
     "reportToAvam": true,
+    "numberOfJobs": 1,
     "contact": {
         "languageIsoCode": "string",
         "salutation": "string",
