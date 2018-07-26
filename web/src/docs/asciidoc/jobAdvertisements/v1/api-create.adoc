@@ -20,7 +20,7 @@
 | occupation | <<Occupation>> | Occupation, education and work experience | Required |
 | languageSkills | Array<<<LanguageSkill>>> | It is possible to define up to 5 language skills required by the job. | 0..5 objects |
 | publicContact | <<PublicContact>> | Contact person for the job seekers questions | Optional | Will be published in Job-Room
-| applyChannel | <<ApplyChannel>> | Different application channels | Optional | Provide at least one application channel
+| applyChannel | <<ApplyChannel>> | Different application channels | Required | Provide at least one application channel
 | publication | <<Publication>> | The publication platforms | Required | You can control how your ad is published
 |===
 
