@@ -251,7 +251,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void approve(String stellennummerAvam, LocalDate date, boolean reportingObligation, LocalDate reportingObligationEndDate) {
-        if(reportingObligation) {
+        if (reportingObligation) {
             Condition.notNull(reportingObligationEndDate, "Reporting obligation end date is missing");
         }
         this.stellennummerAvam = Condition.notBlank(stellennummerAvam);
@@ -271,7 +271,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void expirePublication() {
-        Condition.isTrue(getPublication().getEndDate().isBefore(TimeMachine.now().toLocalDate()), "Must not be archived before publicationEndDate.");
         Condition.isTrue(JobAdvertisementStatus.PUBLISHED_PUBLIC.equals(status), "Must be in PUBLISHED_PUBLIC state.");
 
         DomainEventPublisher.publish(new JobAdvertisementPublishExpiredEvent(this));
@@ -312,6 +311,14 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
     }
 
     public void publishPublic() {
+        Condition.notNull(getPublication().getEndDate(), "Publication end date is missing");
+
+        this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
+        this.updatedTime = TimeMachine.now();
+        DomainEventPublisher.publish(new JobAdvertisementPublishPublicEvent(this));
+    }
+
+    public void republish() {
         Condition.notNull(getPublication().getEndDate(), "Publication end date is missing");
 
         this.status = status.validateTransitionTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
@@ -430,8 +437,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             reportingObligationEndDate = updater.getReportingObligationEndDate();
         }
 
-        if(updater.hasAnyChangesIn(SECTION_JOBDESCRIPTION)) {
-            if(jobContent.getJobDescriptions().size() > 0) {
+        if (updater.hasAnyChangesIn(SECTION_JOBDESCRIPTION)) {
+            if (jobContent.getJobDescriptions().size() > 0) {
                 JobDescription jobDescription = jobContent.getJobDescriptions().get(0);
                 if (hasChanged(jobDescription.getTitle(), updater.getTitle()) || hasChanged(jobDescription.getDescription(), updater.getDescription())) {
                     changeLog.add("title", jobDescription.getTitle(), updater.getTitle());
@@ -477,8 +484,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
 
         if (updater.hasAnyChangesIn(SECTION_CONTACT) && hasChanged(contact, updater.getContact())) {
-            if((contact != null) && (updater.getContact() != null)) {
-                if(hasChanged(contact.getSalutation(), updater.getContact().getSalutation()) ||
+            if ((contact != null) && (updater.getContact() != null)) {
+                if (hasChanged(contact.getSalutation(), updater.getContact().getSalutation()) ||
                         hasChanged(contact.getFirstName(), updater.getContact().getFirstName()) ||
                         hasChanged(contact.getLastName(), updater.getContact().getLastName()) ||
                         hasChanged(contact.getEmail(), updater.getContact().getEmail()) ||
@@ -494,7 +501,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             }
         }
 
-        if(updater.hasAnyChangesIn(SECTION_PUBLICATION) && hasChanged(publication, updater.getPublication())) {
+        if (updater.hasAnyChangesIn(SECTION_PUBLICATION) && hasChanged(publication, updater.getPublication())) {
             changeLog.add("publication", publication, updater.getPublication());
             publication = updater.getPublication();
         }

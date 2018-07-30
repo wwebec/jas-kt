@@ -26,7 +26,7 @@ public enum JobAdvertisementStatus {
         PUBLISHED_RESTRICTED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, PUBLISHED_PUBLIC};
         PUBLISHED_PUBLIC.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, ARCHIVED};
         CANCELLED.allowedDestinationStates = new JobAdvertisementStatus[]{};
-        ARCHIVED.allowedDestinationStates = new JobAdvertisementStatus[]{};
+        ARCHIVED.allowedDestinationStates = new JobAdvertisementStatus[]{PUBLISHED_PUBLIC};
     }
 
     private JobAdvertisementStatus[] allowedDestinationStates;
@@ -38,7 +38,7 @@ public enum JobAdvertisementStatus {
         return destination;
     }
 
-    public boolean isInAnyStates(JobAdvertisementStatus ... status) {
+    public boolean isInAnyStates(JobAdvertisementStatus... status) {
         return (status != null) && Arrays.asList(status).contains(this);
     }
 

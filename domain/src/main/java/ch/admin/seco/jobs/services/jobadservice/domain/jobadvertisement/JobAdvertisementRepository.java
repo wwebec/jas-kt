@@ -32,6 +32,11 @@ public interface JobAdvertisementRepository extends JpaRepository<JobAdvertiseme
             "where j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC and j.publication.endDate < :currentDate")
     Stream<JobAdvertisement> findAllWherePublicationNeedToExpire(@Param("currentDate") LocalDate currentDate);
 
+    @Query("select j from JobAdvertisement j " +
+            "where j.sourceSystem = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.EXTERN " +
+            "and j.status = ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC")
+    Stream<JobAdvertisement> findAllPublishedExtern();
+
     Optional<JobAdvertisement> findByStellennummerAvam(String stellennummerAvam);
 
     Optional<JobAdvertisement> findByStellennummerEgov(String stellennummerEgov);

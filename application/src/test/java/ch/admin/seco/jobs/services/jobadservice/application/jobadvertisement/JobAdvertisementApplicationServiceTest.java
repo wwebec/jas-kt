@@ -31,9 +31,11 @@ import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService.COUNTRY_ISO_CODE_SWITZERLAND;
+import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService.EXTERN_JOB_AD_REACTIVATION_DAY_NUM;
 import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -391,7 +393,37 @@ public class JobAdvertisementApplicationServiceTest {
     }
 
     @Test
-    public void checkPublicationStarts() {
+    public void shouldRepublish() {
+        // given
+        TimeMachine.useFixedClockAt(LocalDateTime.now().minusDays(EXTERN_JOB_AD_REACTIVATION_DAY_NUM));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.ARCHIVED, now().toLocalDate().plusDays(60)));
+        TimeMachine.reset();
+
+        // when
+        sut.republishIfArchived(JOB_ADVERTISEMENT_ID_01);
+
+        // then
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
+    }
+
+    @Test
+    public void shouldNotRepublish() {
+        // given
+        TimeMachine.useFixedClockAt(LocalDateTime.now().minusDays(EXTERN_JOB_AD_REACTIVATION_DAY_NUM + 1));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.ARCHIVED, null));
+        TimeMachine.reset();
+
+        // when
+        sut.republishIfArchived(JOB_ADVERTISEMENT_ID_01);
+
+        // then
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.ARCHIVED);
+    }
+
+    @Test
+    public void scheduledCheckPublicationStarts() {
         // given
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, JobAdvertisementStatus.REFINING, now().toLocalDate().plusDays(1)));
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_04, JobAdvertisementStatus.REFINING, now().toLocalDate().minusDays(1)));
@@ -405,7 +437,7 @@ public class JobAdvertisementApplicationServiceTest {
     }
 
     @Test
-    public void checkBlackoutPolicyExpiration() {
+    public void scheduledCheckBlackoutPolicyExpiration() {
         // given
         jobAdvertisementRepository.save(createJobWithStatusAndReportingObligationEndDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
         jobAdvertisementRepository.save(createJobWithStatusAndReportingObligationEndDate(JOB_ADVERTISEMENT_ID_02, JobAdvertisementStatus.CANCELLED, null));
@@ -422,7 +454,7 @@ public class JobAdvertisementApplicationServiceTest {
     }
 
     @Test
-    public void checkPublicationExpiration() {
+    public void scheduledCheckPublicationExpiration() {
         // given
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_02, JobAdvertisementStatus.CANCELLED, null));
@@ -437,7 +469,6 @@ public class JobAdvertisementApplicationServiceTest {
         DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_EXPIRED.getDomainEventType());
         assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_04);
     }
-
 
     private JobAdvertisement createJobWithStatusAndPublicationStartDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate publicationStartDate) {
         return new JobAdvertisement.Builder()

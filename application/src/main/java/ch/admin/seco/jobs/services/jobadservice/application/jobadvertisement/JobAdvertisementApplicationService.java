@@ -5,7 +5,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ApiCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
@@ -49,7 +48,7 @@ import static org.springframework.util.StringUtils.hasText;
 public class JobAdvertisementApplicationService {
 
     public static final int PUBLICATION_MAX_DAYS = 60;
-
+    public static final int EXTERN_JOB_AD_REACTIVATION_DAY_NUM = 10;
     public static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
 
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
@@ -67,6 +66,7 @@ public class JobAdvertisementApplicationService {
     private final ProfessionService professionService;
 
     private final JobCenterService jobCenterService;
+
 
     @Autowired
     public JobAdvertisementApplicationService(CurrentUserContext currentUserContext,
@@ -119,7 +119,7 @@ public class JobAdvertisementApplicationService {
         }
 
         LOG.debug("Create StellennummerAvam: {}", createJobAdvertisementFromAvamDto.getStellennummerAvam());
-        checkifJobAdvertisementAlreadExists(createJobAdvertisementFromAvamDto);
+        checkIfJobAdvertisementAlreadyExists(createJobAdvertisementFromAvamDto);
 
         Condition.notNull(createJobAdvertisementFromAvamDto.getLocation(), "Location can't be null");
         Location location = toLocation(createJobAdvertisementFromAvamDto.getLocation());
@@ -167,7 +167,7 @@ public class JobAdvertisementApplicationService {
         Condition.notNull(createJobAdvertisementFromX28Dto, "CreateJobAdvertisementFromX28Dto can't be null");
         LOG.debug("Create '{}'", createJobAdvertisementFromX28Dto.getTitle());
 
-        checkifJobAdvertisementAlreadExists(createJobAdvertisementFromX28Dto);
+        checkIfJobAdvertisementAlreadyExists(createJobAdvertisementFromX28Dto);
 
         Location location = toLocation(createJobAdvertisementFromX28Dto.getLocation());
         location = locationService.enrichCodes(location);
@@ -406,6 +406,23 @@ public class JobAdvertisementApplicationService {
         publish(jobAdvertisement);
     }
 
+    public void republishIfArchived(JobAdvertisementId jobAdvertisementId) {
+        Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
+
+        JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
+
+        LocalDate lastUpdateDate = jobAdvertisement.getUpdatedTime().toLocalDate();
+        LocalDate lastDateToRepublish = TimeMachine.now().toLocalDate().minusDays(EXTERN_JOB_AD_REACTIVATION_DAY_NUM);
+        boolean republishAllowed = lastUpdateDate.isAfter(lastDateToRepublish) || lastUpdateDate.isEqual(lastDateToRepublish);
+
+        if (JobAdvertisementStatus.ARCHIVED.equals(jobAdvertisement.getStatus()) && republishAllowed) {
+            jobAdvertisement.republish();
+        } else {
+            LOG.info("Republish is not allowed for jobAdvertisement with id: '{}' in status: '{}', with last update date: '{}''",
+                    jobAdvertisement.getId(), jobAdvertisement.getStatus(), lastUpdateDate);
+        }
+    }
+
     private void publish(JobAdvertisement jobAdvertisement) {
         Condition.notNull(jobAdvertisement, "JobAdvertisement can't be null");
         if (jobAdvertisement.isReportingObligation() && REFINING.equals(jobAdvertisement.getStatus())) {
@@ -448,19 +465,19 @@ public class JobAdvertisementApplicationService {
 
     }
 
-    private void checkifJobAdvertisementAlreadExists(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
+    private void checkIfJobAdvertisementAlreadyExists(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByFingerprint(createJobAdvertisementFromX28Dto.getFingerprint());
         jobAdvertisement.ifPresent(jobAd -> {
             String message = String.format("JobAdvertisement '%s' with fingerprint '%s' already exists", jobAd.getId().getValue(), jobAd.getFingerprint());
-            throw new JobAdvertisementAlreadyExistsException(message);
+            throw new JobAdvertisementAlreadyExistsException(jobAd.getId(), message);
         });
     }
 
-    private void checkifJobAdvertisementAlreadExists(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+    private void checkIfJobAdvertisementAlreadyExists(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(createJobAdvertisementFromAvamDto.getStellennummerAvam());
         jobAdvertisement.ifPresent(jobAd -> {
             String message = String.format("JobAdvertisement '%s' with stellennummerAvam '%s' already exists", jobAd.getId().getValue(), jobAd.getStellennummerAvam());
-            throw new JobAdvertisementAlreadyExistsException(message);
+            throw new JobAdvertisementAlreadyExistsException(jobAd.getId(), message);
         });
     }
 
