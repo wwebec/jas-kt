@@ -2,8 +2,6 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.referenc
 
 import static org.springframework.util.StringUtils.hasText;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
@@ -29,24 +27,17 @@ public class DefaultLocationService implements LocationService {
     @Override
     public Location enrichCodes(Location location) {
         if ((location != null) && hasText(location.getPostalCode()) && isManagedCountry(location.getCountryIsoCode())) {
-            List<LocationResource> locationResources = locationApiClient.findLocationByPostalCode(location.getPostalCode());
-            if ((locationResources != null) && !locationResources.isEmpty()) {
-                LocationResource matchingLocationResource = locationResources.stream()
-                        .filter(locationResource -> locationResource.getCity().equalsIgnoreCase(location.getCity()))
-                        .findFirst().orElse(null);
-                if (matchingLocationResource != null) {
-                    return new Location.Builder()
-                            .setRemarks(location.getRemarks())
-                            .setCity(location.getCity())
-                            .setPostalCode(location.getPostalCode())
-                            .setCommunalCode(matchingLocationResource.getCommunalCode())
-                            .setRegionCode(matchingLocationResource.getRegionCode())
-                            .setCantonCode(matchingLocationResource.getCantonCode())
-                            .setCountryIsoCode(location.getCountryIsoCode())
-                            .setCoordinates(getGeoPoint(matchingLocationResource))
-                            .build();
-                }
-            }
+            return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity()).map(matchingLocationResource -> new Location.Builder()
+                    .setRemarks(location.getRemarks())
+                    .setCity(location.getCity())
+                    .setPostalCode(location.getPostalCode())
+                    .setCommunalCode(matchingLocationResource.getCommunalCode())
+                    .setRegionCode(matchingLocationResource.getRegionCode())
+                    .setCantonCode(matchingLocationResource.getCantonCode())
+                    .setCountryIsoCode(location.getCountryIsoCode())
+                    .setCoordinates(getGeoPoint(matchingLocationResource))
+                    .build()
+            ).orElse(location);
         }
         return location;
     }

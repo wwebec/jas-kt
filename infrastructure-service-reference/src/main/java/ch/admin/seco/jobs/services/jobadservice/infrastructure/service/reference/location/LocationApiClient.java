@@ -1,12 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.location;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,7 +17,6 @@ public interface LocationApiClient {
 
     @Cacheable("location")
     @GetMapping(value = "/api/localities")
-    List<LocationResource> findLocationByPostalCode(@RequestParam("zipCode") String postalCode);
-
+    Optional<LocationResource> findLocationByPostalCodeAndCity(@RequestParam("zipCode") String zipCode, @RequestParam("city") String city);
 }
 

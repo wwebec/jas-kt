@@ -1,7 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.location;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Component;
@@ -15,7 +14,7 @@ public class LocationApiClientFallback implements LocationApiClient {
     }
 
     @Override
-    public List<LocationResource> findLocationByPostalCode(String postalCode) {
-        return Collections.emptyList();
+    public Optional<LocationResource> findLocationByPostalCodeAndCity(String zipCode, String city) {
+        return Optional.empty();
     }
 }
