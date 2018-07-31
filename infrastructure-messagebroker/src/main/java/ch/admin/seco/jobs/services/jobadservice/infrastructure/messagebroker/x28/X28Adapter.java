@@ -46,6 +46,8 @@ public class X28Adapter {
 
     @Scheduled(cron = "${jobAdvertisement.checkExternalJobAdExpiration.cron}")
     public void scheduledArchiveExternalJobAds() {
+        LOG.info("...Starting scheduledArchiveExternalJobAds");
+
         final LocalDate today = TimeMachine.now().toLocalDate();
 
         Predicate<JobAdvertisement> shouldArchive = jobAdvertisement ->
