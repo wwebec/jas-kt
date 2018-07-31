@@ -90,7 +90,9 @@ public class JobContent implements ValueObject<JobContent> {
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_OCCUPATION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
-    @NotEmpty
+    //todo: We already have jobAdvertisements in the DB with empty occupation list.
+    // Because of this currently we can not allow this constraint, otherwise we can not modify the entity.
+    //@NotEmpty
     private List<Occupation> occupations;
 
     @ElementCollection
