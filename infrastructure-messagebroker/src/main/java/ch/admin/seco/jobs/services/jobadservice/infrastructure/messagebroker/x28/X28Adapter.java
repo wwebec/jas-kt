@@ -46,19 +46,11 @@ public class X28Adapter {
 
     @Scheduled(cron = "${jobAdvertisement.checkExternalJobAdExpiration.cron}")
     public void scheduledArchiveExternalJobAds() {
-        LOG.info("...Starting scheduledArchiveExternalJobAds");
+        LOG.info("Starting scheduledArchiveExternalJobAds");
 
-        final LocalDate today = TimeMachine.now().toLocalDate();
+        Long archivedJobCount = this.transactionTemplate.execute(status -> archiveExternalJobAds());
 
-        Predicate<JobAdvertisement> shouldArchive = jobAdvertisement ->
-                this.x28MessageLogRepository.findById(jobAdvertisement.getFingerprint())
-                        .map(X28MessageLog::getLastMessageDate)
-                        .map(lastMessageDate -> lastMessageDate.isBefore(today))
-                        .orElse(Boolean.TRUE);
-
-        this.jobAdvertisementRepository.findAllPublishedExtern()
-                .filter(shouldArchive)
-                .forEach(JobAdvertisement::expirePublication);
+        LOG.info("Archived external jobs: {}", archivedJobCount);
     }
 
     @StreamListener(target = JOB_AD_ACTION_CHANNEL, condition = CREATE_FROM_X28_CONDITION)
@@ -76,6 +68,24 @@ public class X28Adapter {
 
             jobAdvertisementApplicationService.republishIfArchived(e.getJobAdvertisementId());
         }
+    }
+
+    private long archiveExternalJobAds() {
+        final LocalDate today = TimeMachine.now().toLocalDate();
+
+        Predicate<JobAdvertisement> shouldArchive = jobAdvertisement ->
+                this.x28MessageLogRepository.findById(jobAdvertisement.getFingerprint())
+                        .map(X28MessageLog::getLastMessageDate)
+                        .map(lastMessageDate -> lastMessageDate.isBefore(today))
+                        .orElse(Boolean.TRUE);
+
+        return this.jobAdvertisementRepository.findAllPublishedExtern()
+                .filter(shouldArchive)
+                .map(jobAdvertisement -> {
+                    jobAdvertisement.expirePublication();
+                    return jobAdvertisement.getId();
+                })
+                .count();
     }
 
     private UpdateJobAdvertisementFromX28Dto prepareUpdateJobAdvertisementFromX28Dto(CreateJobAdvertisementFromX28Dto createFromX28) {
