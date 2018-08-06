@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
+import ch.admin.seco.jobs.services.jobadservice.application.HtmlToMarkdownConverter;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
@@ -22,16 +23,28 @@ public class JobAdvertisementRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
     private final EventStore eventStore;
+    private final HtmlToMarkdownConverter htmlToMarkdownConverter;
 
-    public JobAdvertisementRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService, EventStore eventStore) {
+    public JobAdvertisementRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService, EventStore eventStore,
+            HtmlToMarkdownConverter htmlToMarkdownConverter) {
         this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
         this.eventStore = eventStore;
+        this.htmlToMarkdownConverter = htmlToMarkdownConverter;
     }
 
     @PostMapping()
     public JobAdvertisementDto createFromWebform(@RequestBody CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
-        JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromWebForm(createJobAdvertisementDto);
+        JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService
+                .createFromWebForm(convertJobDescriptions(createJobAdvertisementDto));
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
+    }
+
+    private CreateJobAdvertisementDto convertJobDescriptions(CreateJobAdvertisementDto createJobAdvertisementDto) {
+        createJobAdvertisementDto.getJobDescriptions().forEach(jobDescription -> {
+            final String convertedDescription = htmlToMarkdownConverter.convert(jobDescription.getDescription());
+            jobDescription.setDescription(convertedDescription);
+        });
+        return createJobAdvertisementDto;
     }
 
     @GetMapping

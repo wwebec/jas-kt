@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
+import ch.admin.seco.jobs.services.jobadservice.application.HtmlToMarkdownConverter;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
@@ -7,9 +8,15 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ConvertApiToNormalCreateJobAdvertisementDto {
+public class ApiToNormalCreateJobAdvertisementDtoConverter {
 
-    public static CreateJobAdvertisementDto convert(ApiCreateJobAdvertisementDto apiCreateDto) {
+    private final HtmlToMarkdownConverter htmlToMarkdownConverter;
+
+    public ApiToNormalCreateJobAdvertisementDtoConverter(HtmlToMarkdownConverter htmlToMarkdownConverter) {
+        this.htmlToMarkdownConverter = htmlToMarkdownConverter;
+    }
+
+    public CreateJobAdvertisementDto convert(ApiCreateJobAdvertisementDto apiCreateDto) {
         return new CreateJobAdvertisementDto(
                 apiCreateDto.isReportToAvam(),
                 apiCreateDto.getExternalUrl(),
@@ -29,7 +36,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         );
     }
 
-    private static ContactDto convertContact(ApiContactDto apiContact) {
+    private ContactDto convertContact(ApiContactDto apiContact) {
         if (apiContact != null) {
             return new ContactDto(
                     apiContact.getSalutation(),
@@ -43,7 +50,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         return null;
     }
 
-    private static PublicationDto convertPublication(ApiPublicationDto apiPublication) {
+    private PublicationDto convertPublication(ApiPublicationDto apiPublication) {
         if(apiPublication != null) {
             return new PublicationDto(
               apiPublication.getStartDate(),
@@ -59,20 +66,20 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         return null;
     }
 
-    private static List<JobDescriptionDto> convertJobDescriptions(List<ApiJobDescriptionDto> apiJobDescriptions) {
+    private List<JobDescriptionDto> convertJobDescriptions(List<ApiJobDescriptionDto> apiJobDescriptions) {
         if(apiJobDescriptions != null) {
             return apiJobDescriptions.stream()
                     .map(apiJobDescription -> new JobDescriptionDto(
                             apiJobDescription.getLanguageIsoCode(),
                             apiJobDescription.getTitle(),
-                            apiJobDescription.getDescription()
+                            htmlToMarkdownConverter.convert(apiJobDescription.getDescription())
                     ))
                     .collect(Collectors.toList());
         }
         return null;
     }
 
-    private static CompanyDto convertCompany(ApiCompanyDto apiCompany) {
+    private  CompanyDto convertCompany(ApiCompanyDto apiCompany) {
         if(apiCompany != null) {
             return new CompanyDto(
               apiCompany.getName(),
@@ -93,7 +100,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         return null;
     }
 
-    private static EmployerDto convertEmployer(ApiEmployerDto apiEmployer) {
+    private EmployerDto convertEmployer(ApiEmployerDto apiEmployer) {
         if(apiEmployer != null) {
             return new EmployerDto(
                     apiEmployer.getName(),
@@ -105,7 +112,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         return null;
     }
 
-    private static EmploymentDto convertEmployment(ApiEmploymentDto apiEmployment) {
+    private EmploymentDto convertEmployment(ApiEmploymentDto apiEmployment) {
         if(apiEmployment != null) {
             return new EmploymentDto(
                     apiEmployment.getStartDate(),
@@ -121,7 +128,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         return null;
     }
 
-    private static CreateLocationDto convertCreateLocation(ApiCreateLocationDto apiLocation) {
+    private CreateLocationDto convertCreateLocation(ApiCreateLocationDto apiLocation) {
         if(apiLocation != null) {
             return new CreateLocationDto(
                     apiLocation.getRemarks(),
@@ -133,7 +140,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         return null;
     }
 
-    private static OccupationDto convertOccupation(ApiOccupationDto apiOccupation) {
+    private OccupationDto convertOccupation(ApiOccupationDto apiOccupation) {
         if(apiOccupation != null) {
             return new OccupationDto(
                     apiOccupation.getAvamOccupationCode(),
@@ -144,7 +151,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         return null;
     }
 
-    private static List<LanguageSkillDto> convertLanguageSkills(List<ApiLanguageSkillDto> apiLanguageSkills) {
+    private List<LanguageSkillDto> convertLanguageSkills(List<ApiLanguageSkillDto> apiLanguageSkills) {
         if(apiLanguageSkills != null) {
             return apiLanguageSkills.stream()
                     .map(apiLanguageSkill -> new LanguageSkillDto(
@@ -157,7 +164,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         return null;
     }
 
-    private static ApplyChannelDto convertApplyChannel(ApiApplyChannelDto apiApplyChannel) {
+    private ApplyChannelDto convertApplyChannel(ApiApplyChannelDto apiApplyChannel) {
         if(apiApplyChannel != null) {
             return new ApplyChannelDto(
                     apiApplyChannel.getMailAddress(),
@@ -170,7 +177,7 @@ public class ConvertApiToNormalCreateJobAdvertisementDto {
         return null;
     }
 
-    private static PublicContactDto convertPublicContact(ApiPublicContactDto apiPublicContact) {
+    private PublicContactDto convertPublicContact(ApiPublicContactDto apiPublicContact) {
         if(apiPublicContact != null) {
             return new PublicContactDto(
                     apiPublicContact.getSalutation(),

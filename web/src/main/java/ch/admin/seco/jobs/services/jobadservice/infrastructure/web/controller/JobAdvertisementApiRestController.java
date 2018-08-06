@@ -1,9 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
+import ch.admin.seco.jobs.services.jobadservice.application.HtmlToMarkdownConverter;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ApiCreateJobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ConvertApiToNormalCreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api.ApiToNormalCreateJobAdvertisementDtoConverter;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
@@ -22,17 +23,21 @@ import javax.validation.Valid;
 public class JobAdvertisementApiRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
+    private final HtmlToMarkdownConverter htmlToMarkdownConverter;
 
     @Autowired
-    public JobAdvertisementApiRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService) {
+    public JobAdvertisementApiRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService,
+            HtmlToMarkdownConverter htmlToMarkdownConverter) {
         this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
+        this.htmlToMarkdownConverter = htmlToMarkdownConverter;
     }
 
     @PostMapping
     public JobAdvertisementDto createFromApi(
             @RequestBody @Valid ApiCreateJobAdvertisementDto apiCreateJobAdvertisementDto
     ) throws AggregateNotFoundException {
-        CreateJobAdvertisementDto createJobAdvertisementDto = ConvertApiToNormalCreateJobAdvertisementDto.convert(apiCreateJobAdvertisementDto);
+        CreateJobAdvertisementDto createJobAdvertisementDto = new ApiToNormalCreateJobAdvertisementDtoConverter(htmlToMarkdownConverter)
+                .convert(apiCreateJobAdvertisementDto);
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromApi(createJobAdvertisementDto);
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
