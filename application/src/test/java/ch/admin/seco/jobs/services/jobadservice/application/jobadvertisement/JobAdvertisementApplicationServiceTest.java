@@ -344,7 +344,7 @@ public class JobAdvertisementApplicationServiceTest {
         // given
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(
                 JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.INSPECTING, null));
-        RejectionDto rejectionDto = new RejectionDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), "code", "reason");
+        RejectionDto rejectionDto = new RejectionDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), "code", "reason","jobcenterid");
 
         // when
         sut.reject(rejectionDto);
@@ -355,6 +355,7 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getRejectionDate()).isEqualTo(LocalDate.of(2018, 1, 1));
         assertThat(jobAdvertisement.getRejectionCode()).isEqualTo("code");
         assertThat(jobAdvertisement.getRejectionReason()).isEqualTo("reason");
+        assertThat(jobAdvertisement.getJobCenterCode()).isEqualTo("jobcenterid");
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.REJECTED);
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_REJECTED.getDomainEventType());
     }

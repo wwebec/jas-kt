@@ -107,7 +107,8 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 parseToLocalDate(avamJobAdvertisement.getAblehnungDatum()),
                 avamJobAdvertisement.getAblehnungGrundCode(),
-                avamJobAdvertisement.getAblehnungGrund()
+                avamJobAdvertisement.getAblehnungGrund(),
+                avamJobAdvertisement.getArbeitsamtBereich()
         );
     }
 

@@ -276,11 +276,12 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementPublishExpiredEvent(this));
     }
 
-    public void reject(String stellennummerAvam, LocalDate date, String code, String reason) {
+    public void reject(String stellennummerAvam, LocalDate date, String code, String reason, String jobCenterCode) {
         this.stellennummerAvam = stellennummerAvam;
         this.rejectionDate = Condition.notNull(date);
         this.rejectionCode = Condition.notBlank(code);
         this.rejectionReason = reason;
+        this.jobCenterCode = jobCenterCode;
         this.status = status.validateTransitionTo(JobAdvertisementStatus.REJECTED);
         this.updatedTime = TimeMachine.now();
         DomainEventPublisher.publish(new JobAdvertisementRejectedEvent(this));

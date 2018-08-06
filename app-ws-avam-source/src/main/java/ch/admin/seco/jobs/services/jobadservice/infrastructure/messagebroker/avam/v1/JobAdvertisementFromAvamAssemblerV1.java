@@ -93,7 +93,8 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 null, // Not defined in this AVAM version
                 null, // Not defined in this AVAM version
-                null // Not defined in this AVAM version
+                null,
+                null// Not defined in this AVAM version
         );
     }
 
