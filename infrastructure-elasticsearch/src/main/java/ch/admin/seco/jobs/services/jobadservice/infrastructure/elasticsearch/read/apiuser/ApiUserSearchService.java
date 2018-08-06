@@ -20,10 +20,10 @@ public class ApiUserSearchService {
 
     private static final String PATH_CTX = "apiUser.";
     private static final String PATH_USERNAME = PATH_CTX + "username";
-    private static final String PATH_EMAIL = PATH_CTX + "email";
     private static final String PATH_COMPANY_NAME = PATH_CTX + "companyName";
-    private static final String PATH_CONTACT_NAME = PATH_CTX + "contactName";
-    private static final String PATH_CONTACT_EMAIL = PATH_CTX + "contactEmail";
+    private static final String PATH_COMPANY_EMAIL = PATH_CTX + "companyEmail";
+    private static final String PATH_TECHNICAL_CONTACT_NAME = PATH_CTX + "technicalContactName";
+    private static final String PATH_TECHNICAL_CONTACT_EMAIL = PATH_CTX + "technicalContactEmail";
 
     private ApiUserElasticsearchRepository apiUserElasticsearchRepository;
 
@@ -38,10 +38,10 @@ public class ApiUserSearchService {
                 : queryStringQuery(searchRequest.getQuery())
                 .defaultOperator(Operator.AND)
                 .field(PATH_USERNAME)
-                .field(PATH_EMAIL)
                 .field(PATH_COMPANY_NAME)
-                .field(PATH_CONTACT_NAME)
-                .field(PATH_CONTACT_EMAIL);
+                .field(PATH_COMPANY_EMAIL)
+                .field(PATH_TECHNICAL_CONTACT_NAME)
+                .field(PATH_TECHNICAL_CONTACT_EMAIL);
 
         return apiUserElasticsearchRepository.search(query, pageable)
                 .map((document) -> ApiUserDto.toDto(document.getApiUser()));

@@ -20,13 +20,20 @@
             }
           },
           "username": {
-            "type": "keyword"
+            "type": "text",
+            "analyzer": "ascii_folding",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
           },
           "password": {
             "type": "keyword"
           },
           "companyName": {
             "type": "text",
+            "analyzer": "ascii_folding",
             "fields": {
               "keyword": {
                 "type": "keyword"
@@ -43,6 +50,7 @@
           },
           "technicalContactName": {
             "type": "text",
+            "analyzer": "ascii_folding",
             "fields": {
               "keyword": {
                 "type": "keyword"
