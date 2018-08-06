@@ -29,7 +29,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.hamcrest.Matchers.equalTo;
@@ -274,6 +276,31 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(jsonPath("$.[0].id").value(equalTo(JOB_ADVERTISEMENT_ID_01.getValue())))
                 .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].title").value(equalTo("c++ developer")))
                 .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].description").value(equalTo("c++ &amp; java entwickler")));
+    }
+
+    @Test
+    public void shouldSearchByLanguageSkillKeyword() throws Exception {
+        // GIVEN
+        final LanguageSkill it = new LanguageSkill.Builder().setLanguageIsoCode("it").setSpokenLevel(LanguageLevel.PROFICIENT).setWrittenLevel(LanguageLevel.INTERMEDIATE).build();
+        final LanguageSkill en = new LanguageSkill.Builder().setLanguageIsoCode("en").setSpokenLevel(LanguageLevel.PROFICIENT).setWrittenLevel(LanguageLevel.INTERMEDIATE).build();
+
+        index(createJobWithLanguageSkills(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", SourceSystem.EXTERN, it));
+        index(createJobWithLanguageSkills(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", SourceSystem.API, en));
+
+        // WHEN
+        JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
+        searchRequest.setKeywords(new String[] {"italien"});
+
+        ResultActions resultActions = mockMvc.perform(
+                post(API_JOB_ADVERTISEMENTS + "/_search")
+                        .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                        .content(TestUtil.convertObjectToJsonBytes(searchRequest))
+        );
+
+        // THEN
+        resultActions.andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(header().string("X-Total-Count", "1"));
     }
 
     @Test
@@ -827,7 +854,12 @@ public class JobAdvertisementSearchControllerIntTest {
         return createJobWithDescription(jobAdvertisementId, title, description, sourceSystem, createOwner(jobAdvertisementId));
     }
 
-    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, Owner owner) {
+    private JobAdvertisement createJobWithLanguageSkills(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, LanguageSkill... languageSkills) {
+        return createJobWithDescription(jobAdvertisementId, title, description, sourceSystem, createOwner(jobAdvertisementId), languageSkills);
+    }
+
+    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, Owner owner, LanguageSkill... languageSkills) {
+        List<LanguageSkill> skills = languageSkills.length == 0 ? Collections.singletonList(createLanguageSkill()) : Arrays.asList(languageSkills);
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(sourceSystem)
@@ -837,7 +869,7 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setJobContent(new JobContent.Builder()
                         .setJobDescriptions(Collections.singletonList(createJobDescription(title, description)))
                         .setCompany(createCompany(jobAdvertisementId))
-                        .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
+                        .setLanguageSkills(skills)
                         .setEmployment(createEmployment())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
                         .setApplyChannel(createApplyChannel())

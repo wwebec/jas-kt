@@ -80,6 +80,7 @@ public class JobAdvertisementSearchService {
     private static final String PATH_WORKLOAD_PERCENTAGE_MAX = PATH_CTX + "jobContent.employment.workloadPercentageMax";
     private static final String PATH_WORKLOAD_TIME_PERCENTAGE_MIN = PATH_CTX + "jobContent.employment.workloadPercentageMin";
     private static final String RELEVANCE = "_score";
+    private static final String PATH_LANGUAGE_SKILL_SYNONYMS = "languageSkillSynonyms";
     private static final int ONLINE_SINCE_DAYS = 60;
 
     private final CurrentUserContext currentUserContext;
@@ -256,7 +257,7 @@ public class JobAdvertisementSearchService {
                             ? Stream.of(termQuery(PATH_SOURCE_SYSTEM, keyword.substring(1).toUpperCase()).boost(2f))
                             : Stream.of
                             (
-                                    multiMatchQuery(keyword, PATH_DESCRIPTION)
+                                    multiMatchQuery(keyword, PATH_DESCRIPTION, PATH_LANGUAGE_SKILL_SYNONYMS)
                                             .field(PATH_TITLE, 1.5f)
                                             .type(MultiMatchQueryBuilder.Type.PHRASE_PREFIX),
                                     termQuery(PATH_AVAM_JOB_ID, keyword).boost(10f),
@@ -270,7 +271,7 @@ public class JobAdvertisementSearchService {
                     .collect(Collectors.joining(" "));
 
             if (isNotBlank(allKeywords)) {
-                keywordQuery.should(multiMatchQuery(allKeywords, PATH_DESCRIPTION, PATH_TITLE)
+                keywordQuery.should(multiMatchQuery(allKeywords, PATH_DESCRIPTION, PATH_TITLE, PATH_LANGUAGE_SKILL_SYNONYMS)
                         .boost(2f)
                         .operator(Operator.AND));
             }

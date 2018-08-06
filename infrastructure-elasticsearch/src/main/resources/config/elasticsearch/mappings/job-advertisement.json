@@ -10,6 +10,10 @@
           }
         }
       },
+      "languageSkillSynonyms": {
+        "type": "text",
+        "analyzer": "ascii_folding"
+      },
       "jobAdvertisement": {
         "properties": {
           "id": {
