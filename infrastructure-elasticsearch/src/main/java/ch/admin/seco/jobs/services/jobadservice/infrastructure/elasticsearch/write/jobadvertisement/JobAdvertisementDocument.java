@@ -92,7 +92,7 @@ public class JobAdvertisementDocument {
         languageSkills.stream()
                 .map(language -> languageSynonyms.get(language.getLanguageIsoCode()))
                 .filter(StringUtils::isNotEmpty)
-                .reduce(String::concat)
+                .reduce((String accumulator, String synonyms) -> accumulator.concat(",").concat(synonyms))
                 .ifPresent((synonyms) -> languageSkillSynonyms = synonyms);
     }
 
