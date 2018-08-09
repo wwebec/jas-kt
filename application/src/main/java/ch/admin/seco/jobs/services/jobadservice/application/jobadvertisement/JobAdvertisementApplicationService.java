@@ -421,7 +421,7 @@ public class JobAdvertisementApplicationService {
         if (JobAdvertisementStatus.ARCHIVED.equals(jobAdvertisement.getStatus()) && republishAllowed) {
             jobAdvertisement.republish();
         } else {
-            LOG.info("Republish is not allowed for jobAdvertisement with id: '{}' in status: '{}', with last update date: '{}''",
+            LOG.debug("Republish is not allowed for jobAdvertisement with id: '{}' in status: '{}', with last update date: '{}'",
                     jobAdvertisement.getId(), jobAdvertisement.getStatus(), lastUpdateDate);
         }
     }
