@@ -411,9 +411,12 @@ public class JobAdvertisementApplicationService {
 
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
 
-        LocalDate lastUpdateDate = jobAdvertisement.getUpdatedTime().toLocalDate();
+        LocalDate lastUpdateDate = jobAdvertisement.getUpdatedTime() != null
+                ? jobAdvertisement.getUpdatedTime().toLocalDate()
+                : null;
+
         LocalDate lastDateToRepublish = TimeMachine.now().toLocalDate().minusDays(EXTERN_JOB_AD_REACTIVATION_DAY_NUM);
-        boolean republishAllowed = lastUpdateDate.isAfter(lastDateToRepublish) || lastUpdateDate.isEqual(lastDateToRepublish);
+        boolean republishAllowed = lastUpdateDate != null && (lastUpdateDate.isAfter(lastDateToRepublish) || lastUpdateDate.isEqual(lastDateToRepublish));
 
         if (JobAdvertisementStatus.ARCHIVED.equals(jobAdvertisement.getStatus()) && republishAllowed) {
             jobAdvertisement.republish();
