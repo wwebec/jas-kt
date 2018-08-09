@@ -281,15 +281,15 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchByLanguageSkillKeyword() throws Exception {
         // GIVEN
-        final LanguageSkill it = new LanguageSkill.Builder().setLanguageIsoCode("it").setSpokenLevel(LanguageLevel.PROFICIENT).setWrittenLevel(LanguageLevel.INTERMEDIATE).build();
+        final LanguageSkill da = new LanguageSkill.Builder().setLanguageIsoCode("da").setSpokenLevel(LanguageLevel.PROFICIENT).setWrittenLevel(LanguageLevel.INTERMEDIATE).build();
         final LanguageSkill en = new LanguageSkill.Builder().setLanguageIsoCode("en").setSpokenLevel(LanguageLevel.PROFICIENT).setWrittenLevel(LanguageLevel.INTERMEDIATE).build();
 
-        index(createJobWithLanguageSkills(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", SourceSystem.EXTERN, it));
+        index(createJobWithLanguageSkills(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", SourceSystem.EXTERN, da));
         index(createJobWithLanguageSkills(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", SourceSystem.API, en));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
-        searchRequest.setKeywords(new String[] {"italien"});
+        searchRequest.setKeywords(new String[] {"dänisch"});
 
         ResultActions resultActions = mockMvc.perform(
                 post(API_JOB_ADVERTISEMENTS + "/_search")
