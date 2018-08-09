@@ -1,11 +1,25 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.util.StringUtils.hasText;
-import static org.springframework.util.StringUtils.isEmpty;
-import static org.springframework.util.StringUtils.trimAllWhitespace;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
+import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import org.apache.commons.lang3.EnumUtils;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,25 +31,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.*;
 
 class JobAdvertisementDtoAssembler {
 
@@ -84,11 +83,31 @@ class JobAdvertisementDtoAssembler {
 
     private LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
         if (hasText(spracheCode)) {
-            return new LanguageSkillDto(
-                    LANGUAGES.getRight(spracheCode),
-                    LANGUAGE_LEVEL.getRight(muendlichCode),
-                    LANGUAGE_LEVEL.getRight(schriftlichCode)
-            );
+            final String languageIsoCode;
+            final LanguageLevel spokenLevel;
+            final LanguageLevel writtenLevel;
+
+            if (LANGUAGES.getRight(spracheCode) != null) {
+                languageIsoCode = LANGUAGES.getRight(spracheCode);
+                spokenLevel = LANGUAGE_LEVEL.getRight(muendlichCode);
+                writtenLevel = LANGUAGE_LEVEL.getRight(schriftlichCode);
+
+            } else if (LANGUAGES.getLeft(spracheCode) != null) {
+                languageIsoCode = LANGUAGES.getLeft(spracheCode);
+                spokenLevel = EnumUtils.getEnum(LanguageLevel.class, muendlichCode);
+                writtenLevel = EnumUtils.getEnum(LanguageLevel.class, schriftlichCode);
+
+            } else {
+                languageIsoCode = null;
+                spokenLevel = null;
+                writtenLevel = null;
+            }
+
+            if (hasText(languageIsoCode)) {
+                return new LanguageSkillDto(languageIsoCode, spokenLevel, writtenLevel);
+            } else {
+                LOGGER.warn("No languageIsoCode was found for: {} ", spracheCode);
+            }
         }
         return null;
     }
@@ -108,21 +127,21 @@ class JobAdvertisementDtoAssembler {
         if (hasText(x28JobAdvertisement.getBq1AvamBerufNr())) {
             occupations.add(new OccupationDto(
                     x28JobAdvertisement.getBq1AvamBerufNr(),
-                    AvamCodeResolver.EXPERIENCES.getRight(x28JobAdvertisement.getBq1ErfahrungCode()),
+                    resolveExperience(x28JobAdvertisement.getBq1ErfahrungCode()),
                     x28JobAdvertisement.getBq1AusbildungCode()
             ));
         }
         if (hasText(x28JobAdvertisement.getBq2AvamBerufNr())) {
             occupations.add(new OccupationDto(
                     x28JobAdvertisement.getBq2AvamBerufNr(),
-                    AvamCodeResolver.EXPERIENCES.getRight(x28JobAdvertisement.getBq2ErfahrungCode()),
+                    resolveExperience(x28JobAdvertisement.getBq2ErfahrungCode()),
                     x28JobAdvertisement.getBq2AusbildungCode()
             ));
         }
         if (hasText(x28JobAdvertisement.getBq3AvamBerufNr())) {
             occupations.add(new OccupationDto(
                     x28JobAdvertisement.getBq3AvamBerufNr(),
-                    AvamCodeResolver.EXPERIENCES.getRight(x28JobAdvertisement.getBq3ErfahrungCode()),
+                    resolveExperience(x28JobAdvertisement.getBq3ErfahrungCode()),
                     x28JobAdvertisement.getBq3AusbildungCode()
             ));
         }
@@ -167,7 +186,7 @@ class JobAdvertisementDtoAssembler {
                 hasText(x28JobAdvertisement.getKpTelefonNr()) ||
                 hasText(x28JobAdvertisement.getKpEMail())) {
             return new ContactDto(
-                    hasText(x28JobAdvertisement.getKpAnredeCode()) ? AvamCodeResolver.SALUTATIONS.getRight(x28JobAdvertisement.getKpAnredeCode()) : Salutation.MR,
+                    resolveSalutation(x28JobAdvertisement.getKpAnredeCode()),
                     x28JobAdvertisement.getKpVorname(),
                     x28JobAdvertisement.getKpName(),
                     sanitizePhoneNumber(x28JobAdvertisement.getKpTelefonNr(), x28JobAdvertisement),
@@ -192,6 +211,34 @@ class JobAdvertisementDtoAssembler {
                 workingTimePercentage.getMax(),
                 null
         );
+    }
+
+    private Salutation resolveSalutation(String kpAnredeCode) {
+        final Salutation resolvedSalutation;
+
+        if (hasText(kpAnredeCode)) {
+            if (AvamCodeResolver.SALUTATIONS.getRight(kpAnredeCode) != null) {
+                resolvedSalutation = AvamCodeResolver.SALUTATIONS.getRight(kpAnredeCode);
+            } else {
+                resolvedSalutation = EnumUtils.getEnum(Salutation.class, kpAnredeCode);
+            }
+        } else {
+            resolvedSalutation = null;
+        }
+
+        return resolvedSalutation != null ? resolvedSalutation : Salutation.MR;
+    }
+
+    private WorkExperience resolveExperience(String experienceCode) {
+        final WorkExperience resolvedWorkExperience;
+
+        if (AvamCodeResolver.EXPERIENCES.getRight(experienceCode) != null) {
+            resolvedWorkExperience = AvamCodeResolver.EXPERIENCES.getRight(experienceCode);
+        } else {
+            resolvedWorkExperience = EnumUtils.getEnum(WorkExperience.class, experienceCode);
+        }
+
+        return resolvedWorkExperience;
     }
 
     private String sanitize(String text) {
