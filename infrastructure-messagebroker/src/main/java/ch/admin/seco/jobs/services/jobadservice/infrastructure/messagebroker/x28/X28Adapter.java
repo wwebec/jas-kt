@@ -48,9 +48,13 @@ public class X28Adapter {
     public void scheduledArchiveExternalJobAds() {
         LOG.info("Starting scheduledArchiveExternalJobAds");
 
-        Long archivedJobCount = this.transactionTemplate.execute(status -> archiveExternalJobAds());
+        if (isX28MessageReceived(today())) {
+            Long archivedJobCount = this.transactionTemplate.execute(status -> archiveExternalJobAds());
 
-        LOG.info("Archived external jobs: {}", archivedJobCount);
+            LOG.info("Archived external jobs: {}", archivedJobCount);
+        } else {
+            LOG.info("Archiving skipped because no x28 message was received. Please check the x28 import job!");
+        }
     }
 
     @StreamListener(target = JOB_AD_ACTION_CHANNEL, condition = CREATE_FROM_X28_CONDITION)
@@ -71,7 +75,7 @@ public class X28Adapter {
     }
 
     private long archiveExternalJobAds() {
-        final LocalDate today = TimeMachine.now().toLocalDate();
+        final LocalDate today = today();
 
         Predicate<JobAdvertisement> shouldArchive = jobAdvertisement ->
                 this.x28MessageLogRepository.findById(jobAdvertisement.getFingerprint())
@@ -102,7 +106,15 @@ public class X28Adapter {
     }
 
     private void logLastX28MessageDate(String fingerprint) {
-        X28MessageLog x28MessageLog = new X28MessageLog(fingerprint, TimeMachine.now().toLocalDate());
+        X28MessageLog x28MessageLog = new X28MessageLog(fingerprint, today());
         x28MessageLogRepository.save(x28MessageLog);
+    }
+
+    private boolean isX28MessageReceived(LocalDate date) {
+        return x28MessageLogRepository.countByLastMessageDateEquals(date) > 0;
+    }
+
+    private LocalDate today() {
+        return TimeMachine.now().toLocalDate();
     }
 }

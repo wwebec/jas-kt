@@ -64,6 +64,21 @@ public class X28AdapterTest {
         assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_02);
     }
 
+    @Test
+    public void shouldNotArchiveExternalJobAdsIfNoMessageReceivedOnTheSameDay() {
+        // given
+        jobAdvertisementRepository.save(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_01, FINGERPRINT_1, JobAdvertisementStatus.CREATED));
+        jobAdvertisementRepository.save(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_02, FINGERPRINT_2, JobAdvertisementStatus.PUBLISHED_PUBLIC));
+        jobAdvertisementRepository.save(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_03, FINGERPRINT_3, JobAdvertisementStatus.PUBLISHED_PUBLIC));
+        x28MessageLogRepository.save(new X28MessageLog(FINGERPRINT_2, TimeMachine.now().toLocalDate().minusDays(1)));
+
+        // when
+        this.sut.scheduledArchiveExternalJobAds();
+
+        // then
+        domainEventMockUtils.verifyNoEventsPublished();
+    }
+
 
     private JobAdvertisement createExternalJobWithStatus(JobAdvertisementId jobAdvertisementId, String fingerprint, JobAdvertisementStatus status) {
         return new JobAdvertisement.Builder()
