@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Mapping;
@@ -13,6 +14,7 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsea
 @Mapping(mappingPath = "config/elasticsearch/mappings/job-advertisement.json")
 @Setting(settingPath = "config/elasticsearch/settings/folding-analyzer.json")
 public class JobAdvertisementDocument {
+
     @Id
     private String id;
 

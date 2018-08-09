@@ -11,6 +11,13 @@
       },
       "simple_csv_analyzer": {
         "tokenizer": "simple_csv_tokenizer"
+      },
+      "language_iso_code_synonym_analyzer": {
+        "tokenizer": "standard",
+        "filter": [
+          "lowercase",
+          "synonym_analyzer"
+        ]
       }
     },
     "tokenizer": {
@@ -21,6 +28,52 @@
       "simple_csv_tokenizer": {
         "type": "pattern",
         "pattern": ","
+      }
+    },
+    "filter": {
+      "synonym_analyzer": {
+        "type": "synonym",
+        "synonyms": [
+          "arabisch, arab, arabe, arabo => ar",
+          "bulgarisch, bulgarian, bulgare, bulgaro => bg",
+          "bosnisch, bosnian, bosniaque, bosniaco => bs",
+          "schweizerdeutsch, swiss german, suisse allemand, svizzero tedesco => ch",
+          "tschechisch, czech, tchèque, tcheque, ceco => cs",
+          "dänisch, danisch, danish, danois, danese => da",
+          "deutsch, german, allemand, tedesco => de",
+          "schweizerdeutsch, swiss german, suisse allemand, svizzero tedesco => de-ch",
+          "griechisch, greek, grec, greco => el",
+          "englisch, english, anglais, inglese => en",
+          "spanisch, spanish, espagnol, spagnolo => es",
+          "finnisch, finnish, finlandais, finlandese => fi",
+          "französisch, franzosisch, french, français, francese => fr",
+          "hebräisch, hebraisch, hebrew, hébraïque, ebreo => he",
+          "kroatisch, croatian, croate, croato => hr",
+          "ungarisch, hungarian, hongrois, ungherese => hu",
+          "italienisch, italian, italien, italiano => it",
+          "japanisch, japanese, japonais, giapponese => ja",
+          "khmer, khmer, khmer, khmer => km",
+          "kurdisch, kurdish, kurde, curdo => ku",
+          "litauisch, lithuanian, lituanien, lituano => lt",
+          "mazedonisch, macedonian, macédonien, macedone => mk",
+          "holländisch, hollandisch, dutch, hollandais, olandese => nl",
+          "norwegisch, norvegian, norvégien, norvegese => no",
+          "polnisch, polish, polonais, polacco => pl",
+          "portugiesisch, portuguese, portugais, portoghese => pt",
+          "rätoromanisch, ratoromanisch, rhaeto-romanic, rheto-romanche, reto-romancio => rm",
+          "rumänisch, rumanisch, romanian, roumain, rumeno => ro",
+          "russisch, russian, russe, russo => ru",
+          "slowakisch, slovakian, slovaque, slovacco => sk",
+          "slowenisch, slovenian, slovène, slovene, sloveno => sl",
+          "albanisch, albanian, albanais, albanese => sq",
+          "serbisch, serbian, serbe, serbo => sr",
+          "schwedisch, swedish, suédois, svedese => sv",
+          "tamil, tamil, tamoul, tamil => ta",
+          "thai, thai, thaïlandais, tailandese => th",
+          "türkisch, turkish, turc, turco => tr",
+          "vietnamesisch, vietnamese, vietnamien, vietnamita => vi",
+          "chinesisch, chinese, chinois, cinese => zh"
+        ]
       }
     }
   }

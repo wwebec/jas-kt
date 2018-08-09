@@ -106,7 +106,8 @@
               "languageSkills": {
                 "properties": {
                   "languageIsoCode": {
-                    "type": "keyword"
+                    "type": "text",
+                    "analyzer": "language_iso_code_synonym_analyzer"
                   },
                   "spokenLevel": {
                     "type": "keyword"
