@@ -16,7 +16,7 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 
-@Pattern(regexp = "[A-Z]{2}",message = "{country.iso-code.invalid.message}")
+@Pattern(regexp = "([A-Z]{2})?",message = "{country.iso-code.invalid.message}")
 @Documented
 @Target({ANNOTATION_TYPE, METHOD, FIELD, CONSTRUCTOR, PARAMETER})
 @Retention(RUNTIME)

@@ -24,6 +24,7 @@ public class ContactDto {
     @NotBlank
     private String email;
 
+    @NotBlank
     @LanguageIsoCode
     private String languageIsoCode;
 

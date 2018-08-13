@@ -20,6 +20,7 @@ public class CompanyDto {
     @NotBlank
     private String city;
 
+    @NotBlank
     @CountryIsoCode
     private String countryIsoCode;
 

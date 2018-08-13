@@ -18,6 +18,7 @@ public class ApiCreateLocationDto {
     @Size(max=10)
     private String postalCode;
 
+    @NotBlank
     @CountryIsoCode
     private String countryIsoCode;
 

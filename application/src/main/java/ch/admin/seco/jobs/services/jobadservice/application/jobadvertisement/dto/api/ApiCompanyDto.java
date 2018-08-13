@@ -26,6 +26,7 @@ public class ApiCompanyDto {
     @Size(max=100)
     private String city;
 
+    @NotBlank
     @CountryIsoCode
     private String countryIsoCode;
 

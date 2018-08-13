@@ -14,6 +14,7 @@ public class EmployerDto {
 
     private String city;
 
+    @NotBlank
     @CountryIsoCode
     private String countryIsoCode;
 

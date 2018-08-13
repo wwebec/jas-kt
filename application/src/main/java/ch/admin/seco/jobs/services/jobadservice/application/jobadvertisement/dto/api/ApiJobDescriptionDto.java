@@ -11,6 +11,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.La
 
 public class ApiJobDescriptionDto {
 
+    @NotBlank
     @LanguageIsoCode
     private String languageIsoCode;
 

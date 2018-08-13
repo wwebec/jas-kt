@@ -33,6 +33,7 @@ public class ApiContactDto {
     @Email
     private String email;
 
+    @NotBlank
     @LanguageIsoCode
     private String languageIsoCode;
 

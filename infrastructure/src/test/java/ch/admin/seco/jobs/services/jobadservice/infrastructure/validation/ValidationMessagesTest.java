@@ -79,6 +79,7 @@ public class ValidationMessagesTest {
         @Max(9)
         int number;
 
+        @NotBlank
         @CountryIsoCode
         String countryCode;
     }
