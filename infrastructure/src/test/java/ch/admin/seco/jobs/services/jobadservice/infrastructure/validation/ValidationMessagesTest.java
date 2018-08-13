@@ -19,6 +19,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.SupportedLanguageIsoCode;
 
 @SpringBootTest
@@ -34,22 +35,23 @@ public class ValidationMessagesTest {
         // given
         DummyClass dummyClass = new DummyClass();
         dummyClass.name = " ";
-        dummyClass.languageIsoCode = "xx";
+        dummyClass.supportedLanguageIsoCode = "xx";
         dummyClass.number = 99;
         dummyClass.countryCode = "de";
+        dummyClass.languageIsoCode = "de-ch";
         BeanPropertyBindingResult ls = new BeanPropertyBindingResult(dummyClass, "ls");
 
         // when
         validator.validate(dummyClass, ls);
 
         // then
-        assertThat(ls.getErrorCount()).isEqualTo(4);
+        assertThat(ls.getErrorCount()).isEqualTo(5);
 
         FieldError stringFieldError = ls.getFieldError("name");
         assertThat(stringFieldError).isNotNull();
         assertThat(stringFieldError.getDefaultMessage()).isEqualTo("must not be blank");
 
-        FieldError languageIsoCodeFieldError = ls.getFieldError("languageIsoCode");
+        FieldError languageIsoCodeFieldError = ls.getFieldError("supportedLanguageIsoCode");
         assertThat(languageIsoCodeFieldError).isNotNull();
         assertThat(languageIsoCodeFieldError.getDefaultMessage()).isEqualTo("'xx' is a unsupported language ISO-Code");
 
@@ -60,6 +62,10 @@ public class ValidationMessagesTest {
         FieldError countryFieldError = ls.getFieldError("countryCode");
         assertThat(countryFieldError).isNotNull();
         assertThat(countryFieldError.getDefaultMessage()).contains("'de' is a invalid country ISO-Code");
+
+        FieldError languageIsoCode = ls.getFieldError("languageIsoCode");
+        assertThat(languageIsoCode).isNotNull();
+        assertThat(languageIsoCode.getDefaultMessage()).contains("'de-ch' is a invalid language ISO-Code");
     }
 
     @SpringBootApplication
@@ -73,7 +79,7 @@ public class ValidationMessagesTest {
         String name;
 
         @SupportedLanguageIsoCode
-        String languageIsoCode;
+        String supportedLanguageIsoCode;
 
         @Min(1)
         @Max(9)
@@ -82,5 +88,10 @@ public class ValidationMessagesTest {
         @NotBlank
         @CountryIsoCode
         String countryCode;
+
+        @NotBlank
+        @LanguageIsoCode
+        String languageIsoCode;
+
     }
 }
