@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.Valid;
+
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.CancellationCode;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
@@ -47,8 +49,10 @@ public class JobAdvertisementDto {
 
     private CancellationCode cancellationCode;
 
+    @Valid
     private JobContentDto jobContent;
 
+    @Valid
     private PublicationDto publication;
 
     protected JobAdvertisementDto() {
