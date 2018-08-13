@@ -1,7 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 
@@ -9,19 +9,32 @@ public class CompanyDto {
 
     @NotBlank
     private String name;
+
     private String street;
+
     private String houseNumber;
+
     @NotBlank
     private String postalCode;
+
     @NotBlank
     private String city;
+
+    @Pattern(regexp = "[A-Z]{2}")
     private String countryIsoCode;
+
     private String postOfficeBoxNumber;
+
     private String postOfficeBoxPostalCode;
+
     private String postOfficeBoxCity;
+
     private String phone;
+
     private String email;
+
     private String website;
+
     private boolean surrogate;
 
     protected CompanyDto() {

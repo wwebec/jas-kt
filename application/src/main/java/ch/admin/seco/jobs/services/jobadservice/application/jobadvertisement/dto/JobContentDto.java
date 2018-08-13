@@ -1,20 +1,39 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobContent;
-
 import java.util.List;
+
+import javax.validation.Valid;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobContent;
 
 public class JobContentDto {
 
     private String externalUrl;
+
     private String numberOfJobs;
+
+    @Valid
     private List<JobDescriptionDto> jobDescriptions;
+
+    @Valid
     private CompanyDto company;
+
+    @Valid
     private EmploymentDto employment;
+
+    @Valid
     private LocationDto location;
+
+    @Valid
     private List<OccupationDto> occupations;
+
+    @Valid
     private List<LanguageSkillDto> languageSkills;
+
+    @Valid
     private ApplyChannelDto applyChannel;
+
+    @Valid
     private PublicContactDto publicContact;
 
     protected JobContentDto() {

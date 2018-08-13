@@ -1,10 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 
 public class ApiCompanyDto {
 
@@ -26,7 +26,6 @@ public class ApiCompanyDto {
     @Size(max=100)
     private String city;
 
-    @Size(max=2)
     @Pattern(regexp = "[A-Z]{2}")
     private String countryIsoCode;
 

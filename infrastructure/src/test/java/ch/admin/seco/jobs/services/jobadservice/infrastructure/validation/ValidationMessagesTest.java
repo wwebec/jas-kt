@@ -18,8 +18,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.SupportedLanguageIsoCode;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -64,7 +63,7 @@ public class ValidationMessagesTest {
 		@NotBlank
 		String name;
 
-		@LanguageIsoCode
+		@SupportedLanguageIsoCode
 		String languageIsoCode;
 
 		@Min(1)

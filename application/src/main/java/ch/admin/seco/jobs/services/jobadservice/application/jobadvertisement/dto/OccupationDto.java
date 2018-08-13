@@ -3,16 +3,18 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.constraints.NotEmpty;
+
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
-
-import javax.validation.constraints.NotEmpty;
 
 public class OccupationDto {
 
     @NotEmpty
     private String avamOccupationCode;
+
     private WorkExperience workExperience;
+
     private String educationCode;
 
     protected OccupationDto() {

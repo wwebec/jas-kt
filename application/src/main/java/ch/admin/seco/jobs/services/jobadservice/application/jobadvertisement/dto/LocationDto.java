@@ -1,20 +1,29 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
+
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-
-import javax.validation.constraints.NotEmpty;
 
 public class LocationDto {
 
     private String remarks;
+
     private String city;
+
     @NotEmpty
     private String postalCode;
+
     private String communalCode;
+
     private String regionCode;
+
     private String cantonCode;
+
+    @Pattern(regexp = "[A-Z]{2}")
     private String countryIsoCode;
+
     private GeoPoint coordinates;
 
     protected LocationDto() {

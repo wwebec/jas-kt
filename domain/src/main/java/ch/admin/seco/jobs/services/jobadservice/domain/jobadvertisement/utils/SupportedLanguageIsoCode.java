@@ -10,8 +10,8 @@ import javax.validation.Payload;
 
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = LanguageIsoCodeValidator.class)
-public @interface LanguageIsoCode {
+@Constraint(validatedBy = SupportedLanguageIsoCodeValidator.class)
+public @interface SupportedLanguageIsoCode {
 
     String message() default "{language.iso-code.message}";
 

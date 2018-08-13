@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 
-public class LanguageIsoCodeValidatorTest {
+public class SupportedLanguageIsoCodeValidatorTest {
 
 	private Validator validator;
 

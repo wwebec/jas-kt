@@ -17,8 +17,6 @@ public class ApiCreateLocationDto {
     @Size(max=10)
     private String postalCode;
 
-    @NotBlank
-    @Size(max=2)
     @Pattern(regexp = "[A-Z]{2}")
     private String countryIsoCode;
 

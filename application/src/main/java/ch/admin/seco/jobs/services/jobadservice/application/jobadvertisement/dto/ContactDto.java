@@ -24,7 +24,6 @@ public class ContactDto {
     @NotBlank
     private String email;
 
-    @NotBlank
     @Pattern(regexp = "[a-z]{2}")
     private String languageIsoCode;
 

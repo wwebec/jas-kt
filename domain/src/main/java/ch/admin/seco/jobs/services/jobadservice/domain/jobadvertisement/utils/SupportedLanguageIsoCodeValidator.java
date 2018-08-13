@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class LanguageIsoCodeValidator implements ConstraintValidator<LanguageIsoCode, String> {
+public class SupportedLanguageIsoCodeValidator implements ConstraintValidator<SupportedLanguageIsoCode, String> {
 
 	private static final Set<String> SUPPORTED_LANGUAGES = new HashSet<>();
 
