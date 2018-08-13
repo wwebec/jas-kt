@@ -108,7 +108,7 @@ public class JobAdvertisementApplicationServiceTest {
                 Collections.singletonList(new JobDescriptionDto("de", "title", "description")),
                 new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
                 null,
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
+                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 1, 10), true, false, false, 80, 100, null),
                 new CreateLocationDto("remarks", "city", "postalCode", "CH"),
                 new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
@@ -125,6 +125,7 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.JOBROOM);
         assertThat(jobAdvertisement.getStellennummerEgov()).isEqualTo(TEST_STELLEN_NUMMER_EGOV);
+        assertThat(jobAdvertisement.isReportingObligation()).isEqualTo(false);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
     }
