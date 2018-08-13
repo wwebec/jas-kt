@@ -428,6 +428,10 @@ public class JobAdvertisementApplicationService {
 
     private void publish(JobAdvertisement jobAdvertisement) {
         Condition.notNull(jobAdvertisement, "JobAdvertisement can't be null");
+        LocalDate startDate = jobAdvertisement.getPublication().getStartDate();
+        if((startDate != null) && startDate.isAfter(TimeMachine.now().toLocalDate())) {
+            return;
+        }
         if (jobAdvertisement.isReportingObligation() && REFINING.equals(jobAdvertisement.getStatus())) {
             LOG.debug("Publish in restricted area for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
             jobAdvertisement.publishRestricted();
