@@ -29,8 +29,6 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
 	}
 
 	public LanguageSkill(Builder builder) {
-		String[] isoLanguages = Locale.getISOLanguages();
-
 		this.languageIsoCode = Condition.notBlank(builder.languageIsoCode).toLowerCase();
 		this.spokenLevel = builder.spokenLevel;
 		this.writtenLevel = builder.writtenLevel;
