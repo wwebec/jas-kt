@@ -46,7 +46,7 @@ public class ValidationMessagesTest {
 
 		FieldError languageIsoCodeFieldError = ls.getFieldError("languageIsoCode");
 		assertThat(languageIsoCodeFieldError).isNotNull();
-		assertThat(languageIsoCodeFieldError.getDefaultMessage()).isEqualTo("'xxx' is a unsupported ISO-Code");
+		assertThat(languageIsoCodeFieldError.getDefaultMessage()).isEqualTo("'xxx' is a unsupported language ISO-Code");
 
 		FieldError numberFieldError = ls.getFieldError("number");
 		assertThat(numberFieldError).isNotNull();
