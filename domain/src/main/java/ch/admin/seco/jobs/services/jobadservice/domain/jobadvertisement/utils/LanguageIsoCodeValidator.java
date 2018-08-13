@@ -6,11 +6,13 @@ import java.util.Set;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class LanguageIsoCodeValidator implements ConstraintValidator<LanguageIsoCode, String> {
 
 	private static final Set<String> SUPPORTED_LANGUAGES = new HashSet<>();
 
-	{
+	static {
 		SUPPORTED_LANGUAGES.add("ar");
 		SUPPORTED_LANGUAGES.add("bg");
 		SUPPORTED_LANGUAGES.add("bs");
@@ -54,7 +56,7 @@ public class LanguageIsoCodeValidator implements ConstraintValidator<LanguageIso
 
 	@Override
 	public boolean isValid(String value, ConstraintValidatorContext context) {
-		if (value.isEmpty()) {
+		if (StringUtils.isBlank(value)) {
 			return true;
 		}
 		return SUPPORTED_LANGUAGES.contains(value.toLowerCase());
