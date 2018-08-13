@@ -1,10 +1,21 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmployerDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
 
 public class CreateJobAdvertisementDto {
 
@@ -14,36 +25,47 @@ public class CreateJobAdvertisementDto {
 
     private String externalReference;
 
+    @Valid
     @NotNull
     private ContactDto contact;
 
+    @Valid
     @NotNull
     private PublicationDto publication;
 
     private String numberOfJobs;
 
+    @Valid
     @NotNull
     @NotEmpty
     private List<JobDescriptionDto> jobDescriptions;
 
+    @Valid
     @NotNull
     private CompanyDto company;
 
+    @Valid
     private EmployerDto employer;
 
+    @Valid
     @NotNull
     private EmploymentDto employment;
 
+    @Valid
     @NotNull
     private CreateLocationDto location;
 
+    @Valid
     @NotNull
     private OccupationDto occupation;
 
+    @Valid
     private List<LanguageSkillDto> languageSkills;
 
+    @Valid
     private ApplyChannelDto applyChannel;
 
+    @Valid
     private PublicContactDto publicContact;
 
     protected CreateJobAdvertisementDto() {

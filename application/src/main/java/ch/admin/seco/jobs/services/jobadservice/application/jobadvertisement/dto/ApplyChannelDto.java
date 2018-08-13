@@ -5,9 +5,13 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyCha
 public class ApplyChannelDto {
 
     private String mailAddress;
+
     private String emailAddress;
+
     private String phoneNumber;
+
     private String formUrl;
+
     private String additionalInfo;
 
     protected ApplyChannelDto() {

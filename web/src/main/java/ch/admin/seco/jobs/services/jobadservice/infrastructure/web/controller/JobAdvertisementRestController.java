@@ -1,5 +1,20 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
+import javax.validation.Valid;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import ch.admin.seco.jobs.services.jobadservice.application.HtmlToMarkdownConverter;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
@@ -12,10 +27,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.CancellationResource;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/jobAdvertisements")
@@ -33,7 +44,7 @@ public class JobAdvertisementRestController {
     }
 
     @PostMapping()
-    public JobAdvertisementDto createFromWebform(@RequestBody CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
+    public JobAdvertisementDto createFromWebform(@RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService
                 .createFromWebForm(convertJobDescriptions(createJobAdvertisementDto));
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
