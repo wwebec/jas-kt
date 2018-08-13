@@ -13,7 +13,7 @@ import javax.validation.Payload;
 @Constraint(validatedBy = SupportedLanguageIsoCodeValidator.class)
 public @interface SupportedLanguageIsoCode {
 
-    String message() default "{language.iso-code.message}";
+    String message() default "{language.iso-code.unsupported.message}";
 
     Class<?>[] groups() default {};
 

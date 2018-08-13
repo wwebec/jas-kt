@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
 
 public class ApiContactDto {
 
@@ -32,7 +33,7 @@ public class ApiContactDto {
     @Email
     private String email;
 
-    @Pattern(regexp = "[a-z]{2}")
+    @LanguageIsoCode
     private String languageIsoCode;
 
     protected ApiContactDto() {

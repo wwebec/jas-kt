@@ -1,10 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
 
 public class LocationDto {
 
@@ -21,7 +21,7 @@ public class LocationDto {
 
     private String cantonCode;
 
-    @Pattern(regexp = "[A-Z]{2}")
+    @CountryIsoCode
     private String countryIsoCode;
 
     private GeoPoint coordinates;

@@ -18,6 +18,7 @@ import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.Validator;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.SupportedLanguageIsoCode;
 
 @SpringBootTest
@@ -25,49 +26,60 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.Su
 @ActiveProfiles("test")
 public class ValidationMessagesTest {
 
-	@Autowired
-	private Validator validator;
+    @Autowired
+    private Validator validator;
 
-	@Test
-	public void testValidateWithMessage() {
-		DummyClass dummyClass = new DummyClass();
-		dummyClass.name = " ";
-		dummyClass.languageIsoCode = "xxx";
-		dummyClass.number = 99;
-		BeanPropertyBindingResult ls = new BeanPropertyBindingResult(dummyClass, "ls");
+    @Test
+    public void testValidateWithMessage() {
+        // given
+        DummyClass dummyClass = new DummyClass();
+        dummyClass.name = " ";
+        dummyClass.languageIsoCode = "xx";
+        dummyClass.number = 99;
+        dummyClass.countryCode = "de";
+        BeanPropertyBindingResult ls = new BeanPropertyBindingResult(dummyClass, "ls");
 
-		validator.validate(dummyClass, ls);
+        // when
+        validator.validate(dummyClass, ls);
 
-		assertThat(ls.getErrorCount()).isEqualTo(3);
+        // then
+        assertThat(ls.getErrorCount()).isEqualTo(4);
 
-		FieldError stringFieldError = ls.getFieldError("name");
-		assertThat(stringFieldError).isNotNull();
-		assertThat(stringFieldError.getDefaultMessage()).isEqualTo("must not be blank");
+        FieldError stringFieldError = ls.getFieldError("name");
+        assertThat(stringFieldError).isNotNull();
+        assertThat(stringFieldError.getDefaultMessage()).isEqualTo("must not be blank");
 
-		FieldError languageIsoCodeFieldError = ls.getFieldError("languageIsoCode");
-		assertThat(languageIsoCodeFieldError).isNotNull();
-		assertThat(languageIsoCodeFieldError.getDefaultMessage()).isEqualTo("'xxx' is a unsupported language ISO-Code");
+        FieldError languageIsoCodeFieldError = ls.getFieldError("languageIsoCode");
+        assertThat(languageIsoCodeFieldError).isNotNull();
+        assertThat(languageIsoCodeFieldError.getDefaultMessage()).isEqualTo("'xx' is a unsupported language ISO-Code");
 
-		FieldError numberFieldError = ls.getFieldError("number");
-		assertThat(numberFieldError).isNotNull();
-		assertThat(numberFieldError.getDefaultMessage()).isEqualTo("must be less than or equal to 9");
-	}
+        FieldError numberFieldError = ls.getFieldError("number");
+        assertThat(numberFieldError).isNotNull();
+        assertThat(numberFieldError.getDefaultMessage()).isEqualTo("must be less than or equal to 9");
 
-	@SpringBootApplication
-	static class TestConfig {
+        FieldError countryFieldError = ls.getFieldError("countryCode");
+        assertThat(countryFieldError).isNotNull();
+        assertThat(countryFieldError.getDefaultMessage()).contains("'de' is a invalid country ISO-Code");
+    }
 
-	}
+    @SpringBootApplication
+    static class TestConfig {
 
-	static class DummyClass {
+    }
 
-		@NotBlank
-		String name;
+    static class DummyClass {
 
-		@SupportedLanguageIsoCode
-		String languageIsoCode;
+        @NotBlank
+        String name;
 
-		@Min(1)
-		@Max(9)
-		int number;
-	}
+        @SupportedLanguageIsoCode
+        String languageIsoCode;
+
+        @Min(1)
+        @Max(9)
+        int number;
+
+        @CountryIsoCode
+        String countryCode;
+    }
 }

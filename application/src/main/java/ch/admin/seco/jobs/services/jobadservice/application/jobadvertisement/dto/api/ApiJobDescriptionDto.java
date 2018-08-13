@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
 
 public class ApiJobDescriptionDto {
 
-    @Pattern(regexp = "[a-z]{2}")
+    @LanguageIsoCode
     private String languageIsoCode;
 
     @NotBlank

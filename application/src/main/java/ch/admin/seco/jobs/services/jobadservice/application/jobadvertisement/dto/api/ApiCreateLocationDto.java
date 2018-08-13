@@ -1,8 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
 
 public class ApiCreateLocationDto {
 
@@ -17,7 +18,7 @@ public class ApiCreateLocationDto {
     @Size(max=10)
     private String postalCode;
 
-    @Pattern(regexp = "[A-Z]{2}")
+    @CountryIsoCode
     private String countryIsoCode;
 
     protected ApiCreateLocationDto() {

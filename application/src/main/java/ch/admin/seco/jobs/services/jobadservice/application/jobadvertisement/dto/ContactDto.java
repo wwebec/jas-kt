@@ -2,10 +2,10 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
 
 public class ContactDto {
 
@@ -24,7 +24,7 @@ public class ContactDto {
     @NotBlank
     private String email;
 
-    @Pattern(regexp = "[a-z]{2}")
+    @LanguageIsoCode
     private String languageIsoCode;
 
     protected ContactDto() {

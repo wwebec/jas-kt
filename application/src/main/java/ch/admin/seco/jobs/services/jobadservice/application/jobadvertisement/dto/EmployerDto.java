@@ -1,9 +1,9 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employer;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
 
 public class EmployerDto {
 
@@ -14,7 +14,7 @@ public class EmployerDto {
 
     private String city;
 
-    @Pattern(regexp = "[A-Z]{2}")
+    @CountryIsoCode
     private String countryIsoCode;
 
     protected EmployerDto() {

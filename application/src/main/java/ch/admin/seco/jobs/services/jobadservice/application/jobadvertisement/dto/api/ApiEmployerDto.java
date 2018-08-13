@@ -1,10 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employer;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
 
 public class ApiEmployerDto {
 
@@ -20,7 +20,7 @@ public class ApiEmployerDto {
     @Size(max = 100)
     private String city;
 
-    @Pattern(regexp = "[A-Z]{2}")
+    @CountryIsoCode
     private String countryIsoCode;
 
     protected ApiEmployerDto() {
