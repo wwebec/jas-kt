@@ -1,10 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.ConditionException;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -18,7 +20,7 @@ public class JobContent implements ValueObject<JobContent> {
     @Column(name = "X28_OCCUPATION_CODES")
     private String x28OccupationCodes;
 
-    @NotEmpty
+    @NotBlank
     private String numberOfJobs;
 
     @ElementCollection
@@ -165,11 +167,11 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setNumberOfJobs(String numberOfJobs) {
-	    if (numberOfJobs == null || numberOfJobs.isEmpty()){
-		    this.numberOfJobs = "1";
-	    } else {
-		    this.numberOfJobs = numberOfJobs;
-	    }
+        try {
+            this.numberOfJobs = Condition.notBlank(numberOfJobs);
+        } catch (ConditionException e){
+            this.numberOfJobs = "1";
+        }
     }
 
     public List<JobDescription> getJobDescriptions() {
