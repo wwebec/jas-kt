@@ -5,6 +5,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
     <changeSet id="20180814080000-1" author="alnu">
-        <addNotNullConstraint tableName="JOB_ADVERTISEMENT" columnName="NUMBER_OF_JOBS" defaultNullValue="1"/>
+        <addNotNullConstraint tableName="JOB_ADVERTISEMENT" columnName="NUMBER_OF_JOBS" columnDataType="VARCHAR(5)" defaultNullValue="1"/>
     </changeSet>
 </databaseChangeLog>
