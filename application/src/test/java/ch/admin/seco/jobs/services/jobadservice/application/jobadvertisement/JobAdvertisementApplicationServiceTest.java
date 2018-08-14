@@ -396,22 +396,30 @@ public class JobAdvertisementApplicationServiceTest {
     @Test
     public void shouldPublish() {
         // given
-        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, JobAdvertisementStatus.REFINING, now().toLocalDate().plusDays(1)));
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_05, JobAdvertisementStatus.REFINING, now().toLocalDate()));
 
         // when
-        this.sut.publish(JOB_ADVERTISEMENT_ID_03);
         this.sut.publish(JOB_ADVERTISEMENT_ID_05);
 
         // then
         DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
         assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_05);
 
-        JobAdvertisement jobAdvertisementPublishLater = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_03);
-        assertThat(jobAdvertisementPublishLater.getStatus()).isEqualTo(JobAdvertisementStatus.REFINING);
-
         JobAdvertisement jobAdvertisementPublishNow = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_05);
         assertThat(jobAdvertisementPublishNow.getStatus()).isEqualTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
+    }
+
+    @Test
+    public void shouldNotPublish() {
+        // given
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, JobAdvertisementStatus.REFINING, now().toLocalDate().plusDays(1)));
+
+        // when
+        this.sut.publish(JOB_ADVERTISEMENT_ID_03);
+
+        // then
+        JobAdvertisement jobAdvertisementPublishLater = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_03);
+        assertThat(jobAdvertisementPublishLater.getStatus()).isEqualTo(JobAdvertisementStatus.REFINING);
     }
 
     @Test
