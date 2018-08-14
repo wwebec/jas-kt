@@ -25,7 +25,7 @@ public class ApiContactDto {
 
     @NotBlank
     @Size(max=20)
-    @Pattern(regexp = "[+][0-9]{11,}")
+    @Pattern(regexp = "[+][0-9]{10,}")
     private String phone;
 
     @NotBlank
