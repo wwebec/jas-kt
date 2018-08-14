@@ -394,6 +394,21 @@ public class JobAdvertisementApplicationServiceTest {
     }
 
     @Test
+    public void shouldPublish() {
+        // given
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, JobAdvertisementStatus.REFINING, now().toLocalDate().plusDays(1)));
+        jobAdvertisementRepository.save(createJobWithStatusAndPublicationStartDate(JOB_ADVERTISEMENT_ID_05, JobAdvertisementStatus.REFINING, now().toLocalDate()));
+
+        // when
+        this.sut.publish(JOB_ADVERTISEMENT_ID_03);
+        this.sut.publish(JOB_ADVERTISEMENT_ID_05);
+
+        // then
+        DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
+        assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_05);
+    }
+
+    @Test
     public void shouldRepublish() {
         // given
         TimeMachine.useFixedClockAt(LocalDateTime.now().minusDays(EXTERN_JOB_AD_REACTIVATION_DAY_NUM));
