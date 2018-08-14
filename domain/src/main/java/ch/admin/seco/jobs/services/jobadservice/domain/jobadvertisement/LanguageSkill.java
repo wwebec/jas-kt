@@ -1,15 +1,24 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import java.util.Objects;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.constraints.NotBlank;
+
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
-
-import javax.persistence.*;
-import java.util.Objects;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.SupportedLanguageIsoCode;
 
 @Embeddable
 @Access(AccessType.FIELD)
 public class LanguageSkill implements ValueObject<LanguageSkill> {
 
+    @SupportedLanguageIsoCode
+    @NotBlank
     private String languageIsoCode;
 
     @Enumerated(EnumType.STRING)
@@ -23,7 +32,7 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
     }
 
     public LanguageSkill(Builder builder) {
-        this.languageIsoCode = Condition.notBlank(builder.languageIsoCode);
+        this.languageIsoCode = Condition.notBlank(builder.languageIsoCode).toLowerCase();
         this.spokenLevel = builder.spokenLevel;
         this.writtenLevel = builder.writtenLevel;
     }
@@ -42,8 +51,8 @@ public class LanguageSkill implements ValueObject<LanguageSkill> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         LanguageSkill that = (LanguageSkill) o;
         return Objects.equals(languageIsoCode, that.languageIsoCode) &&
                 spokenLevel == that.spokenLevel &&

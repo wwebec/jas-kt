@@ -1,30 +1,44 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import java.util.Objects;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-import java.util.Objects;
+
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 @Embeddable
 @Access(AccessType.FIELD)
 public class Company implements ValueObject<Company> {
 
     private String name;
+
     private String street;
+
     private String houseNumber;
+
     private String postalCode;
+
     private String city;
+
     private String countryIsoCode;
+
     private String postOfficeBoxNumber;
+
     private String postOfficeBoxPostalCode;
+
     private String postOfficeBoxCity;
+
     private String phone;
+
     private String email;
+
     private String website;
+
     private boolean surrogate;
+
 
     protected Company() {
         // For reflection libs

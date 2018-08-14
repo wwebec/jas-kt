@@ -1,10 +1,19 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
+import javax.validation.constraints.NotBlank;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
+
 public class CreateLocationDto {
 
     private String remarks;
+
     private String city;
+
     private String postalCode;
+
+    @NotBlank
+    @CountryIsoCode
     private String countryIsoCode;
 
     protected CreateLocationDto() {

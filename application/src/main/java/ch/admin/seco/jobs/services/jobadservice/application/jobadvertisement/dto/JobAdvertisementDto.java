@@ -5,28 +5,54 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import javax.validation.Valid;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.CancellationCode;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
 public class JobAdvertisementDto {
 
     private String id;
+
     private JobAdvertisementStatus status;
+
     private SourceSystem sourceSystem;
+
     private String externalReference;
+
     private String stellennummerEgov;
+
     private String stellennummerAvam;
+
     private String fingerprint;
+
     private boolean reportingObligation;
+
     private LocalDate reportingObligationEndDate;
+
     private boolean reportToAvam;
+
     private String jobCenterCode;
+
     private LocalDate approvalDate;
+
     private LocalDate rejectionDate;
+
     private String rejectionCode;
+
     private String rejectionReason;
+
     private LocalDate cancellationDate;
+
     private CancellationCode cancellationCode;
+
+    @Valid
     private JobContentDto jobContent;
+
+    @Valid
     private PublicationDto publication;
 
     protected JobAdvertisementDto() {

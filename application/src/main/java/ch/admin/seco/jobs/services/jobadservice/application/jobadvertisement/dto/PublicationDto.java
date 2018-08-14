@@ -1,9 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
+import java.time.LocalDate;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
 
 public class PublicationDto {
 
@@ -13,10 +14,15 @@ public class PublicationDto {
     private LocalDate endDate;
 
     private boolean euresDisplay;
+
     private boolean euresAnonymous;
+
     private boolean publicDisplay;
+
     private boolean publicAnonymous;
+
     private boolean restrictedDisplay;
+
     private boolean restrictedAnonymous;
 
     protected PublicationDto() {

@@ -1,17 +1,17 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
-import org.springframework.beans.factory.annotation.Value;
-
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotBlank;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
 
 public class JobDescriptionDto {
 
+    // can be blank
+    @LanguageIsoCode
     private String languageIsoCode;
 
     @NotBlank

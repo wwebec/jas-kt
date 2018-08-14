@@ -9,13 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ActiveProfiles;
 import org.zalando.problem.spring.web.advice.MediaTypes;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -77,7 +77,7 @@ public class ExceptionTranslatorIntTest {
                 .andExpect(jsonPath("$.message").value(ErrorConstants.ERR_VALIDATION))
                 .andExpect(jsonPath("$.fieldErrors.[0].objectName").value("testDTO"))
                 .andExpect(jsonPath("$.fieldErrors.[0].field").value("test"))
-                .andExpect(jsonPath("$.fieldErrors.[0].message").value("NotNull"));
+                .andExpect(jsonPath("$.fieldErrors.[0].message").value("must not be null"));
     }
 
     @Test
