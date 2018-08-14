@@ -141,9 +141,7 @@ public class JobContent implements ValueObject<JobContent> {
         this.applyChannel = builder.applyChannel;
         this.location = builder.location;
         this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
-        if (builder.numberOfJobs == null){
-            this.numberOfJobs = "1";
-        }
+		this.setNumberOfJobs(builder.numberOfJobs);
     }
 
     public String getExternalUrl() {
@@ -167,7 +165,11 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setNumberOfJobs(String numberOfJobs) {
-        this.numberOfJobs = numberOfJobs;
+	    if (numberOfJobs == null || numberOfJobs.isEmpty()){
+		    this.numberOfJobs = "1";
+	    } else {
+		    this.numberOfJobs = numberOfJobs;
+	    }
     }
 
     public List<JobDescription> getJobDescriptions() {
