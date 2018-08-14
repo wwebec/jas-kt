@@ -18,6 +18,7 @@ public class JobContent implements ValueObject<JobContent> {
     @Column(name = "X28_OCCUPATION_CODES")
     private String x28OccupationCodes;
 
+    @NotEmpty
     private String numberOfJobs;
 
     @ElementCollection
@@ -140,6 +141,9 @@ public class JobContent implements ValueObject<JobContent> {
         this.applyChannel = builder.applyChannel;
         this.location = builder.location;
         this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
+        if (builder.numberOfJobs == null){
+            this.numberOfJobs = "1";
+        }
     }
 
     public String getExternalUrl() {
