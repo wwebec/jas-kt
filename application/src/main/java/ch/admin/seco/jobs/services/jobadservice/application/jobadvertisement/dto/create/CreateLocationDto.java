@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
 
@@ -8,6 +9,7 @@ public class CreateLocationDto {
 
     private String remarks;
 
+    @Size(max = 50)
     private String city;
 
     private String postalCode;

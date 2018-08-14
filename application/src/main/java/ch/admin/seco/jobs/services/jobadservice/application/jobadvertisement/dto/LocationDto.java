@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
@@ -11,6 +12,7 @@ public class LocationDto {
 
     private String remarks;
 
+    @Size(max = 50)
     private String city;
 
     @NotEmpty
