@@ -406,6 +406,12 @@ public class JobAdvertisementApplicationServiceTest {
         // then
         DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
         assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_05);
+
+        JobAdvertisement jobAdvertisementPublishLater = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_03);
+        assertThat(jobAdvertisementPublishLater.getStatus()).isEqualTo(JobAdvertisementStatus.REFINING);
+
+        JobAdvertisement jobAdvertisementPublishNow = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_05);
+        assertThat(jobAdvertisementPublishNow.getStatus()).isEqualTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
     }
 
     @Test
