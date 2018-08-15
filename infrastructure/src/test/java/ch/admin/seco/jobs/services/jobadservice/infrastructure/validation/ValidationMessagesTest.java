@@ -48,7 +48,7 @@ public class ValidationMessagesTest {
         validator.validate(dummyClass, ls);
 
         // then
-        assertThat(ls.getErrorCount()).isEqualTo(6);
+        assertThat(ls.getErrorCount()).isEqualTo(5);
 
         FieldError stringFieldError = ls.getFieldError("name");
         assertThat(stringFieldError).isNotNull();
