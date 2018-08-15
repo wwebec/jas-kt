@@ -1,8 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.PhoneNumber;
 
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 public class ApiApplyChannelDto {
@@ -14,7 +14,7 @@ public class ApiApplyChannelDto {
     private String emailAddress;
 
     @Size(max=20)
-    @Pattern(regexp = "[+][0-9]{10,}")
+    @PhoneNumber
     private String phoneNumber;
 
     @Size(max=255)

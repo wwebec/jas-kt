@@ -20,6 +20,7 @@ import org.springframework.validation.Validator;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.PhoneNumber;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.SupportedLanguageIsoCode;
 
 @SpringBootTest
@@ -39,13 +40,14 @@ public class ValidationMessagesTest {
         dummyClass.number = 99;
         dummyClass.countryCode = "de";
         dummyClass.languageIsoCode = "de-ch";
+        dummyClass.phoneNumber = "+423234567";
         BeanPropertyBindingResult ls = new BeanPropertyBindingResult(dummyClass, "ls");
 
         // when
         validator.validate(dummyClass, ls);
 
         // then
-        assertThat(ls.getErrorCount()).isEqualTo(5);
+        assertThat(ls.getErrorCount()).isEqualTo(6);
 
         FieldError stringFieldError = ls.getFieldError("name");
         assertThat(stringFieldError).isNotNull();
@@ -66,6 +68,10 @@ public class ValidationMessagesTest {
         FieldError languageIsoCode = ls.getFieldError("languageIsoCode");
         assertThat(languageIsoCode).isNotNull();
         assertThat(languageIsoCode.getDefaultMessage()).contains("'de-ch' is a invalid language ISO-Code");
+
+        FieldError phoneNumber = ls.getFieldError("phoneNumber");
+        assertThat(phoneNumber).isNotNull();
+        assertThat(phoneNumber.getDefaultMessage()).contains("+423234567 doesn't match to [+][0-9]{10,} pattern");
     }
 
     @SpringBootApplication
@@ -93,5 +99,7 @@ public class ValidationMessagesTest {
         @LanguageIsoCode
         String languageIsoCode;
 
+        @PhoneNumber
+        String phoneNumber;
     }
 }
