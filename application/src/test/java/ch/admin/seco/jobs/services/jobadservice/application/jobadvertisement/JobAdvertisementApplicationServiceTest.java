@@ -18,6 +18,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMo
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
+
 import org.assertj.core.util.Sets;
 import org.junit.After;
 import org.junit.Before;
@@ -98,7 +100,23 @@ public class JobAdvertisementApplicationServiceTest {
     @Test
     public void createFromWebForm() {
         //Prepare
-        CreateJobAdvertisementDto createJobAdvertisementDto = new CreateJobAdvertisementDto(
+        CreateJobAdvertisementDto createJobAdvertisementDto = createDefaultJobAdvertisementDto();
+
+        //Execute
+        JobAdvertisementId jobAdvertisementId = sut.createFromWebForm(createJobAdvertisementDto);
+
+        //Validate
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
+        assertThat(jobAdvertisement).isNotNull();
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
+        assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.JOBROOM);
+        assertThat(jobAdvertisement.getStellennummerEgov()).isEqualTo(TEST_STELLEN_NUMMER_EGOV);
+
+        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
+    }
+
+    private CreateJobAdvertisementDto createDefaultJobAdvertisementDto() {
+        return new CreateJobAdvertisementDto(
                 true,
                 null,
                 null,
@@ -115,18 +133,44 @@ public class JobAdvertisementApplicationServiceTest {
                 new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
                 new PublicContactDto(Salutation.MR, "firstName", "lastName", "phone", "email")
         );
+    }
 
+    @Test
+    public void shouldSetReportingObligationToFalseWhenShortEmployment() {
+        //Prepare
+        CreateJobAdvertisementDto createJobAdvertisementDto = createDefaultJobAdvertisementDto();
+        createJobAdvertisementDto.setEmployment(new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 1, 10), true, false, false, 80, 100, null));
+        when(reportingObligationService.hasReportingObligation(any(), any(), any())).thenReturn(true);
+
+        checkReportingObligation(createJobAdvertisementDto, false);
+    }
+
+    private void checkReportingObligation(CreateJobAdvertisementDto createJobAdvertisementDto, boolean expectedValue) {
         //Execute
         JobAdvertisementId jobAdvertisementId = sut.createFromWebForm(createJobAdvertisementDto);
 
         //Validate
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
-        assertThat(jobAdvertisement).isNotNull();
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
-        assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.JOBROOM);
-        assertThat(jobAdvertisement.getStellennummerEgov()).isEqualTo(TEST_STELLEN_NUMMER_EGOV);
+        assertThat(jobAdvertisement.isReportingObligation()).isEqualTo(expectedValue);
+    }
 
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
+    @Test
+    public void shouldSetReportingObligationToFalseWhenLocationIsGermany() {
+        //Prepare
+        CreateJobAdvertisementDto createJobAdvertisementDto = createDefaultJobAdvertisementDto();
+        createJobAdvertisementDto.setLocation(new CreateLocationDto("remarks", "city", "postalCode", "DE"));
+        when(locationService.enrichCodes(any(Location.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        checkReportingObligation(createJobAdvertisementDto, false);
+    }
+
+    @Test
+    public void shouldSetReportingObligationToTrueWhenLocationIsSwiss() {
+        //Prepare
+        CreateJobAdvertisementDto createJobAdvertisementDto = createDefaultJobAdvertisementDto();
+        when(reportingObligationService.hasReportingObligation(ProfessionCodeType.AVAM, "avamCode", "BE")).thenReturn(true);
+
+        checkReportingObligation(createJobAdvertisementDto, true);
     }
 
     @Test
