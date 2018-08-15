@@ -3,12 +3,12 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.PhoneNumber;
 
 public class ApiContactDto {
 
@@ -24,8 +24,7 @@ public class ApiContactDto {
     private String lastName;
 
     @NotBlank
-    @Size(max=20)
-    @Pattern(regexp = "[+][0-9]{11,}")
+    @PhoneNumber
     private String phone;
 
     @NotBlank
