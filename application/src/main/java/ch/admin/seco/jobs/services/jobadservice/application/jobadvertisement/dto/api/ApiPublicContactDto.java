@@ -19,7 +19,6 @@ public class ApiPublicContactDto {
     @Size(max=50)
     private String lastName;
 
-    @Size(max=20)
     @PhoneNumber
     private String phone;
 

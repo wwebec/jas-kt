@@ -24,7 +24,6 @@ public class ApiContactDto {
     private String lastName;
 
     @NotBlank
-    @Size(max=20)
     @PhoneNumber
     private String phone;
 

@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
+@Size(min = 11,  max = 20, message = "{phone-number.invalid-length.message}")
 @Pattern(regexp = "[+][0-9]{10,}", message = "{phone-number.invalid.message}")
 @Documented
 @Target({ElementType.FIELD})

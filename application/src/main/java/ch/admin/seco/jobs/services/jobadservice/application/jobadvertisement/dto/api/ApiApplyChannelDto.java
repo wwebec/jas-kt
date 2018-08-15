@@ -13,7 +13,6 @@ public class ApiApplyChannelDto {
     @Size(max=50)
     private String emailAddress;
 
-    @Size(max=20)
     @PhoneNumber
     private String phoneNumber;
 
