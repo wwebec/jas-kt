@@ -367,7 +367,7 @@ public class JobAdvertisementApplicationServiceTest {
                 JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
 
         // when
-        sut.cancel(JOB_ADVERTISEMENT_ID_01, LocalDate.of(2018, 1, 1), CancellationCode.OCCUPIED_OTHER, null);
+        sut.cancel(JOB_ADVERTISEMENT_ID_01, LocalDate.of(2018, 1, 1), CancellationCode.OCCUPIED_OTHER, SourceSystem.JOBROOM, null);
 
         // then
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
