@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
 import javax.validation.Valid;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -95,7 +96,7 @@ public class JobAdvertisementRestController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("@jobAdvertisementAuthorizationService.canCancel(#id, #token)")
     public void cancel(@PathVariable String id, @RequestParam(required = false) String token, @RequestBody CancellationResource cancellation) {
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode(), token);
+        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(id), TimeMachine.now().toLocalDate(), cancellation.getCode(), SourceSystem.JOBROOM, token);
     }
 
     @GetMapping("/{id}/events")

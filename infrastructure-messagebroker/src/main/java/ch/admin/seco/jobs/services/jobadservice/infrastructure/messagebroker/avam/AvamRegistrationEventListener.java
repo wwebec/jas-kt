@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCancelledEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementInspectingEvent;
 import org.slf4j.Logger;
@@ -26,7 +27,18 @@ public class AvamRegistrationEventListener {
 
     @EventListener
     protected void handle(JobAdvertisementCancelledEvent event) {
+        if (shouldNotBeSend(event)) {
+            return;
+        }
         LOG.debug("EVENT caught for AVAM: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
         this.avamTaskRepository.save(new AvamTask(new AvamTaskId(), event.getAggregateId(), AvamTaskType.DEREGISTER));
+    }
+
+    private boolean shouldNotBeSend(JobAdvertisementCancelledEvent event) {
+        Object cancelledBy = event.getAttributesMap().get("cancelledBy");
+        if (cancelledBy == null) {
+            return false;
+        }
+        return cancelledBy.equals(SourceSystem.RAV);
     }
 }

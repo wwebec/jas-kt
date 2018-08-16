@@ -14,6 +14,7 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebro
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.AVAM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.JOB_AD_SERVICE;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,6 +97,12 @@ public class AvamService {
             jobAdvertisementDto = jobAdvertisementApplicationService.findByStellennummerAvam(cancellationDto.getStellennummerAvam());
         }
         Condition.notNull(jobAdvertisementDto, "Couldn't find the jobAdvertisement for stellennummerEgov %s nor stellennummerAvam %s", cancellationDto.getStellennummerEgov(), cancellationDto.getStellennummerAvam());
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(jobAdvertisementDto.getId()), cancellationDto.getDate(), cancellationDto.getCode(), null);
+        jobAdvertisementApplicationService.cancel(
+                new JobAdvertisementId(jobAdvertisementDto.getId()),
+                cancellationDto.getDate(),
+                cancellationDto.getCode(),
+                SourceSystem.RAV,
+                null
+        );
     }
 }

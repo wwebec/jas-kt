@@ -385,11 +385,11 @@ public class JobAdvertisementApplicationService {
     }
 
     // FIXME @PreAuthorize("@jobAdvertisementAuthorizationService.canCancel(jobAdvertisementId, token)")
-    public void cancel(JobAdvertisementId jobAdvertisementId, LocalDate date, CancellationCode cancellationCode, String token) {
+    public void cancel(JobAdvertisementId jobAdvertisementId, LocalDate date, CancellationCode cancellationCode, SourceSystem cancelledBy, String token) {
         Condition.notNull(jobAdvertisementId, "JobAdvertisementId can't be null");
         JobAdvertisement jobAdvertisement = getJobAdvertisement(jobAdvertisementId);
         LOG.debug("Starting cancel for JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
-        jobAdvertisement.cancel(date, cancellationCode);
+        jobAdvertisement.cancel(date, cancellationCode, cancelledBy);
     }
 
     public void refining(JobAdvertisementId jobAdvertisementId) {
