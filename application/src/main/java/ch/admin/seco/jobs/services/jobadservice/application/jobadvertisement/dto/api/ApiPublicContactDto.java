@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.PublicContact;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.PhoneNumber;
 
 import javax.validation.constraints.*;
 
@@ -18,8 +19,7 @@ public class ApiPublicContactDto {
     @Size(max=50)
     private String lastName;
 
-    @Size(max=20)
-    @Pattern(regexp = "[+][0-9]{11,}")
+    @PhoneNumber
     private String phone;
 
     @Size(max=50)

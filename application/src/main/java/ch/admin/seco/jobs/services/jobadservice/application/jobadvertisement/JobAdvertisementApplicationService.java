@@ -499,9 +499,11 @@ public class JobAdvertisementApplicationService {
         occupation = enrichOccupationWithProfessionCodes(occupation);
         List<Occupation> occupations = Collections.singletonList(occupation);
 
+        Employment employment = toEmployment(createJobAdvertisementDto.getEmployment());
         boolean reportingObligation = checkReportingObligation(
                 occupation,
-                location
+                location,
+                employment
         );
 
         String jobCenterCode = jobCenterService.findJobCenterCode(location.getCountryIsoCode(), location.getPostalCode());
@@ -512,7 +514,7 @@ public class JobAdvertisementApplicationService {
                 .setJobDescriptions(toJobDescriptions(createJobAdvertisementDto.getJobDescriptions()))
                 .setLocation(location)
                 .setOccupations(occupations)
-                .setEmployment(toEmployment(createJobAdvertisementDto.getEmployment()))
+                .setEmployment(employment)
                 .setApplyChannel(toApplyChannel(createJobAdvertisementDto.getApplyChannel()))
                 .setCompany(toCompany(createJobAdvertisementDto.getCompany()))
                 .setEmployer(toEmployer(createJobAdvertisementDto.getEmployer()))
@@ -581,9 +583,14 @@ public class JobAdvertisementApplicationService {
         return occupation;
     }
 
-    private boolean checkReportingObligation(Occupation occupation, Location location) {
+    private boolean checkReportingObligation(Occupation occupation, Location location, Employment employment) {
         Condition.notNull(occupation, "Occupation can't be null");
         Condition.notNull(location, "Location can't be null");
+        Condition.notNull(employment, "Employment can't be null");
+
+        if(employment.isShortEmployment()) {
+            return false;
+        }
         String avamOccupationCode = occupation.getAvamOccupationCode();
         String cantonCode = location.getCantonCode();
         if (COUNTRY_ISO_CODE_SWITZERLAND.equals(location.getCountryIsoCode())) {

@@ -2,6 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.validation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -20,6 +22,7 @@ import org.springframework.validation.Validator;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.CountryIsoCode;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.PhoneNumber;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.SupportedLanguageIsoCode;
 
 @SpringBootTest
@@ -68,6 +71,39 @@ public class ValidationMessagesTest {
         assertThat(languageIsoCode.getDefaultMessage()).contains("'de-ch' is a invalid language ISO-Code");
     }
 
+    @Test
+    public void testPhoneNumberValidationWithMessages() {
+        // given
+        PhoneValidationClass phoneValidationClass = new PhoneValidationClass();
+        phoneValidationClass.shortPhoneNumber = "+423234567";
+        phoneValidationClass.longPhoneNumber =  "+42323456789012345678";
+        phoneValidationClass.withoutPlusSign = "42312345678";
+        phoneValidationClass.containsIllegalCharacter = "+421a4567123";
+        BeanPropertyBindingResult bindingResult = new BeanPropertyBindingResult(phoneValidationClass, "pv");
+
+        // when
+        validator.validate(phoneValidationClass, bindingResult);
+
+        // then
+        assertThat(bindingResult.getErrorCount()).isEqualTo(5);
+
+        List<FieldError> shortPhoneNumber = bindingResult.getFieldErrors("shortPhoneNumber");
+        assertThat(shortPhoneNumber).isNotEmpty();
+        assertThat(shortPhoneNumber).hasSize(2);
+
+        FieldError longPhoneNumber = bindingResult.getFieldError("longPhoneNumber");
+        assertThat(longPhoneNumber).isNotNull();
+        assertThat(longPhoneNumber.getDefaultMessage()).contains("Phone number length must be between 11 and 20");
+
+        FieldError withoutPlusSign = bindingResult.getFieldError("withoutPlusSign");
+        assertThat(withoutPlusSign).isNotNull();
+        assertThat(withoutPlusSign.getDefaultMessage()).contains("42312345678 doesn't match to [+][0-9]{10,} pattern");
+
+        FieldError containsIllegalCharacter = bindingResult.getFieldError("containsIllegalCharacter");
+        assertThat(containsIllegalCharacter).isNotNull();
+        assertThat(containsIllegalCharacter.getDefaultMessage()).contains("+421a4567123 doesn't match to [+][0-9]{10,} pattern");
+    }
+
     @SpringBootApplication
     static class TestConfig {
 
@@ -92,6 +128,19 @@ public class ValidationMessagesTest {
         @NotBlank
         @LanguageIsoCode
         String languageIsoCode;
+    }
 
+    static class PhoneValidationClass {
+        @PhoneNumber
+        String shortPhoneNumber;
+
+        @PhoneNumber
+        String longPhoneNumber;
+
+        @PhoneNumber
+        String withoutPlusSign;
+
+        @PhoneNumber
+        String containsIllegalCharacter;
     }
 }
