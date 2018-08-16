@@ -489,9 +489,7 @@ public class JobAdvertisementApplicationService {
     }
 
     private JobAdvertisementCreator getJobAdvertisementCreatorFromInternal(CreateJobAdvertisementDto createJobAdvertisementDto) {
-        Condition.notNull(createJobAdvertisementDto.getLocation(), "Location can't be null");
-        Location location = toLocation(createJobAdvertisementDto.getLocation());
-        location = locationService.enrichCodes(location);
+		Location location = convertCreateLocationToEnrichedLocation(createJobAdvertisementDto.getLocation());
 
         Condition.notNull(createJobAdvertisementDto.getOccupation(), "Occupation can't be null");
 
@@ -546,6 +544,13 @@ public class JobAdvertisementApplicationService {
                 .build();
     }
 
+	private Location convertCreateLocationToEnrichedLocation(CreateLocationDto createLocationDto) {
+		Condition.notNull(createLocationDto, "Location can't be null");
+		Location location = toLocation(createLocationDto);
+		Condition.notNull(locationService.verifyLocation(location), "Location is invalid");
+
+		return locationService.enrichCodes(location);
+	}
     private JobAdvertisement getJobAdvertisement(JobAdvertisementId jobAdvertisementId) throws AggregateNotFoundException {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId);
         return jobAdvertisement.orElseThrow(() -> new AggregateNotFoundException(JobAdvertisement.class, jobAdvertisementId.getValue()));

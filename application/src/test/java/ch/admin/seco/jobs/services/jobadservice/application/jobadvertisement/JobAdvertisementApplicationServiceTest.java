@@ -42,6 +42,8 @@ import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -113,6 +115,7 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getStellennummerEgov()).isEqualTo(TEST_STELLEN_NUMMER_EGOV);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
+        verify(locationService, times(1)).verifyLocation(any());
     }
 
     private CreateJobAdvertisementDto createDefaultJobAdvertisementDto() {
@@ -204,6 +207,7 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.API);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
+        verify(locationService, times(1)).verifyLocation(any());
     }
 
     @Test

@@ -1,10 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.location;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +27,9 @@ public class DefaultLocationServiceTest {
     @Mock
     private LocationApiClient locationApiClient;
 
+    @Mock
+    private LocationVerifier locationVerifier;
+
     @Test
     public void shouldEnrichCodes() {
         // GIVEN
@@ -39,8 +45,7 @@ public class DefaultLocationServiceTest {
                 .build();
         LocationResource locationResource = new LocationResource(UUID.randomUUID(), "Bern", "7777", "12", "34", "Bern", new GeoPointResource(3., 5.));
 
-        given(locationApiClient.findLocationByPostalCodeAndCity("2222", "Bern"))
-                .willReturn(Optional.of(locationResource));
+        given(locationVerifier.verifyLocation(any(Location.class),any(BiFunction.class))).willReturn(Optional.of(locationResource));
 
         // WHEN
         Location enriched = testedObject.enrichCodes(location);
@@ -57,7 +62,7 @@ public class DefaultLocationServiceTest {
     }
 
     @Test
-    public void shouldNotEnrichCodesWhenNoMatchingCity() {
+    public void shouldNotEnrichCodesWhenLocationCannotBeVerified() {
         // GIVEN
         Location location = new Location.Builder()
                 .setCountryIsoCode("CH")
@@ -67,24 +72,7 @@ public class DefaultLocationServiceTest {
                 .setPostalCode("2222")
                 .setRegionCode("region")
                 .build();
-
-        given(locationApiClient.findLocationByPostalCodeAndCity("2222", "Bern"))
-                .willReturn(Optional.empty());
-
-        // WHEN
-        Location enriched = testedObject.enrichCodes(location);
-
-        assertThat(enriched).isSameAs(location);
-    }
-
-    @Test
-    public void shouldNotEnrichCodesForNotManagedCountry() {
-        // GIVEN
-        Location location = new Location.Builder()
-                .setCountryIsoCode("UA")
-                .setCity("Kyiv")
-                .setPostalCode("2222")
-                .build();
+        given(locationVerifier.verifyLocation(any(Location.class),any(BiFunction.class))).willReturn(Optional.empty());
 
         // WHEN
         Location enriched = testedObject.enrichCodes(location);

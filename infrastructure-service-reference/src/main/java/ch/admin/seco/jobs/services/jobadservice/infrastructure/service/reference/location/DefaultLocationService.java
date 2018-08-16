@@ -1,7 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.location;
 
-import static org.springframework.util.StringUtils.hasText;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
@@ -14,42 +12,43 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location
 @EnableCaching
 public class DefaultLocationService implements LocationService {
 
-    private static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
-    private static final String COUNTRY_ISO_CODE_LIECHTENSTEIN = "LI";
-
-    private final LocationApiClient locationApiClient;
+	private final LocationApiClient locationApiClient;
+	private final LocationVerifier locationVerifier;
 
     @Autowired
-    public DefaultLocationService(LocationApiClient locationApiClient) {
+    public DefaultLocationService(LocationApiClient locationApiClient, LocationVerifier locationVerifier) {
         this.locationApiClient = locationApiClient;
+        this.locationVerifier = locationVerifier;
     }
 
-    @Override
-    public Location enrichCodes(Location location) {
-        if ((location != null) && hasText(location.getPostalCode()) && isManagedCountry(location.getCountryIsoCode())) {
-            return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity()).map(matchingLocationResource -> new Location.Builder()
-                    .setRemarks(location.getRemarks())
-                    .setCity(location.getCity())
-                    .setPostalCode(location.getPostalCode())
-                    .setCommunalCode(matchingLocationResource.getCommunalCode())
-                    .setRegionCode(matchingLocationResource.getRegionCode())
-                    .setCantonCode(matchingLocationResource.getCantonCode())
-                    .setCountryIsoCode(location.getCountryIsoCode())
-                    .setCoordinates(getGeoPoint(matchingLocationResource))
-                    .build()
-            ).orElse(location);
-        }
-        return location;
-    }
+	@Override
+	public Location enrichCodes(Location location) {
+		return locationVerifier.verifyLocation(location, locationApiClient::findLocationByPostalCodeAndCity).map(locationResource -> enrichLocationWithLocationResource(location, locationResource))
+				.orElse(location);
+	}
+
+	@Override
+	public boolean verifyLocation(Location location) {
+		return locationVerifier.verifyLocation(location, locationApiClient::findLocationByPostalCodeAndCity).isPresent();
+	}
+
+	private Location enrichLocationWithLocationResource(Location location, LocationResource resource) {
+		return new Location.Builder()
+				.setRemarks(location.getRemarks())
+				.setCity(location.getCity())
+				.setPostalCode(location.getPostalCode())
+				.setCommunalCode(resource.getCommunalCode())
+				.setRegionCode(resource.getRegionCode())
+				.setCantonCode(resource.getCantonCode())
+				.setCountryIsoCode(location.getCountryIsoCode())
+				.setCoordinates(getGeoPoint(resource))
+				.build();
+	}
 
     private GeoPoint getGeoPoint(LocationResource matchingLocationResource) {
         if (matchingLocationResource.getGeoPoint() == null) {
             return null;
         }
         return new GeoPoint(matchingLocationResource.getGeoPoint().getLongitude(), matchingLocationResource.getGeoPoint().getLatitude());
-    }
-
-    private boolean isManagedCountry(String countryIsoCode) {
-        return COUNTRY_ISO_CODE_SWITZERLAND.equalsIgnoreCase(countryIsoCode) || COUNTRY_ISO_CODE_LIECHTENSTEIN.equalsIgnoreCase(countryIsoCode);
     }
 }
