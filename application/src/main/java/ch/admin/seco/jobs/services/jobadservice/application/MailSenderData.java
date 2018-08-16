@@ -1,10 +1,16 @@
 package ch.admin.seco.jobs.services.jobadservice.application;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 
-import java.util.*;
-
-public class MailSenderData {
+public class MailSenderData implements Serializable {
 
     private final String subject;
 
