@@ -97,6 +97,12 @@ public class AvamService {
             jobAdvertisementDto = jobAdvertisementApplicationService.findByStellennummerAvam(cancellationDto.getStellennummerAvam());
         }
         Condition.notNull(jobAdvertisementDto, "Couldn't find the jobAdvertisement for stellennummerEgov %s nor stellennummerAvam %s", cancellationDto.getStellennummerEgov(), cancellationDto.getStellennummerAvam());
-        jobAdvertisementApplicationService.cancel(new JobAdvertisementId(jobAdvertisementDto.getId()), cancellationDto.getDate(), cancellationDto.getCode(), SourceSystem.RAV, null);
+        jobAdvertisementApplicationService.cancel(
+                new JobAdvertisementId(jobAdvertisementDto.getId()),
+                cancellationDto.getDate(),
+                cancellationDto.getCode(),
+                SourceSystem.RAV,
+                null
+        );
     }
 }

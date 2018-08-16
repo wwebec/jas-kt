@@ -27,17 +27,18 @@ public class AvamRegistrationEventListener {
 
     @EventListener
     protected void handle(JobAdvertisementCancelledEvent event) {
-        if (shouldBeSend(event)) {
-            LOG.debug("EVENT caught for AVAM: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
-            this.avamTaskRepository.save(new AvamTask(new AvamTaskId(), event.getAggregateId(), AvamTaskType.DEREGISTER));
+        if (shouldNotBeSend(event)) {
+            return;
         }
+        LOG.debug("EVENT caught for AVAM: JOB_ADVERTISEMENT_CANCELLED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+        this.avamTaskRepository.save(new AvamTask(new AvamTaskId(), event.getAggregateId(), AvamTaskType.DEREGISTER));
     }
 
-    private boolean shouldBeSend(JobAdvertisementCancelledEvent event) {
+    private boolean shouldNotBeSend(JobAdvertisementCancelledEvent event) {
         Object cancelledBy = event.getAttributesMap().get("cancelledBy");
         if (cancelledBy == null) {
-            return true;
+            return false;
         }
-        return !cancelledBy.equals(SourceSystem.RAV);
+        return cancelledBy.equals(SourceSystem.RAV);
     }
 }
