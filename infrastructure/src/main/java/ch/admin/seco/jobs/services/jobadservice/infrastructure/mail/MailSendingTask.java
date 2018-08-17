@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 import org.springframework.util.SerializationUtils;
 
@@ -18,9 +19,10 @@ class MailSendingTask {
     @Id
     private String id;
 
-    private LocalDateTime created;
-
+    @Lob
     private byte[] payload;
+
+    private LocalDateTime created;
 
     MailSendingTask(MailSenderData mailSenderData) {
         this.id = IdGenerator.timeBasedUUID().toString();
@@ -32,8 +34,8 @@ class MailSendingTask {
         // for jpa
     }
 
-    MailSenderData getMailSenderData(){
-        return ( MailSenderData) SerializationUtils.deserialize(this.payload);
+    MailSenderData getMailSenderData() {
+        return (MailSenderData) SerializationUtils.deserialize(this.payload);
     }
 
     public LocalDateTime getCreated() {
