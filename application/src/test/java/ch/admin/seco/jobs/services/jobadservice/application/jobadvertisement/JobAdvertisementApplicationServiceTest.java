@@ -91,6 +91,7 @@ public class JobAdvertisementApplicationServiceTest {
                         .setCountryIsoCode("CH")
                         .build()
         );
+        when(locationService.verifyLocation(any())).thenReturn(Boolean.TRUE);
         when(egovNumberGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
     }
 
