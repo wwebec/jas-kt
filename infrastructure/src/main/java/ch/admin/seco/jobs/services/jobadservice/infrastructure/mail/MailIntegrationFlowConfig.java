@@ -1,7 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManagerFactory;
 
 import org.slf4j.Logger;
@@ -14,8 +17,7 @@ import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Pollers;
 import org.springframework.integration.jpa.dsl.Jpa;
 import org.springframework.mail.javamail.JavaMailSender;
-
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
+import org.springframework.mail.javamail.MimeMessageHelper;
 
 @Configuration
 public class MailIntegrationFlowConfig {
@@ -26,12 +28,12 @@ public class MailIntegrationFlowConfig {
 
     private final JavaMailSender mailSender;
 
-    private final MailPreparator mailPreparator;
 
-    public MailIntegrationFlowConfig(EntityManagerFactory entityManagerFactory, JavaMailSender mailSender, MailPreparator mailPreparator) {
+    private static final String CONTENT_ENCODING = StandardCharsets.UTF_8.name();
+
+    public MailIntegrationFlowConfig(EntityManagerFactory entityManagerFactory, JavaMailSender mailSender) {
         this.entityManagerFactory = entityManagerFactory;
         this.mailSender = mailSender;
-        this.mailPreparator = mailPreparator;
     }
 
     @Bean
@@ -49,9 +51,23 @@ public class MailIntegrationFlowConfig {
 
     private Object sendMail(MailSendingTask mailSendingTask, Map<String, Object> headers) {
         LOGGER.debug("About to send Mail {}", mailSendingTask.getId());
-        MailSenderData mailSenderData = mailSendingTask.getMailSenderData();
-        mailSender.send(mimeMessage -> mailPreparator.prepareMail(mailSenderData, mimeMessage));
+        mailSender.send(mimeMessage -> enrichMessage(mimeMessage, mailSendingTask.getMailSenderData()));
         return null;
     }
 
+    private void enrichMessage(MimeMessage mimeMessage, MailData mailData) throws MessagingException {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Sending email with MailSenderData={}", mailData);
+        }
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, CONTENT_ENCODING);
+        messageHelper.setFrom(mailData.getFrom());
+        messageHelper.setReplyTo(mailData.getFrom());
+        messageHelper.setBcc(mailData.getBcc());
+        messageHelper.setTo(mailData.getTo());
+        if (mailData.getCc() != null) {
+            messageHelper.setCc(mailData.getCc());
+        }
+        messageHelper.setSubject(mailData.getSubject());
+        messageHelper.setText(mailData.getContent(), true);
+    }
 }

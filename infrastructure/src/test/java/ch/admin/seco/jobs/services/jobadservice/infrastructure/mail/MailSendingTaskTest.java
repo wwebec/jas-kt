@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.mail.MailSenderTestDataFactory.createDummyMailSenderData;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.mail.MailDataTestFactory.createDummyMailData;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
@@ -12,13 +12,13 @@ public class MailSendingTaskTest {
     @Test
     public void shouldGetMailSenderDataDeserializeByteArrayPayloadIntoMailSenderData() {
         // given
-        MailSenderData mailSenderData = createDummyMailSenderData();
-        MailSendingTask mailSendingTask = new MailSendingTask(mailSenderData);
+        MailData mailData = createDummyMailData();
+        MailSendingTask mailSendingTask = new MailSendingTask(mailData);
 
         // when
-        MailSenderData deserializeMailSenderData = mailSendingTask.getMailSenderData();
+        MailData deserializeMailSenderData = mailSendingTask.getMailSenderData();
 
         // then
-        assertThat(deserializeMailSenderData).isEqualTo(mailSenderData);
+        assertThat(deserializeMailSenderData).isEqualTo(mailData);
     }
 }

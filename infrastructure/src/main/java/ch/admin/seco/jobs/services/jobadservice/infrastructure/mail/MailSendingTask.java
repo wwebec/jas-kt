@@ -9,7 +9,6 @@ import javax.persistence.Lob;
 
 import org.apache.commons.lang3.SerializationUtils;
 
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.IdGenerator;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 
@@ -24,9 +23,9 @@ class MailSendingTask {
 
     private LocalDateTime created;
 
-    MailSendingTask(MailSenderData mailSenderData) {
+    MailSendingTask(MailData mailData) {
         this.id = IdGenerator.timeBasedUUID().toString();
-        this.payload = SerializationUtils.serialize(mailSenderData);
+        this.payload = SerializationUtils.serialize(mailData);
         this.created = TimeMachine.now();
     }
 
@@ -34,7 +33,7 @@ class MailSendingTask {
         // for jpa
     }
 
-    MailSenderData getMailSenderData() {
+    MailData getMailSenderData() {
         return SerializationUtils.deserialize(this.payload);
     }
 
