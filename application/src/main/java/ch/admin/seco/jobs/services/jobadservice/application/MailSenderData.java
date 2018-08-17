@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
@@ -30,7 +31,34 @@ public class MailSenderData implements Serializable {
 
     private final Collection<EmailAttachement> emailAttachments;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        MailSenderData that = (MailSenderData) o;
+        return Objects.equals(subject, that.subject) &&
+                Objects.equals(from, that.from) &&
+                Arrays.equals(to, that.to) &&
+                Arrays.equals(cc, that.cc) &&
+                Arrays.equals(bcc, that.bcc) &&
+                Objects.equals(templateName, that.templateName) &&
+                Objects.equals(templateVariables, that.templateVariables) &&
+                Objects.equals(locale, that.locale) &&
+                Objects.equals(emailAttachments, that.emailAttachments);
+    }
+
+    @Override
+    public int hashCode() {
+
+        int result = Objects.hash(subject, from, templateName, templateVariables, locale, emailAttachments);
+        result = 31 * result + Arrays.hashCode(to);
+        result = 31 * result + Arrays.hashCode(cc);
+        result = 31 * result + Arrays.hashCode(bcc);
+        return result;
+    }
+
     MailSenderData(Builder builder) {
+
         this.subject = Condition.notBlank(builder.subject, "E-Mail must contain a subject.");
         this.from = builder.from;
         this.to = Condition.notNull(builder.to);
