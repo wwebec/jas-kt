@@ -1,31 +1,33 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.location;
 
-import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.stereotype.Service;
+import static org.apache.commons.lang3.StringUtils.upperCase;
+import static org.springframework.util.StringUtils.hasText;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.apache.commons.lang3.StringUtils.upperCase;
-import static org.springframework.util.StringUtils.hasText;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.stereotype.Service;
+
+import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 
 @Service
 @EnableCaching
 public class DefaultLocationService implements LocationService {
+
     private static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
+
     private static final String COUNTRY_ISO_CODE_LIECHTENSTEIN = "LI";
 
     private static final Set<String> MANAGED_COUNTRY_CODES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             COUNTRY_ISO_CODE_LIECHTENSTEIN,
             COUNTRY_ISO_CODE_SWITZERLAND
     )));
-
 
     private final LocationApiClient locationApiClient;
 
@@ -36,25 +38,25 @@ public class DefaultLocationService implements LocationService {
 
     @Override
     public Location enrichCodes(Location location) {
-        if (canBeValidLocation(location)) {
-            return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity())
-                    .map(locationResource -> enrichLocationWithLocationResource(location, locationResource))
-                    .orElse(location);
+        if (!isManagedLocations(location)) {
+            return location;
         }
+        return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity())
+                .map(locationResource -> enrichLocationWithLocationResource(location, locationResource))
+                .orElse(location);
 
-        return location;
     }
 
     @Override
     public boolean verifyLocation(Location location) {
-        if (canBeValidLocation(location)) {
+        if (isManagedLocations(location)) {
             return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity()).isPresent();
         }
 
         return false;
     }
 
-    private boolean canBeValidLocation(Location location) {
+    private boolean isManagedLocations(Location location) {
         return location != null
                 && hasText(location.getPostalCode())
                 && MANAGED_COUNTRY_CODES.contains(upperCase(location.getCountryIsoCode()));
