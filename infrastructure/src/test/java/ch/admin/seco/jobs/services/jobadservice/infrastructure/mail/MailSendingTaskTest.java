@@ -1,8 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.mail.MailSenderDataFactory.createDummyMailSenderData;
 import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Locale;
 
 import org.junit.Test;
 
@@ -18,15 +17,5 @@ public class MailSendingTaskTest {
         MailSenderData deserializeMailSenderData = mailSendingTask.getMailSenderData();
 
         assertThat(deserializeMailSenderData).isEqualTo(mailSenderData);
-    }
-
-    private MailSenderData createDummyMailSenderData() {
-        return new MailSenderData.Builder()
-                .setFrom("from")
-                .setTo("to")
-                .setSubject("subject")
-                .setTemplateName("templateName")
-                .setLocale(Locale.getDefault())
-                .build();
     }
 }
