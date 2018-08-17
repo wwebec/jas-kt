@@ -8,6 +8,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 
 public class MailData implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final String subject;
 
     private final String from;
