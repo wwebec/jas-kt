@@ -17,4 +17,5 @@
     <include file="classpath:/liquibase/changelog/20180813130000_update_JobAdvertisement_location_city" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180813140000_lower-case-lang-iso-codes.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180814080000_update_JobAdvertisement_numberOfJobs.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20180817080000_added_entity_MailSendingTask.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
