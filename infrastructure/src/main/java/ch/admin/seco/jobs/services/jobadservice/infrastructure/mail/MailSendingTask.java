@@ -5,7 +5,6 @@ import java.util.Objects;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 
 import org.springframework.util.SerializationUtils;
 
@@ -19,7 +18,6 @@ class MailSendingTask {
     @Id
     private String id;
 
-    @Lob
     private byte[] payload;
 
     private LocalDateTime created;
