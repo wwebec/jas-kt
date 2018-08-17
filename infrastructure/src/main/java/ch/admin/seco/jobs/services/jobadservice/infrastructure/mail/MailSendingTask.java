@@ -6,7 +6,7 @@ import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import org.springframework.util.SerializationUtils;
+import org.apache.commons.lang3.SerializationUtils;
 
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.IdGenerator;
@@ -33,7 +33,7 @@ class MailSendingTask {
     }
 
     MailSenderData getMailSenderData() {
-        return (MailSenderData) SerializationUtils.deserialize(this.payload);
+        return SerializationUtils.deserialize(this.payload);
     }
 
     public LocalDateTime getCreated() {
