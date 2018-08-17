@@ -1,43 +1,39 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.mail.MailSenderDataFactory.createDummyMailSenderData;
-import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-@Transactional(propagation = Propagation.NOT_SUPPORTED)
-@SpringBootTest(classes = {ThymeleafConfiguration.class, MailSenderConfig.class, MailIntegrationFlowConfig.class})
-@EnableAutoConfiguration
 public class MailSendingTaskRepositoryTest {
 
     @Autowired
-    private TestEntityManager entityManager;
-
-    @Autowired
-    MailSendingTaskRepository repository;
+    private MailSendingTaskRepository repository;
 
     @Test
-    public void shouldFindAllReturn() {
-        final MailSendingTask task = new MailSendingTask(createDummyMailSenderData());
-        this.entityManager.persist(task);
+    public void shouldSaveAndFine() {
+        // given
+        MailSendingTask sendingTask = new MailSendingTask(MailSenderTestDataFactory.createDummyMailSenderData());
+        // when
+        this.repository.save(sendingTask);
 
-        final List<MailSendingTask> tasks = this.repository.findAll();
+        // then
+        Optional<MailSendingTask> mailSendingTask = this.repository.findById(sendingTask.getId());
+        assertThat(mailSendingTask).isPresent();
+        assertThat(mailSendingTask.get().getMailSenderData()).isNotNull();
+    }
 
-        assertThat(tasks.size()).isEqualTo(1);
-        assertThat(tasks.get(0)).isEqualTo(task);
+    @SpringBootApplication
+    static class TestConfig {
+
     }
 }

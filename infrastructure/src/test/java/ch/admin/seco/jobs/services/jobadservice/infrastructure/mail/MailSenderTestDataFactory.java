@@ -4,7 +4,7 @@ import java.util.Locale;
 
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 
-class MailSenderDataFactory {
+class MailSenderTestDataFactory {
 
     static MailSenderData createDummyMailSenderData() {
         return new MailSenderData.Builder()
