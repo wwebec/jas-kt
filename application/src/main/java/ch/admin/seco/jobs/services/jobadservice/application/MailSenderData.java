@@ -13,6 +13,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 
 public class MailSenderData implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
     private final String subject;
 
     private final String from;
@@ -201,7 +203,9 @@ public class MailSenderData implements Serializable {
                 '}';
     }
 
-    public static class EmailAttachement {
+    public static class EmailAttachement implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         private static final String MIMETYPE_PDF = "application/pdf";
 
