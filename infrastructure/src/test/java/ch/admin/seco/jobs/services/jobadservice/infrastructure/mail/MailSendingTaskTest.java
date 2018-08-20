@@ -5,8 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
-
 public class MailSendingTaskTest {
 
     @Test
@@ -16,7 +14,7 @@ public class MailSendingTaskTest {
         MailSendingTask mailSendingTask = new MailSendingTask(mailData);
 
         // when
-        MailData deserializeMailSenderData = mailSendingTask.getMailSenderData();
+        MailData deserializeMailSenderData = mailSendingTask.getMailData();
 
         // then
         assertThat(deserializeMailSenderData).isEqualTo(mailData);

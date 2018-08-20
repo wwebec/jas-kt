@@ -31,7 +31,7 @@ class MailSendingTask {
         // for jpa
     }
 
-    MailData getMailSenderData() {
+    MailData getMailData() {
         return SerializationUtils.deserialize(this.payload);
     }
 

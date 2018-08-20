@@ -29,7 +29,7 @@ public class MailSendingTaskRepositoryTest {
         // then
         Optional<MailSendingTask> mailSendingTask = this.repository.findById(sendingTask.getId());
         assertThat(mailSendingTask).isPresent();
-        assertThat(mailSendingTask.get().getMailSenderData()).isNotNull();
+        assertThat(mailSendingTask.get().getMailData()).isNotNull();
     }
 
     @SpringBootApplication

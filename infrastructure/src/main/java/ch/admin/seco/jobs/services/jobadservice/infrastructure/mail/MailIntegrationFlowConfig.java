@@ -50,7 +50,7 @@ public class MailIntegrationFlowConfig {
 
     private Object sendMail(MailSendingTask mailSendingTask, Map<String, Object> headers) {
         LOGGER.debug("About to send Mail {}", mailSendingTask.getId());
-        mailSender.send(mimeMessage -> enrichMessage(mimeMessage, mailSendingTask.getMailSenderData()));
+        mailSender.send(mimeMessage -> enrichMessage(mimeMessage, mailSendingTask.getMailData()));
         return null;
     }
 
