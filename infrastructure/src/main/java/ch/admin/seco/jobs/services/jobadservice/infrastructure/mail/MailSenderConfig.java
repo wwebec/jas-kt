@@ -19,8 +19,6 @@ public class MailSenderConfig {
 
     private final MailSendingTaskRepository mailSendingTaskRepository;
 
-    private final SpringTemplateEngine springTemplateEngine;
-
     private final MailSenderProperties mailSenderProperties;
 
     private final MessageSource messageSource;
@@ -30,11 +28,9 @@ public class MailSenderConfig {
     private final IDNEmailAddressConverter idnEmailAddressConverter;
 
     public MailSenderConfig(MailSendingTaskRepository mailSendingTaskRepository,
-            SpringTemplateEngine springTemplateEngine,
             MailSenderProperties mailSenderProperties,
             MessageSource messageSource, SpringTemplateEngine templateEngine) {
         this.mailSendingTaskRepository = mailSendingTaskRepository;
-        this.springTemplateEngine = springTemplateEngine;
         this.mailSenderProperties = mailSenderProperties;
         this.messageSource = messageSource;
         this.templateEngine = templateEngine;

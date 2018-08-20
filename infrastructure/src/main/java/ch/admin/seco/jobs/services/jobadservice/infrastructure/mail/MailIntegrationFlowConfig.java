@@ -28,7 +28,6 @@ public class MailIntegrationFlowConfig {
 
     private final JavaMailSender mailSender;
 
-
     private static final String CONTENT_ENCODING = StandardCharsets.UTF_8.name();
 
     public MailIntegrationFlowConfig(EntityManagerFactory entityManagerFactory, JavaMailSender mailSender) {
