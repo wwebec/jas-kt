@@ -30,33 +30,7 @@ public class MailSenderData implements Serializable {
 
     private final Locale locale;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
-        MailSenderData that = (MailSenderData) o;
-        return Objects.equals(subject, that.subject) &&
-                Objects.equals(from, that.from) &&
-                Arrays.equals(to, that.to) &&
-                Arrays.equals(cc, that.cc) &&
-                Arrays.equals(bcc, that.bcc) &&
-                Objects.equals(templateName, that.templateName) &&
-                Objects.equals(templateVariables, that.templateVariables) &&
-                Objects.equals(locale, that.locale) ;
-    }
-
-    @Override
-    public int hashCode() {
-
-        int result = Objects.hash(subject, from, templateName, templateVariables, locale);
-        result = 31 * result + Arrays.hashCode(to);
-        result = 31 * result + Arrays.hashCode(cc);
-        result = 31 * result + Arrays.hashCode(bcc);
-        return result;
-    }
-
-    MailSenderData(Builder builder) {
-
+    private MailSenderData(Builder builder) {
         this.subject = Condition.notBlank(builder.subject, "E-Mail must contain a subject.");
         this.from = builder.from;
         this.to = Condition.notNull(builder.to);
@@ -70,6 +44,30 @@ public class MailSenderData implements Serializable {
         }
         this.locale = Condition.notNull(builder.locale, "E-Mail must contain a locale.");
         Condition.isTrue(builder.to.length > 0, "E-Mail must contain at least one receiver.");
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
+        MailSenderData that = (MailSenderData) o;
+        return Objects.equals(subject, that.subject) &&
+                Objects.equals(from, that.from) &&
+                Arrays.equals(to, that.to) &&
+                Arrays.equals(cc, that.cc) &&
+                Arrays.equals(bcc, that.bcc) &&
+                Objects.equals(templateName, that.templateName) &&
+                Objects.equals(templateVariables, that.templateVariables) &&
+                Objects.equals(locale, that.locale);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(subject, from, templateName, templateVariables, locale);
+        result = 31 * result + Arrays.hashCode(to);
+        result = 31 * result + Arrays.hashCode(cc);
+        result = 31 * result + Arrays.hashCode(bcc);
+        return result;
     }
 
     public String getSubject() {
