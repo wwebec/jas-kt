@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.mail.MailDataTestFactory.createDummyMailData;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.mail.MailDataTestFactory.createDummyMailSendingTaskData;
 import static javax.mail.Message.RecipientType.BCC;
 import static javax.mail.Message.RecipientType.CC;
 import static javax.mail.Message.RecipientType.TO;
@@ -20,21 +20,21 @@ public class MailPreparatorTest {
     @Test
     public void shouldPrepareMimeMessageWithMailData() throws Exception {
         //given
-        MailData mailData = createDummyMailData();
-        MailPreparator preparator = new MailPreparator(mailData);
+        MailSendingTask.MailSendingTaskData mailSendingTaskData = createDummyMailSendingTaskData();
+        MailPreparator preparator = new MailPreparator(mailSendingTaskData);
         MimeMessage message = new MimeMessage((Session) null);
 
         //when
         preparator.prepare(message);
 
         //then
-        assertThat(message.getFrom()).isEqualTo(InternetAddress.parse(mailData.getFrom()));
-        assertThat(message.getReplyTo()).isEqualTo(InternetAddress.parse(mailData.getFrom()));
-        assertThat(message.getRecipients(TO)).containsExactly(toAddresses(mailData.getTo()));
-        assertThat(message.getRecipients(CC)).containsExactly(toAddresses(mailData.getCc()));
-        assertThat(message.getRecipients(BCC)).containsExactly(toAddresses(mailData.getBcc()));
-        assertThat(message.getSubject()).isEqualTo(mailData.getSubject());
-        assertThat(message.getContent()).isEqualTo(mailData.getContent());
+        assertThat(message.getFrom()).isEqualTo(InternetAddress.parse(mailSendingTaskData.getFrom()));
+        assertThat(message.getReplyTo()).isEqualTo(InternetAddress.parse(mailSendingTaskData.getFrom()));
+        assertThat(message.getRecipients(TO)).containsExactly(toAddresses(mailSendingTaskData.getTo()));
+        assertThat(message.getRecipients(CC)).containsExactly(toAddresses(mailSendingTaskData.getCc()));
+        assertThat(message.getRecipients(BCC)).containsExactly(toAddresses(mailSendingTaskData.getBcc()));
+        assertThat(message.getSubject()).isEqualTo(mailSendingTaskData.getSubject());
+        assertThat(message.getContent()).isEqualTo(mailSendingTaskData.getContent());
     }
 
     private Address[] toAddresses (String ... recipients) throws AddressException {

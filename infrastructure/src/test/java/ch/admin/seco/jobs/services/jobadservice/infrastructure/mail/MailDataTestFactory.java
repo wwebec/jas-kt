@@ -2,8 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
 class MailDataTestFactory {
 
-    static MailData createDummyMailData() {
-        return new MailData.Builder()
+    static MailSendingTask.MailSendingTaskData createDummyMailSendingTaskData() {
+        return MailSendingTask.builder()
                 .setFrom("from")
                 .setTo("to")
                 .setSubject("subject")

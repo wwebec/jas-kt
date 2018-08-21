@@ -22,7 +22,7 @@ public class MailSendingTaskRepositoryTest {
     @Test
     public void shouldSaveAndFine() {
         // given
-        MailSendingTask sendingTask = new MailSendingTask(MailDataTestFactory.createDummyMailData());
+        MailSendingTask sendingTask = new MailSendingTask(MailDataTestFactory.createDummyMailSendingTaskData());
         // when
         this.repository.save(sendingTask);
 

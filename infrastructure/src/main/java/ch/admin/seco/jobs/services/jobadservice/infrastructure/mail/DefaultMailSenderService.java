@@ -45,13 +45,12 @@ class DefaultMailSenderService implements MailSenderService {
         mailSendingTaskRepository.save(new MailSendingTask(toMailData(mailSenderData)));
     }
 
-    private MailData toMailData(MailSenderData mailSenderData) {
+    private MailSendingTask.MailSendingTaskData toMailData(MailSenderData mailSenderData) {
         String subject = messageSource.getMessage(mailSenderData.getSubject(), null, mailSenderData.getSubject(), mailSenderData.getLocale());
         String content = createContent(mailSenderData);
         String from = mailSenderData.getFrom().orElse(mailSenderProperties.getFromAddress());
         String[] bcc = mailSenderData.getBcc().orElse(mailSenderProperties.getBccAddress());
-
-        return new MailData.Builder()
+        return MailSendingTask.builder()
                 .setBcc(bcc)
                 .setCc(encodeEmailAddresses(mailSenderData.getCc()))
                 .setContent(content)

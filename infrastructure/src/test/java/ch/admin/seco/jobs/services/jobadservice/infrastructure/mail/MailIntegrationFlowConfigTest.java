@@ -40,7 +40,7 @@ public class MailIntegrationFlowConfigTest {
     @Test
     public void shouldSendEmailIfThereIsMailSendingTask() {
         // given
-        MailSendingTask mailSendingTask = new MailSendingTask(MailDataTestFactory.createDummyMailData());
+        MailSendingTask mailSendingTask = new MailSendingTask(MailDataTestFactory.createDummyMailSendingTaskData());
 
         // when
         mailSendingTaskRepository.save(mailSendingTask);
@@ -53,7 +53,7 @@ public class MailIntegrationFlowConfigTest {
     @Test
     public void testRetryTemplateWithBackoff() {
         // given
-        MailSendingTask mailSendingTask = new MailSendingTask(MailDataTestFactory.createDummyMailData());
+        MailSendingTask mailSendingTask = new MailSendingTask(MailDataTestFactory.createDummyMailSendingTaskData());
 
         doThrow(new RuntimeException("TEST")).when(mailSender).send(any(MimeMessagePreparator.class));
 
