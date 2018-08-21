@@ -2,7 +2,6 @@ package ch.admin.seco.jobs.services.jobadservice.application;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
@@ -31,8 +30,6 @@ public class MailSenderData implements Serializable {
 
     private final Locale locale;
 
-    private final Collection<EmailAttachement> emailAttachments;
-
     @Override
     public boolean equals(Object o) {
         if (this == o) { return true; }
@@ -45,14 +42,13 @@ public class MailSenderData implements Serializable {
                 Arrays.equals(bcc, that.bcc) &&
                 Objects.equals(templateName, that.templateName) &&
                 Objects.equals(templateVariables, that.templateVariables) &&
-                Objects.equals(locale, that.locale) &&
-                Objects.equals(emailAttachments, that.emailAttachments);
+                Objects.equals(locale, that.locale) ;
     }
 
     @Override
     public int hashCode() {
 
-        int result = Objects.hash(subject, from, templateName, templateVariables, locale, emailAttachments);
+        int result = Objects.hash(subject, from, templateName, templateVariables, locale);
         result = 31 * result + Arrays.hashCode(to);
         result = 31 * result + Arrays.hashCode(cc);
         result = 31 * result + Arrays.hashCode(bcc);
@@ -73,11 +69,6 @@ public class MailSenderData implements Serializable {
             this.templateVariables = Collections.emptyMap();
         }
         this.locale = Condition.notNull(builder.locale, "E-Mail must contain a locale.");
-        if (builder.emailAttachements != null) {
-            this.emailAttachments = builder.emailAttachements;
-        } else {
-            this.emailAttachments = Collections.emptyList();
-        }
         Condition.isTrue(builder.to.length > 0, "E-Mail must contain at least one receiver.");
     }
 
@@ -113,10 +104,6 @@ public class MailSenderData implements Serializable {
         return locale;
     }
 
-    public Collection<EmailAttachement> getEmailAttachments() {
-        return Collections.unmodifiableCollection(emailAttachments);
-    }
-
     public static class Builder {
 
         private String subject;
@@ -134,8 +121,6 @@ public class MailSenderData implements Serializable {
         private Map<String, Object> templateVariables;
 
         private Locale locale;
-
-        private Collection<EmailAttachement> emailAttachements;
 
         public Builder setSubject(String subject) {
             this.subject = subject;
@@ -177,11 +162,6 @@ public class MailSenderData implements Serializable {
             return this;
         }
 
-        public Builder setEmailAttachements(Collection<EmailAttachement> emailAttachements) {
-            this.emailAttachements = emailAttachements;
-            return this;
-        }
-
         public MailSenderData build() {
             return new MailSenderData(this);
         }
@@ -199,52 +179,6 @@ public class MailSenderData implements Serializable {
                 ", templateName='" + templateName + '\'' +
                 ", templateVariables=" + templateVariables +
                 ", locale=" + locale +
-                ", emailAttachments=" + emailAttachments +
                 '}';
-    }
-
-    public static class EmailAttachement implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        private static final String MIMETYPE_PDF = "application/pdf";
-
-        private final String fileName;
-
-        private final String mimeType;
-
-        private final byte[] content;
-
-        EmailAttachement(String fileName, String mimeType, byte[] content) {
-            this.fileName = fileName;
-            this.mimeType = mimeType;
-            this.content = content;
-        }
-
-        public static EmailAttachement createPdfAttachement(String fileName, byte[] content) {
-            return new EmailAttachement(fileName, MIMETYPE_PDF, content);
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public String getMimeType() {
-            return mimeType;
-        }
-
-        public byte[] getContent() {
-            return content;
-        }
-
-
-        @Override
-        public String toString() {
-            return "EmailAttachement{" +
-                    "fileName='" + fileName + '\'' +
-                    ", mimeType='" + mimeType + '\'' +
-                    ", content-size='" + content.length + '\'' +
-                    '}';
-        }
     }
 }
