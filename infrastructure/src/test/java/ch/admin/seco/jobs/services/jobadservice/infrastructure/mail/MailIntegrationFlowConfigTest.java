@@ -1,67 +1,52 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.mail.MailDataTestFactory.createDummyMailData;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessagePreparator;
-import org.springframework.messaging.MessageChannel;
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@ActiveProfiles("test")
 public class MailIntegrationFlowConfigTest {
-
-    @Autowired
-    private MailIntegrationFlowConfig config;
 
     @Autowired
     private JavaMailSender mailSender;
 
-    private MessageChannel retrievingGateway;
-
-    @Before
-    public void setUp() {
-        this.retrievingGateway = this.config.retrievingGatewayFlow().getInputChannel();
-    }
+    @Autowired
+    private MailSendingTaskRepository mailSendingTaskRepository;
 
     @Test
     public void shouldSendEmailIfThereIsMailSendingTask() {
-        this.retrievingGateway.send(MessageBuilder.withPayload(new MailSendingTask(createDummyMailData())).build());
+        // given
+        MailSendingTask mailSendingTask = new MailSendingTask(MailDataTestFactory.createDummyMailData());
 
-        verify(mailSender, only()).send(any(MimeMessagePreparator.class));
+        // when
+        mailSendingTaskRepository.save(mailSendingTask);
+
+        // then
+        await().atMost(10, SECONDS)
+                .untilAsserted(() -> verify(mailSender, only()).send(any(MimeMessagePreparator.class)));
+
     }
 
-    @SpringBootApplication(exclude = JpaRepositoriesAutoConfiguration.class)
+    @SpringBootApplication
     static class TestConfig {
 
         @MockBean
         JavaMailSender mailSender;
-
-        @MockBean
-        MailSendingTaskRepository repository;
-
-        @MockBean
-        MailSenderProperties mailSenderProperties;
-
-        @MockBean
-        MessageSource messageSource;
-
-        @MockBean
-        SpringTemplateEngine templateEngine;
     }
 }
