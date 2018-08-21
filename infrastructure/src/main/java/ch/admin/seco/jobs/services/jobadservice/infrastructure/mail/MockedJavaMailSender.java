@@ -1,8 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -10,11 +10,13 @@ import javax.mail.Part;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class MockedJavaMailSender extends JavaMailSenderImpl {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+
+class MockedJavaMailSender extends JavaMailSenderImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(MockedJavaMailSender.class);
 

@@ -3,7 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
-public class MailSendingTaskHealthCheck extends AbstractHealthIndicator {
+class MailSendingTaskHealthCheck extends AbstractHealthIndicator {
 
     private final MailSendingTaskRepository mailSendingTaskRepository;
 

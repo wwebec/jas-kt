@@ -9,14 +9,20 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.integration.dsl.IntegrationFlows;
 import org.springframework.integration.dsl.Pollers;
+import org.springframework.integration.handler.GenericHandler;
 import org.springframework.integration.jpa.dsl.Jpa;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.integration.IntegrationBasisConfig;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.integration.RetryAdviceFactory;
+
 @Configuration
-public class MailIntegrationFlowConfig {
+@Import(IntegrationBasisConfig.class)
+class MailIntegrationFlowConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MailIntegrationFlowConfig.class);
 
@@ -24,32 +30,27 @@ public class MailIntegrationFlowConfig {
 
     private final JavaMailSender mailSender;
 
-    public MailIntegrationFlowConfig(EntityManagerFactory entityManagerFactory, JavaMailSender mailSender) {
+    private final RetryAdviceFactory retryAdviceFactory;
+
+    public MailIntegrationFlowConfig(EntityManagerFactory entityManagerFactory, JavaMailSender mailSender, RetryAdviceFactory retryAdviceFactory) {
         this.entityManagerFactory = entityManagerFactory;
         this.mailSender = mailSender;
+        this.retryAdviceFactory = retryAdviceFactory;
     }
 
     @Bean
-    public IntegrationFlow mailSendingFlow() {
+    IntegrationFlow mailSendingFlow() {
         return IntegrationFlows
                 .from(Jpa.inboundAdapter(this.entityManagerFactory)
                         .entityClass(MailSendingTask.class)
                         .jpaQuery("SELECT t FROM MailSendingTask t ORDER BY t.created ASC")
                         .maxResults(1)
                         .expectSingleResult(true)
-                        .deleteAfterPoll(true), c -> c.poller(Pollers.fixedRate(1000).transactional()))
-                .handle(this::sendMail)
+                        .deleteAfterPoll(true), c -> c.poller(Pollers.fixedDelay(200).transactional()))
+                .handle((GenericHandler<MailSendingTask>) this::sendMail, c -> c.advice(this.retryAdviceFactory.retryAdvice()))
                 .get();
     }
 
-/*    private RequestHandlerRetryAdvice retryAdvice(){
-        RequestHandlerRetryAdvice requestHandlerRetryAdvice = new RequestHandlerRetryAdvice();
-        RetryTemplate retryTemplate = new RetryTemplate();
-        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
-        retryTemplate.setBackOffPolicy(backOffPolicy);
-        requestHandlerRetryAdvice.setRetryTemplate(retryTemplate);
-        return requestHandlerRetryAdvice;
-    }*/
 
     private Object sendMail(MailSendingTask mailSendingTask, Map<String, Object> headers) {
         LOGGER.debug("About to send Mail {}", mailSendingTask.getId());
