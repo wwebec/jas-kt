@@ -1,6 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import javax.persistence.EntityManagerFactory;
@@ -25,15 +24,13 @@ public class MailIntegrationFlowConfig {
 
     private final JavaMailSender mailSender;
 
-    private static final String CONTENT_ENCODING = StandardCharsets.UTF_8.name();
-
     public MailIntegrationFlowConfig(EntityManagerFactory entityManagerFactory, JavaMailSender mailSender) {
         this.entityManagerFactory = entityManagerFactory;
         this.mailSender = mailSender;
     }
 
     @Bean
-    public IntegrationFlow retrievingGatewayFlow() {
+    public IntegrationFlow mailSendingFlow() {
         return IntegrationFlows
                 .from(Jpa.inboundAdapter(this.entityManagerFactory)
                         .entityClass(MailSendingTask.class)
@@ -44,6 +41,15 @@ public class MailIntegrationFlowConfig {
                 .handle(this::sendMail)
                 .get();
     }
+
+/*    private RequestHandlerRetryAdvice retryAdvice(){
+        RequestHandlerRetryAdvice requestHandlerRetryAdvice = new RequestHandlerRetryAdvice();
+        RetryTemplate retryTemplate = new RetryTemplate();
+        ExponentialBackOffPolicy backOffPolicy = new ExponentialBackOffPolicy();
+        retryTemplate.setBackOffPolicy(backOffPolicy);
+        requestHandlerRetryAdvice.setRetryTemplate(retryTemplate);
+        return requestHandlerRetryAdvice;
+    }*/
 
     private Object sendMail(MailSendingTask mailSendingTask, Map<String, Object> headers) {
         LOGGER.debug("About to send Mail {}", mailSendingTask.getId());
