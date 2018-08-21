@@ -1,21 +1,29 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.dsl.Pollers;
-import org.springframework.integration.jpa.dsl.Jpa;
-
-import javax.persistence.EntityManagerFactory;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.persistence.EntityManagerFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.dsl.IntegrationFlows;
+import org.springframework.integration.dsl.Pollers;
+import org.springframework.integration.handler.GenericHandler;
+import org.springframework.integration.jpa.dsl.Jpa;
+
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.integration.IntegrationBasisConfig;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.integration.RetryAdviceFactory;
+
 @Configuration
+@Import(IntegrationBasisConfig.class)
 public class AvamIntegrationFlowConfig {
 
     private final Logger LOG = LoggerFactory.getLogger(AvamIntegrationFlowConfig.class);
@@ -26,10 +34,13 @@ public class AvamIntegrationFlowConfig {
 
     private final EntityManagerFactory entityManagerFactory;
 
-    public AvamIntegrationFlowConfig(AvamService avamService, JobAdvertisementRepository jobAdvertisementRepository, EntityManagerFactory entityManagerFactory) {
+    private final RetryAdviceFactory retryAdviceFactory;
+
+    public AvamIntegrationFlowConfig(AvamService avamService, JobAdvertisementRepository jobAdvertisementRepository, EntityManagerFactory entityManagerFactory, RetryAdviceFactory retryAdviceFactory) {
         this.avamService = avamService;
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.entityManagerFactory = entityManagerFactory;
+        this.retryAdviceFactory = retryAdviceFactory;
     }
 
     @Bean
@@ -40,8 +51,8 @@ public class AvamIntegrationFlowConfig {
                         .jpaQuery("SELECT t FROM AvamTask t ORDER BY t.created ASC")
                         .maxResults(1)
                         .expectSingleResult(true)
-                        .deleteAfterPoll(true), c -> c.poller(Pollers.fixedRate(1000).transactional()))
-                .handle(this::sendToAvam)
+                        .deleteAfterPoll(true), c -> c.poller(Pollers.fixedDelay(200).transactional()))
+                .handle((GenericHandler<AvamTask>) this::sendToAvam, c -> c.advice(this.retryAdviceFactory.retryAdvice()))
                 .get();
     }
 

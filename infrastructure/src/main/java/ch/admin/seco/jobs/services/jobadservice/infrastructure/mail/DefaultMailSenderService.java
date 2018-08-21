@@ -1,97 +1,84 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
-import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
+import java.util.stream.Stream;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.util.IDNEmailAddressConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
-import javax.mail.MessagingException;
-import javax.mail.util.ByteArrayDataSource;
+import org.springframework.context.MessageSource;
 
-import java.nio.charset.StandardCharsets;
-import java.util.stream.Stream;
+import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
+import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
 
-public class DefaultMailSenderService implements MailSenderService {
+class DefaultMailSenderService implements MailSenderService {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultMailSenderService.class);
 
-    private static final String CONTENT_ENCODING = StandardCharsets.UTF_8.name();
+    private final MailSendingTaskRepository mailSendingTaskRepository;
 
     private final SpringTemplateEngine templateEngine;
-
-    private final JavaMailSender mailSender;
 
     private final MailSenderProperties mailSenderProperties;
 
     private final MessageSource messageSource;
 
-    private IDNEmailAddressConverter idnEmailAddressConverter;
+    private final IDNEmailAddressConverter idnEmailAddressConverter;
 
-    DefaultMailSenderService(SpringTemplateEngine templateEngine,
-                             JavaMailSender mailSender,
-                             MailSenderProperties mailSenderProperties,
-                             MessageSource messageSource) {
+    DefaultMailSenderService(MailSendingTaskRepository mailSendingTaskRepository, SpringTemplateEngine templateEngine, MailSenderProperties mailSenderProperties, MessageSource messageSource, IDNEmailAddressConverter idnEmailAddressConverter) {
+        this.mailSendingTaskRepository = mailSendingTaskRepository;
         this.templateEngine = templateEngine;
-        this.mailSender = mailSender;
         this.mailSenderProperties = mailSenderProperties;
         this.messageSource = messageSource;
-        this.idnEmailAddressConverter = new IDNEmailAddressConverter();
+        this.idnEmailAddressConverter = idnEmailAddressConverter;
     }
 
-    @Async
     @Override
     public void send(MailSenderData mailSenderData) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Save email with MailSenderData={}", mailSenderData);
+        }
+
+        mailSendingTaskRepository.save(new MailSendingTask(toMailData(mailSenderData)));
+    }
+
+    private MailSendingTask.MailSendingTaskData toMailData(MailSenderData mailSenderData) {
+        String subject = messageSource.getMessage(mailSenderData.getSubject(), null, mailSenderData.getSubject(), mailSenderData.getLocale());
+        String content = createContent(mailSenderData);
+        String from = mailSenderData.getFrom().orElse(mailSenderProperties.getFromAddress());
+        String[] bcc = mailSenderData.getBcc().orElse(mailSenderProperties.getBccAddress());
+        return MailSendingTask.builder()
+                .setBcc(bcc)
+                .setCc(encodeEmailAddresses(mailSenderData.getCc()))
+                .setContent(content)
+                .setFrom(from)
+                .setSubject(subject)
+                .setTo(encodeEmailAddresses(mailSenderData.getTo()))
+                .build();
+    }
+
+    private String createContent(MailSenderData mailSenderData) {
+        return StringUtils.strip(templateEngine.process(mailSenderData.getTemplateName(), createTemplateContext(mailSenderData)));
+    }
+
+    private Context createTemplateContext(MailSenderData mailSenderData) {
         Context context = new Context();
         context.setVariable("baseUrl", mailSenderProperties.getBaseUrl());
         context.setVariable("linkToJobAdDetailPage", mailSenderProperties.getLinkToJobAdDetailPage());
         context.setVariable("user", null);
         context.setVariables(mailSenderData.getTemplateVariables());
         context.setLocale(mailSenderData.getLocale());
-        final String content = StringUtils.strip(templateEngine.process(mailSenderData.getTemplateName(), context));
-        final String from = mailSenderData.getFrom().orElse(mailSenderProperties.getFromAddress());
-        final String[] bcc = mailSenderData.getBcc().orElse(mailSenderProperties.getBccAddress());
-        final String subject = messageSource.getMessage(mailSenderData.getSubject(), null, mailSenderData.getSubject(), mailSenderData.getLocale());
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending email with MailSenderData={},\nBODY=\n{}", mailSenderData, content);
-        }
-
-        mailSender.send(mimeMessage -> {
-            MimeMessageHelper message = new MimeMessageHelper(mimeMessage, !mailSenderData.getEmailAttachments().isEmpty(), CONTENT_ENCODING);
-            message.setFrom(from);
-            message.setReplyTo(from);
-            message.setBcc(encodeEmailAddresses(bcc));
-            message.setTo(encodeEmailAddresses(mailSenderData.getTo()));
-            if(mailSenderData.getCc() != null) {
-                message.setCc(encodeEmailAddresses(mailSenderData.getCc()));
-            }
-            message.setSubject(subject);
-            message.setText(content, true);
-            mailSenderData.getEmailAttachments().forEach(attachment -> {
-                try {
-                    message.addAttachment(attachment.getFileName(), new ByteArrayDataSource(attachment.getContent(), attachment.getMimeType()));
-                } catch (MessagingException e) {
-                    LOG.error(String.format("Failed to attach document %s to email with template %s, abort sending", attachment.getFileName(), mailSenderData.getTemplateName()), e);
-                    throw new IllegalStateException(e);
-                }
-            });
-        });
+        return context;
     }
 
     private String[] encodeEmailAddresses(String[] addresses) {
         return addresses != null
                 ? Stream.of(addresses)
-                    .map(idnEmailAddressConverter::toASCII)
-                    .toArray(String[]::new)
+                .map(idnEmailAddressConverter::toASCII)
+                .toArray(String[]::new)
                 : null;
     }
-
 }

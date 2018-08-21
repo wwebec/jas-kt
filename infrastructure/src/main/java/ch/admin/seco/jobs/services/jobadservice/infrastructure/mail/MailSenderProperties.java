@@ -1,14 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
-import org.springframework.validation.annotation.Validated;
+import java.util.Properties;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.Properties;
+
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "mail.sender")
@@ -37,6 +38,9 @@ public class MailSenderProperties {
 
     @NotNull
     private String templatesPath;
+
+    @Min(0)
+    private int mailQueueThreshold = 0;
 
     public JavaMailSenderImpl getJavaMailSender() {
         final JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
@@ -117,5 +121,13 @@ public class MailSenderProperties {
 
     public void setTemplatesPath(String templatesPath) {
         this.templatesPath = templatesPath;
+    }
+
+    public int getMailQueueThreshold() {
+        return mailQueueThreshold;
+    }
+
+    public void setMailQueueThreshold(int mailQueueThreshold) {
+        this.mailQueueThreshold = mailQueueThreshold;
     }
 }
