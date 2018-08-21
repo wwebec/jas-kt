@@ -3,6 +3,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -17,6 +18,7 @@ class MailSendingTask {
     @Id
     private String id;
 
+    @Column(length = 2048)
     private byte[] payload;
 
     private LocalDateTime created;

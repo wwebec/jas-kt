@@ -9,13 +9,18 @@
             <column name="ID" type="varchar(36)">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="PAYLOAD" type="binary">
+            <column name="PAYLOAD" type="binary(2048)">
                 <constraints nullable="false"/>
             </column>
             <column name="CREATED" type="timestamp">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <createIndex indexName="idx_created"
+                     tableName="mail_sending_task"
+                     unique="true">
+            <column name="CREATED" type="timestamp"/>
+        </createIndex>
     </changeSet>
 
 </databaseChangeLog>

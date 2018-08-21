@@ -11,8 +11,11 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 
 class MailPreparator implements MimeMessagePreparator {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MailPreparator.class);
+
     private static final String CONTENT_ENCODING = StandardCharsets.UTF_8.name();
+
     private final MailData mailData;
 
     MailPreparator(MailData mailData) {
@@ -21,9 +24,6 @@ class MailPreparator implements MimeMessagePreparator {
 
     @Override
     public void prepare(MimeMessage mimeMessage) throws Exception {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Sending email with MailSenderData={}", mailData);
-        }
         MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, CONTENT_ENCODING);
         messageHelper.setFrom(mailData.getFrom());
         messageHelper.setReplyTo(mailData.getFrom());

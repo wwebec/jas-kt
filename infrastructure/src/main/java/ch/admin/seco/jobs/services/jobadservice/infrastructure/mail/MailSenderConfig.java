@@ -15,7 +15,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
 
 @Configuration
 @EnableConfigurationProperties(MailSenderProperties.class)
-public class MailSenderConfig {
+class MailSenderConfig {
 
     private final MailSendingTaskRepository mailSendingTaskRepository;
 
@@ -38,12 +38,12 @@ public class MailSenderConfig {
     }
 
     @Bean
-    public MailSenderService mailSenderService() {
+    MailSenderService mailSenderService() {
         return new DefaultMailSenderService(mailSendingTaskRepository, templateEngine, mailSenderProperties, messageSource, idnEmailAddressConverter);
     }
 
     @Bean
-    public MailSendingTaskHealthCheck mailSendingTaskHealthCheck() {
+    MailSendingTaskHealthCheck mailSendingTaskHealthCheck() {
         return new MailSendingTaskHealthCheck(this.mailSendingTaskRepository, this.mailSenderProperties.getMailQueueThreshold());
     }
 
