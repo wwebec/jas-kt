@@ -120,3 +120,12 @@ see https://en.wikipedia.org/wiki/Common_European_Framework_of_Reference_for_Lan
 Refer to separate Excel sheet. The AVAM occupation list comprises > 4000 occupations with labels in three languages.
 Each is assigned to an SBN occupation group. The occupation code is required to determine whether
 a job vacancy falls under the registration requirement. link:AVAM-Berufsliste-Juni-2018.xlsx[Download occupations Excel sheet]
+
+=== Populate a database with Candidate data
+
+To populate a local database with a candidate data, run the undermentioned *curl* script against REST APIs, under the ```/api``` URL with a corresponding payload.
+e.g.
+```
+curl -H 'Content-Type: application/json' -H 'Accept: application/json' -d @src/curl/create_job_advertisement-curl_payload.json http://localhost:8086/api/jobAdvertisements
+```
+The payload scripts can be found under ```/src/curl```. Be aware of already existing candidate data and if there is such a need remove the old one.
