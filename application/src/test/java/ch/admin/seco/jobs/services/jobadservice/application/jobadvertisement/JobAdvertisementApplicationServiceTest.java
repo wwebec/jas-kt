@@ -91,7 +91,7 @@ public class JobAdvertisementApplicationServiceTest {
                         .setCountryIsoCode("CH")
                         .build()
         );
-        when(locationService.verifyLocation(any())).thenReturn(Boolean.TRUE);
+        when(locationService.isLocationValid(any())).thenReturn(Boolean.TRUE);
         when(egovNumberGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
     }
 
@@ -116,7 +116,7 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getStellennummerEgov()).isEqualTo(TEST_STELLEN_NUMMER_EGOV);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
-        verify(locationService, times(1)).verifyLocation(any());
+        verify(locationService, times(1)).isLocationValid(any());
     }
 
     private CreateJobAdvertisementDto createDefaultJobAdvertisementDto() {
@@ -208,7 +208,7 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.API);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
-        verify(locationService, times(1)).verifyLocation(any());
+        verify(locationService, times(1)).isLocationValid(any());
     }
 
     @Test

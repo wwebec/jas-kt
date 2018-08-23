@@ -6,6 +6,7 @@ import static org.springframework.util.StringUtils.hasText;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,27 +39,31 @@ public class DefaultLocationService implements LocationService {
 
     @Override
     public Location enrichCodes(Location location) {
-        if (!isManagedLocations(location)) {
+        if (!isManagedLocation(location)) {
             return location;
         }
-        return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity())
+        return findLocationIfHasPostalCode(location)
                 .map(locationResource -> enrichLocationWithLocationResource(location, locationResource))
                 .orElse(location);
-
     }
 
     @Override
-    public boolean verifyLocation(Location location) {
-        if (isManagedLocations(location)) {
-            return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity()).isPresent();
+    public boolean isLocationValid(Location location) {
+        if (location == null) {
+            return false;
         }
-
-        return false;
+        return isManagedLocation(location) ? findLocationIfHasPostalCode(location).isPresent() :
+                true;
     }
 
-    private boolean isManagedLocations(Location location) {
+    private Optional<LocationResource> findLocationIfHasPostalCode(Location location) {
+        return hasText(location.getPostalCode()) ?
+                locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity())
+                : Optional.empty();
+    }
+
+    private boolean isManagedLocation(Location location) {
         return location != null
-                && hasText(location.getPostalCode())
                 && MANAGED_COUNTRY_CODES.contains(upperCase(location.getCountryIsoCode()));
     }
 
@@ -76,9 +81,7 @@ public class DefaultLocationService implements LocationService {
     }
 
     private GeoPoint getGeoPoint(LocationResource matchingLocationResource) {
-        if (matchingLocationResource.getGeoPoint() == null) {
-            return null;
-        }
-        return new GeoPoint(matchingLocationResource.getGeoPoint().getLongitude(), matchingLocationResource.getGeoPoint().getLatitude());
+        GeoPointResource geoPoint = matchingLocationResource.getGeoPoint();
+        return geoPoint == null ? null : new GeoPoint(geoPoint.getLongitude(), geoPoint.getLatitude());
     }
 }
