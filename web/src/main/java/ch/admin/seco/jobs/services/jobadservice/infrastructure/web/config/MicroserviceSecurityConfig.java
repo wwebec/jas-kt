@@ -1,28 +1,37 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.config;
 
-import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
-import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTConfigurer;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTSecurityProperties;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.TokenProvider;
+import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
+
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.boot.autoconfigure.security.oauth2.resource.*;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.FixedAuthoritiesExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.FixedPrincipalExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
+import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
-import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
+
+import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
+import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTConfigurer;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.JWTSecurityProperties;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.jwt.TokenProvider;
 
 @Configuration
 @Import(SecurityProblemSupport.class)
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class MicroserviceSecurityConfig {
 
     @Configuration
@@ -32,6 +41,7 @@ public class MicroserviceSecurityConfig {
     static class JWTConfig extends WebSecurityConfigurerAdapter {
 
         private final JWTSecurityProperties securityProperties;
+
         private final SecurityProblemSupport problemSupport;
 
         public JWTConfig(JWTSecurityProperties securityProperties, SecurityProblemSupport problemSupport) {

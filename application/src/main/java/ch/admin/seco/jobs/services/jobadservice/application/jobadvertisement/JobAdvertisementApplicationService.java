@@ -547,7 +547,7 @@ public class JobAdvertisementApplicationService {
     private Location convertCreateLocationToEnrichedLocation(CreateLocationDto createLocationDto) {
         Condition.notNull(createLocationDto, "Location can't be null");
         Location location = toLocation(createLocationDto);
-        Condition.isTrue(locationService.verifyLocation(location), "Location is invalid");
+        Condition.isTrue(locationService.isLocationValid(location), "Location is invalid: it is empty or has improper postal code in Switzerland or Liechtenstein");
 
         return locationService.enrichCodes(location);
     }

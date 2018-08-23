@@ -1,30 +1,15 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.mail;
 
-import java.util.Properties;
-
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
 @ConfigurationProperties(prefix = "mail.sender")
 public class MailSenderProperties {
-
-    @NotEmpty
-    private String host;
-
-    @Min(0)
-    @Max(65535)
-    private int port;
-
-    private String username;
-
-    private String password;
 
     @NotEmpty
     private String fromAddress;
@@ -41,51 +26,6 @@ public class MailSenderProperties {
 
     @Min(0)
     private int mailQueueThreshold = 0;
-
-    public JavaMailSenderImpl getJavaMailSender() {
-        final JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
-        javaMailSender.setHost(this.getHost());
-        javaMailSender.setPort(this.getPort());
-        javaMailSender.setUsername(this.getUsername());
-        javaMailSender.setPassword(this.getPassword());
-        final Properties javaMailProperties = new Properties();
-        javaMailProperties.setProperty("mail.smtp.auth", String.valueOf(Boolean.TRUE));
-        javaMailProperties.setProperty("mail.smtp.starttls.enable", String.valueOf(Boolean.FALSE));
-        javaMailSender.setJavaMailProperties(javaMailProperties);
-        return javaMailSender;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public String getFromAddress() {
         return fromAddress;
@@ -111,9 +51,13 @@ public class MailSenderProperties {
         this.baseUrl = baseUrl;
     }
 
-    public String getLinkToJobAdDetailPage() { return linkToJobAdDetailPage; }
+    public String getLinkToJobAdDetailPage() {
+        return linkToJobAdDetailPage;
+    }
 
-    public void setLinkToJobAdDetailPage(String linkToJobAdDetailPage) { this.linkToJobAdDetailPage = linkToJobAdDetailPage; }
+    public void setLinkToJobAdDetailPage(String linkToJobAdDetailPage) {
+        this.linkToJobAdDetailPage = linkToJobAdDetailPage;
+    }
 
     public String getTemplatesPath() {
         return templatesPath;
