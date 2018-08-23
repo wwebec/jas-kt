@@ -43,8 +43,8 @@ class MailSenderConfig {
     }
 
     @Bean
-    MailSendingTaskHealthCheck mailSendingTaskHealthCheck() {
-        return new MailSendingTaskHealthCheck(this.mailSendingTaskRepository, this.mailSenderProperties.getMailQueueThreshold());
+    MailSendingTaskHealthIndicator mailSendingTaskHealthCheck() {
+        return new MailSendingTaskHealthIndicator(this.mailSendingTaskRepository, this.mailSenderProperties.getMailQueueThreshold());
     }
 
     @Configuration
