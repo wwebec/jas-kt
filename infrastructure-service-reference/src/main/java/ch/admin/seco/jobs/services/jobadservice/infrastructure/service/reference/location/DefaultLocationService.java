@@ -38,7 +38,7 @@ public class DefaultLocationService implements LocationService {
 
     @Override
     public Location enrichCodes(Location location) {
-        if (!isManagedLocations(location)) {
+        if (!(isManagedLocations(location) || hasText(location.getPostalCode()))) {
             return location;
         }
         return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity())
@@ -53,7 +53,8 @@ public class DefaultLocationService implements LocationService {
             return false;
         }
         return isManagedLocations(location) ?
-                hasText(location.getPostalCode()) && locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity()).isPresent() :
+                hasText(location.getPostalCode()) &&
+                        locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity()).isPresent() :
                 true;
     }
 

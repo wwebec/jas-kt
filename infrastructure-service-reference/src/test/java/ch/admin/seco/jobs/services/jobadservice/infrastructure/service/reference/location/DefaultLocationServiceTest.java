@@ -113,6 +113,32 @@ public class DefaultLocationServiceTest {
     }
 
     @Test
+    public void shouldNotEnrichCodesIfLocationIsLiechtensteinAndHasNotPostalCodee() {
+        // GIVEN
+        Location location = new Location.Builder()
+                .setCountryIsoCode("LI")
+                .setCity("Liechtenstein")
+                .build();
+        // WHEN
+        Location enriched = testedObject.enrichCodes(location);
+
+        assertThat(enriched).isSameAs(location);
+    }
+
+    @Test
+    public void shouldNotEnrichCodesIfLocationIsSwityerlandAndHasNotPostalCodee() {
+        // GIVEN
+        Location location = new Location.Builder()
+                .setCountryIsoCode("CH")
+                .setCity("Bern")
+                .build();
+        // WHEN
+        Location enriched = testedObject.enrichCodes(location);
+
+        assertThat(enriched).isSameAs(location);
+    }
+
+    @Test
     public void shouldIsLocationValidReturnTrue() {
         // GIVEN
         Location location = new Location.Builder()
