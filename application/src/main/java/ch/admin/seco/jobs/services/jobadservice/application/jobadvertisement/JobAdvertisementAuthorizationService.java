@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 import javax.transaction.Transactional;
 import java.util.Optional;
 
+import static org.springframework.util.StringUtils.hasText;
+
 @Component
 @Transactional
 public class JobAdvertisementAuthorizationService {
@@ -30,11 +32,11 @@ public class JobAdvertisementAuthorizationService {
             return true;
         }
 
-        CurrentUser currentUser = this.currentUserContext.getCurrentUser();
-        if (currentUser == null) {
+        if (hasText(token)) {
             return hasToken(jobAdvertisement.get(), token);
         }
 
+        CurrentUser currentUser = this.currentUserContext.getCurrentUser();
         // FIXME ROLE_API and from AVAM return true
         return isOwner(jobAdvertisement.get(), currentUser);
 
@@ -45,17 +47,12 @@ public class JobAdvertisementAuthorizationService {
     }
 
     public boolean isOwner(JobAdvertisement jobAdvertisement, CurrentUser currentUser) {
-
         String userId = currentUser.getUserId();
         if ((userId != null) && userId.equals(jobAdvertisement.getOwner().getUserId())) {
             return true;
         }
 
         String companyId = currentUser.getCompanyId();
-        if ((companyId != null) && companyId.equals(jobAdvertisement.getOwner().getCompanyId())) {
-            return true;
-        }
-
-        return false;
+        return (companyId != null) && companyId.equals(jobAdvertisement.getOwner().getCompanyId());
     }
 }
