@@ -387,6 +387,10 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 employment.getStartDate()
         );
         violations.addIfTrue(
+                employment.isShortEmployment() && employment.isPermanent(),
+                "Employment is short-term and permanent at the same time"
+        );
+        violations.addIfTrue(
                 (employment.getWorkloadPercentageMin() <= 0) || (employment.getWorkloadPercentageMin() > 100),
                 "WorkloadPercentageMin %d is out of range [1..100]",
                 employment.getWorkloadPercentageMin()
