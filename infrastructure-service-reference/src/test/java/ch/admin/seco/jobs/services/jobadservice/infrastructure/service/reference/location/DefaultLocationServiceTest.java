@@ -126,7 +126,7 @@ public class DefaultLocationServiceTest {
     }
 
     @Test
-    public void shouldNotEnrichCodesIfLocationIsSwityerlandAndHasNotPostalCodee() {
+    public void shouldNotEnrichCodesIfLocationIsSwitzerlandAndHasNotPostalCode() {
         // GIVEN
         Location location = new Location.Builder()
                 .setCountryIsoCode("CH")

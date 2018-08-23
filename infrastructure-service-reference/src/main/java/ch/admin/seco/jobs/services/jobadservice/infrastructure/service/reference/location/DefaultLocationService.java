@@ -39,7 +39,7 @@ public class DefaultLocationService implements LocationService {
 
     @Override
     public Location enrichCodes(Location location) {
-        if (!isManagedLocations(location)) {
+        if (!isManagedLocation(location)) {
             return location;
         }
         return findLocationIfHasPostalCode(location)
@@ -52,7 +52,7 @@ public class DefaultLocationService implements LocationService {
         if (location == null) {
             return false;
         }
-        return isManagedLocations(location) ? findLocationIfHasPostalCode(location).isPresent() :
+        return isManagedLocation(location) ? findLocationIfHasPostalCode(location).isPresent() :
                 true;
     }
 
@@ -62,7 +62,7 @@ public class DefaultLocationService implements LocationService {
                 : Optional.empty();
     }
 
-    private boolean isManagedLocations(Location location) {
+    private boolean isManagedLocation(Location location) {
         return location != null
                 && MANAGED_COUNTRY_CODES.contains(upperCase(location.getCountryIsoCode()));
     }
@@ -81,9 +81,7 @@ public class DefaultLocationService implements LocationService {
     }
 
     private GeoPoint getGeoPoint(LocationResource matchingLocationResource) {
-        if (matchingLocationResource.getGeoPoint() == null) {
-            return null;
-        }
-        return new GeoPoint(matchingLocationResource.getGeoPoint().getLongitude(), matchingLocationResource.getGeoPoint().getLatitude());
+        GeoPointResource geoPoint = matchingLocationResource.getGeoPoint();
+        return geoPoint == null ? null : new GeoPoint(geoPoint.getLongitude(), geoPoint.getLatitude());
     }
 }
