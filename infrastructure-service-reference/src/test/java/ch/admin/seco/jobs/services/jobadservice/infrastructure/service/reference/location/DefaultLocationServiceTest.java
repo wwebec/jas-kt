@@ -2,6 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.referenc
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -36,7 +38,7 @@ public class DefaultLocationServiceTest {
                 .setRemarks("remarks")
                 .setCoordinates(new GeoPoint(1., 1.))
                 .build();
-        LocationResource locationResource = new LocationResource(UUID.randomUUID(), "Bern", "7777", "12", "34", "Bern", new GeoPointResource(3., 5.));
+        LocationResource locationResource = dummyLocationResource();
 
         given(locationApiClient.findLocationByPostalCodeAndCity("2222", "Bern"))
                 .willReturn(Optional.of(locationResource));
@@ -108,5 +110,62 @@ public class DefaultLocationServiceTest {
         Location enriched = testedObject.enrichCodes(location);
 
         assertThat(enriched).isSameAs(location);
+    }
+
+    @Test
+    public void shouldIsLocationValidReturnTrue() {
+        // GIVEN
+        Location location = new Location.Builder()
+                .setCountryIsoCode("CH")
+                .setCity("Bern")
+                .setPostalCode("3004")
+                .build();
+        given(locationApiClient.findLocationByPostalCodeAndCity(anyString(), anyString())).willReturn(Optional.of(dummyLocationResource()));
+        // WHEN
+        boolean locationValid = testedObject.isLocationValid(location);
+        //THEN
+        assertThat(locationValid).isTrue();
+    }
+
+
+    @Test
+    public void shouldIsLocationValidReturnTrueIfLocationIsInEu() {
+        // GIVEN
+        Location location = new Location.Builder()
+                .setCountryIsoCode("DE")
+                .build();
+        // WHEN
+        boolean locationValid = testedObject.isLocationValid(location);
+        //THEN
+        assertThat(locationValid).isTrue();
+    }
+
+    @Test
+    public void shouldIsLocationValidReturnFalseIfLocationIsInSwitzerlandAndHasNotPostalCode() {
+        // GIVEN
+        Location location = new Location.Builder()
+                .setCountryIsoCode("CH")
+                .build();
+        // WHEN
+        boolean locationValid = testedObject.isLocationValid(location);
+        //THEN
+        assertThat(locationValid).isFalse();
+    }
+
+
+    @Test
+    public void shouldIsLocationValidReturnFalseIfLocationIsLiechtensteinAndHasNotPostalCode() {
+        // GIVEN
+        Location location = new Location.Builder()
+                .setCountryIsoCode("LI")
+                .build();
+        // WHEN
+        boolean locationValid = testedObject.isLocationValid(location);
+        //THEN
+        assertThat(locationValid).isFalse();;
+    }
+
+    private LocationResource dummyLocationResource() {
+        return new LocationResource(UUID.randomUUID(), "Bern", "7777", "12", "34", "Bern", new GeoPointResource(3., 5.));
     }
 }

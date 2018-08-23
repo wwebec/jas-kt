@@ -53,7 +53,7 @@ public class DefaultLocationService implements LocationService {
             return false;
         }
         return isManagedLocations(location) ?
-                hasText(location.getPostalCode()) :
+                hasText(location.getPostalCode()) && locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity()).isPresent() :
                 true;
     }
 
