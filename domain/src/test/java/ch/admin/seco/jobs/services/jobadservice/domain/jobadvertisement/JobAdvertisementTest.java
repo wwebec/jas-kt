@@ -4,7 +4,10 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.J
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createJobContent;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createOwner;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.ConditionException;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
 import org.junit.After;
@@ -136,4 +139,33 @@ public class JobAdvertisementTest {
     public void testArchive() {
     }
 
+    @Test
+    public void testShortTermValidation() {
+        //Prepare
+        final JobContent jobContent = createJobContent(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
+        jobContent.setEmployment(new Employment.Builder()
+                .setStartDate(TimeMachine.now().toLocalDate())
+                .setEndDate(TimeMachine.now().plusDays(31).toLocalDate())
+                .setShortEmployment(true)
+                .setImmediately(false)
+                .setPermanent(true)
+                .setWorkloadPercentageMin(80)
+                .setWorkloadPercentageMax(100)
+                .build());
+        final JobAdvertisement.Builder jobAdvertisementBuilder = new JobAdvertisement.Builder()
+                .setId(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01)
+                .setOwner(createOwner(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
+                .setContact(createContact(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
+                .setJobContent(jobContent)
+                .setPublication(new Publication.Builder().build())
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.CREATED);
+
+        //Execute
+        final ConditionException exception = catchThrowableOfType(jobAdvertisementBuilder::build, ConditionException.class);
+
+        //Validate
+        assertThat(exception).isNotNull();
+        assertThat(exception.getMessage()).contains("Employment is short-term and permanent at the same time");
+    }
 }
