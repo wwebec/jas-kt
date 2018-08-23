@@ -6,6 +6,7 @@ import static org.springframework.util.StringUtils.hasText;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,12 @@ public class DefaultLocationService implements LocationService {
 
     @Override
     public Location enrichCodes(Location location) {
-        if (!(isManagedLocations(location) || hasText(location.getPostalCode()))) {
+        if (!isManagedLocations(location)) {
             return location;
         }
-        return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity())
+        return findLocationIfHasPostalCode(location)
                 .map(locationResource -> enrichLocationWithLocationResource(location, locationResource))
                 .orElse(location);
-
     }
 
     @Override
@@ -52,10 +52,14 @@ public class DefaultLocationService implements LocationService {
         if (location == null) {
             return false;
         }
-        return isManagedLocations(location) ?
-                hasText(location.getPostalCode()) &&
-                        locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity()).isPresent() :
+        return isManagedLocations(location) ? findLocationIfHasPostalCode(location).isPresent() :
                 true;
+    }
+
+    private Optional<LocationResource> findLocationIfHasPostalCode(Location location) {
+        return hasText(location.getPostalCode()) ?
+                locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity())
+                : Optional.empty();
     }
 
     private boolean isManagedLocations(Location location) {
