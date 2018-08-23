@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20180823080000-1" author="alnu">
+        <preConditions onFail="MARK_RAN">
+            <changeSetExecuted id="20180814080000-1" author="alnu" changeLogFile="classpath:/liquibase/changelog/20180814080000_update_JobAdvertisement_numberOfJobs.xml"/>
+        </preConditions>
+        <dropNotNullConstraint tableName="JOB_ADVERTISEMENT" columnName="NUMBER_OF_JOBS" columnDataType="VARCHAR(5)" />
+        <sql>
+            update JOB_ADVERTISEMENT
+            set NUMBER_OF_JOBS = null
+            where NUMBER_OF_JOBS = '1'
+        </sql>
+    </changeSet>
+</databaseChangeLog>
