@@ -48,17 +48,17 @@ public class DefaultLocationService implements LocationService {
     }
 
     @Override
-    public boolean verifyLocation(Location location) {
-        if (isManagedLocations(location)) {
-            return locationApiClient.findLocationByPostalCodeAndCity(location.getPostalCode(), location.getCity()).isPresent();
+    public boolean isLocationValid(Location location) {
+        if (location == null) {
+            return false;
         }
-
-        return false;
+        return isManagedLocations(location) ?
+                hasText(location.getPostalCode()) :
+                true;
     }
 
     private boolean isManagedLocations(Location location) {
         return location != null
-                && hasText(location.getPostalCode())
                 && MANAGED_COUNTRY_CODES.contains(upperCase(location.getCountryIsoCode()));
     }
 

@@ -6,5 +6,5 @@ public interface LocationService {
 
     Location enrichCodes(Location location);
 
-    boolean verifyLocation(Location location);
+    boolean isLocationValid(Location location);
 }
