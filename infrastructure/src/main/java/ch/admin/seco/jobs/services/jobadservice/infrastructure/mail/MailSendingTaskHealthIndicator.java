@@ -16,7 +16,10 @@ class MailSendingTaskHealthIndicator extends AbstractHealthIndicator {
 
     @Override
     protected void doHealthCheck(Health.Builder builder) {
-        if (mailSendingTaskRepository.findAll().size() > mailQueueThreshold) {
+        int size = mailSendingTaskRepository.findAll().size();
+        builder.withDetail("number-of-tasks", size);
+        builder.withDetail("mail-queue-threshold", this.mailQueueThreshold);
+        if (size > this.mailQueueThreshold) {
             builder.down();
         } else {
             builder.up();
