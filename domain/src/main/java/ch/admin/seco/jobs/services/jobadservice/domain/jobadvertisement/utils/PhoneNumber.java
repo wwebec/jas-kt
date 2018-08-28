@@ -11,8 +11,8 @@ import javax.validation.Payload;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-@Size(min = 11,  max = 20, message = "{phone-number.invalid-length.message}")
-@Pattern(regexp = "[+][0-9]{10,}", message = "{phone-number.invalid.message}")
+@Size(min = 9,  max = 20, message = "{phone-number.invalid-length.message}")
+@Pattern(regexp = "[+][0-9]{8,}", message = "{phone-number.invalid.message}")
 @Documented
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

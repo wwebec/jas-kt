@@ -75,7 +75,7 @@ public class ValidationMessagesTest {
     public void testPhoneNumberValidationWithMessages() {
         // given
         PhoneValidationClass phoneValidationClass = new PhoneValidationClass();
-        phoneValidationClass.shortPhoneNumber = "+423234567";
+        phoneValidationClass.shortPhoneNumber = "+4232345";
         phoneValidationClass.longPhoneNumber =  "+42323456789012345678";
         phoneValidationClass.withoutPlusSign = "42312345678";
         phoneValidationClass.containsIllegalCharacter = "+421a4567123";
@@ -93,15 +93,15 @@ public class ValidationMessagesTest {
 
         FieldError longPhoneNumber = bindingResult.getFieldError("longPhoneNumber");
         assertThat(longPhoneNumber).isNotNull();
-        assertThat(longPhoneNumber.getDefaultMessage()).contains("Phone number length must be between 11 and 20");
+        assertThat(longPhoneNumber.getDefaultMessage()).contains("Phone number length must be between 9 and 20");
 
         FieldError withoutPlusSign = bindingResult.getFieldError("withoutPlusSign");
         assertThat(withoutPlusSign).isNotNull();
-        assertThat(withoutPlusSign.getDefaultMessage()).contains("42312345678 doesn't match to [+][0-9]{10,} pattern");
+        assertThat(withoutPlusSign.getDefaultMessage()).contains("42312345678 doesn't match to [+][0-9]{8,} pattern");
 
         FieldError containsIllegalCharacter = bindingResult.getFieldError("containsIllegalCharacter");
         assertThat(containsIllegalCharacter).isNotNull();
-        assertThat(containsIllegalCharacter.getDefaultMessage()).contains("+421a4567123 doesn't match to [+][0-9]{10,} pattern");
+        assertThat(containsIllegalCharacter.getDefaultMessage()).contains("+421a4567123 doesn't match to [+][0-9]{8,} pattern");
     }
 
     @SpringBootApplication
