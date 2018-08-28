@@ -128,4 +128,4 @@ e.g.
 ```
 curl -H 'Content-Type: application/json' -H 'Accept: application/json' -d @src/curl/create_job_advertisement-curl_payload.json http://localhost:8086/api/jobAdvertisements
 ```
-The payload scripts can be found under ```/src/curl```. Be aware of already existing job advertisement data and if there is such a need remove the old one.
+The payload scripts can be found under ```/src/test-data```. Be aware of already existing job advertisement data and if there is such a need remove the old one.
