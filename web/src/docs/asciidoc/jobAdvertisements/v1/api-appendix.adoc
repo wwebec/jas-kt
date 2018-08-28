@@ -126,6 +126,6 @@ a job vacancy falls under the registration requirement. link:AVAM-Berufsliste-Ju
 To populate a local database with a job advertisement data, run the undermentioned *curl* script against REST APIs, under the ```/api``` URL with a corresponding payload.
 e.g.
 ```
-curl -H 'Content-Type: application/json' -H 'Accept: application/json' -d @src/curl/create_job_advertisement-curl_payload.json http://localhost:8086/api/jobAdvertisements
+curl -H 'Content-Type: application/json' -H 'Accept: application/json' -d @src/curl/create_job_advertisement-payload.json http://localhost:8086/api/jobAdvertisements
 ```
 The payload scripts can be found under ```/src/test-data```. Be aware of already existing job advertisement data and if there is such a need remove the old one.
