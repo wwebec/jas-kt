@@ -25,6 +25,7 @@ plugins {
 }
 
 apply from: "gradle/docker.gradle"
+apply from: "gradle/sonar.gradle"
 
 allprojects {
     group 'ch.admin.seco.jobs.services.jobadservice'
