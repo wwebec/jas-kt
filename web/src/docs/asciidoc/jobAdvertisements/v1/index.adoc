@@ -14,23 +14,29 @@ Seco eGovernment Services <{contact-mail}>
 - For testing:
 * Use URL link:{api-url}/jobAdvertisements/v1[{api-url}/jobAdvertisements/v1]
 * Test users apiuser01 to apiuser99 are available (password same as user name).
-* Do NOT use any confidetnial data in the test environment but DO use real postal codes.
+* Do NOT use any confidential data in the test environment but DO use real postal codes.
 - The URL for the productive API is https://api.job-room.ch/jobAdvertisements/v1
+* Do NOT submit test data to the production environment!
 - If you have integrated and tested the Jobs API and wish to request productive access credentials:
 * Send a message with subject "Job-Room API access" to jobroom-api@seco.admin.ch
 * Specify the company name, address and email, at least one technical contact person with email address and phone number, and user name. Please also specify the expected volume of job registrations.
 * The technical contact will receive an email with further instructions.
 
-= Important notes
-- Please do not use html tags in job advertisements. Use Markdown formating instead. The reason is that job center agents
-can see the ad only in text mode and the html tags make them difficult to read. Some markdown references you might find helpful:
+= Important notes (latest change: August 30, 2018)
+- The recommended format for job descriptions is **Markdown formating**. You may use simple html tags as well but they will be converted to Markdown.
+Some markdown references you might find helpful:
 * http://en.wikipedia.org/wiki/Markdown
 * http://zaclem01.github.io/angular-markdown-previewer/
 * http://html2markdown.bayn.es
-
-- It is not possible currently to cancel a job advertisement in status INSPECTING.
+- **Company address**: While the <<Company>> address is not currently defined as mandatory, we strongly request that this data is included
+for jobs under reporting obligation. If the address is missing, this causes extra work for the public employment agent.
+- **Postal codes** must be valid. From beginning of September, postal codes will be validated and invalid data will be rejected.
+- **Phone number validation**: The minimum length of a phone number will be reduced in order to accomodate Liechtenstein phone numbers.
+The format is [+][0-9]{8,}.
+- You can find a list of language codes supported by Job-Room at link:Job-Room-Languages.xlsx[List of supported languages]
+- It is not possible currently to **cancel** a job advertisement in status INSPECTING.
 Only cancel job ads in status PUBLISHED_RESTRICTED or PUBLISHED_PUBLIC.
-- Updating a job ad is currently not supported. 
+- **Updating** a job ad is currently not supported.
 
 = General
 

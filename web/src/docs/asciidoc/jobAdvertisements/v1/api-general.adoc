@@ -9,6 +9,8 @@ For nontechnical questions (e. g. legal, administrative) regarding the job regis
 
 == Jobs registration process
 
+**Please read this section carefully as this will avoid many questions and problems!**
+
 Under the job registration requirement, from July 1 2018, employers must report job vacancies in Switzerland in certain occupations to the public employment services.
 The list of occupations that fall under the law can be downloaded from the
 https://www.arbeit.swiss/dam/secoalv/de/dokumente/unternehmen/Stellenmeldepflicht/Liste_meldepflichtiger_Berufsarten_mit_zugeh%C3%B6rigen_Berufsbezeichnungen_DE_FR_IT.xlsx.download.xlsx/[arbeit.swiss portal].
@@ -16,17 +18,29 @@ Regardless of the legal requirement, employers are invited to publish, free of c
 Swiss public employment service - *Job-Room* (https://www.job-room.ch) and
 *Job-Desk* (http://www.job-desk.ch) - as well as on the European platform *Eures* (https://ec.europa.eu/eures/public/en/homepage).
 
-The registration process via the Jobs interface (API) is as follows:
+**The registration process via the Jobs interface (API) is as follows:**
 
-* Job ads are published one by one using the Create method.
-* All vacancies reported to the API must have an occupation code. Based on that code, the system determines whether the job falls under the registration requirement. link:AVAM-Berufsliste-Juni-2018.xlsx[Download occupations Excel sheet]
-* If no: the job ad is directly published on Job-Room and will be visible and searchable to the public. The maximum publication period is 60 days. Job ads can at any time be canceled via the API.
-* If yes: the job ad is transmitted to the database of the Swiss public employment service (PES), called AVAM. It is then reviewed and approved by a PES agent (there can be a delay). It may also be rejected, for example if information is insufficient.
+* Job ads are published one by one using the _Create_ method.
+* They are immediately assigned an _id_ and a _stellennummerEgov_, both serve as unique identifiers within Job-Room.
+* All vacancies reported to the API must have an occupation code. Based on that code, the system determines whether the job falls under the registration requirement
+(see link:AVAM-Berufsliste-Juni-2018.xlsx[List of occupations]
+* If no: the job ad is directly published on Job-Room and will be visible and searchable to the public. The maximum publication period is 60 days.
+Job ads under publication can at any time be canceled via the API.
+* If yes: the flag _reportingObligation_ is set to true and the job ad is transmitted to the database of the Swiss public employment service (PES), called AVAM.
+It is then reviewed and approved by a PES agent (there can be a delay).
+The competent job center (RAV) is indicated by the _jobCenterCode_.
+It may also be rejected, for example if information is insufficient.
 * After the ad is approved or rejected, an email to the contact person is generated with information about the registration requirement.
-* The ad may not be published elsewhere for a period of five work days from the date of approval. The end date of that period is indicated in the email message.
-* During the blackout period, the ad is not visible to the public, only to registered jobseekers.
-* After the blackout period, the ad is available to the public on Job-Room. The employer may opt out of this.
-* The owner of a job ad may at any time view the state of the data object using the Get method.
+* The ad may not be published elsewhere for a period of **five work days** from the date of approval.
+The **last day** of that period is indicated in the email message and in the property _reportingObligationEndDate_.
+* Approved ads are assigned an additional identifier, _stellennummerAvam_. In correspondence with PES or Job-Room support, _stellennummerEgov_
+is most useful but sometimes _stellennummerAvam_ is helpful. These identifiers can also be used as search terms in the Job-Room job search.
+* During the blackout period, the ad is not visible to the public, only to registered job seekers.
+* After the blackout period, the ad is available to the public on Job-Room. The employer may opt out of this by setting the _publicDisplay_ flag to false.
+* **The owner of a job ad may at any time view the state of the data object using the _Get_ method.**
+Important: the properties _stellennummerAvam_ and _reportingObligationEndDate_ aren't known at the time of submission and the _status_ changes over
+the life cycle. To retrieve these properties, use the Get method **after approval** of the job ad.
+This applies only to those ads that go through validation by the Public Employment Service.
 
 == API
 

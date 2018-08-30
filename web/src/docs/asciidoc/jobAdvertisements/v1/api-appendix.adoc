@@ -8,15 +8,16 @@ The dates are send as string in the ISO 8601 format YYYY-MM-DD
 
 ==== Languages
 
-The languages are send as string with the ISO 639-1 code (e.g. "de")
+The languages are sent as string with the ISO 639-1 code (e.g. "de")
+link:Job-Room-Languages.xlsx[List of supported languages]
 
 ==== Countries
 
-The Countries are send as string with the ISO 3166-1 alpha-2 (e.g. "ch")
+The Countries are sent as string with the ISO 3166-1 alpha-2 (e.g. "ch")
 
 ==== Phone numbers
 
-The phone numbers are send as string in the format "+41123456789"
+The phone numbers are sent as string in the format "+41123456789" (Regex "[+][0-9]{8,}")
 
 === Status of a job advertisement
 
@@ -24,12 +25,12 @@ The phone numbers are send as string in the format "+41123456789"
 |===
 | Value | Description
 
-| INSPECTING | The job ad has been passed to AVAM system
-| REJECTED | The job ad has been rejected in the AVAM system
-| PUBLISHED_RESTRICTED | The job ad is only displayed for logged in user (due to reporting obligation)
+| INSPECTING | The job ad has been passed to AVAM system and is waiting for validation
+| REJECTED | The job ad has been rejected by the public employment agency
+| PUBLISHED_RESTRICTED | The job ad is approved and is only displayed to registered jobseekers (due to reporting obligation)
 | PUBLISHED_PUBLIC | The job ad is displayed for everyone
 | CANCELLED | The job ad has been cancelled
-| ARCHIVED | The publication reached his end of life and is archived
+| ARCHIVED | The publication reached its end of life and is archived
 |===
 
 === Salutations
