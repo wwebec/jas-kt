@@ -64,7 +64,8 @@ class JobAdvertisementDtoAssembler {
                 createProfessionCodes(x28JobAdvertisement),
                 createLanguageSkills(x28JobAdvertisement),
                 parseDate(x28JobAdvertisement.getAnmeldeDatum()),
-                parseDate(x28JobAdvertisement.getGueltigkeit())
+                parseDate(x28JobAdvertisement.getGueltigkeit()),
+                safeBoolean(x28JobAdvertisement.isWwwAnonym(), false)
         );
     }
 

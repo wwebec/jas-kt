@@ -49,11 +49,13 @@ public class CreateJobAdvertisementFromX28Dto {
 
     private LocalDate publicationEndDate;
 
+    private boolean companyAnonymous;
+
     protected CreateJobAdvertisementFromX28Dto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title, String description, String numberOfJobs, String fingerprint, String externalUrl, ContactDto contact, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate) {
+    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title, String description, String numberOfJobs, String fingerprint, String externalUrl, ContactDto contact, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean companyAnonymous) {
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.title = title;
@@ -70,6 +72,7 @@ public class CreateJobAdvertisementFromX28Dto {
         this.languageSkills = languageSkills;
         this.publicationStartDate = publicationStartDate;
         this.publicationEndDate = publicationEndDate;
+        this.companyAnonymous = companyAnonymous;
     }
 
     public String getStellennummerEgov() {
@@ -198,5 +201,13 @@ public class CreateJobAdvertisementFromX28Dto {
 
     public void setPublicationEndDate(LocalDate publicationEndDate) {
         this.publicationEndDate = publicationEndDate;
+    }
+
+    public boolean isCompanyAnonymous() {
+        return companyAnonymous;
+    }
+
+    public void setCompanyAnonymous(boolean companyAnonymous) {
+        this.companyAnonymous = companyAnonymous;
     }
 }

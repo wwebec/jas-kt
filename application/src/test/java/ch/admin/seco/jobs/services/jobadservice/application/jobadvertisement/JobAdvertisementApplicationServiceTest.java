@@ -265,7 +265,8 @@ public class JobAdvertisementApplicationServiceTest {
                 "1,2",
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
                 TimeMachine.now().toLocalDate(),
-                null
+                null,
+                false
         );
 
         //Execute
@@ -299,7 +300,8 @@ public class JobAdvertisementApplicationServiceTest {
                 "1,2",
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
                 TimeMachine.now().toLocalDate(),
-                null
+                null,
+                false
         );
 
         //Execute
