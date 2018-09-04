@@ -49,7 +49,7 @@ public class IndexerEventListener {
         if (API_USER_UPDATED_STATUS.getDomainEventType().equals(event.getDomainEventType())) {
             return true;
         }
-        return false;
+        return API_USER_UPDATED_LAST_ACCESS_DATE.getDomainEventType().equals(event.getDomainEventType());
     }
 
 }

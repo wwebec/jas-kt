@@ -16,7 +16,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.UserDetailsToCurrentUserAdapter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 
 @Configuration
 @Order(SecurityProperties.BASIC_AUTH_ORDER - 1)
