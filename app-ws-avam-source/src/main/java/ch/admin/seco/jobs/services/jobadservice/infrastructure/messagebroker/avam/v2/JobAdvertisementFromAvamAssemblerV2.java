@@ -244,9 +244,8 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 avamJobAdvertisement.isEures(),
                 avamJobAdvertisement.isEuresAnonym(),
                 avamJobAdvertisement.isPublikation(),
-                avamJobAdvertisement.isAnonym(),
                 avamJobAdvertisement.isLoginPublikation(),
-                avamJobAdvertisement.isLoginAnonym()
+                avamJobAdvertisement.isAnonym() || avamJobAdvertisement.isLoginAnonym()
         );
     }
 

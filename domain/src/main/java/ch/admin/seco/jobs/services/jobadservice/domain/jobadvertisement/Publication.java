@@ -22,11 +22,9 @@ public class Publication implements ValueObject<Publication> {
 
     private boolean publicDisplay;
 
-    private boolean publicAnonymous;
-
     private boolean restrictedDisplay;
 
-    private boolean restrictedAnonymous;
+    private boolean companyAnonymous;
 
     protected Publication() {
         // For reflection libs
@@ -38,9 +36,8 @@ public class Publication implements ValueObject<Publication> {
         this.euresDisplay = builder.euresDisplay;
         this.euresAnonymous = builder.euresAnonymous;
         this.publicDisplay = builder.publicDisplay;
-        this.publicAnonymous = builder.publicAnonymous;
         this.restrictedDisplay = builder.restrictedDisplay;
-        this.restrictedAnonymous = builder.restrictedAnonymous;
+        this.companyAnonymous = builder.companyAnonymous;
     }
 
     public LocalDate getStartDate() {
@@ -83,14 +80,6 @@ public class Publication implements ValueObject<Publication> {
         this.publicDisplay = publicDisplay;
     }
 
-    public boolean isPublicAnonymous() {
-        return publicAnonymous;
-    }
-
-    void setPublicAnonymous(boolean publicAnonymous) {
-        this.publicAnonymous = publicAnonymous;
-    }
-
     public boolean isRestrictedDisplay() {
         return restrictedDisplay;
     }
@@ -99,12 +88,12 @@ public class Publication implements ValueObject<Publication> {
         this.restrictedDisplay = restrictedDisplay;
     }
 
-    public boolean isRestrictedAnonymous() {
-        return restrictedAnonymous;
+    public boolean isCompanyAnonymous() {
+        return companyAnonymous;
     }
 
-    void setRestrictedAnonymous(boolean restrictedAnonymous) {
-        this.restrictedAnonymous = restrictedAnonymous;
+    void setCompanyAnonymous(boolean companyAnonymous) {
+        this.companyAnonymous = companyAnonymous;
     }
 
     @Override
@@ -115,16 +104,15 @@ public class Publication implements ValueObject<Publication> {
         return euresDisplay == that.euresDisplay &&
                 euresAnonymous == that.euresAnonymous &&
                 publicDisplay == that.publicDisplay &&
-                publicAnonymous == that.publicAnonymous &&
                 restrictedDisplay == that.restrictedDisplay &&
-                restrictedAnonymous == that.restrictedAnonymous &&
+                companyAnonymous == that.companyAnonymous &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(endDate, that.endDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(startDate, endDate, euresDisplay, euresAnonymous, publicDisplay, publicAnonymous, restrictedDisplay, restrictedAnonymous);
+        return Objects.hash(startDate, endDate, euresDisplay, euresAnonymous, publicDisplay, restrictedDisplay, companyAnonymous);
     }
 
     @Override
@@ -135,9 +123,8 @@ public class Publication implements ValueObject<Publication> {
                 ", euresDisplay=" + euresDisplay +
                 ", euresAnonymous=" + euresAnonymous +
                 ", publicDisplay=" + publicDisplay +
-                ", publicAnonymous=" + publicAnonymous +
                 ", restrictedDisplay=" + restrictedDisplay +
-                ", restrictedAnonymous=" + restrictedAnonymous +
+                ", companyAnonymous=" + companyAnonymous +
                 '}';
     }
 
@@ -147,9 +134,8 @@ public class Publication implements ValueObject<Publication> {
         private boolean euresDisplay;
         private boolean euresAnonymous;
         private boolean publicDisplay;
-        private boolean publicAnonymous;
         private boolean restrictedDisplay;
-        private boolean restrictedAnonymous;
+        private boolean companyAnonymous;
 
         public Builder() {
         }
@@ -183,18 +169,13 @@ public class Publication implements ValueObject<Publication> {
             return this;
         }
 
-        public Builder setPublicAnonymous(boolean publicAnonymous) {
-            this.publicAnonymous = publicAnonymous;
-            return this;
-        }
-
         public Builder setRestrictedDisplay(boolean restrictedDisplay) {
             this.restrictedDisplay = restrictedDisplay;
             return this;
         }
 
-        public Builder setRestrictedAnonymous(boolean restrictedAnonymous) {
-            this.restrictedAnonymous = restrictedAnonymous;
+        public Builder setCompanyAnonymous(boolean companyAnonymous) {
+            this.companyAnonymous = companyAnonymous;
             return this;
         }
     }

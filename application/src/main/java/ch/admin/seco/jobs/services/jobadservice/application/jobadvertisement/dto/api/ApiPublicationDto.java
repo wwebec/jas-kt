@@ -19,25 +19,22 @@ public class ApiPublicationDto {
 
     private boolean publicDisplay;
 
-    private boolean publicAnonymous;
-
     private boolean restrictedDisplay;
 
-    private boolean restrictedAnonymous;
+    private boolean companyAnonymous;
 
     protected ApiPublicationDto() {
         // For reflection libs
     }
 
-    public ApiPublicationDto(LocalDate startDate, LocalDate endDate, boolean euresDisplay, boolean euresAnonymous, boolean publicDisplay, boolean publicAnonymous, boolean restrictedDisplay, boolean restrictedAnonymous) {
+    public ApiPublicationDto(LocalDate startDate, LocalDate endDate, boolean euresDisplay, boolean euresAnonymous, boolean publicDisplay, boolean restrictedDisplay, boolean companyAnonymous) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.euresDisplay = euresDisplay;
         this.euresAnonymous = euresAnonymous;
         this.publicDisplay = publicDisplay;
-        this.publicAnonymous = publicAnonymous;
         this.restrictedDisplay = restrictedDisplay;
-        this.restrictedAnonymous = restrictedAnonymous;
+        this.companyAnonymous = companyAnonymous;
     }
 
     public LocalDate getStartDate() {
@@ -80,14 +77,6 @@ public class ApiPublicationDto {
         this.publicDisplay = publicDisplay;
     }
 
-    public boolean isPublicAnonymous() {
-        return publicAnonymous;
-    }
-
-    public void setPublicAnonymous(boolean publicAnonymous) {
-        this.publicAnonymous = publicAnonymous;
-    }
-
     public boolean isRestrictedDisplay() {
         return restrictedDisplay;
     }
@@ -96,12 +85,12 @@ public class ApiPublicationDto {
         this.restrictedDisplay = restrictedDisplay;
     }
 
-    public boolean isRestrictedAnonymous() {
-        return restrictedAnonymous;
+    public boolean isCompanyAnonymous() {
+        return companyAnonymous;
     }
 
-    public void setRestrictedAnonymous(boolean restrictedAnonymous) {
-        this.restrictedAnonymous = restrictedAnonymous;
+    public void setCompanyAnonymous(boolean companyAnonymous) {
+        this.companyAnonymous = companyAnonymous;
     }
 
     public static ApiPublicationDto toDto(Publication publication) {
@@ -111,9 +100,8 @@ public class ApiPublicationDto {
         publicationDto.setEuresDisplay(publication.isEuresDisplay());
         publicationDto.setEuresAnonymous(publication.isEuresAnonymous());
         publicationDto.setPublicDisplay(publication.isPublicDisplay());
-        publicationDto.setPublicAnonymous(publication.isPublicAnonymous());
         publicationDto.setRestrictedDisplay(publication.isRestrictedDisplay());
-        publicationDto.setRestrictedAnonymous(publication.isRestrictedAnonymous());
+        publicationDto.setCompanyAnonymous(publication.isCompanyAnonymous());
         return publicationDto;
     }
 }

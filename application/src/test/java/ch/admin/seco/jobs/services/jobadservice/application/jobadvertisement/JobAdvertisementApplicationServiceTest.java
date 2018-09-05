@@ -125,7 +125,7 @@ public class JobAdvertisementApplicationServiceTest {
                 null,
                 null,
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false),
+                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false),
                 null,
                 Collections.singletonList(new JobDescriptionDto("de", "title", "description")),
                 new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
@@ -185,7 +185,7 @@ public class JobAdvertisementApplicationServiceTest {
                 null,
                 null,
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false),
+                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false),
                 null,
                 Collections.singletonList(new JobDescriptionDto("de", "title", "description")),
                 new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
@@ -231,7 +231,7 @@ public class JobAdvertisementApplicationServiceTest {
                 new CreateLocationDto("remarks", "city", "postalCode", "CH"),
                 Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
                 Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
-                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false)
+                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false)
         );
 
         //Execute

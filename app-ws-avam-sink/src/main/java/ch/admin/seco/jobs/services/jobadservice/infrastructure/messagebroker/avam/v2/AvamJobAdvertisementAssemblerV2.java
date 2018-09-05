@@ -57,9 +57,9 @@ public class AvamJobAdvertisementAssemblerV2 {
         avamJobAdvertisement.setEures(publication.isEuresDisplay());
         avamJobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
         avamJobAdvertisement.setPublikation(publication.isPublicDisplay());
-        avamJobAdvertisement.setAnonym(publication.isPublicAnonymous());
+        avamJobAdvertisement.setAnonym(publication.isCompanyAnonymous());
         avamJobAdvertisement.setLoginPublikation(publication.isRestrictedDisplay());
-        avamJobAdvertisement.setLoginAnonym(publication.isRestrictedAnonymous());
+        avamJobAdvertisement.setLoginAnonym(publication.isCompanyAnonymous());
 
         final JobContent jobContent = jobAdvertisement.getJobContent();
         //TODO: Review if we need to check nullability

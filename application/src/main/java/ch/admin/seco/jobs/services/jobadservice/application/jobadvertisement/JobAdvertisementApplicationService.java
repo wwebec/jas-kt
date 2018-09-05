@@ -214,9 +214,8 @@ public class JobAdvertisementApplicationService {
                                 .setEuresDisplay(false)
                                 .setEuresAnonymous(false)
                                 .setPublicDisplay(true)
-                                .setPublicAnonymous(createJobAdvertisementFromX28Dto.isCompanyAnonymous())
                                 .setRestrictedDisplay(true)
-                                .setRestrictedAnonymous(createJobAdvertisementFromX28Dto.isCompanyAnonymous())
+                                .setCompanyAnonymous(createJobAdvertisementFromX28Dto.isCompanyAnonymous())
                                 .build()
                 )
                 .build();
@@ -538,9 +537,8 @@ public class JobAdvertisementApplicationService {
                                 .setEuresDisplay(publicationDto.isEuresDisplay())
                                 .setEuresAnonymous(publicationDto.isEuresAnonymous())
                                 .setRestrictedDisplay(publicationDto.isPublicDisplay())
-                                .setRestrictedAnonymous(publicationDto.isPublicAnonymous())
                                 .setPublicDisplay(publicationDto.isPublicDisplay())
-                                .setPublicAnonymous(publicationDto.isPublicAnonymous())
+                                .setCompanyAnonymous(publicationDto.isCompanyAnonymous())
                                 .build()
                 )
                 .build();
@@ -629,9 +627,8 @@ public class JobAdvertisementApplicationService {
                     .setEuresDisplay(publicationDto.isEuresDisplay())
                     .setEuresAnonymous(publicationDto.isEuresAnonymous())
                     .setPublicDisplay(publicationDto.isPublicDisplay())
-                    .setPublicAnonymous(publicationDto.isPublicAnonymous())
                     .setRestrictedDisplay(publicationDto.isRestrictedDisplay())
-                    .setRestrictedAnonymous(publicationDto.isRestrictedAnonymous())
+                    .setCompanyAnonymous(publicationDto.isCompanyAnonymous())
                     .build();
         }
         return null;
