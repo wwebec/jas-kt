@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.security;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security;
 
 import java.util.Optional;
 
@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserId;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.UserDetailsToCurrentUserAdapter;
 
 @Component
 public class AuthenticationListener implements ApplicationListener<AbstractAuthenticationEvent> {
