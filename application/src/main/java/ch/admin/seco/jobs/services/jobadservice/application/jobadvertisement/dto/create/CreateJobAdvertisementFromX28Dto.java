@@ -27,6 +27,8 @@ public class CreateJobAdvertisementFromX28Dto {
 
     private String externalUrl;
 
+    private String jobCenterCode;
+
     private ContactDto contact;
 
     @NotNull
@@ -55,7 +57,7 @@ public class CreateJobAdvertisementFromX28Dto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title, String description, String numberOfJobs, String fingerprint, String externalUrl, ContactDto contact, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean companyAnonymous) {
+    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title, String description, String numberOfJobs, String fingerprint, String externalUrl, String jobCenterCode, ContactDto contact, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean companyAnonymous) {
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.title = title;
@@ -63,6 +65,7 @@ public class CreateJobAdvertisementFromX28Dto {
         this.numberOfJobs = numberOfJobs;
         this.fingerprint = fingerprint;
         this.externalUrl = externalUrl;
+        this.jobCenterCode = jobCenterCode;
         this.contact = contact;
         this.employment = employment;
         this.company = company;
@@ -129,6 +132,14 @@ public class CreateJobAdvertisementFromX28Dto {
 
     public void setExternalUrl(String externalUrl) {
         this.externalUrl = externalUrl;
+    }
+
+    public String getJobCenterCode() {
+        return jobCenterCode;
+    }
+
+    public void setJobCenterCode(String jobCenterCode) {
+        this.jobCenterCode = jobCenterCode;
     }
 
     public ContactDto getContact() {

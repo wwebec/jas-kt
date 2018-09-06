@@ -19,6 +19,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.AggregateNotFoundException;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddress;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 import org.slf4j.Logger;
@@ -128,6 +130,7 @@ public class JobAdvertisementApplicationService {
         Condition.notEmpty(createJobAdvertisementFromAvamDto.getOccupations(), "Occupations can't be empty");
         List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromAvamDto.getOccupations());
 
+        Company company = toCompany(createJobAdvertisementFromAvamDto.getCompany());
         JobContent jobContent = new JobContent.Builder()
                 .setNumberOfJobs(createJobAdvertisementFromAvamDto.getNumberOfJobs())
                 .setJobDescriptions(Collections.singletonList(
@@ -141,7 +144,8 @@ public class JobAdvertisementApplicationService {
                 .setOccupations(occupations)
                 .setEmployment(toEmployment(createJobAdvertisementFromAvamDto.getEmployment()))
                 .setApplyChannel(toApplyChannel(createJobAdvertisementFromAvamDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementFromAvamDto.getCompany()))
+                .setDisplayCompany(determineDisplayCompany(company, createJobAdvertisementFromAvamDto.getPublication().isCompanyAnonymous(), createJobAdvertisementFromAvamDto.getJobCenterCode()))
+                .setCompany(company)
                 .setPublicContact(toPublicContact(createJobAdvertisementFromAvamDto.getContact()))
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromAvamDto.getLanguageSkills()))
                 .build();
@@ -174,6 +178,7 @@ public class JobAdvertisementApplicationService {
 
         List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromX28Dto.getOccupations());
 
+        Company company = toCompany(createJobAdvertisementFromX28Dto.getCompany());
         JobContent jobContent = new JobContent.Builder()
                 .setNumberOfJobs(createJobAdvertisementFromX28Dto.getNumberOfJobs())
                 .setJobDescriptions(Collections.singletonList(
@@ -188,7 +193,8 @@ public class JobAdvertisementApplicationService {
                 .setOccupations(occupations)
                 .setX28OccupationCodes(createJobAdvertisementFromX28Dto.getProfessionCodes())
                 .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
-                .setCompany(toCompany(createJobAdvertisementFromX28Dto.getCompany()))
+                .setDisplayCompany(determineDisplayCompany(company, createJobAdvertisementFromX28Dto.isCompanyAnonymous(), createJobAdvertisementFromX28Dto.getJobCenterCode()))
+                .setCompany(company)
                 .setPublicContact(toPublicContact(createJobAdvertisementFromX28Dto.getContact()))
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkills()))
                 .build();
@@ -331,12 +337,14 @@ public class JobAdvertisementApplicationService {
         Condition.notEmpty(occupationDtos, "Occupations can't be empty");
         List<Occupation> occupations = enrichAndToOccupations(occupationDtos);
 
+        Company company = toCompany(createJobAdvertisement.getCompany());
         return new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
                 .setNumberOfJobs(createJobAdvertisement.getNumberOfJobs())
                 .setJobDescription(createJobAdvertisement.getTitle(), createJobAdvertisement.getDescription())
                 .setReportingObligation(createJobAdvertisement.isReportingObligation(), createJobAdvertisement.getReportingObligationEndDate())
                 .setJobCenterCode(createJobAdvertisement.getJobCenterCode())
-                .setCompany(toCompany(createJobAdvertisement.getCompany()))
+                .setDisplayCompany(determineDisplayCompany(company, createJobAdvertisement.getPublication().isCompanyAnonymous(), createJobAdvertisement.getJobCenterCode()))
+                .setCompany(company)
                 .setEmployment(toEmployment(createJobAdvertisement.getEmployment()))
                 .setLocation(location)
                 .setOccupations(occupations)
@@ -356,11 +364,13 @@ public class JobAdvertisementApplicationService {
         Condition.notEmpty(occupationDtos, "Occupations can't be empty");
         List<Occupation> occupations = enrichAndToOccupations(occupationDtos);
 
+        Company company = toCompany(updateJobAdvertisement.getCompany());
         return new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
                 .setNumberOfJobs(updateJobAdvertisement.getNumberOfJobs())
                 .setJobDescription(updateJobAdvertisement.getTitle(), updateJobAdvertisement.getDescription())
                 .setJobCenterCode(updateJobAdvertisement.getJobCenterCode())
-                .setCompany(toCompany(updateJobAdvertisement.getCompany()))
+                .setDisplayCompany(determineDisplayCompany(company, updateJobAdvertisement.getPublication().isCompanyAnonymous(), updateJobAdvertisement.getJobCenterCode()))
+                .setCompany(company)
                 .setEmployment(toEmployment(updateJobAdvertisement.getEmployment()))
                 .setLocation(location)
                 .setOccupations(occupations)
@@ -507,6 +517,7 @@ public class JobAdvertisementApplicationService {
 
         String jobCenterCode = jobCenterService.findJobCenterCode(location.getCountryIsoCode(), location.getPostalCode());
 
+        Company company = toCompany(createJobAdvertisementDto.getCompany());
         JobContent jobContent = new JobContent.Builder()
                 .setNumberOfJobs(createJobAdvertisementDto.getNumberOfJobs())
                 .setExternalUrl(createJobAdvertisementDto.getExternalUrl())
@@ -515,7 +526,8 @@ public class JobAdvertisementApplicationService {
                 .setOccupations(occupations)
                 .setEmployment(employment)
                 .setApplyChannel(toApplyChannel(createJobAdvertisementDto.getApplyChannel()))
-                .setCompany(toCompany(createJobAdvertisementDto.getCompany()))
+                .setDisplayCompany(determineDisplayCompany(company, createJobAdvertisementDto.getPublication().isCompanyAnonymous(), jobCenterCode))
+                .setCompany(company)
                 .setEmployer(toEmployer(createJobAdvertisementDto.getEmployer()))
                 .setPublicContact(toPublicContact(createJobAdvertisementDto.getPublicContact()))
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisementDto.getLanguageSkills()))
@@ -661,6 +673,38 @@ public class JobAdvertisementApplicationService {
                     .build();
         }
         return null;
+    }
+
+    private Company determineDisplayCompany(Company company, boolean companyAnonymous, String jobCenterCode) {
+        if(!companyAnonymous || !hasText(jobCenterCode)) {
+            return company;
+        }
+
+        Company.Builder companyBuilder = new Company.Builder();
+        JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobCenterCode);
+        if(jobCenter == null) {
+            return companyBuilder.build();
+        }
+
+        JobCenterAddress jobCenterAddress = jobCenter.getAddress();
+        if(jobCenterAddress == null) {
+            return companyBuilder.build();
+        }
+
+        companyBuilder.setName(jobCenterAddress.getName());
+        companyBuilder.setStreet(jobCenterAddress.getStreet());
+        companyBuilder.setHouseNumber(jobCenterAddress.getHouseNumber());
+        companyBuilder.setPostalCode(jobCenterAddress.getZipCode());
+        companyBuilder.setCity(jobCenterAddress.getCity());
+        companyBuilder.setCountryIsoCode(COUNTRY_ISO_CODE_SWITZERLAND);
+        companyBuilder.setSurrogate(true);
+
+        if(jobCenter.isShowContactDetailsToPublic()) {
+            companyBuilder.setPhone(jobCenter.getPhone());
+            companyBuilder.setEmail(jobCenter.getEmail());
+        }
+
+        return companyBuilder.build();
     }
 
     private Company toCompany(CompanyDto companyDto) {
