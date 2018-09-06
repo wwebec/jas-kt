@@ -9,8 +9,7 @@ jdk:
 sudo: false
 cache:
   directories:
-  - "$HOME/.gradle/wrapper"
-  - "$HOME/.gradle/caches/modules-2/files-2.1"
+  - "$HOME/.gradle"
 env:
   global:
   - SPRING_OUTPUT_ANSI_ENABLED=ALWAYS
