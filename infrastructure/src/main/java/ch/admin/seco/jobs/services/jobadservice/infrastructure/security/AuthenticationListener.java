@@ -1,6 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.security;
 
-import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.context.ApplicationListener;
@@ -11,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
 
 @Component
@@ -28,10 +28,7 @@ public class AuthenticationListener implements ApplicationListener<AbstractAuthe
         if (event instanceof AuthenticationSuccessEvent) {
             extractUserName((AuthenticationSuccessEvent) event)
                     .map(apiUserRepository::findByUsername)
-                    .ifPresent(apiUser -> {
-                        apiUser.changeLastAccessDate(LocalDate.now());
-                        apiUserRepository.save(apiUser);
-                    });
+                    .ifPresent(apiUser -> apiUser.changeLastAccessDate(TimeMachine.now().toLocalDate()));
         }
     }
 

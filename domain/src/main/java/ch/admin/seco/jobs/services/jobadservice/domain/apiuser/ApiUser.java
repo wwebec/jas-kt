@@ -4,7 +4,6 @@ import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.Aggregate;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventPublisher;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.events.ApiUserUpdatedDetailsEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.events.ApiUserUpdatedLastAccessDateEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.events.ApiUserUpdatedPasswordEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.events.ApiUserUpdatedStatusEvent;
 
@@ -147,7 +146,6 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
 
     public void changeLastAccessDate(LocalDate lastAccessDate) {
         this.lastAccessDate = lastAccessDate;
-        DomainEventPublisher.publish(new ApiUserUpdatedLastAccessDateEvent(this));
     }
 
     public static final class Builder {
