@@ -676,11 +676,14 @@ public class JobAdvertisementApplicationService {
     }
 
     private Company determineDisplayCompany(Company company, boolean companyAnonymous, String jobCenterCode) {
-        if(!companyAnonymous || !hasText(jobCenterCode)) {
+        if(!companyAnonymous) {
             return company;
         }
 
         Company.Builder companyBuilder = new Company.Builder();
+        if(!hasText(jobCenterCode)) {
+            return companyBuilder.build();
+        }
         JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobCenterCode);
         if(jobCenter == null) {
             return companyBuilder.build();
@@ -691,17 +694,19 @@ public class JobAdvertisementApplicationService {
             return companyBuilder.build();
         }
 
-        companyBuilder.setName(jobCenterAddress.getName());
-        companyBuilder.setStreet(jobCenterAddress.getStreet());
-        companyBuilder.setHouseNumber(jobCenterAddress.getHouseNumber());
-        companyBuilder.setPostalCode(jobCenterAddress.getZipCode());
-        companyBuilder.setCity(jobCenterAddress.getCity());
-        companyBuilder.setCountryIsoCode(COUNTRY_ISO_CODE_SWITZERLAND);
-        companyBuilder.setSurrogate(true);
+        companyBuilder
+                .setName(jobCenterAddress.getName())
+                .setStreet(jobCenterAddress.getStreet())
+                .setHouseNumber(jobCenterAddress.getHouseNumber())
+                .setPostalCode(jobCenterAddress.getZipCode())
+                .setCity(jobCenterAddress.getCity())
+                .setCountryIsoCode(COUNTRY_ISO_CODE_SWITZERLAND)
+                .setSurrogate(true);
 
         if(jobCenter.isShowContactDetailsToPublic()) {
-            companyBuilder.setPhone(jobCenter.getPhone());
-            companyBuilder.setEmail(jobCenter.getEmail());
+            companyBuilder
+                    .setPhone(jobCenter.getPhone())
+                    .setEmail(jobCenter.getEmail());
         }
 
         return companyBuilder.build();
