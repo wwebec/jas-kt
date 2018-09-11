@@ -526,7 +526,7 @@ public class JobAdvertisementApplicationService {
                 .setOccupations(occupations)
                 .setEmployment(employment)
                 .setApplyChannel(toApplyChannel(createJobAdvertisementDto.getApplyChannel()))
-                .setDisplayCompany(determineDisplayCompany(company, createJobAdvertisementDto.getPublication().isCompanyAnonymous(), jobCenterCode))
+                .setDisplayCompany(company)
                 .setCompany(company)
                 .setEmployer(toEmployer(createJobAdvertisementDto.getEmployer()))
                 .setPublicContact(toPublicContact(createJobAdvertisementDto.getPublicContact()))
