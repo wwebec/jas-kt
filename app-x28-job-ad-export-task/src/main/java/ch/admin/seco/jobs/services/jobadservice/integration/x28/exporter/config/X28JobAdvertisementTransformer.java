@@ -130,7 +130,7 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
             x28JobAdvertisement.setArbeitsortKanton(location.getCantonCode());
             x28JobAdvertisement.setArbeitsortPlz(location.getPostalCode());
             x28JobAdvertisement.setArbeitsortRegion(location.getRegionCode());
-            x28JobAdvertisement.setArbeitsortText(location.getRemarks());
+            x28JobAdvertisement.setArbeitsortText(location.getCity());
         }
     }
 

@@ -126,7 +126,11 @@ public class X28JobAdExportTaskConfig {
     JpaPagingItemReader<JobAdvertisement> jpaPagingItemReader(EntityManagerFactory jobAdServiceEntityManagerFactory) {
         JpaPagingItemReader<JobAdvertisement> jpaPagingItemReader = new JpaPagingItemReader<>();
         jpaPagingItemReader.setQueryString("select j from JobAdvertisement j " +
-                "where j.status = 'PUBLISHED_PUBLIC' and j.sourceSystem in ('API', 'JOBROOM', 'RAV') and j.publication.publicDisplay is TRUE " +
+                "where j.status = 'PUBLISHED_PUBLIC' and " +
+                "j.sourceSystem in ('API', 'JOBROOM', 'RAV') and " +
+                "j.publication.publicDisplay is TRUE and " +
+                "j.publication.publicAnonymous is FALSE and " +
+                "j.publication.restrictedAnonymous is FALSE " +
                 "order by j.id");
         jpaPagingItemReader.setEntityManagerFactory(jobAdServiceEntityManagerFactory);
         jpaPagingItemReader.setPageSize(10);
