@@ -125,7 +125,7 @@ public class JobContentDto {
         jobContentDto.setExternalUrl(jobContent.getExternalUrl());
         jobContentDto.setNumberOfJobs(jobContent.getNumberOfJobs());
         jobContentDto.setJobDescriptions(JobDescriptionDto.toDto(jobContent.getJobDescriptions()));
-        jobContentDto.setCompany(CompanyDto.toDto(jobContent.getCompany()));
+        jobContentDto.setCompany(CompanyDto.toDto(jobContent.getDisplayCompany()));
         jobContentDto.setEmployment(EmploymentDto.toDto(jobContent.getEmployment()));
         jobContentDto.setLocation(LocationDto.toDto(jobContent.getLocation()));
         jobContentDto.setOccupations(OccupationDto.toDto(jobContent.getOccupations()));

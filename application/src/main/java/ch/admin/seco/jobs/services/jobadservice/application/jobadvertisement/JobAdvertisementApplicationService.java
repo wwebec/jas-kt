@@ -547,10 +547,10 @@ public class JobAdvertisementApplicationService {
                                 .setStartDate(publicationDto.getStartDate())
                                 .setEndDate((publicationDto.getEndDate() != null) ? publicationDto.getEndDate() : TimeMachine.now().plusDays(PUBLICATION_MAX_DAYS).toLocalDate())
                                 .setEuresDisplay(publicationDto.isEuresDisplay())
-                                .setEuresAnonymous(publicationDto.isEuresAnonymous())
+                                .setEuresAnonymous(false)
                                 .setRestrictedDisplay(publicationDto.isPublicDisplay())
                                 .setPublicDisplay(publicationDto.isPublicDisplay())
-                                .setCompanyAnonymous(publicationDto.isCompanyAnonymous())
+                                .setCompanyAnonymous(false)
                                 .build()
                 )
                 .build();

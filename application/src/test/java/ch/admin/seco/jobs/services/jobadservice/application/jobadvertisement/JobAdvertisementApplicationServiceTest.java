@@ -607,7 +607,7 @@ public class JobAdvertisementApplicationServiceTest {
                 jobAdvertisement.getApprovalDate(),
                 EmploymentDto.toDto(jobAdvertisement.getJobContent().getEmployment()),
                 ApplyChannelDto.toDto(jobAdvertisement.getJobContent().getApplyChannel()),
-                CompanyDto.toDto(jobAdvertisement.getJobContent().getCompany()),
+                CompanyDto.toDto(jobAdvertisement.getJobContent().getCompany()), // This is only for test purpose. Generally only the displayCompany is converted to CompanyDto
                 ContactDto.toDto(jobAdvertisement.getContact()),
                 new CreateLocationDto(
                         jobAdvertisement.getJobContent().getLocation().getRemarks(),
