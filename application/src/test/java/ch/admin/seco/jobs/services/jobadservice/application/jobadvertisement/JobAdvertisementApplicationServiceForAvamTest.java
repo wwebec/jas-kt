@@ -7,6 +7,9 @@ import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationS
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
@@ -28,6 +31,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.util.Collections;
 
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -203,6 +207,132 @@ public class JobAdvertisementApplicationServiceForAvamTest {
         assertThat(jobAdvertisement.getJobContent().getDisplayCompany()).isEqualTo(jobCenter);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
+    }
+
+    //@Test
+    public void shouldApprove() {
+        // given
+        JobAdvertisement originalJobAdvertisement = createInspectingJobAd();
+        // FIXME Problem with saving addon-table of job-ad on h2 database
+        jobAdvertisementRepository.save(originalJobAdvertisement);
+        UpdateJobAdvertisementFromAvamDto updateJobAdvertisement = new UpdateJobAdvertisementFromAvamDto(
+                originalJobAdvertisement.getStellennummerAvam(),
+                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(),
+                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getDescription(),
+                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getLanguage().getLanguage(),
+                originalJobAdvertisement.getJobContent().getNumberOfJobs(),
+                originalJobAdvertisement.isReportingObligation(),
+                originalJobAdvertisement.getReportingObligationEndDate(),
+                originalJobAdvertisement.getJobCenterCode(),
+                originalJobAdvertisement.getApprovalDate(),
+                EmploymentDto.toDto(originalJobAdvertisement.getJobContent().getEmployment()),
+                ApplyChannelDto.toDto(originalJobAdvertisement.getJobContent().getApplyChannel()),
+                CompanyDto.toDto(originalJobAdvertisement.getJobContent().getCompany()), // This is only for test purpose. Generally only the displayCompany is converted to CompanyDto
+                ContactDto.toDto(originalJobAdvertisement.getContact()),
+                new CreateLocationDto(
+                        originalJobAdvertisement.getJobContent().getLocation().getRemarks(),
+                        originalJobAdvertisement.getJobContent().getLocation().getCity(),
+                        originalJobAdvertisement.getJobContent().getLocation().getPostalCode(),
+                        originalJobAdvertisement.getJobContent().getLocation().getCountryIsoCode()
+                ),
+                OccupationDto.toDto(originalJobAdvertisement.getJobContent().getOccupations()),
+                LanguageSkillDto.toDto(originalJobAdvertisement.getJobContent().getLanguageSkills()),
+                PublicationDto.toDto(originalJobAdvertisement.getPublication())
+        );
+        ApprovalDto approvalDto = new ApprovalDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), true, LocalDate.of(2018, 10, 1), updateJobAdvertisement);
+
+        // when
+        sut.approve(approvalDto);
+
+        // then
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
+        assertThat(jobAdvertisement.getApprovalDate()).isEqualTo(LocalDate.of(2018, 1, 1));
+        assertThat(jobAdvertisement.isReportingObligation()).isTrue();
+        assertThat(jobAdvertisement.getReportingObligationEndDate()).isEqualTo(LocalDate.of(2018, 10, 1));
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
+        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
+    }
+
+    //@Test
+    public void shouldApproveWithUpdate() {
+        // given
+        JobAdvertisement originalJobAdvertisement = createInspectingJobAd();
+        // FIXME Problem with saving addon-table of job-ad on h2 database
+        jobAdvertisementRepository.save(originalJobAdvertisement);
+        UpdateJobAdvertisementFromAvamDto updateJobAdvertisement = new UpdateJobAdvertisementFromAvamDto(
+                originalJobAdvertisement.getStellennummerAvam(),
+                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(),
+                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getDescription(),
+                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getLanguage().getLanguage(),
+                originalJobAdvertisement.getJobContent().getNumberOfJobs(),
+                originalJobAdvertisement.isReportingObligation(),
+                originalJobAdvertisement.getReportingObligationEndDate(),
+                originalJobAdvertisement.getJobCenterCode(),
+                originalJobAdvertisement.getApprovalDate(),
+                EmploymentDto.toDto(originalJobAdvertisement.getJobContent().getEmployment()),
+                ApplyChannelDto.toDto(originalJobAdvertisement.getJobContent().getApplyChannel()),
+                CompanyDto.toDto(originalJobAdvertisement.getJobContent().getCompany()), // This is only for test purpose. Generally only the displayCompany is converted to CompanyDto
+                ContactDto.toDto(originalJobAdvertisement.getContact()),
+                new CreateLocationDto(
+                        originalJobAdvertisement.getJobContent().getLocation().getRemarks(),
+                        originalJobAdvertisement.getJobContent().getLocation().getCity(),
+                        originalJobAdvertisement.getJobContent().getLocation().getPostalCode(),
+                        originalJobAdvertisement.getJobContent().getLocation().getCountryIsoCode()
+                ),
+                OccupationDto.toDto(originalJobAdvertisement.getJobContent().getOccupations()),
+                LanguageSkillDto.toDto(originalJobAdvertisement.getJobContent().getLanguageSkills()),
+                PublicationDto.toDto(originalJobAdvertisement.getPublication())
+        );
+        updateJobAdvertisement.setDescription("OTHER VALUE");
+        ApprovalDto approvalDto = new ApprovalDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), true, LocalDate.of(2018, 10, 1), updateJobAdvertisement);
+
+        // when
+        sut.approve(approvalDto);
+
+        // then
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
+        assertThat(jobAdvertisement.getApprovalDate()).isEqualTo(LocalDate.of(2018, 1, 1));
+        assertThat(jobAdvertisement.isReportingObligation()).isTrue();
+        assertThat(jobAdvertisement.getReportingObligationEndDate()).isEqualTo(LocalDate.of(2018, 10, 1));
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
+        assertThat(jobAdvertisement.getJobContent().getJobDescriptions().get(0).getDescription()).isEqualTo("OTHER VALUE");
+        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
+    }
+
+    @Test
+    public void shouldReject() {
+        // given
+        jobAdvertisementRepository.save(createInspectingJobAd());
+        RejectionDto rejectionDto = new RejectionDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), "code", "reason","jobcenterid");
+
+        // when
+        sut.reject(rejectionDto);
+
+        // then
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
+        assertThat(jobAdvertisement.getRejectionDate()).isEqualTo(LocalDate.of(2018, 1, 1));
+        assertThat(jobAdvertisement.getRejectionCode()).isEqualTo("code");
+        assertThat(jobAdvertisement.getRejectionReason()).isEqualTo("reason");
+        assertThat(jobAdvertisement.getJobCenterCode()).isEqualTo("jobcenterid");
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.REJECTED);
+        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_REJECTED.getDomainEventType());
+    }
+
+    private JobAdvertisement createInspectingJobAd() {
+        return new JobAdvertisement.Builder()
+                .setId(JOB_ADVERTISEMENT_ID_01)
+                .setOwner(createOwner(JOB_ADVERTISEMENT_ID_01))
+                .setContact(createContact(JOB_ADVERTISEMENT_ID_01))
+                .setJobContent(createJobContent(JOB_ADVERTISEMENT_ID_01))
+                .setPublication(new Publication.Builder().build())
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStellennummerEgov(JOB_ADVERTISEMENT_ID_01.getValue())
+                .setStellennummerAvam(STELLENNUMMER_AVAM)
+                .setStatus(JobAdvertisementStatus.INSPECTING)
+                .build();
     }
 
 }
