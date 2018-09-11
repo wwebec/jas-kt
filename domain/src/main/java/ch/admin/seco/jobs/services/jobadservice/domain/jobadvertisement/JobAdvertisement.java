@@ -457,6 +457,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             this.jobCenterCode = updater.getJobCenterCode();
         }
 
+        if (updater.hasAnyChangesIn(SECTION_DISPLAY_COMPANY) && hasChanged(jobContent.getDisplayCompany(), updater.getDisplayCompany())) {
+            changeLog.add("displayCompany", jobContent.getDisplayCompany(), updater.getDisplayCompany());
+            jobContent.setDisplayCompany(updater.getDisplayCompany());
+        }
+
         if (updater.hasAnyChangesIn(SECTION_COMPANY) && hasChanged(jobContent.getCompany(), updater.getCompany())) {
             changeLog.add("company", jobContent.getCompany(), updater.getCompany());
             jobContent.setCompany(updater.getCompany());
