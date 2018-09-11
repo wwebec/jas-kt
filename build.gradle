@@ -24,7 +24,7 @@ plugins {
     id "org.asciidoctor.convert" version "1.5.2"
 }
 
-apply from: "gradle/docker.gradle"
+apply from: "gradle/docker-compose.gradle"
 
 allprojects {
     group 'ch.admin.seco.jobs.services.jobadservice'

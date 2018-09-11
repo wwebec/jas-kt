@@ -1,0 +1,9 @@
+apply plugin: 'docker-compose'
+
+dockerCompose {
+    dockerComposeWorkingDirectory = "${project.rootProject.rootDir}/docker/jobad"
+    stopContainers = System.getenv().hasProperty('TRAVIS_JOB_ID') ? true: false
+    startedServices = ['elasticsearch','jhipster-registry']
+}
+
+dockerCompose.isRequiredBy(test)
