@@ -58,9 +58,8 @@ public class ApiToNormalCreateJobAdvertisementDtoConverter {
               apiPublication.isEuresDisplay(),
               apiPublication.isEuresAnonymous(),
               apiPublication.isPublicDisplay(),
-              apiPublication.isPublicAnonymous(),
               apiPublication.isRestrictedDisplay(),
-              apiPublication.isRestrictedAnonymous()
+              apiPublication.isCompanyAnonymous()
             );
         }
         return null;

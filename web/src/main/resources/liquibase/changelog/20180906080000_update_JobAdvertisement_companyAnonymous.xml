@@ -1,0 +1,36 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="just" id="20180906080000-1">
+        <addColumn tableName="JOB_ADVERTISEMENT">
+            <column name="DISPLAY_COMPANY_NAME" type="VARCHAR(255)"/>
+            <column name="DISPLAY_COMPANY_STREET" type="VARCHAR(50)"/>
+            <column name="DISPLAY_COMPANY_HOUSE_NUMBER" type="VARCHAR(10)"/>
+            <column name="DISPLAY_COMPANY_POSTAL_CODE" type="VARCHAR(10)"/>
+            <column name="DISPLAY_COMPANY_CITY" type="VARCHAR(100)"/>
+            <column name="DISPLAY_COMPANY_COUNTRY_ISO_CODE" type="VARCHAR(2)"/>
+            <column name="DISPLAY_COMPANY_POST_OFFICE_BOX_NUMBER" type="VARCHAR(10)"/>
+            <column name="DISPLAY_COMPANY_POST_OFFICE_BOX_POSTAL_CODE" type="VARCHAR(255)"/>
+            <column name="DISPLAY_COMPANY_POST_OFFICE_BOX_CITY" type="VARCHAR(255)"/>
+            <column name="DISPLAY_COMPANY_EMAIL" type="VARCHAR(255)"/>
+            <column name="DISPLAY_COMPANY_PHONE" type="VARCHAR(20)"/>
+            <column name="DISPLAY_COMPANY_WEBSITE" type="VARCHAR(255)"/>
+            <column name="DISPLAY_COMPANY_SURROGATE" type="BOOLEAN"/>
+        </addColumn>
+    </changeSet>
+    <changeSet author="just" id="20180906080000-2">
+        <renameColumn tableName="JOB_ADVERTISEMENT" oldColumnName="PUBLICATION_PUBLIC_ANONYMOUS" newColumnName="PUBLICATION_COMPANY_ANONYMOUS"/>
+    </changeSet>
+    <changeSet author="just" id="20180906080000-3">
+        <sql>
+            update JOB_ADVERTISEMENT
+            set PUBLICATION_COMPANY_ANONYMOUS = PUBLICATION_COMPANY_ANONYMOUS OR PUBLICATION_RESTRICTED_ANONYMOUS
+        </sql>
+    </changeSet>
+    <changeSet author="just" id="20180906080000-4">
+        <dropColumn tableName="JOB_ADVERTISEMENT" columnName="PUBLICATION_RESTRICTED_ANONYMOUS"/>
+    </changeSet>
+
+</databaseChangeLog>

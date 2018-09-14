@@ -40,22 +40,40 @@
                   }
                 }
               },
-              "company": {
+              "displayCompany": {
                 "properties": {
+                  "name": {
+                    "type": "text",
+                    "analyzer": "ascii_folding"
+                  },
+                  "street": {
+                    "type": "text"
+                  },
+                  "houseNumber": {
+                    "type": "keyword"
+                  },
+                  "postalCode": {
+                    "type": "keyword"
+                  },
                   "city": {
                     "type": "text"
                   },
                   "countryIsoCode": {
                     "type": "keyword"
                   },
-                  "name": {
-                    "type": "text",
-                    "analyzer": "ascii_folding"
-                  },
-                  "postalCode": {
+                  "postOfficeBoxNumber": {
                     "type": "keyword"
                   },
-                  "street": {
+                  "postOfficeBoxPostalCode": {
+                    "type": "keyword"
+                  },
+                  "phone": {
+                    "type": "keyword"
+                  },
+                  "email": {
+                    "type": "text"
+                  },
+                  "website": {
                     "type": "text"
                   },
                   "surrogate": {

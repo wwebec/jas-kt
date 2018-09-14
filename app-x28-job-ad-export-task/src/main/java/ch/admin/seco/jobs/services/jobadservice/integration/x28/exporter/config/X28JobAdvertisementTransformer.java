@@ -33,7 +33,7 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
         mapEmployment(jobContent.getEmployment(), x28JobAdvertisement);
         mapPublicContact(jobContent.getPublicContact(), x28JobAdvertisement);
         mapLanguageSkills(jobContent.getLanguageSkills(), x28JobAdvertisement);
-        mapCompany(jobContent.getCompany(), x28JobAdvertisement);
+        mapCompany(jobContent.getDisplayCompany(), x28JobAdvertisement);
         mapApplyChannel(jobContent.getApplyChannel(), x28JobAdvertisement);
 
         return x28JobAdvertisement;
@@ -120,6 +120,7 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
 
             x28JobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
             x28JobAdvertisement.setEuresPublikation(publication.isEuresDisplay());
+            x28JobAdvertisement.setWwwAnonym(publication.isCompanyAnonymous());
         }
     }
 

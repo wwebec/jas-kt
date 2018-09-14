@@ -103,9 +103,8 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             @AttributeOverride(name = "euresDisplay", column = @Column(name = "PUBLICATION_EURES_DISPLAY")),
             @AttributeOverride(name = "euresAnonymous", column = @Column(name = "PUBLICATION_EURES_ANONYMOUS")),
             @AttributeOverride(name = "publicDisplay", column = @Column(name = "PUBLICATION_PUBLIC_DISPLAY")),
-            @AttributeOverride(name = "publicAnonymous", column = @Column(name = "PUBLICATION_PUBLIC_ANONYMOUS")),
             @AttributeOverride(name = "restrictedDisplay", column = @Column(name = "PUBLICATION_RESTRICTED_DISPLAY")),
-            @AttributeOverride(name = "restrictedAnonymous", column = @Column(name = "PUBLICATION_RESTRICTED_ANONYMOUS"))
+            @AttributeOverride(name = "companyAnonymous", column = @Column(name = "PUBLICATION_COMPANY_ANONYMOUS"))
     })
     @Valid
     @NotNull
@@ -456,6 +455,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         if (updater.hasAnyChangesIn(SECTION_JOB_CENTER_CODE) && hasChanged(jobCenterCode, updater.getJobCenterCode())) {
             changeLog.add("jobCenterCode", jobCenterCode, updater.getJobCenterCode());
             this.jobCenterCode = updater.getJobCenterCode();
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_DISPLAY_COMPANY) && hasChanged(jobContent.getDisplayCompany(), updater.getDisplayCompany())) {
+            changeLog.add("displayCompany", jobContent.getDisplayCompany(), updater.getDisplayCompany());
+            jobContent.setDisplayCompany(updater.getDisplayCompany());
         }
 
         if (updater.hasAnyChangesIn(SECTION_COMPANY) && hasChanged(jobContent.getCompany(), updater.getCompany())) {

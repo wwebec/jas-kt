@@ -162,21 +162,21 @@ public class CompanyDto {
         this.surrogate = surrogate;
     }
 
-    public static CompanyDto toDto(Company company) {
+    public static CompanyDto toDto(Company displayCompany) {
         CompanyDto companyDto = new CompanyDto();
-        companyDto.setName(company.getName());
-        companyDto.setStreet(company.getStreet());
-        companyDto.setHouseNumber(company.getHouseNumber());
-        companyDto.setPostalCode(company.getPostalCode());
-        companyDto.setCity(company.getCity());
-        companyDto.setCountryIsoCode(company.getCountryIsoCode());
-        companyDto.setPostOfficeBoxNumber(company.getPostOfficeBoxNumber());
-        companyDto.setPostOfficeBoxPostalCode(company.getPostOfficeBoxPostalCode());
-        companyDto.setPostOfficeBoxCity(company.getPostOfficeBoxCity());
-        companyDto.setPhone(company.getPhone());
-        companyDto.setEmail(company.getEmail());
-        companyDto.setWebsite(company.getWebsite());
-        companyDto.setSurrogate(company.isSurrogate());
+        companyDto.setName(displayCompany.getName());
+        companyDto.setStreet(displayCompany.getStreet());
+        companyDto.setHouseNumber(displayCompany.getHouseNumber());
+        companyDto.setPostalCode(displayCompany.getPostalCode());
+        companyDto.setCity(displayCompany.getCity());
+        companyDto.setCountryIsoCode(displayCompany.getCountryIsoCode());
+        companyDto.setPostOfficeBoxNumber(displayCompany.getPostOfficeBoxNumber());
+        companyDto.setPostOfficeBoxPostalCode(displayCompany.getPostOfficeBoxPostalCode());
+        companyDto.setPostOfficeBoxCity(displayCompany.getPostOfficeBoxCity());
+        companyDto.setPhone(displayCompany.getPhone());
+        companyDto.setEmail(displayCompany.getEmail());
+        companyDto.setWebsite(displayCompany.getWebsite());
+        companyDto.setSurrogate(displayCompany.isSurrogate());
         return companyDto;
     }
 }

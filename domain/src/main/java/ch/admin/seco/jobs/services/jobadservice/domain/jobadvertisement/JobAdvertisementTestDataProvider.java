@@ -56,6 +56,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId, JobDescription jobDescription, Occupation occupation, Location location) {
         return new JobContent.Builder()
                 .setJobDescriptions(Collections.singletonList(jobDescription))
+                .setDisplayCompany(createCompany(jobAdvertisementId))
                 .setCompany(createCompany(jobAdvertisementId))
                 .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
                 .setEmployment(createEmployment())
@@ -73,6 +74,7 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
         PublicContact publicContact = createPublicContact(jobAdvertisementId);
         return new JobContent.Builder()
                 .setJobDescriptions(Collections.singletonList(jobDescription))
+                .setDisplayCompany(createCompany(jobAdvertisementId))
                 .setCompany(createCompany(jobAdvertisementId))
                 .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
                 .setEmployment(employment)

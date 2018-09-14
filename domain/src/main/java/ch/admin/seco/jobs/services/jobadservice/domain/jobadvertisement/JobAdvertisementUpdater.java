@@ -18,6 +18,7 @@ public class JobAdvertisementUpdater {
     static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
     static final String SECTION_JOB_CENTER_CODE = "SECTION_JOB_CENTER_CODE";
     static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
+    static final String SECTION_DISPLAY_COMPANY = "SECTION_DISPLAY_COMPANY";
     static final String SECTION_COMPANY = "SECTION_COMPANY";
     static final String SECTION_CONTACT = "SECTION_CONTACT";
     static final String SECTION_LOCATION = "SECTION_LOCATION";
@@ -48,6 +49,8 @@ public class JobAdvertisementUpdater {
 
     private ApplyChannel applyChannel;
 
+    private Company displayCompany;
+
     private Company company;
 
     private Contact contact;
@@ -73,6 +76,7 @@ public class JobAdvertisementUpdater {
         this.employment = builder.employment;
         this.jobCenterCode = builder.jobCenterCode;
         this.applyChannel = builder.applyChannel;
+        this.displayCompany = builder.displayCompany;
         this.company = builder.company;
         this.contact = builder.contact;
         this.location = builder.location;
@@ -129,6 +133,10 @@ public class JobAdvertisementUpdater {
         return applyChannel;
     }
 
+    public Company getDisplayCompany() {
+        return displayCompany;
+    }
+
     public Company getCompany() {
         return company;
     }
@@ -167,6 +175,7 @@ public class JobAdvertisementUpdater {
         private Employment employment;
         private String jobCenterCode;
         private ApplyChannel applyChannel;
+        private Company displayCompany;
         private Company company;
         private Contact contact;
         private Location location;
@@ -229,6 +238,12 @@ public class JobAdvertisementUpdater {
         public Builder setApplyChannel(ApplyChannel applyChannel) {
             this.changedSections.add(SECTION_APPLY_CHANNEL);
             this.applyChannel = applyChannel;
+            return this;
+        }
+
+        public Builder setDisplayCompany(Company displayCompany) {
+            this.changedSections.add(SECTION_DISPLAY_COMPANY);
+            this.displayCompany = displayCompany;
             return this;
         }
 

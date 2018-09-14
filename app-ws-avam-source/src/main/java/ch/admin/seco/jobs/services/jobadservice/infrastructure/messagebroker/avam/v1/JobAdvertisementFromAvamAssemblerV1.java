@@ -221,9 +221,8 @@ public class JobAdvertisementFromAvamAssemblerV1 {
                 avamJobAdvertisement.isEures(),
                 avamJobAdvertisement.isEuresAnonym(),
                 avamJobAdvertisement.isPublikation(),
-                avamJobAdvertisement.isAnonym(),
                 false, // Not defined in this AVAM version
-                false // Not defined in this AVAM version
+                avamJobAdvertisement.isAnonym()
         );
     }
 

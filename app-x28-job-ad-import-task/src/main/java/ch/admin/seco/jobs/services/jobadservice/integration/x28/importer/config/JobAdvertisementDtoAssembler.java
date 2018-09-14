@@ -56,6 +56,7 @@ class JobAdvertisementDtoAssembler {
                 x28JobAdvertisement.getGleicheOste(),
                 x28JobAdvertisement.getFingerprint(),
                 x28JobAdvertisement.getUrl(),
+                x28JobAdvertisement.getArbeitsamtbereich(),
                 createContact(x28JobAdvertisement),
                 createEmployment(x28JobAdvertisement),
                 createCompany(x28JobAdvertisement),

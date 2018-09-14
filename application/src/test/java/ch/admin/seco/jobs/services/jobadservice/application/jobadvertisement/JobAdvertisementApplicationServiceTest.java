@@ -100,32 +100,13 @@ public class JobAdvertisementApplicationServiceTest {
         domainEventMockUtils.clearEvents();
     }
 
-    @Test
-    public void createFromWebForm() {
-        //Prepare
-        CreateJobAdvertisementDto createJobAdvertisementDto = createDefaultJobAdvertisementDto();
-
-        //Execute
-        JobAdvertisementId jobAdvertisementId = sut.createFromWebForm(createJobAdvertisementDto);
-
-        //Validate
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
-        assertThat(jobAdvertisement).isNotNull();
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
-        assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.JOBROOM);
-        assertThat(jobAdvertisement.getStellennummerEgov()).isEqualTo(TEST_STELLEN_NUMMER_EGOV);
-
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
-        verify(locationService, times(1)).isLocationValid(any());
-    }
-
     private CreateJobAdvertisementDto createDefaultJobAdvertisementDto() {
         return new CreateJobAdvertisementDto(
                 true,
                 null,
                 null,
                 new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false),
+                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false),
                 null,
                 Collections.singletonList(new JobDescriptionDto("de", "title", "description")),
                 new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
@@ -178,160 +159,6 @@ public class JobAdvertisementApplicationServiceTest {
     }
 
     @Test
-    public void createFromApi() {
-        //Prepare
-        CreateJobAdvertisementDto createJobAdvertisementDto = new CreateJobAdvertisementDto(
-                false,
-                null,
-                null,
-                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false),
-                null,
-                Collections.singletonList(new JobDescriptionDto("de", "title", "description")),
-                new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
-                null,
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
-                new CreateLocationDto("remarks", "city", "postalCode", "CH"),
-                new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
-                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
-                new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new PublicContactDto(Salutation.MR, "firstName", "lastName", "phone", "email")
-        );
-
-        //Execute
-        JobAdvertisementId jobAdvertisementId = sut.createFromApi(createJobAdvertisementDto);
-
-        //Validate
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
-        assertThat(jobAdvertisement).isNotNull();
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
-        assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.API);
-
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
-        verify(locationService, times(1)).isLocationValid(any());
-    }
-
-    @Test
-    public void createFromAvam() {
-        //Prepare
-        CreateJobAdvertisementFromAvamDto createJobAdvertisementDto = new CreateJobAdvertisementFromAvamDto(
-                STELLENNUMMER_AVAM,
-                "title",
-                "description",
-                "de",
-                null,
-                true,
-                LocalDate.of(2018, 1, 1),
-                "jobCenter",
-                TimeMachine.now().toLocalDate(),
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, Sets.newHashSet()),
-                new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
-                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new CreateLocationDto("remarks", "city", "postalCode", "CH"),
-                Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
-                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
-                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false, false)
-        );
-
-        //Execute
-        JobAdvertisementId jobAdvertisementId = sut.createFromAvam(createJobAdvertisementDto);
-
-        //Validate
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
-        assertThat(jobAdvertisement).isNotNull();
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
-        assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.RAV);
-
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
-    }
-
-    @Test
-    public void createFromX28() {
-        //Prepare
-        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto(
-                null,
-                null,
-                "title",
-                "description",
-                null,
-                "fingerprint",
-                "url",
-                null,
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
-                new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
-                new CreateLocationDto("remarks", "city", "postalCode", "CH"),
-                Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
-                "1,2",
-                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
-                TimeMachine.now().toLocalDate(),
-                null,
-                false
-        );
-
-        //Execute
-        JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);
-
-        //Validate
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
-        assertThat(jobAdvertisement).isNotNull();
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
-        assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.EXTERN);
-
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
-    }
-
-    @Test
-    public void createFromX28WithEmptyCountry() {
-        //Prepare
-        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto(
-                null,
-                null,
-                "title",
-                "description",
-                null,
-                "fingerprint",
-                "url",
-                null,
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
-                new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
-                new CreateLocationDto(null, "city", "postalCode", null),
-                Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
-                "1,2",
-                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
-                TimeMachine.now().toLocalDate(),
-                null,
-                false
-        );
-
-        //Execute
-        JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);
-
-        //Validate
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
-        assertThat(jobAdvertisement).isNotNull();
-        assertThat(jobAdvertisement.getJobContent().getLocation().getCountryIsoCode()).isEqualTo(COUNTRY_ISO_CODE_SWITZERLAND);
-    }
-
-    @Test
-    public void updateFromX28() {
-        // given
-        jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(
-                JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.CREATED, null));
-        UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto = new UpdateJobAdvertisementFromX28Dto(
-                JOB_ADVERTISEMENT_ID_01.getValue(), "fingerprint", "x28");
-
-        // when
-        sut.updateFromX28(updateJobAdvertisementFromX28Dto);
-
-        // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
-        assertThat(jobAdvertisement.getFingerprint()).isEqualTo("fingerprint");
-        assertThat(jobAdvertisement.getJobContent().getX28OccupationCodes()).isEqualTo("x28");
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED.getDomainEventType());
-    }
-
-    @Test
     public void shouldInspect() {
         // given
         jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(
@@ -344,71 +171,6 @@ public class JobAdvertisementApplicationServiceTest {
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.INSPECTING);
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING.getDomainEventType());
-    }
-
-    //@Test
-    public void shouldApprove() {
-        // given
-        JobAdvertisement originalJobAdvertisement = createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.INSPECTING, null);
-        jobAdvertisementRepository.saveAndFlush(originalJobAdvertisement);
-        UpdateJobAdvertisementFromAvamDto updateJobAdvertisement = updateJobAdvertisementFromAvamDto(originalJobAdvertisement);
-        ApprovalDto approvalDto = new ApprovalDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), true, LocalDate.of(2018, 10, 1), updateJobAdvertisement);
-
-        // when
-        sut.approve(approvalDto);
-
-        // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
-        assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
-        assertThat(jobAdvertisement.getApprovalDate()).isEqualTo(LocalDate.of(2018, 1, 1));
-        assertThat(jobAdvertisement.isReportingObligation()).isTrue();
-        assertThat(jobAdvertisement.getReportingObligationEndDate()).isEqualTo(LocalDate.of(2018, 10, 1));
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
-    }
-
-    //@Test
-    public void shouldApproveWithUpdate() {
-        // given
-        JobAdvertisement originalJobAdvertisement = createJobWithStatusAndPublicationEndDate(JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.INSPECTING, null);
-        jobAdvertisementRepository.save(originalJobAdvertisement);
-        UpdateJobAdvertisementFromAvamDto updateJobAdvertisement = updateJobAdvertisementFromAvamDto(originalJobAdvertisement);
-        updateJobAdvertisement.setDescription("OTHER VALUE");
-        ApprovalDto approvalDto = new ApprovalDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), true, LocalDate.of(2018, 10, 1), updateJobAdvertisement);
-
-        // when
-        sut.approve(approvalDto);
-
-        // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
-        assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
-        assertThat(jobAdvertisement.getApprovalDate()).isEqualTo(LocalDate.of(2018, 1, 1));
-        assertThat(jobAdvertisement.isReportingObligation()).isTrue();
-        assertThat(jobAdvertisement.getReportingObligationEndDate()).isEqualTo(LocalDate.of(2018, 10, 1));
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
-        assertThat(jobAdvertisement.getJobContent().getJobDescriptions().get(0).getDescription()).isEqualTo("OTHER VALUE");
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
-    }
-
-    @Test
-    public void shouldReject() {
-        // given
-        jobAdvertisementRepository.save(createJobWithStatusAndPublicationEndDate(
-                JOB_ADVERTISEMENT_ID_01, JobAdvertisementStatus.INSPECTING, null));
-        RejectionDto rejectionDto = new RejectionDto(JOB_ADVERTISEMENT_ID_01.getValue(), STELLENNUMMER_AVAM, LocalDate.of(2018, 1, 1), "code", "reason","jobcenterid");
-
-        // when
-        sut.reject(rejectionDto);
-
-        // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
-        assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
-        assertThat(jobAdvertisement.getRejectionDate()).isEqualTo(LocalDate.of(2018, 1, 1));
-        assertThat(jobAdvertisement.getRejectionCode()).isEqualTo("code");
-        assertThat(jobAdvertisement.getRejectionReason()).isEqualTo("reason");
-        assertThat(jobAdvertisement.getJobCenterCode()).isEqualTo("jobcenterid");
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.REJECTED);
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_REJECTED.getDomainEventType());
     }
 
     @Test
@@ -590,33 +352,6 @@ public class JobAdvertisementApplicationServiceTest {
                 .setStellennummerAvam(STELLENNUMMER_AVAM)
                 .setStatus(status)
                 .build();
-    }
-
-    private UpdateJobAdvertisementFromAvamDto updateJobAdvertisementFromAvamDto(JobAdvertisement jobAdvertisement) {
-        return new UpdateJobAdvertisementFromAvamDto(
-                jobAdvertisement.getStellennummerAvam(),
-                jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(),
-                jobAdvertisement.getJobContent().getJobDescriptions().get(0).getDescription(),
-                jobAdvertisement.getJobContent().getJobDescriptions().get(0).getLanguage().getLanguage(),
-                jobAdvertisement.getJobContent().getNumberOfJobs(),
-                jobAdvertisement.isReportingObligation(),
-                jobAdvertisement.getReportingObligationEndDate(),
-                jobAdvertisement.getJobCenterCode(),
-                jobAdvertisement.getApprovalDate(),
-                EmploymentDto.toDto(jobAdvertisement.getJobContent().getEmployment()),
-                ApplyChannelDto.toDto(jobAdvertisement.getJobContent().getApplyChannel()),
-                CompanyDto.toDto(jobAdvertisement.getJobContent().getCompany()),
-                ContactDto.toDto(jobAdvertisement.getContact()),
-                new CreateLocationDto(
-                        jobAdvertisement.getJobContent().getLocation().getRemarks(),
-                        jobAdvertisement.getJobContent().getLocation().getCity(),
-                        jobAdvertisement.getJobContent().getLocation().getPostalCode(),
-                        jobAdvertisement.getJobContent().getLocation().getCountryIsoCode()
-                ),
-                OccupationDto.toDto(jobAdvertisement.getJobContent().getOccupations()),
-                LanguageSkillDto.toDto(jobAdvertisement.getJobContent().getLanguageSkills()),
-                PublicationDto.toDto(jobAdvertisement.getPublication())
-        );
     }
 
 }

@@ -1,16 +1,22 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.ConditionException;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
-
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.JoinColumn;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 @Embeddable
 public class JobContent implements ValueObject<JobContent> {
@@ -27,6 +33,25 @@ public class JobContent implements ValueObject<JobContent> {
     @Valid
     @NotEmpty
     private List<JobDescription> jobDescriptions;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "name", column = @Column(name = "DISPLAY_COMPANY_NAME")),
+            @AttributeOverride(name = "street", column = @Column(name = "DISPLAY_COMPANY_STREET")),
+            @AttributeOverride(name = "houseNumber", column = @Column(name = "DISPLAY_COMPANY_HOUSE_NUMBER")),
+            @AttributeOverride(name = "postalCode", column = @Column(name = "DISPLAY_COMPANY_POSTAL_CODE")),
+            @AttributeOverride(name = "city", column = @Column(name = "DISPLAY_COMPANY_CITY")),
+            @AttributeOverride(name = "countryIsoCode", column = @Column(name = "DISPLAY_COMPANY_COUNTRY_ISO_CODE")),
+            @AttributeOverride(name = "postOfficeBoxNumber", column = @Column(name = "DISPLAY_COMPANY_POST_OFFICE_BOX_NUMBER")),
+            @AttributeOverride(name = "postOfficeBoxPostalCode", column = @Column(name = "DISPLAY_COMPANY_POST_OFFICE_BOX_POSTAL_CODE")),
+            @AttributeOverride(name = "postOfficeBoxCity", column = @Column(name = "DISPLAY_COMPANY_POST_OFFICE_BOX_CITY")),
+            @AttributeOverride(name = "phone", column = @Column(name = "DISPLAY_COMPANY_PHONE")),
+            @AttributeOverride(name = "email", column = @Column(name = "DISPLAY_COMPANY_EMAIL")),
+            @AttributeOverride(name = "website", column = @Column(name = "DISPLAY_COMPANY_WEBSITE")),
+            @AttributeOverride(name = "surrogate", column = @Column(name = "DISPLAY_COMPANY_SURROGATE"))
+    })
+    @Valid
+    private Company displayCompany;
 
     @Embedded
     @AttributeOverrides({
@@ -133,6 +158,7 @@ public class JobContent implements ValueObject<JobContent> {
         this.externalUrl = builder.externalUrl;
         this.x28OccupationCodes = builder.x28OccupationCodes;
         this.numberOfJobs = builder.numberOfJobs;
+        this.displayCompany = Condition.notNull(builder.displayCompany, "DisplayCompany can't be null");
         this.company = Condition.notNull(builder.company, "Company can't be null");
         this.employer = builder.employer;
         this.jobDescriptions = Condition.notEmpty(builder.jobDescriptions, "Job descriptions can't be null or empty");
@@ -174,6 +200,14 @@ public class JobContent implements ValueObject<JobContent> {
 
     void setJobDescriptions(List<JobDescription> jobDescriptions) {
         this.jobDescriptions = jobDescriptions;
+    }
+
+    public Company getDisplayCompany() {
+        return displayCompany;
+    }
+
+    void setDisplayCompany(Company displayCompany) {
+        this.displayCompany = displayCompany;
     }
 
     public Company getCompany() {
@@ -249,6 +283,7 @@ public class JobContent implements ValueObject<JobContent> {
                 Objects.equals(x28OccupationCodes, that.x28OccupationCodes) &&
                 Objects.equals(numberOfJobs, that.numberOfJobs) &&
                 Objects.equals(jobDescriptions, that.jobDescriptions) &&
+                Objects.equals(displayCompany, that.displayCompany) &&
                 Objects.equals(company, that.company) &&
                 Objects.equals(employer, that.employer) &&
                 Objects.equals(employment, that.employment) &&
@@ -261,7 +296,7 @@ public class JobContent implements ValueObject<JobContent> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(externalUrl, x28OccupationCodes, numberOfJobs, jobDescriptions, company, employer, employment, location, occupations, languageSkills, applyChannel, publicContact);
+        return Objects.hash(externalUrl, x28OccupationCodes, numberOfJobs, jobDescriptions, displayCompany, company, employer, employment, location, occupations, languageSkills, applyChannel, publicContact);
     }
 
     @Override
@@ -271,6 +306,7 @@ public class JobContent implements ValueObject<JobContent> {
                 ", x28OccupationCodes=" + x28OccupationCodes +
                 ", numberOfJobs=" + numberOfJobs +
                 ", jobDescriptions=" + jobDescriptions +
+                ", displayCompany=" + displayCompany +
                 ", company=" + company +
                 ", employer=" + employer +
                 ", employment=" + employment +
@@ -289,6 +325,7 @@ public class JobContent implements ValueObject<JobContent> {
         private String x28OccupationCodes;
         private String numberOfJobs;
         private List<JobDescription> jobDescriptions;
+        private Company displayCompany;
         private Company company;
         private Employer employer;
         private Employment employment;
@@ -326,6 +363,11 @@ public class JobContent implements ValueObject<JobContent> {
 
         public Builder<T> setJobDescriptions(List<JobDescription> jobDescriptions) {
             this.jobDescriptions = jobDescriptions;
+            return this;
+        }
+
+        public Builder<T> setDisplayCompany(Company displayCompany) {
+            this.displayCompany = displayCompany;
             return this;
         }
 
