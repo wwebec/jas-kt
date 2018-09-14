@@ -1,13 +1,16 @@
 os:
 - linux
+dist: trusty
 services:
 - docker
+language: java
 jdk:
 - oraclejdk8
 sudo: false
 cache:
   directories:
-  - "$HOME/.gradle"
+  - "$HOME/.gradle/wrapper"
+  - "$HOME/.gradle/caches/modules-2/files-2.1"
 env:
   global:
   - SPRING_OUTPUT_ANSI_ENABLED=ALWAYS
@@ -17,14 +20,11 @@ env:
   - secure: NI2eMzWgtCJWkhcs/jT9CYiDabSWFD/h5sikocWxnaf0+Mgxe0ZWgOtli8gLNv0yO6Ku8iHkn/L36jUksTX0BeZL3Ot90HzGzL1YhMYk5AFm1zOBemoOCKXGJ4EbTynN+6+upiPZP2VwJlJwqnhlitQI6jCATXn0A9JaQ+vQnGoGYegkQPynL/Yre16gMV4L9UCnHGHd37atUOV535dmj27KenDUCkAAuAYJJxeBLOFFUk0cRlONeLdi97M+k37nEzSHHAGUlxIkpQCU939KXM6Z6rbgSvQq804Y4nyQm/baA3YZ+d3umgCghSfijvKUJ6HC5TzQKsugP8537Sx+H3NpM1YfvA44E+Xhh9nt/qhyOMYSyK76d1/0kOEW9QWIVNX2Nt4ifsAlyS2rnnsonbt32yxbRQln5E394hysXmLYJXogvJkvwzvpe9xOTMtqmYa5k83JG1smExywdliSgDve123VPZ7NIhYYEuvP/1QZ6SddXghUiqgf0v+03c8m4MbkEE2tvBBCum+/s3Mihrmv3zlZYZBh1L5YaMzswTYZXWRtTWQ9wDLDOzXEmf2KYl34YEWR4rju5m1unSetaNN5sFl0IMCJTCaavJ6qG2d0i5SBnsCvxfZZMpHYrXK7SK7oCTX/I93AUoeHnvG+64XN3UaJtE1CUuoxTjJCiqw=
 before_install:
 - git fetch --unshallow || true
+- chmod +x gradlew
 - jdk_switcher use oraclejdk8
 - java -version
-- docker-compose -f docker/elasticsearch.yml up -d
 script:
-- chmod +x gradlew
-- "./gradlew clean check"
-after_script:
-- docker-compose -f docker/elasticsearch.yml stop
+- ./gradlew clean check
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 
