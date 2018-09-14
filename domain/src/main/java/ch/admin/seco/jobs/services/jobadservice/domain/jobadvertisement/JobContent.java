@@ -1,16 +1,22 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.ConditionException;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
-
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
+import javax.persistence.JoinColumn;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 
 @Embeddable
 public class JobContent implements ValueObject<JobContent> {
@@ -45,7 +51,6 @@ public class JobContent implements ValueObject<JobContent> {
             @AttributeOverride(name = "surrogate", column = @Column(name = "DISPLAY_COMPANY_SURROGATE"))
     })
     @Valid
-    @NotNull
     private Company displayCompany;
 
     @Embedded

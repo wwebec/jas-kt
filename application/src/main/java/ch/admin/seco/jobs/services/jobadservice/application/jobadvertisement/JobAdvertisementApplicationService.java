@@ -103,7 +103,6 @@ public class JobAdvertisementApplicationService {
 
     private final JobCenterService jobCenterService;
 
-
     @Autowired
     public JobAdvertisementApplicationService(CurrentUserContext currentUserContext,
             JobAdvertisementRepository jobAdvertisementRepository,
@@ -739,20 +738,25 @@ public class JobAdvertisementApplicationService {
             return company;
         }
 
-        Company.Builder companyBuilder = new Company.Builder();
         if (!hasText(jobCenterCode)) {
-            return companyBuilder.build();
+            return null;
         }
+
         JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobCenterCode);
+        return toCompany(jobCenter);
+    }
+
+    private Company toCompany(JobCenter jobCenter) {
         if (jobCenter == null) {
-            return companyBuilder.build();
+            return null;
         }
 
         JobCenterAddress jobCenterAddress = jobCenter.getAddress();
         if (jobCenterAddress == null) {
-            return companyBuilder.build();
+            return null;
         }
 
+        Company.Builder companyBuilder = new Company.Builder();
         companyBuilder
                 .setName(jobCenterAddress.getName())
                 .setStreet(jobCenterAddress.getStreet())
