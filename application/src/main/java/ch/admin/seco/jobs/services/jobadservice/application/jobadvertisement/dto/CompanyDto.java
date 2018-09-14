@@ -163,6 +163,9 @@ public class CompanyDto {
     }
 
     public static CompanyDto toDto(Company displayCompany) {
+        if(displayCompany == null) {
+            return null;
+        }
         CompanyDto companyDto = new CompanyDto();
         companyDto.setName(displayCompany.getName());
         companyDto.setStreet(displayCompany.getStreet());
