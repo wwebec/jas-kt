@@ -42,9 +42,6 @@ class DefaultJobCenterService implements JobCenterService {
 
     private JobCenter toJobCenter(JobCenterResource jobCenterResource) {
         AddressResource jobCenterAddressResource = jobCenterResource.getAddress();
-        if (jobCenterAddressResource == null) {
-            return null;
-        }
         return new JobCenter(
                 jobCenterResource.getId(),
                 jobCenterResource.getCode(),
