@@ -225,16 +225,13 @@
               "euresDisplay": {
                 "type": "boolean"
               },
-              "publicAnonymous": {
-                "type": "boolean"
-              },
               "publicDisplay": {
                 "type": "boolean"
               },
-              "restrictedAnonymous": {
+              "restrictedDisplay": {
                 "type": "boolean"
               },
-              "restrictedDisplay": {
+              "companyAnonymous": {
                 "type": "boolean"
               },
               "startDate": {
