@@ -111,7 +111,7 @@ public class JobAdvertisementApplicationServiceTest {
     public void setUp() {
         this.jobAdvertisementRepository.deleteAll();
 
-        domainEventMockUtils = new DomainEventMockUtils();
+        this.domainEventMockUtils = new DomainEventMockUtils();
 
         when(locationService.enrichCodes(any())).thenReturn(
                 new Location.Builder()
@@ -128,8 +128,8 @@ public class JobAdvertisementApplicationServiceTest {
 
     @After
     public void tearDown() {
-        jobAdvertisementRepository.deleteAll();
-        domainEventMockUtils.clearEvents();
+        this.jobAdvertisementRepository.deleteAll();
+        this.domainEventMockUtils.clearEvents();
     }
 
     private CreateJobAdvertisementDto createDefaultJobAdvertisementDto() {

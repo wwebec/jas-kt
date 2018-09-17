@@ -86,9 +86,11 @@ import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCode
 @Transactional(rollbackFor = {Exception.class})
 public class JobAdvertisementApplicationService {
 
-    public static final int PUBLICATION_MAX_DAYS = 60;
-    public static final int EXTERN_JOB_AD_REACTIVATION_DAY_NUM = 10;
-    public static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
+    private static final int PUBLICATION_MAX_DAYS = 60;
+
+    static final int EXTERN_JOB_AD_REACTIVATION_DAY_NUM = 10;
+
+    static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
 
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
 
