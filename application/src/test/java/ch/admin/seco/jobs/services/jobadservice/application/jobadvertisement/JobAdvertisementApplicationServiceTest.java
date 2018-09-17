@@ -30,11 +30,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
@@ -75,7 +76,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCode
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-@DataJpaTest
+@Transactional
 public class JobAdvertisementApplicationServiceTest {
 
     private static final String TEST_STELLEN_NUMMER_EGOV = "1000000";
@@ -108,6 +109,8 @@ public class JobAdvertisementApplicationServiceTest {
 
     @Before
     public void setUp() {
+        this.jobAdvertisementRepository.deleteAll();
+
         domainEventMockUtils = new DomainEventMockUtils();
 
         when(locationService.enrichCodes(any())).thenReturn(
@@ -163,7 +166,7 @@ public class JobAdvertisementApplicationServiceTest {
         JobAdvertisementId jobAdvertisementId = sut.createFromWebForm(createJobAdvertisementDto);
 
         //Validate
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId).get();
         assertThat(jobAdvertisement.isReportingObligation()).isEqualTo(expectedValue);
     }
 
@@ -196,7 +199,7 @@ public class JobAdvertisementApplicationServiceTest {
         sut.inspect(JOB_ADVERTISEMENT_ID_01);
 
         // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findById(JOB_ADVERTISEMENT_ID_01).get();
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.INSPECTING);
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING.getDomainEventType());
     }
@@ -211,7 +214,7 @@ public class JobAdvertisementApplicationServiceTest {
         sut.cancel(JOB_ADVERTISEMENT_ID_01, LocalDate.of(2018, 1, 1), CancellationCode.OCCUPIED_OTHER, SourceSystem.JOBROOM, null);
 
         // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findById(JOB_ADVERTISEMENT_ID_01).get();
         assertThat(jobAdvertisement.getCancellationCode()).isEqualTo(CancellationCode.OCCUPIED_OTHER);
         assertThat(jobAdvertisement.getCancellationDate()).isEqualTo(LocalDate.of(2018, 1, 1));
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CANCELLED);
@@ -228,7 +231,7 @@ public class JobAdvertisementApplicationServiceTest {
         sut.refining(JOB_ADVERTISEMENT_ID_01);
 
         // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findById(JOB_ADVERTISEMENT_ID_01).get();
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.REFINING);
         // TODO: uncomment once we have x28-api
 //        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_REFINING.getDomainEventType());
@@ -246,7 +249,7 @@ public class JobAdvertisementApplicationServiceTest {
         DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
         assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_05);
 
-        JobAdvertisement jobAdvertisementPublishNow = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_05);
+        JobAdvertisement jobAdvertisementPublishNow = jobAdvertisementRepository.findById(JOB_ADVERTISEMENT_ID_05).get();
         assertThat(jobAdvertisementPublishNow.getStatus()).isEqualTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
     }
 
@@ -259,7 +262,7 @@ public class JobAdvertisementApplicationServiceTest {
         this.sut.publish(JOB_ADVERTISEMENT_ID_03);
 
         // then
-        JobAdvertisement jobAdvertisementPublishLater = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_03);
+        JobAdvertisement jobAdvertisementPublishLater = jobAdvertisementRepository.findById(JOB_ADVERTISEMENT_ID_03).get();
         assertThat(jobAdvertisementPublishLater.getStatus()).isEqualTo(JobAdvertisementStatus.REFINING);
     }
 
@@ -274,7 +277,7 @@ public class JobAdvertisementApplicationServiceTest {
         sut.republishIfArchived(JOB_ADVERTISEMENT_ID_01);
 
         // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findById(JOB_ADVERTISEMENT_ID_01).get();
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
     }
 
@@ -289,7 +292,7 @@ public class JobAdvertisementApplicationServiceTest {
         sut.republishIfArchived(JOB_ADVERTISEMENT_ID_01);
 
         // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(JOB_ADVERTISEMENT_ID_01);
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findById(JOB_ADVERTISEMENT_ID_01).get();
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.ARCHIVED);
     }
 
@@ -342,6 +345,7 @@ public class JobAdvertisementApplicationServiceTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     public void updateJobCenter() {
         final String jobCenterCode = "JOB_CENTER_CODE_AAAA";
         for (int i = 0; i < 100; i++) {
