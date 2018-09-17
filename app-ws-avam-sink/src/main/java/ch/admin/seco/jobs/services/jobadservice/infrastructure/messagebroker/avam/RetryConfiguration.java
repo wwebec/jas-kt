@@ -9,11 +9,9 @@ import org.springframework.retry.policy.ExceptionClassifierRetryPolicy;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.ws.client.WebServiceIOException;
-import org.springframework.ws.client.WebServiceTransportException;
 import org.springframework.ws.soap.SoapMessageException;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 public class RetryConfiguration {
