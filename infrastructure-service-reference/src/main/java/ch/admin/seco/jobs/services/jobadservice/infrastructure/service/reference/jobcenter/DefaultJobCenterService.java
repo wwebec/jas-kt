@@ -1,18 +1,20 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.jobcenter;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddress;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
-public class DefaultJobCenterService implements JobCenterService {
+class DefaultJobCenterService implements JobCenterService {
 
     private final JobCenterApiClient jobCenterApiClient;
 
-    @Autowired
-    public DefaultJobCenterService(JobCenterApiClient jobCenterApiClient) {
+    DefaultJobCenterService(JobCenterApiClient jobCenterApiClient) {
         this.jobCenterApiClient = jobCenterApiClient;
     }
 
@@ -25,27 +27,42 @@ public class DefaultJobCenterService implements JobCenterService {
     @Override
     public JobCenter findJobCenterByCode(String code) {
         JobCenterResource jobCenterResource = jobCenterApiClient.searchJobCenterByCode(code);
-        if (jobCenterResource != null) {
-            AddressResource jobCenterAddressResource = jobCenterResource.getAddress();
-            if (jobCenterAddressResource != null) {
-                JobCenterAddress jobCenterAddress = new JobCenterAddress(
-                        jobCenterAddressResource.getName(),
-                        jobCenterAddressResource.getCity(),
-                        jobCenterAddressResource.getStreet(),
-                        jobCenterAddressResource.getHouseNumber(),
-                        jobCenterAddressResource.getZipCode()
-                );
-                return new JobCenter(
-                        jobCenterResource.getId(),
-                        jobCenterResource.getCode(),
-                        jobCenterResource.getEmail(),
-                        jobCenterResource.getPhone(),
-                        jobCenterResource.getFax(),
-                        jobCenterResource.isShowContactDetailsToPublic(),
-                        jobCenterAddress
-                );
-            }
+        if (jobCenterResource == null) {
+            return null;
         }
-        return null;
+        return toJobCenter(jobCenterResource);
+    }
+
+    @Override
+    public List<JobCenter> findAllJobCenters() {
+        return jobCenterApiClient.findAllJobCenters().stream()
+                .map(this::toJobCenter)
+                .collect(Collectors.toList());
+    }
+
+    private JobCenter toJobCenter(JobCenterResource jobCenterResource) {
+        AddressResource jobCenterAddressResource = jobCenterResource.getAddress();
+        if (jobCenterAddressResource == null) {
+            return null;
+        }
+        return new JobCenter(
+                jobCenterResource.getId(),
+                jobCenterResource.getCode(),
+                jobCenterResource.getEmail(),
+                jobCenterResource.getPhone(),
+                jobCenterResource.getFax(),
+                jobCenterResource.isShowContactDetailsToPublic(),
+                toJobCenterAddress(jobCenterAddressResource)
+        );
+    }
+
+    private JobCenterAddress toJobCenterAddress(AddressResource jobCenterAddressResource) {
+        return new JobCenterAddress(
+                jobCenterAddressResource.getName(),
+                jobCenterAddressResource.getCity(),
+                jobCenterAddressResource.getStreet(),
+                jobCenterAddressResource.getHouseNumber(),
+                jobCenterAddressResource.getZipCode()
+        );
     }
 }

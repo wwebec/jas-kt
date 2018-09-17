@@ -1,5 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import static org.hibernate.jpa.QueryHints.HINT_CACHE_MODE;
+import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
+
+import java.time.LocalDate;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import javax.persistence.QueryHint;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,14 +17,6 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.QueryHint;
-import java.time.LocalDate;
-import java.util.Optional;
-import java.util.stream.Stream;
-
-import static org.hibernate.jpa.QueryHints.HINT_CACHE_MODE;
-import static org.hibernate.jpa.QueryHints.HINT_FETCH_SIZE;
 
 @Transactional(propagation = Propagation.MANDATORY)
 public interface JobAdvertisementRepository extends JpaRepository<JobAdvertisement, JobAdvertisementId> {
@@ -54,4 +55,7 @@ public interface JobAdvertisementRepository extends JpaRepository<JobAdvertiseme
 
     @Query("select j from JobAdvertisement j where j.owner.userId = :userId or j.owner.companyId = :companyId")
     Page<JobAdvertisement> findOwnJobAdvertisements(Pageable pageable, @Param("userId") String userId, @Param("companyId") String companyId);
+
+    @Query("select j from JobAdvertisement j where j.jobCenterCode = :jobCenterCode")
+    Stream<JobAdvertisement> findByJobCenterCode(@Param("jobCenterCode") String jobCenterCode);
 }

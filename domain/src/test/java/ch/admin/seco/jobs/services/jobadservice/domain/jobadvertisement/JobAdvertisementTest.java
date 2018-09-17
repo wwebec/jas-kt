@@ -4,17 +4,20 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.J
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createJobContent;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createOwner;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-import ch.admin.seco.jobs.services.jobadservice.core.conditions.ConditionException;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.admin.seco.jobs.services.jobadservice.core.conditions.ConditionException;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddress;
 
 public class JobAdvertisementTest {
 
@@ -30,7 +33,7 @@ public class JobAdvertisementTest {
         domainEventMockUtils.clearEvents();
     }
 
-   // @Test
+    // @Test
     public void testUpdate() {
         //Prepare
         JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
@@ -167,5 +170,87 @@ public class JobAdvertisementTest {
         //Validate
         assertThat(exception).isNotNull();
         assertThat(exception.getMessage()).contains("Employment is short-term and permanent at the same time");
+    }
+
+    @Test
+    public void testUpdateJobCenter() {
+        final JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
+                .setId(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01)
+                .setJobCenterCode("jobCenterCode")
+                .setOwner(createOwner(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
+                .setContact(createContact(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
+                .setJobContent(createJobContent(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
+                .setPublication(new Publication.Builder().setCompanyAnonymous(true).build())
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.CREATED)
+                .build();
+        final JobCenter jobCenter = new JobCenter(
+                "jobCenterId",
+                "jobCenterCode",
+                "jobCenterEmail",
+                "jobCenterPhone",
+                "jobCenterFax",
+                true,
+                new JobCenterAddress(
+                        "jobCenterName",
+                        "jobCenterCity",
+                        "jobCenterStreet",
+                        "jobCenterHouseNumber",
+                        "jobCenterZipCode"
+                )
+        );
+
+        jobAdvertisement.updateJobCenter(jobCenter);
+
+        assertThat(jobAdvertisement.getJobContent().getDisplayCompany().getName()).isEqualTo("jobCenterName");
+    }
+
+    @Test
+    public void testShouldNotUpdateJobCenter() {
+        JobContent jobContent = createJobContent(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
+        jobContent.setDisplayCompany(new Company.Builder(new JobCenter(
+                "jobCenterOtherId",
+                "jobCenterOtherCode",
+                "jobCenterOtherEmail",
+                "jobCenterOtherPhone",
+                "jobCenterOtherFax",
+                true,
+                new JobCenterAddress(
+                        "jobCenterOtherName",
+                        "jobCenterOtherCity",
+                        "jobCenterOtherStreet",
+                        "jobCenterOtherHouseNumber",
+                        "jobCenterOtherZipCode"
+                )
+        )).build());
+        final JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
+                .setId(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01)
+                .setJobCenterCode("jobCenterCodeOther")
+                .setOwner(createOwner(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
+                .setContact(createContact(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
+                .setJobContent(jobContent)
+                .setPublication(new Publication.Builder().setCompanyAnonymous(true).build())
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStatus(JobAdvertisementStatus.CREATED)
+                .build();
+        final JobCenter jobCenter = new JobCenter(
+                "jobCenterId",
+                "jobCenterCode",
+                "jobCenterEmail",
+                "jobCenterPhone",
+                "jobCenterFax",
+                true,
+                new JobCenterAddress(
+                        "jobCenterName",
+                        "jobCenterCity",
+                        "jobCenterStreet",
+                        "jobCenterHouseNumber",
+                        "jobCenterZipCode"
+                )
+        );
+
+        assertThatThrownBy(() -> jobAdvertisement.updateJobCenter(jobCenter))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("can not be different");
     }
 }

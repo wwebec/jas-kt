@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application;
 
+import java.util.List;
+
 import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
 
 public interface JobCenterService {
@@ -8,4 +10,5 @@ public interface JobCenterService {
 
     JobCenter findJobCenterByCode(String code);
 
+    List<JobCenter> findAllJobCenters();
 }

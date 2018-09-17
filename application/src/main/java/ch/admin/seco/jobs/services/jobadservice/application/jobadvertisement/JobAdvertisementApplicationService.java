@@ -361,6 +361,16 @@ public class JobAdvertisementApplicationService {
         jobAdvertisement.update(prepareUpdaterFromAvam(updateJobAdvertisement));
     }
 
+    public void updateJobCenters() {
+        jobCenterService.findAllJobCenters()
+                .forEach(this::updateGivenJobCenter);
+    }
+
+    private void updateGivenJobCenter(JobCenter jobCenter) {
+        jobAdvertisementRepository.findByJobCenterCode(jobCenter.getCode())
+                .forEach(jobAdvertisement -> jobAdvertisement.updateJobCenter(jobCenter));
+    }
+
     private JobAdvertisementUpdater prepareUpdaterFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisement) {
         Condition.notNull(createJobAdvertisement.getLocation(), "Location can't be null");
         Location location = toLocation(createJobAdvertisement.getLocation());
@@ -750,29 +760,8 @@ public class JobAdvertisementApplicationService {
         if (jobCenter == null) {
             return null;
         }
-
-        JobCenterAddress jobCenterAddress = jobCenter.getAddress();
-        if (jobCenterAddress == null) {
-            return null;
-        }
-
-        Company.Builder companyBuilder = new Company.Builder();
-        companyBuilder
-                .setName(jobCenterAddress.getName())
-                .setStreet(jobCenterAddress.getStreet())
-                .setHouseNumber(jobCenterAddress.getHouseNumber())
-                .setPostalCode(jobCenterAddress.getZipCode())
-                .setCity(jobCenterAddress.getCity())
-                .setCountryIsoCode(COUNTRY_ISO_CODE_SWITZERLAND)
-                .setSurrogate(true);
-
-        if (jobCenter.isShowContactDetailsToPublic()) {
-            companyBuilder
-                    .setPhone(jobCenter.getPhone())
-                    .setEmail(jobCenter.getEmail());
-        }
-
-        return companyBuilder.build();
+        return new Company.Builder(jobCenter)
+                .build();
     }
 
     private Company toCompany(CompanyDto companyDto) {

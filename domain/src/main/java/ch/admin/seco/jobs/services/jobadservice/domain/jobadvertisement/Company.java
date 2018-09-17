@@ -8,6 +8,8 @@ import javax.persistence.Embeddable;
 
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddress;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -116,8 +118,8 @@ public class Company implements ValueObject<Company> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         Company company = (Company) o;
         return Objects.equals(name, company.name) &&
                 Objects.equals(street, company.street) &&
@@ -179,6 +181,22 @@ public class Company implements ValueObject<Company> {
         }
 
         public Builder() {
+        }
+
+        public Builder(JobCenter jobCenter) {
+            JobCenterAddress jobCenterAddress = jobCenter.getAddress();
+            this.setName(jobCenterAddress.getName())
+                    .setStreet(jobCenterAddress.getStreet())
+                    .setHouseNumber(jobCenterAddress.getHouseNumber())
+                    .setPostalCode(jobCenterAddress.getZipCode())
+                    .setCity(jobCenterAddress.getCity())
+                    .setCountryIsoCode("CH")
+                    .setSurrogate(true);
+
+            if (jobCenter.isShowContactDetailsToPublic()) {
+                this.setPhone(jobCenter.getPhone())
+                        .setEmail(jobCenter.getEmail());
+            }
         }
 
         public Company build() {
