@@ -1,30 +1,34 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
-import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
-import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
-import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
+import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService.EXTERN_JOB_AD_REACTIVATION_DAY_NUM;
+import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_02;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_03;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_04;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_05;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createContact;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createJobContent;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createOwner;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.prepareJobContentBuilder;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
-import org.assertj.core.util.Sets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import org.assertj.core.api.iterable.Extractor;
+import org.assertj.core.data.Index;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,19 +36,42 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Collections;
-
-import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService.COUNTRY_ISO_CODE_SWITZERLAND;
-import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService.EXTERN_JOB_AD_REACTIVATION_DAY_NUM;
-import static ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine.now;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
+import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
+import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.CancellationCode;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddress;
+import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -52,6 +79,7 @@ import static org.mockito.Mockito.when;
 public class JobAdvertisementApplicationServiceTest {
 
     private static final String TEST_STELLEN_NUMMER_EGOV = "1000000";
+
     private static final String STELLENNUMMER_AVAM = "avam";
 
     @MockBean
@@ -313,6 +341,41 @@ public class JobAdvertisementApplicationServiceTest {
         assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_04);
     }
 
+    @Test
+    public void updateJobCenter() {
+        final String jobCenterCode = "JOB_CENTER_CODE_AAAA";
+        for (int i = 0; i < 100; i++) {
+            JobAdvertisement jobAdvertisement = createJobWithAnonymCompanyAndJobCenterCodeAndDisplayCompany(new JobAdvertisementId("Job-Add-Test" + i), JobAdvertisementStatus.CREATED, jobCenterCode);
+            jobAdvertisementRepository.saveAndFlush(jobAdvertisement);
+        }
+
+        List<JobCenter> jobCenters = new ArrayList<>();
+        JobCenter testRav = new JobCenter()
+                .setId("1")
+                .setCode(jobCenterCode)
+                .setShowContactDetailsToPublic(true)
+                .setAddress(new JobCenterAddress()
+                        .setName("TEST RAV")
+                        .setStreet("Test-Street")
+                        .setCity("Test-City")
+                );
+        jobCenters.add(testRav);
+
+        when(this.jobCenterService.findAllJobCenters()).thenReturn(jobCenters);
+
+        // when
+        sut.updateJobCenters();
+
+        //then
+        List<JobAdvertisement> jobAdvertisements = this.jobAdvertisementRepository.findAll();
+        Company updatedDisplayCompany = new Company.Builder(testRav).build();
+        assertThat(jobAdvertisements)
+                .extracting((Extractor<JobAdvertisement, Company>) input -> input.getJobContent().getDisplayCompany())
+                .contains(updatedDisplayCompany, Index.atIndex(0))
+                .contains(updatedDisplayCompany, Index.atIndex(99));
+
+    }
+
     private JobAdvertisement createJobWithStatusAndPublicationStartDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate publicationStartDate) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
@@ -351,6 +414,29 @@ public class JobAdvertisementApplicationServiceTest {
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStellennummerAvam(STELLENNUMMER_AVAM)
                 .setStatus(status)
+                .build();
+    }
+
+    private JobAdvertisement createJobWithAnonymCompanyAndJobCenterCodeAndDisplayCompany(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, String jobCenterCode) {
+        return new JobAdvertisement.Builder()
+                .setId(jobAdvertisementId)
+                .setOwner(createOwner(jobAdvertisementId))
+                .setContact(createContact(jobAdvertisementId))
+                .setJobContent(prepareJobContentBuilder(jobAdvertisementId)
+                        .setJobDescriptions(Collections.singletonList(new JobDescription.Builder()
+                                .setTitle("Test TITLE")
+                                .setDescription("TEST JOB DESC")
+                                .setLanguage(Locale.GERMAN)
+                                .build()))
+                        .setLanguageSkills(Collections.singletonList(new LanguageSkill.Builder().setLanguageIsoCode("de").build()))
+                        .setDisplayCompany(new Company.Builder<>().setName("Test-Company").setCity("Test-Cizy").setPostalCode("1234").build())
+                        .build())
+                .setPublication(new Publication.Builder().setCompanyAnonymous(true).build())
+                .setSourceSystem(SourceSystem.JOBROOM)
+                .setStellennummerEgov(jobAdvertisementId.getValue())
+                .setStellennummerAvam(STELLENNUMMER_AVAM)
+                .setStatus(status)
+                .setJobCenterCode(jobCenterCode)
                 .build();
     }
 

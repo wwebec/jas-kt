@@ -44,10 +44,14 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     }
 
     public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId) {
-        return createJobContent(jobAdvertisementId, createJobDescription(jobAdvertisementId), createOccupation(), createLocation());
+        return prepareJobContentBuilder(jobAdvertisementId).build();
     }
 
-    public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId, JobDescription jobDescription, Occupation occupation, Location location) {
+    public static JobContent.Builder prepareJobContentBuilder(JobAdvertisementId jobAdvertisementId) {
+        return prepareJobContentBuilder(jobAdvertisementId, createJobDescription(jobAdvertisementId), createOccupation(), createLocation());
+    }
+
+    public static JobContent.Builder prepareJobContentBuilder(JobAdvertisementId jobAdvertisementId, JobDescription jobDescription, Occupation occupation, Location location) {
         return new JobContent.Builder()
                 .setJobDescriptions(Collections.singletonList(jobDescription))
                 .setDisplayCompany(createCompany(jobAdvertisementId))
@@ -57,13 +61,13 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
                 .setPublicContact(createPublicContact(jobAdvertisementId))
                 .setApplyChannel(createApplyChannel())
                 .setLocation(location)
-                .setOccupations(Collections.singletonList(occupation))
-                .build();
+                .setOccupations(Collections.singletonList(occupation));
+
     }
 
     public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId,
-                                              String title, String description,
-                                              Occupation occupation, Location location, Employment employment) {
+            String title, String description,
+            Occupation occupation, Location location, Employment employment) {
         JobDescription jobDescription = createJobDescription(title, description);
         PublicContact publicContact = createPublicContact(jobAdvertisementId);
         return new JobContent.Builder()
