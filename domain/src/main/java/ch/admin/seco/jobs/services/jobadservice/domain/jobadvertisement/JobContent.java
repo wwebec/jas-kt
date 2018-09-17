@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +33,7 @@ public class JobContent implements ValueObject<JobContent> {
     @CollectionTable(name = "JOB_ADVERTISEMENT_DESCRIPTION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
     @NotEmpty
-    private List<JobDescription> jobDescriptions;
+    private List<JobDescription> jobDescriptions = new ArrayList<>();
 
     @Embedded
     @AttributeOverrides({
@@ -120,12 +121,12 @@ public class JobContent implements ValueObject<JobContent> {
     //todo: We already have jobAdvertisements in the DB with empty occupation list.
     // Because of this currently we can not allow this constraint, otherwise we can not modify the entity.
     //@NotEmpty
-    private List<Occupation> occupations;
+    private List<Occupation> occupations = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "JOB_ADVERTISEMENT_LANGUAGE_SKILL", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
     @Valid
-    private List<LanguageSkill> languageSkills;
+    private List<LanguageSkill> languageSkills = new ArrayList<>();
 
     @Embedded
     @AttributeOverrides({
@@ -161,13 +162,13 @@ public class JobContent implements ValueObject<JobContent> {
         this.displayCompany = Condition.notNull(builder.displayCompany, "DisplayCompany can't be null");
         this.company = Condition.notNull(builder.company, "Company can't be null");
         this.employer = builder.employer;
-        this.jobDescriptions = Condition.notEmpty(builder.jobDescriptions, "Job descriptions can't be null or empty");
-        this.languageSkills = builder.languageSkills;
+        this.jobDescriptions.addAll(Condition.notEmpty(builder.jobDescriptions, "Job descriptions can't be null or empty"));
+        this.languageSkills.addAll(builder.languageSkills);
         this.employment = Condition.notNull(builder.employment, "Employment can't be null");
         this.publicContact = builder.publicContact;
         this.applyChannel = builder.applyChannel;
         this.location = builder.location;
-        this.occupations = Condition.notEmpty(builder.occupations, "Occupations can't be null or empty");
+        this.occupations.addAll(Condition.notEmpty(builder.occupations, "Occupations can't be null or empty"));
     }
 
     public String getExternalUrl() {
@@ -191,7 +192,7 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setNumberOfJobs(String numberOfJobs) {
-            this.numberOfJobs = numberOfJobs;
+        this.numberOfJobs = numberOfJobs;
     }
 
     public List<JobDescription> getJobDescriptions() {
@@ -199,7 +200,7 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setJobDescriptions(List<JobDescription> jobDescriptions) {
-        this.jobDescriptions = jobDescriptions;
+        this.jobDescriptions.addAll(jobDescriptions);
     }
 
     public Company getDisplayCompany() {
@@ -247,7 +248,7 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setOccupations(List<Occupation> occupations) {
-        this.occupations = occupations;
+        this.occupations.addAll(occupations);
     }
 
     public List<LanguageSkill> getLanguageSkills() {
@@ -255,7 +256,7 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setLanguageSkills(List<LanguageSkill> languageSkills) {
-        this.languageSkills = languageSkills;
+        this.languageSkills.addAll(languageSkills);
     }
 
     public ApplyChannel getApplyChannel() {
@@ -276,8 +277,8 @@ public class JobContent implements ValueObject<JobContent> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         JobContent that = (JobContent) o;
         return Objects.equals(externalUrl, that.externalUrl) &&
                 Objects.equals(x28OccupationCodes, that.x28OccupationCodes) &&
