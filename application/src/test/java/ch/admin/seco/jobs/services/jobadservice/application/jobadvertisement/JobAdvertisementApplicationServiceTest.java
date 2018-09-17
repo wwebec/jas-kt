@@ -128,6 +128,7 @@ public class JobAdvertisementApplicationServiceTest {
 
     @After
     public void tearDown() {
+        jobAdvertisementRepository.deleteAll();
         domainEventMockUtils.clearEvents();
     }
 
