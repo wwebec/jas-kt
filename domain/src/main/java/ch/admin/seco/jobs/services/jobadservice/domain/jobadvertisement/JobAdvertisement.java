@@ -416,7 +416,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
         if (publication.isCompanyAnonymous()) {
             Company updatedDisplayCompany = new Company.Builder<>(jobCenter).build();
-            if (!jobContent.getDisplayCompany().equals(updatedDisplayCompany)) {
+            if (!Objects.equals(jobContent.getDisplayCompany(), updatedDisplayCompany)) {
                 jobContent.setDisplayCompany(updatedDisplayCompany);
                 ChangeLog changeLog = new ChangeLog();
                 changeLog.add("displayCompany", jobContent.getDisplayCompany(), updatedDisplayCompany);
