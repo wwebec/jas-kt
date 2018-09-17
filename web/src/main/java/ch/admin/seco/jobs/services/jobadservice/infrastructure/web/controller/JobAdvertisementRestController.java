@@ -117,4 +117,10 @@ public class JobAdvertisementRestController {
         this.jobAdvertisementApplicationService.updateJobCenters();
     }
 
+    @GetMapping("/_actions/update-job-centers/{jobCenterCode}")
+    @PreAuthorize("hasRole(T(ch.admin.seco.jobs.services.jobadservice.application.security.Role).SYSADMIN.value)")
+    public void updateJobCenter(@PathVariable String jobCenterCode) {
+        this.jobAdvertisementApplicationService.updateJobCenter(jobCenterCode);
+    }
+
 }

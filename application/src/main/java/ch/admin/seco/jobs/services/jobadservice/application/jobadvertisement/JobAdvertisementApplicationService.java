@@ -22,7 +22,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
@@ -75,7 +79,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.PublicCo
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddress;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.Profession;
 import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCodeType;
 
@@ -103,6 +106,8 @@ public class JobAdvertisementApplicationService {
 
     private final JobCenterService jobCenterService;
 
+    private final TransactionTemplate transactionTemplate;
+
     @Autowired
     public JobAdvertisementApplicationService(CurrentUserContext currentUserContext,
             JobAdvertisementRepository jobAdvertisementRepository,
@@ -110,7 +115,7 @@ public class JobAdvertisementApplicationService {
             ReportingObligationService reportingObligationService,
             LocationService locationService,
             ProfessionService professionService,
-            JobCenterService jobCenterService) {
+            JobCenterService jobCenterService, TransactionTemplate transactionTemplate) {
         this.currentUserContext = currentUserContext;
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
@@ -118,6 +123,7 @@ public class JobAdvertisementApplicationService {
         this.locationService = locationService;
         this.professionService = professionService;
         this.jobCenterService = jobCenterService;
+        this.transactionTemplate = transactionTemplate;
     }
 
     public JobAdvertisementId createFromWebForm(CreateJobAdvertisementDto createJobAdvertisementDto) {
@@ -366,9 +372,26 @@ public class JobAdvertisementApplicationService {
                 .forEach(this::updateGivenJobCenter);
     }
 
+    public void updateJobCenter(String code) {
+        JobCenter jobCenter = jobCenterService.findJobCenterByCode(code);
+        this.updateGivenJobCenter(jobCenter);
+    }
+
     private void updateGivenJobCenter(JobCenter jobCenter) {
-        jobAdvertisementRepository.findByJobCenterCode(jobCenter.getCode())
-                .forEach(jobAdvertisement -> jobAdvertisement.updateJobCenter(jobCenter));
+        LOG.info("Updating Job Advertisements for Job-Center: {}", jobCenter.getCode());
+        try {
+            this.transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+            this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    jobAdvertisementRepository.findByJobCenterCode(jobCenter.getCode())
+                            .peek(jobAdvertisement -> LOG.debug("Update Job-Center for Job-Advertisement: {}", jobAdvertisement.getId().getValue()))
+                            .forEach(jobAdvertisement -> jobAdvertisement.updateJobCenter(jobCenter));
+                }
+            });
+        } catch (Exception e) {
+            LOG.warn("Could not update Job Advertisements for Job-Center: " + jobCenter.getCode(), e);
+        }
     }
 
     private JobAdvertisementUpdater prepareUpdaterFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisement) {
