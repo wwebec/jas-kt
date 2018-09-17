@@ -1,0 +1,35 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <property name="textType" value="text" dbms="postgresql"/>
+
+    <property name="textType" value="varchar(4000)" dbms="h2"/>
+
+    <changeSet author="mabi" id="20180907080000_added_entity_DLQitem-1">
+        <createTable tableName="DLQ_ITEM">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ERROR_TIME" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_AT" type="timestamp">
+                <constraints nullable="false"/>
+            </column>
+            <column name="HEADERS" type="${textType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PAYLOAD" type="${textType}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DLQ_NAME" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AGGREGATE_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>

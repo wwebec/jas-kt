@@ -1,12 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import ch.admin.seco.jobs.services.jobadservice.core.domain.TestDataProvider;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+
+import ch.admin.seco.jobs.services.jobadservice.core.domain.TestDataProvider;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 
 public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdvertisement> {
 
@@ -33,19 +33,13 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     }
 
     private JobAdvertisement createJob01() {
-        List<JobDescription> jobDescriptions = Collections.singletonList(new JobDescription.Builder()
-                .setLanguage(Locale.GERMAN)
-                .setTitle("Job number 1")
-                .setDescription("This is the job number 1 with the minimum of data")
-                .build());
-        JobContent jobContent = new JobContent.Builder()
-                .setJobDescriptions(jobDescriptions)
-                .build();
         return new JobAdvertisement.Builder()
                 .setId(JOB_ADVERTISEMENT_ID_01)
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.CREATED)
-                .setJobContent(jobContent)
+                .setJobContent(createJobContent(JOB_ADVERTISEMENT_ID_01))
+                .setOwner(createOwner(JOB_ADVERTISEMENT_ID_01))
+                .setPublication(createPublication())
                 .build();
     }
 

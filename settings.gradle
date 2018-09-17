@@ -7,6 +7,7 @@ include 'infrastructure-database'
 include 'infrastructure-elasticsearch'
 include 'infrastructure-service-reference'
 include 'infrastructure-messagebroker'
+include 'infrastructure-messagebroker-dlq'
 include 'infrastructure-messagebroker-shared'
 include 'web'
 

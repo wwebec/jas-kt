@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="shortcut icon" th:href="@{|${baseUrl}/favicon.ico|}"/>
+</head>
+<body>
+
+<p>
+    An Error occured during processing of the message having id:
+    <span th:text="${dlqItemId}">1234567</span>
+</p>
+
+<p>
+    Concerns:
+    <span th:text="${aggregateType}">AGGREGATE-TYPE</span>
+    <span th:text="${aggregateId}">AggregateId</span>
+</p>
+
+<p>
+    Exception Message:
+    <span th:text="${exceptionMessage}">Sample Message</span>
+</p>
+
+<p>Exception Stacktract:</p>
+<pre th:text="${exceptionStacktrace}">Sample Stacktrace</pre>
+
+</body>
+</html>

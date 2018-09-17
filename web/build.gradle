@@ -9,6 +9,7 @@ dependencies {
     compile project(":infrastructure-database")
     compile project(":infrastructure-elasticsearch")
     compile project(":infrastructure-messagebroker")
+    compile project(":infrastructure-messagebroker-dlq")
     compile project(":infrastructure-service-reference")
     compile project(":infrastructure-elasticsearch")
 

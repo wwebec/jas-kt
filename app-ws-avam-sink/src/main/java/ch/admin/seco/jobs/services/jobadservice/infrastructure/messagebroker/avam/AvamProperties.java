@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +18,12 @@ public class AvamProperties {
 
     @NotBlank
     private String password;
+
+    @NotNull
+    private Long retryBackOffPeriod = 1000L;
+
+    @NotNull
+    private Integer simpleRetryMaxAttempts = 3;
 
     public String getEndPointUrl() {
         return endPointUrl;
@@ -40,5 +47,21 @@ public class AvamProperties {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Long getRetryBackOffPeriod() {
+        return retryBackOffPeriod;
+    }
+
+    public void setRetryBackOffPeriod(Long retryBackOffPeriod) {
+        this.retryBackOffPeriod = retryBackOffPeriod;
+    }
+
+    public Integer getSimpleRetryMaxAttempts() {
+        return simpleRetryMaxAttempts;
+    }
+
+    public void setSimpleRetryMaxAttempts(Integer simpleRetryMaxAttempts) {
+        this.simpleRetryMaxAttempts = simpleRetryMaxAttempts;
     }
 }
