@@ -119,9 +119,8 @@ This date is only set after approval by the PES (RAV), in case that the ad falls
         "euresDisplay": true,
         "euresAnonymous": true,
         "publicDisplay": true,
-        "publicAnonymous": true,
         "restrictedDisplay": true,
-        "restrictedAnonymous": true
+        "companyAnonymous": true
     }
 }
 ----

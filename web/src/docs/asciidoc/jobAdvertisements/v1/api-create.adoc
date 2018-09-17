@@ -380,9 +380,8 @@ based on the occupation code provided.
         "euresDisplay": true,
         "euresAnonymous": true,
         "publicDisplay": true,
-        "publicAnonymous": true,
         "restrictedDisplay": true,
-        "restrictedAnonymous": true
+        "companyAnonymous": true
     }
 }
 ----
