@@ -9,12 +9,12 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebro
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.MessageBrokerChannels.REJECT_CONDITION;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.EVENT;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.PARTITION_KEY;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.RELEVANT_ID;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.SOURCE_SYSTEM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.TARGET_SYSTEM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.AVAM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageSystem.JOB_AD_SERVICE;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +33,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 
 public class AvamService {
 
@@ -52,6 +53,7 @@ public class AvamService {
         jobAdEventChannel.send(MessageBuilder
                 .withPayload(jobAdvertisement)
                 .setHeader(PARTITION_KEY, jobAdvertisement.getId())
+                .setHeader(RELEVANT_ID, jobAdvertisement.getId())
                 .setHeader(EVENT, JOB_ADVERTISEMENT_INSPECTING.getDomainEventType().getValue())
                 .setHeader(SOURCE_SYSTEM, JOB_AD_SERVICE.name())
                 .setHeader(TARGET_SYSTEM, AVAM.name())
@@ -63,6 +65,7 @@ public class AvamService {
         jobAdEventChannel.send(MessageBuilder
                 .withPayload(jobAdvertisement)
                 .setHeader(PARTITION_KEY, jobAdvertisement.getId())
+                .setHeader(RELEVANT_ID, jobAdvertisement.getId())
                 .setHeader(EVENT, JOB_ADVERTISEMENT_CANCELLED.getDomainEventType().getValue())
                 .setHeader(SOURCE_SYSTEM, JOB_AD_SERVICE.name())
                 .setHeader(TARGET_SYSTEM, AVAM.name())

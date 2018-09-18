@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.dlq;
 
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.dlq.DLQChannels.JOB_AD_ACTION_DLQ_CHANNEL;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.dlq.DLQChannels.JOB_AD_EVENT_DLQ_CHANNEL;
 
 import java.time.Instant;
@@ -10,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,10 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 
 @Transactional
 public class DLQItemService {
+
+    private static final String RELEVANT_ID_KEY = "relevantId";
 
     static final String KAFKA_RECEIVED_TIMESTAMP = "kafka_receivedTimestamp";
 
@@ -56,14 +59,13 @@ public class DLQItemService {
     }
 
     @StreamListener(target = JOB_AD_EVENT_DLQ_CHANNEL)
-    public void handleDLQMessage(Message<JobAdvertisement> message) {
-        try {
-            DLQItem dlqItem = createDLQItem(message);
-            this.dlqItemRepository.save(dlqItem);
-            mailSenderService.send(createMailSenderData(message, dlqItem));
-        } catch (Exception e) {
-            throw new DLQItemProcessingException(message, e);
-        }
+    public void handleEventDLQMessage(Message<?> message) {
+        doHandle(message, this::extractPartitionKey);
+    }
+
+    @StreamListener(target = JOB_AD_ACTION_DLQ_CHANNEL)
+    public void handleActionDLQMessage(Message<?> message) {
+        doHandle(message, this::extractPartitionKey);
     }
 
     public long count() {
@@ -82,14 +84,24 @@ public class DLQItemService {
         this.dlqItemRepository.deleteById(id);
     }
 
-    private MailSenderData createMailSenderData(Message<JobAdvertisement> message, DLQItem dlqItem) {
-        final String aggregateTypeName = message.getPayload().getClass().getSimpleName();
+    private <T> void doHandle(Message<T> message, Function<Message<T>, String> idMapper) {
+        try {
+            DLQItem dlqItem = createDlqItem(message, idMapper);
+            this.dlqItemRepository.save(dlqItem);
+            this.mailSenderService.send(createMailSenderData(message, dlqItem));
+        } catch (Exception e) {
+            throw new DLQItemProcessingException(message, e);
+        }
+    }
+
+    private MailSenderData createMailSenderData(Message<?> message, DLQItem dlqItem) {
         final Map<String, Object> mailVariables = new HashMap<>();
         mailVariables.put("dlqItemId", dlqItem.getId());
+        mailVariables.put("originalTopic", dlqItem.getOriginalTopic());
         mailVariables.put("exceptionMessage", extractString(message.getHeaders().get(X_EXCEPTION_MESSAGE)));
         mailVariables.put("exceptionStacktrace", extractString(message.getHeaders().get(X_EXCEPTION_STACKTRACE)));
-        mailVariables.put("aggregateType", aggregateTypeName);
-        mailVariables.put("aggregateId", message.getPayload().getId().getValue());
+        mailVariables.put("payloadType", message.getPayload().getClass().getSimpleName());
+        mailVariables.put("relevantId", dlqItem.getRelevantId());
         return new MailSenderData.Builder()
                 .setTo(dlqItemProperties.getReceivers().toArray(new String[0]))
                 .setSubject("mail.dlq.notification.subject")
@@ -99,13 +111,24 @@ public class DLQItemService {
                 .build();
     }
 
-    private DLQItem createDLQItem(Message<JobAdvertisement> message) throws JsonProcessingException {
+    private <T> DLQItem createDlqItem(Message<T> message, Function<Message<T>, String> idMapper) throws JsonProcessingException {
         final String header = this.objectMapper.writeValueAsString(extractHeaderAsString(message.getHeaders()));
         final LocalDateTime errorTime = extractLocalDateTime(message.getHeaders().get(KAFKA_RECEIVED_TIMESTAMP));
-        final String payload = this.objectMapper.writeValueAsString(message.getPayload());
-        final DLQItem dlqItem = new DLQItem(errorTime, header, payload, extractString(message.getHeaders().get(X_ORIGINAL_TOPIC)), message.getPayload().getId().getValue());
+        final String payload = extractString(message.getPayload());
+        final String relevantId = idMapper.apply(message);
+        final DLQItem dlqItem = new DLQItem(
+                errorTime,
+                header,
+                payload,
+                extractString(message.getHeaders().get(X_ORIGINAL_TOPIC)),
+                relevantId
+        );
         LOG.debug("Error message received: [timestamp: {}, header:{}, payload:{}]", errorTime, header, payload);
         return dlqItem;
+    }
+
+    private String extractPartitionKey(Message<?> message) {
+        return extractString(message.getHeaders().get(RELEVANT_ID_KEY));
     }
 
     private Map<String, String> extractHeaderAsString(MessageHeaders headers) {
