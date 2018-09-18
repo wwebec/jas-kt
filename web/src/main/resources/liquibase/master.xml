@@ -22,4 +22,5 @@
     <include file="classpath:/liquibase/changelog/20180907080000_added_entity_DLQitem.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180918150000_revert_unique_index.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180918160000_changed_entity_DLQitem.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20180918220000_update_DLQitem_relevant_id.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
