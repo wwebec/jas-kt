@@ -58,7 +58,7 @@ public class DLQItemServiceTest {
                 .build();
 
         // when
-        dlqItemService.handleDLQMessage(message);
+        dlqItemService.handleActionDLQMessage(message);
 
         // then
         ArgumentCaptor<MailSenderData> mailSenderDataArgumentCaptor = ArgumentCaptor.forClass(MailSenderData.class);
