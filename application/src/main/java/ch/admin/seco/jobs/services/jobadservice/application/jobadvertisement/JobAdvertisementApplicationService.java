@@ -272,11 +272,11 @@ public class JobAdvertisementApplicationService {
     }
 
     public JobAdvertisementId updateFromX28(UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto) {
-        LOG.debug("Update StellennummerEgov '{}' from X28", updateJobAdvertisementFromX28Dto.getStellennummerEgov());
+        LOG.debug("Update JobAdvertisement '{}' from X28", updateJobAdvertisementFromX28Dto.getJobAdvertisementId());
 
-        final String stellennummerEgov = updateJobAdvertisementFromX28Dto.getStellennummerEgov();
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov)
-                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. stellennummerEgov: " + stellennummerEgov));
+        JobAdvertisementId jobAdvertisementId = new JobAdvertisementId(updateJobAdvertisementFromX28Dto.getJobAdvertisementId());
+        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.findById(jobAdvertisementId)
+                .orElseThrow(() -> new EntityNotFoundException("JobAdvertisement not found. JobAdvertisementId: " + jobAdvertisementId.getValue()));
 
         JobAdvertisementUpdater updater = new JobAdvertisementUpdater.Builder(currentUserContext.getAuditUser())
                 .setFingerprint(updateJobAdvertisementFromX28Dto.getFingerprint())

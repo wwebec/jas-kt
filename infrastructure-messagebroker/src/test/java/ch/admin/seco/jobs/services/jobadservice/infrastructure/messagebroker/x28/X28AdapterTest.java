@@ -1,11 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.x28;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEvent;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,26 +16,26 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.Optional;
+
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class X28AdapterTest {
-    private static final String FINGERPRINT_1 = "fingerprint1";
-    private static final String FINGERPRINT_2 = "fingerprint2";
-    private static final String FINGERPRINT_3 = "fingerprint3";
 
     @Autowired
     private X28MessageLogRepository x28MessageLogRepository;
 
-    @Autowired
+    @MockBean
     private JobAdvertisementRepository jobAdvertisementRepository;
 
     @Autowired
     private TransactionTemplate transactionTemplate;
-
-    private DomainEventMockUtils domainEventMockUtils;
 
     @MockBean
     private JobAdvertisementApplicationService jobAdvertisementApplicationService;
@@ -44,41 +45,43 @@ public class X28AdapterTest {
     @Before
     public void setUp() {
         this.sut = new X28Adapter(jobAdvertisementApplicationService, jobAdvertisementRepository, transactionTemplate, x28MessageLogRepository);
-        domainEventMockUtils = new DomainEventMockUtils();
     }
 
     @Test
-    public void scheduledArchiveExternalJobAds() {
-        // given
-        jobAdvertisementRepository.save(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_01, FINGERPRINT_1, JobAdvertisementStatus.CREATED));
-        jobAdvertisementRepository.save(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_02, FINGERPRINT_2, JobAdvertisementStatus.PUBLISHED_PUBLIC));
-        jobAdvertisementRepository.save(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_03, FINGERPRINT_3, JobAdvertisementStatus.PUBLISHED_PUBLIC));
-        x28MessageLogRepository.save(new X28MessageLog(FINGERPRINT_2, TimeMachine.now().toLocalDate().minusDays(1)));
-        x28MessageLogRepository.save(new X28MessageLog(FINGERPRINT_3, TimeMachine.now().toLocalDate()));
+    public void shouldCreateFromX28() {
+        when(jobAdvertisementRepository.findByStellennummerEgov(any())).thenReturn(Optional.empty());
+        when(jobAdvertisementRepository.findByStellennummerAvam(any())).thenReturn(Optional.empty());
+        CreateJobAdvertisementFromX28Dto x28Dto = createJobAdvertisementFromX28Dto();
 
-        // when
-        this.sut.scheduledArchiveExternalJobAds();
+        sut.handleCreateFromX28Action(x28Dto);
 
-        // then
-        DomainEvent domainEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_EXPIRED.getDomainEventType());
-        assertThat(domainEvent.getAggregateId()).isEqualTo(JOB_ADVERTISEMENT_ID_02);
+        verify(jobAdvertisementApplicationService, times(1)).createFromX28(any());
+        verify(jobAdvertisementApplicationService, never()).updateFromX28(any());
     }
 
     @Test
-    public void shouldNotArchiveExternalJobAdsIfNoMessageReceivedOnTheSameDay() {
-        // given
-        jobAdvertisementRepository.save(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_01, FINGERPRINT_1, JobAdvertisementStatus.CREATED));
-        jobAdvertisementRepository.save(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_02, FINGERPRINT_2, JobAdvertisementStatus.PUBLISHED_PUBLIC));
-        jobAdvertisementRepository.save(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_03, FINGERPRINT_3, JobAdvertisementStatus.PUBLISHED_PUBLIC));
-        x28MessageLogRepository.save(new X28MessageLog(FINGERPRINT_2, TimeMachine.now().toLocalDate().minusDays(1)));
+    public void shouldUpdatefromEgov() {
+        when(jobAdvertisementRepository.findByStellennummerEgov(any())).thenReturn(Optional.of(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_01, "fingerprint", JobAdvertisementStatus.PUBLISHED_PUBLIC)));
+        when(jobAdvertisementRepository.findByStellennummerAvam(any())).thenReturn(Optional.empty());
+        CreateJobAdvertisementFromX28Dto x28Dto = createJobAdvertisementFromX28Dto();
 
-        // when
-        this.sut.scheduledArchiveExternalJobAds();
+        sut.handleCreateFromX28Action(x28Dto);
 
-        // then
-        domainEventMockUtils.verifyNoEventsPublished();
+        verify(jobAdvertisementApplicationService, never()).createFromX28(any());
+        verify(jobAdvertisementApplicationService, times(1)).updateFromX28(any());
     }
 
+    @Test
+    public void shouldUpdatefromAvam() {
+        when(jobAdvertisementRepository.findByStellennummerEgov(any())).thenReturn(Optional.empty());
+        when(jobAdvertisementRepository.findByStellennummerAvam(any())).thenReturn(Optional.of(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_01, "fingerprint", JobAdvertisementStatus.PUBLISHED_PUBLIC)));
+        CreateJobAdvertisementFromX28Dto x28Dto = createJobAdvertisementFromX28Dto();
+
+        sut.handleCreateFromX28Action(x28Dto);
+
+        verify(jobAdvertisementApplicationService, never()).createFromX28(any());
+        verify(jobAdvertisementApplicationService, times(1)).updateFromX28(any());
+    }
 
     private JobAdvertisement createExternalJobWithStatus(JobAdvertisementId jobAdvertisementId, String fingerprint, JobAdvertisementStatus status) {
         return new JobAdvertisement.Builder()
@@ -93,5 +96,28 @@ public class X28AdapterTest {
                 .setStellennummerAvam(null)
                 .setStatus(status)
                 .build();
+    }
+
+    private CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto() {
+        return new CreateJobAdvertisementFromX28Dto(
+                "stellennummerEgov",
+                "stellennummerAvam",
+                "title",
+                "descriotion",
+                "numberOfJobs",
+                "fingerprint",
+                "externalUrl",
+                "jobCenterCode",
+                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
+                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 100, 100, null),
+                new CompanyDto("companyName", "companyStreet", "companyHouseNumber", "companyPostalCode", "companyCity", "CH", null, null, null, "companyPhone", "companyEmail", "companyWebside", false),
+                new CreateLocationDto(null, "locationCity", "locationPostalCode", "CH"),
+                Collections.singletonList(new OccupationDto("avamOccupationCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
+                "professionCodes",
+                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.INTERMEDIATE)),
+                LocalDate.of(2018, 1, 1),
+                LocalDate.of(2018, 12, 31),
+                false
+        );
     }
 }

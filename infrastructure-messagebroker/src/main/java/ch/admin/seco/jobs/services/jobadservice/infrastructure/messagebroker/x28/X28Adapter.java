@@ -6,6 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,9 +62,13 @@ public class X28Adapter {
     public void handleCreateFromX28Action(CreateJobAdvertisementFromX28Dto createFromX28) {
         try {
             logLastX28MessageDate(createFromX28.getFingerprint());
-
-            if (createFromX28.getStellennummerEgov() != null && exists(createFromX28.getStellennummerEgov())) {
-                jobAdvertisementApplicationService.updateFromX28(prepareUpdateJobAdvertisementFromX28Dto(createFromX28));
+            Optional<JobAdvertisementId> jobAdvertisementId = determineJobAdvertisementId(createFromX28);
+            if (jobAdvertisementId.isPresent()) {
+                jobAdvertisementApplicationService.updateFromX28(new UpdateJobAdvertisementFromX28Dto(
+                        jobAdvertisementId.get().getValue(),
+                        createFromX28.getFingerprint(),
+                        createFromX28.getProfessionCodes()
+                ));
             } else {
                 jobAdvertisementApplicationService.createFromX28(createFromX28);
             }
@@ -72,6 +77,29 @@ public class X28Adapter {
 
             jobAdvertisementApplicationService.republishIfArchived(e.getJobAdvertisementId());
         }
+    }
+
+    private Optional<JobAdvertisementId> determineJobAdvertisementId(CreateJobAdvertisementFromX28Dto createFromX28) {
+        if (createFromX28.getStellennummerEgov() != null) {
+            Optional<JobAdvertisementId> jobAdvertisementId = transactionTemplate.execute(status -> findByStellennummerEgov(createFromX28))
+                    .map(JobAdvertisement::getId);
+            if (jobAdvertisementId.isPresent()) {
+                return jobAdvertisementId;
+            }
+        }
+        if (createFromX28.getStellennummerAvam() != null) {
+            return transactionTemplate.execute(status -> findByStellennummerAvam(createFromX28)
+                    .map(JobAdvertisement::getId));
+        }
+        return Optional.empty();
+    }
+
+    private Optional<JobAdvertisement> findByStellennummerEgov(CreateJobAdvertisementFromX28Dto createFromX28) {
+        return jobAdvertisementRepository.findByStellennummerEgov(createFromX28.getStellennummerEgov());
+    }
+
+    private Optional<JobAdvertisement> findByStellennummerAvam(CreateJobAdvertisementFromX28Dto createFromX28) {
+        return jobAdvertisementRepository.findByStellennummerAvam(createFromX28.getStellennummerAvam());
     }
 
     private long archiveExternalJobAds() {
@@ -90,19 +118,6 @@ public class X28Adapter {
                     return jobAdvertisement.getId();
                 })
                 .count();
-    }
-
-    private UpdateJobAdvertisementFromX28Dto prepareUpdateJobAdvertisementFromX28Dto(CreateJobAdvertisementFromX28Dto createFromX28) {
-        return new UpdateJobAdvertisementFromX28Dto(
-                createFromX28.getStellennummerEgov(),
-                createFromX28.getFingerprint(),
-                createFromX28.getProfessionCodes()
-        );
-    }
-
-    private boolean exists(String stellennummerEgov) {
-        Optional<JobAdvertisement> result = transactionTemplate.execute(status -> jobAdvertisementRepository.findByStellennummerEgov(stellennummerEgov));
-        return result.isPresent();
     }
 
     private void logLastX28MessageDate(String fingerprint) {

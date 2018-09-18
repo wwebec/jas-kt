@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 public class UpdateJobAdvertisementFromX28Dto {
 
     @NotBlank
-    private String stellennummerEgov;
+    private String jobAdvertisementId;
 
     @NotBlank
     private String fingerprint;
@@ -16,14 +16,14 @@ public class UpdateJobAdvertisementFromX28Dto {
         // For reflection libs
     }
 
-    public UpdateJobAdvertisementFromX28Dto(@NotBlank String stellennummerEgov, @NotBlank String fingerprint, @NotBlank String x28OccupationCodes) {
-        this.stellennummerEgov = stellennummerEgov;
+    public UpdateJobAdvertisementFromX28Dto(String jobAdvertisementId, String fingerprint, String x28OccupationCodes) {
+        this.jobAdvertisementId = jobAdvertisementId;
         this.fingerprint = fingerprint;
         this.x28OccupationCodes = x28OccupationCodes;
     }
 
-    public String getStellennummerEgov() {
-        return stellennummerEgov;
+    public String getJobAdvertisementId() {
+        return jobAdvertisementId;
     }
 
     public String getFingerprint() {

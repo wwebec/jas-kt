@@ -103,8 +103,6 @@ public class X28JobAdImportTaskTest {
                 updateJobAdvertisementFromX28DtoJacksonTester.parse(message2.getPayload()).getObject();
         assertThat(updateJobAdvertisementFromX28Dto.getFingerprint())
                 .isEqualTo("531718bd5fb01f9e2872a13a58bc5f8b7b6f97e75123b62405db3ae011446fa10c5998e754d769f2");
-        assertThat(updateJobAdvertisementFromX28Dto.getStellennummerEgov())
-                .isEqualTo("230177997");
 
 //        does not work on crapy Windows
 //        assertThat(zipFile).doesNotExist();
