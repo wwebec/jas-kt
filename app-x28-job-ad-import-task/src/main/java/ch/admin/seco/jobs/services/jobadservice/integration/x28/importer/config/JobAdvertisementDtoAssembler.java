@@ -95,7 +95,7 @@ class JobAdvertisementDtoAssembler {
                 writtenLevel = LANGUAGE_LEVEL.getRight(schriftlichCode);
 
             } else if (LANGUAGES.getLeft(spracheCode) != null) {
-                languageIsoCode = LANGUAGES.getLeft(spracheCode);
+                languageIsoCode = spracheCode;
                 spokenLevel = EnumUtils.getEnum(LanguageLevel.class, muendlichCode);
                 writtenLevel = EnumUtils.getEnum(LanguageLevel.class, schriftlichCode);
 
