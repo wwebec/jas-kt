@@ -23,9 +23,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
@@ -86,9 +86,11 @@ import ch.admin.seco.jobs.services.jobadservice.domain.profession.ProfessionCode
 @Transactional(rollbackFor = {Exception.class})
 public class JobAdvertisementApplicationService {
 
-    public static final int PUBLICATION_MAX_DAYS = 60;
-    public static final int EXTERN_JOB_AD_REACTIVATION_DAY_NUM = 10;
-    public static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
+    private static final int PUBLICATION_MAX_DAYS = 60;
+
+    static final int EXTERN_JOB_AD_REACTIVATION_DAY_NUM = 10;
+
+    static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
 
     private static Logger LOG = LoggerFactory.getLogger(JobAdvertisementApplicationService.class);
 
@@ -381,15 +383,13 @@ public class JobAdvertisementApplicationService {
         LOG.info("Updating Job Advertisements for Job-Center: {}", jobCenter.getCode());
         try {
             this.transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-            this.transactionTemplate.execute(new TransactionCallbackWithoutResult() {
-                @Override
-                protected void doInTransactionWithoutResult(TransactionStatus status) {
-                    jobAdvertisementRepository.findByJobCenterCode(jobCenter.getCode())
-                            .peek(jobAdvertisement -> LOG.debug("Update Job-Center for Job-Advertisement: {}", jobAdvertisement.getId().getValue()))
-                            .forEach(jobAdvertisement -> jobAdvertisement.updateJobCenter(jobCenter));
-                }
+            this.transactionTemplate.execute((TransactionCallback<Void>) status -> {
+                jobAdvertisementRepository.findByJobCenterCode(jobCenter.getCode())
+                        .peek(jobAdvertisement -> LOG.debug("Update Job-Center for Job-Advertisement: {}", jobAdvertisement.getId().getValue()))
+                        .forEach(jobAdvertisement -> jobAdvertisement.updateJobCenter(jobCenter));
+                return null;
             });
-        } catch (Exception e) {
+        } catch (TransactionSystemException e) {
             LOG.warn("Could not update Job Advertisements for Job-Center: " + jobCenter.getCode(), e);
         }
     }

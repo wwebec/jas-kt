@@ -8,7 +8,7 @@ public class JobCenterAddress {
     private String houseNumber;
     private String zipCode;
 
-    protected JobCenterAddress() {
+    public JobCenterAddress() {
         // For reflection libs
     }
 
@@ -24,39 +24,44 @@ public class JobCenterAddress {
         return name;
     }
 
-    public void setName(String name) {
+    public JobCenterAddress setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public JobCenterAddress setCity(String city) {
         this.city = city;
+        return this;
     }
 
     public String getStreet() {
         return street;
     }
 
-    public void setStreet(String street) {
+    public JobCenterAddress setStreet(String street) {
         this.street = street;
+        return this;
     }
 
     public String getHouseNumber() {
         return houseNumber;
     }
 
-    public void setHouseNumber(String houseNumber) {
+    public JobCenterAddress setHouseNumber(String houseNumber) {
         this.houseNumber = houseNumber;
+        return this;
     }
 
     public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(String zipCode) {
+    public JobCenterAddress setZipCode(String zipCode) {
         this.zipCode = zipCode;
+        return this;
     }
 }

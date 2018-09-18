@@ -366,6 +366,21 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         DomainEventPublisher.publish(new JobAdvertisementArchivedEvent(this));
     }
 
+    public void updateJobCenter(JobCenter jobCenter) {
+        if (!Objects.equals(this.jobCenterCode, jobCenter.getCode())) {
+            throw new IllegalArgumentException("JobCenter Code " + this.jobCenterCode + " and " + jobCenter.getCode() + " can not be different");
+        }
+        if (publication.isCompanyAnonymous()) {
+            Company updatedDisplayCompany = new Company.Builder<>(jobCenter).build();
+            if (!Objects.equals(jobContent.getDisplayCompany(), updatedDisplayCompany)) {
+                jobContent.setDisplayCompany(updatedDisplayCompany);
+                ChangeLog changeLog = new ChangeLog();
+                changeLog.add("displayCompany", jobContent.getDisplayCompany(), updatedDisplayCompany);
+                DomainEventPublisher.publish(new JobAdvertisementUpdatedEvent(this, changeLog));
+            }
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -408,21 +423,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 ", contact=" + contact +
                 ", publication=" + publication +
                 '}';
-    }
-
-    public void updateJobCenter(JobCenter jobCenter) {
-        if (!Objects.equals(this.jobCenterCode, jobCenter.getCode())) {
-            throw new IllegalArgumentException("JobCenter Code " + this.jobCenterCode + " and " + jobCenter.getCode() + " can not be different");
-        }
-        if (publication.isCompanyAnonymous()) {
-            Company updatedDisplayCompany = new Company.Builder<>(jobCenter).build();
-            if (!Objects.equals(jobContent.getDisplayCompany(), updatedDisplayCompany)) {
-                jobContent.setDisplayCompany(updatedDisplayCompany);
-                ChangeLog changeLog = new ChangeLog();
-                changeLog.add("displayCompany", jobContent.getDisplayCompany(), updatedDisplayCompany);
-                DomainEventPublisher.publish(new JobAdvertisementUpdatedEvent(this, changeLog));
-            }
-        }
     }
 
     private void checkViolations() {
