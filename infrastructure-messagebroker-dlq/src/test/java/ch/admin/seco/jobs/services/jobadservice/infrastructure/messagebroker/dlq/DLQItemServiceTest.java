@@ -55,10 +55,11 @@ public class DLQItemServiceTest {
                 .setHeader(DLQItemService.KAFKA_RECEIVED_TIMESTAMP, 1536573600000L)
                 .setHeader(DLQItemService.X_EXCEPTION_STACKTRACE, "Test-Stacktrace")
                 .setHeader(DLQItemService.X_ORIGINAL_TOPIC, "Test-Original-Topic")
+                .setHeader(DLQItemService.RELEVANT_ID_KEY, testingJobAd.getId().getValue())
                 .build();
 
         // when
-        dlqItemService.handleActionDLQMessage(message);
+        dlqItemService.handleEventDLQMessage(message);
 
         // then
         ArgumentCaptor<MailSenderData> mailSenderDataArgumentCaptor = ArgumentCaptor.forClass(MailSenderData.class);
@@ -69,7 +70,7 @@ public class DLQItemServiceTest {
         assertThat(mailSenderData).isNotNull();
         assertThat(mailSenderData.getTemplateVariables()).isNotEmpty();
 
-        List<DLQItem> dlqItems = dlqItemRepository.findByAggregateId(testingJobAd.getId().getValue());
+        List<DLQItem> dlqItems = dlqItemRepository.findByRelevantId(testingJobAd.getId().getValue());
         assertThat(dlqItems).hasSize(1);
 
         DLQItem dlqItem = dlqItems.get(0);

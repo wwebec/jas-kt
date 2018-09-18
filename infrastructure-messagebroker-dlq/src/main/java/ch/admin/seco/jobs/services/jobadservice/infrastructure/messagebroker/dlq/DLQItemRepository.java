@@ -10,6 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(propagation = Propagation.REQUIRED)
 public interface DLQItemRepository extends JpaRepository<DLQItem, String> {
 
-    @Query("Select i from DLQItem i where i.aggregateId = :aggregateId")
-    List<DLQItem> findByAggregateId(String aggregateId);
+    @Query("Select i from DLQItem i where i.relevantId = :relevantId")
+    List<DLQItem> findByRelevantId(String relevantId);
 }

@@ -29,6 +29,7 @@ public class DLQItem {
 
     @JsonRawValue
     @NotBlank
+    @Column(length = 4000)
     private String headers;
 
     @JsonRawValue

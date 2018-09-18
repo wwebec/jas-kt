@@ -31,7 +31,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
 @Transactional
 public class DLQItemService {
 
-    private static final String RELEVANT_ID_KEY = "relevantId";
+    static final String RELEVANT_ID_KEY = "relevantId";
 
     static final String KAFKA_RECEIVED_TIMESTAMP = "kafka_receivedTimestamp";
 
@@ -114,7 +114,7 @@ public class DLQItemService {
     private <T> DLQItem createDlqItem(Message<T> message, Function<Message<T>, String> idMapper) throws JsonProcessingException {
         final String header = this.objectMapper.writeValueAsString(extractHeaderAsString(message.getHeaders()));
         final LocalDateTime errorTime = extractLocalDateTime(message.getHeaders().get(KAFKA_RECEIVED_TIMESTAMP));
-        final String payload = extractString(message.getPayload());
+        final String payload = extractPayload(message.getPayload());
         final String relevantId = idMapper.apply(message);
         final DLQItem dlqItem = new DLQItem(
                 errorTime,
@@ -127,6 +127,7 @@ public class DLQItemService {
         return dlqItem;
     }
 
+
     private String extractPartitionKey(Message<?> message) {
         return extractString(message.getHeaders().get(RELEVANT_ID_KEY));
     }
@@ -135,6 +136,18 @@ public class DLQItemService {
         Map<String, String> result = new HashMap<>();
         headers.forEach((key, value) -> result.put(key, extractString(value)));
         return result;
+    }
+
+    private <T> String extractPayload(T payload) {
+        if (payload instanceof byte[]) {
+            return extractString(payload);
+        } else {
+            try {
+                return objectMapper.writeValueAsString(payload);
+            } catch (JsonProcessingException e) {
+                throw new IllegalStateException("Could serialize as JSON ", e);
+            }
+        }
     }
 
     private String extractString(Object value) {
