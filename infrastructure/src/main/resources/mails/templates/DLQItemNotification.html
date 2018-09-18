@@ -7,14 +7,15 @@
 <body>
 
 <p>
-    An Error occured during processing of the message having id:
+    An Error occured during processing of the message having dlq-item id:
     <span th:text="${dlqItemId}">1234567</span>
 </p>
 
 <p>
     Concerns:
-    <span th:text="${aggregateType}">AGGREGATE-TYPE</span>
-    <span th:text="${aggregateId}">AggregateId</span>
+    <span th:text="${originalTopic}">ORIGINAL TOPIC</span>
+    <span th:text="${payloadType}">PAYLOAD-TYPE</span>
+    <span th:text="${relevantId}">RelevantId</span>
 </p>
 
 <p>
@@ -22,7 +23,7 @@
     <span th:text="${exceptionMessage}">Sample Message</span>
 </p>
 
-<p>Exception Stacktract:</p>
+<p>Exception Stacktrace:</p>
 <pre th:text="${exceptionStacktrace}">Sample Stacktrace</pre>
 
 </body>

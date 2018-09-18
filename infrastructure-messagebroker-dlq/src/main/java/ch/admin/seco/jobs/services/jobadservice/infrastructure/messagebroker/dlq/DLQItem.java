@@ -29,6 +29,7 @@ public class DLQItem {
 
     @JsonRawValue
     @NotBlank
+    @Column(length = 4000)
     private String headers;
 
     @JsonRawValue
@@ -37,18 +38,18 @@ public class DLQItem {
     private String payload;
 
     @NotBlank
-    private String dlqName;
+    private String originalTopic;
 
     @NotBlank
-    private String aggregateId;
+    private String relevantId;
 
-    DLQItem(LocalDateTime errorTime, String headers, String payload, String dlqName, String aggregateId) {
-        this.aggregateId = aggregateId;
+    DLQItem(LocalDateTime errorTime, String headers, String payload, String originalTopic, String relevantId) {
+        this.relevantId = relevantId;
         this.id = IdGenerator.timeBasedUUID().toString();
         this.errorTime = errorTime == null ? LocalDateTime.now() : errorTime;
         this.headers = headers;
         this.payload = payload;
-        this.dlqName = dlqName;
+        this.originalTopic = originalTopic;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -72,12 +73,12 @@ public class DLQItem {
         return payload;
     }
 
-    public String getDlqName() {
-        return dlqName;
+    public String getOriginalTopic() {
+        return originalTopic;
     }
 
-    public String getAggregateId() {
-        return aggregateId;
+    public String getRelevantId() {
+        return relevantId;
     }
 
     public LocalDateTime getCreatedAt() {
