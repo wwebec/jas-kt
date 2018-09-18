@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <changeSet id="20180918150000" author="pado">
+        <dropIndex tableName="mail_sending_task"
+                   indexName="idx_created"/>
+    </changeSet>
+
+    <changeSet id="20180918150001" author="pado">
+        <createIndex tableName="mail_sending_task"
+                     indexName="idx_created"
+                     unique="false">
+            <column name="CREATED" type="timestamp"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
