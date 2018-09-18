@@ -159,16 +159,16 @@ public class JobContent implements ValueObject<JobContent> {
         this.externalUrl = builder.externalUrl;
         this.x28OccupationCodes = builder.x28OccupationCodes;
         this.numberOfJobs = builder.numberOfJobs;
-        this.displayCompany = Condition.notNull(builder.displayCompany, "DisplayCompany can't be null");
-        this.company = Condition.notNull(builder.company, "Company can't be null");
+        this.displayCompany = builder.displayCompany;
+        this.setCompany(builder.company);
         this.employer = builder.employer;
-        this.jobDescriptions.addAll(Condition.notEmpty(builder.jobDescriptions, "Job descriptions can't be null or empty"));
-        this.languageSkills.addAll(builder.languageSkills);
-        this.employment = Condition.notNull(builder.employment, "Employment can't be null");
+        this.setJobDescriptions(builder.jobDescriptions);
+        this.setLanguageSkills(builder.languageSkills);
+        this.setEmployment(builder.employment);
         this.publicContact = builder.publicContact;
         this.applyChannel = builder.applyChannel;
         this.location = builder.location;
-        this.occupations.addAll(Condition.notEmpty(builder.occupations, "Occupations can't be null or empty"));
+        this.setOccupations(builder.occupations);
     }
 
     public String getExternalUrl() {
@@ -200,6 +200,8 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setJobDescriptions(List<JobDescription> jobDescriptions) {
+        Condition.notEmpty(jobDescriptions, "Job descriptions can't be null or empty");
+        this.jobDescriptions.clear();
         this.jobDescriptions.addAll(jobDescriptions);
     }
 
@@ -216,7 +218,7 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setCompany(Company company) {
-        this.company = company;
+        this.company = Condition.notNull(company, "Company can't be null");
     }
 
     public Employer getEmployer() {
@@ -232,7 +234,7 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setEmployment(Employment employment) {
-        this.employment = employment;
+        this.employment = Condition.notNull(employment, "Employment can't be null");
     }
 
     public Location getLocation() {
@@ -248,6 +250,8 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setOccupations(List<Occupation> occupations) {
+        Condition.notEmpty(occupations, "Occupations can't be null or empty");
+        this.occupations.clear();
         this.occupations.addAll(occupations);
     }
 
@@ -256,6 +260,7 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     void setLanguageSkills(List<LanguageSkill> languageSkills) {
+        this.languageSkills.clear();
         this.languageSkills.addAll(languageSkills);
     }
 
@@ -320,8 +325,8 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
 
-    public static final class Builder<T> {
-        private T parentBuilder;
+    public static final class Builder {
+
         private String externalUrl;
         private String x28OccupationCodes;
         private String numberOfJobs;
@@ -339,75 +344,67 @@ public class JobContent implements ValueObject<JobContent> {
         public Builder() {
         }
 
-        public Builder(T parentBuilder) {
-            this.parentBuilder = parentBuilder;
-        }
-
-        public T end() {
-            return Condition.notNull(parentBuilder, "No parentBuilder has been set");
-        }
-
-        public Builder<T> setExternalUrl(String externalUrl) {
+        public Builder setExternalUrl(String externalUrl) {
             this.externalUrl = externalUrl;
             return this;
         }
 
-        public Builder<T> setX28OccupationCodes(String x28OccupationCodes) {
+        public Builder setX28OccupationCodes(String x28OccupationCodes) {
             this.x28OccupationCodes = x28OccupationCodes;
             return this;
         }
 
-        public Builder<T> setNumberOfJobs(String numberOfJobs) {
+        public Builder setNumberOfJobs(String numberOfJobs) {
             this.numberOfJobs = numberOfJobs;
             return this;
         }
 
-        public Builder<T> setJobDescriptions(List<JobDescription> jobDescriptions) {
+        public Builder setJobDescriptions(List<JobDescription> jobDescriptions) {
             this.jobDescriptions = jobDescriptions;
             return this;
         }
 
-        public Builder<T> setDisplayCompany(Company displayCompany) {
+        public Builder setDisplayCompany(Company displayCompany) {
             this.displayCompany = displayCompany;
             return this;
         }
 
-        public Builder<T> setCompany(Company company) {
+        public Builder setCompany(Company company) {
             this.company = company;
             return this;
         }
 
-        public Builder<T> setEmployer(Employer employer) {
+        public Builder setEmployer(Employer employer) {
             this.employer = employer;
             return this;
         }
 
-        public Builder<T> setEmployment(Employment employment) {
+        public Builder setEmployment(Employment employment) {
             this.employment = employment;
             return this;
         }
 
-        public Builder<T> setLocation(Location location) {
+        public Builder setLocation(Location location) {
             this.location = location;
             return this;
         }
 
-        public Builder<T> setOccupations(List<Occupation> occupations) {
+        public Builder setOccupations(List<Occupation> occupations) {
             this.occupations = occupations;
             return this;
         }
 
-        public Builder<T> setLanguageSkills(List<LanguageSkill> languageSkills) {
+        public Builder setLanguageSkills(List<LanguageSkill> languageSkills) {
             this.languageSkills = languageSkills;
             return this;
         }
 
-        public Builder<T> setApplyChannel(ApplyChannel applyChannel) {
+        public Builder setApplyChannel(ApplyChannel applyChannel) {
             this.applyChannel = applyChannel;
             return this;
         }
 
-        public Builder<T> setPublicContact(PublicContact publicContact) {
+        public Builder setPublicContact(PublicContact publicContact) {
             this.publicContact = publicContact;
             return this;
         }
