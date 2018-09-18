@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import org.assertj.core.api.iterable.Extractor;
 import org.assertj.core.data.Index;
@@ -61,7 +60,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
@@ -428,11 +426,6 @@ public class JobAdvertisementApplicationServiceTest {
                 .setOwner(createOwner(jobAdvertisementId))
                 .setContact(createContact(jobAdvertisementId))
                 .setJobContent(prepareJobContentBuilder(jobAdvertisementId)
-                        .setJobDescriptions(Collections.singletonList(new JobDescription.Builder()
-                                .setTitle("Test TITLE")
-                                .setDescription("TEST JOB DESC")
-                                .setLanguage(Locale.GERMAN)
-                                .build()))
                         .setLanguageSkills(Collections.singletonList(new LanguageSkill.Builder().setLanguageIsoCode("de").build()))
                         .setDisplayCompany(new Company.Builder<>().setName("Test-Company").setCity("Test-Cizy").setPostalCode("1234").build())
                         .build())

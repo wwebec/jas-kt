@@ -6,7 +6,6 @@ dependencies {
     testCompile files(this.project(':core').sourceSets.test.output)
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'org.hibernate.validator:hibernate-validator'
-    // TODO ENABLE ONCE THE TEST-DATA IS CORRECT/VALID
-    // testCompile 'org.glassfish:javax.el'
+    testCompile 'org.glassfish:javax.el'
     testCompile 'com.h2database:h2'
 }
