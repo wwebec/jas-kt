@@ -46,6 +46,7 @@ class JobAdvertisementDtoAssembler {
     private static final String ORACLE_DATE_FORMAT = "yyyy-MM-dd-HH.mm.ss.SSSSSS";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(ORACLE_DATE_FORMAT);
     private static final EmailValidator EMAIL_VALIDATOR = new EmailValidator();
+    private static final String DEFAULT_AVAM_OCCUPATION_CODE = "99999";
 
     CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto(Oste x28JobAdvertisement) {
         return new CreateJobAdvertisementFromX28Dto(
@@ -128,21 +129,21 @@ class JobAdvertisementDtoAssembler {
         List<OccupationDto> occupations = new ArrayList<>();
         if (hasText(x28JobAdvertisement.getBq1AvamBerufNr())) {
             occupations.add(new OccupationDto(
-                    x28JobAdvertisement.getBq1AvamBerufNr(),
+                    safeAvamOccuptionCode(x28JobAdvertisement.getBq1AvamBerufNr()),
                     resolveExperience(x28JobAdvertisement.getBq1ErfahrungCode()),
                     x28JobAdvertisement.getBq1AusbildungCode()
             ));
         }
         if (hasText(x28JobAdvertisement.getBq2AvamBerufNr())) {
             occupations.add(new OccupationDto(
-                    x28JobAdvertisement.getBq2AvamBerufNr(),
+                    safeAvamOccuptionCode(x28JobAdvertisement.getBq2AvamBerufNr()),
                     resolveExperience(x28JobAdvertisement.getBq2ErfahrungCode()),
                     x28JobAdvertisement.getBq2AusbildungCode()
             ));
         }
         if (hasText(x28JobAdvertisement.getBq3AvamBerufNr())) {
             occupations.add(new OccupationDto(
-                    x28JobAdvertisement.getBq3AvamBerufNr(),
+                    safeAvamOccuptionCode(x28JobAdvertisement.getBq3AvamBerufNr()),
                     resolveExperience(x28JobAdvertisement.getBq3ErfahrungCode()),
                     x28JobAdvertisement.getBq3AusbildungCode()
             ));
@@ -321,6 +322,10 @@ class JobAdvertisementDtoAssembler {
 
     private boolean safeBoolean(Boolean value, boolean defaultValue) {
         return (value != null) ? value : defaultValue;
+    }
+
+    private String safeAvamOccuptionCode(String avamOccupationCode) {
+        return hasText(avamOccupationCode) ? avamOccupationCode : DEFAULT_AVAM_OCCUPATION_CODE;
     }
 
 }
