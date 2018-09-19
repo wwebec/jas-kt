@@ -20,26 +20,21 @@ import org.springframework.messaging.MessageChannel;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.JobAdvertisementAction;
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 
-public class X28JobAdWriter implements ItemWriter<Oste> {
+public class X28JobAdWriter implements ItemWriter<CreateJobAdvertisementFromX28Dto> {
+
     private static final Logger LOG = LoggerFactory.getLogger(X28JobAdWriter.class);
-    private final MessageChannel output;
 
-    private final JobAdvertisementDtoAssembler jobAdvertisementDtoAssembler;
+    private final MessageChannel output;
 
     public X28JobAdWriter(MessageChannel output) {
         this.output = output;
-        this.jobAdvertisementDtoAssembler = new JobAdvertisementDtoAssembler();
     }
 
     @Override
-    public void write(List<? extends Oste> x28JobAdvertisements) {
-        LOG.debug("Send x28 JobAdvertisements ({}) to JobAd service", x28JobAdvertisements.size());
-        for (Oste x28JobAdvertisement : x28JobAdvertisements) {
-            CreateJobAdvertisementFromX28Dto createFromX28 = jobAdvertisementDtoAssembler.createJobAdvertisementFromX28Dto(x28JobAdvertisement);
-            send(createFromX28, createFromX28.getFingerprint());
-        }
+    public void write(List<? extends CreateJobAdvertisementFromX28Dto> items) {
+        LOG.debug("Send x28 JobAdvertisements ({}) to JobAd service", items.size());
+        items.forEach(item -> send(item, item.getFingerprint()));
     }
 
     private void send(CreateJobAdvertisementFromX28Dto createFromX28, String key) {

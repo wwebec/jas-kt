@@ -1,25 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
-import org.apache.commons.lang3.EnumUtils;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -31,10 +17,32 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.util.StringUtils.*;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import org.apache.commons.lang3.EnumUtils;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.util.StringUtils;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
+import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 
 class JobAdvertisementDtoAssembler {
 
@@ -49,6 +57,8 @@ class JobAdvertisementDtoAssembler {
     private static final String DEFAULT_AVAM_OCCUPATION_CODE = "99999";
 
     CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto(Oste x28JobAdvertisement) {
+        LocalDate publicationStartDate = parseDate(x28JobAdvertisement.getAnmeldeDatum());
+        LocalDate publicationEndDate = parseDate(x28JobAdvertisement.getGueltigkeit());
         return new CreateJobAdvertisementFromX28Dto(
                 x28JobAdvertisement.getStellennummerEGov(),
                 x28JobAdvertisement.getStellennummerAvam(),
@@ -65,10 +75,36 @@ class JobAdvertisementDtoAssembler {
                 createOccupations(x28JobAdvertisement),
                 createProfessionCodes(x28JobAdvertisement),
                 createLanguageSkills(x28JobAdvertisement),
-                parseDate(x28JobAdvertisement.getAnmeldeDatum()),
-                parseDate(x28JobAdvertisement.getGueltigkeit()),
+                determineStartDate(publicationStartDate, publicationEndDate),
+                determineEndDate(publicationStartDate, publicationEndDate),
                 fallbackAwareBoolean(x28JobAdvertisement.isWwwAnonym(), false)
         );
+    }
+
+    private LocalDate determineStartDate(LocalDate startDate, LocalDate endDate) {
+        if(startDate == null) {
+            return null;
+        }
+        if(endDate == null) {
+            return startDate;
+        }
+        if(startDate.isAfter(endDate)) {
+            return endDate;
+        }
+        return startDate;
+    }
+
+    private LocalDate determineEndDate(LocalDate startDate, LocalDate endDate) {
+        if(endDate == null) {
+            return null;
+        }
+        if(startDate == null) {
+            return endDate;
+        }
+        if(endDate.isBefore(startDate)) {
+            return startDate;
+        }
+        return endDate;
     }
 
     private List<LanguageSkillDto> createLanguageSkills(Oste x28JobAdvertisement) {
