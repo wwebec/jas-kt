@@ -1,7 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
 public class X28OccupationDto {
@@ -20,14 +19,6 @@ public class X28OccupationDto {
         this.avamOccupationCode = avamOccupationCode;
         this.workExperience = workExperience;
         this.educationCode = educationCode;
-    }
-
-    public static X28OccupationDto toDto(Occupation occupation) {
-        X28OccupationDto occupationDto = new X28OccupationDto();
-        occupationDto.setAvamOccupationCode(occupation.getAvamOccupationCode());
-        occupationDto.setWorkExperience(occupation.getWorkExperience());
-        occupationDto.setEducationCode(occupation.getEducationCode());
-        return occupationDto;
     }
 
     public String getAvamOccupationCode() {
