@@ -11,15 +11,30 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DLQItemProperties {
 
+    /**
+     * Enable or disable sending mails when a dead-letter-message has been processed
+     */
+    private boolean mailSendingEnabled = true;
+
+    /**
+     * Receivers of the mails for a dead-letter-message
+     */
     @NotEmpty
     private List<String> receivers;
+
+    public boolean isMailSendingEnabled() {
+        return mailSendingEnabled;
+    }
+
+    public void setMailSendingEnabled(boolean mailSendingEnabled) {
+        this.mailSendingEnabled = mailSendingEnabled;
+    }
 
     public List<String> getReceivers() {
         return receivers;
     }
 
-    public DLQItemProperties setReceivers(List<String> receivers) {
+    public void setReceivers(List<String> receivers) {
         this.receivers = receivers;
-        return this;
     }
 }
