@@ -33,7 +33,7 @@ public class X28ItemProcessor implements ItemProcessor<Oste, CreateJobAdvertisem
         if (violations.isEmpty()) {
             return createItem;
         }
-        LOGGER.warn("Item with Fingerprint: {} has constraint violation:  {}", item.getFingerprint(), violations);
+        LOGGER.warn("Item with Fingerprint: {} has constraint violations: {}", item.getFingerprint(), violations);
         return null;
     }
 
