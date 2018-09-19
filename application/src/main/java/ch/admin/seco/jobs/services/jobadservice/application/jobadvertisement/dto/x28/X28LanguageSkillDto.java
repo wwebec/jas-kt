@@ -1,12 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.constraints.NotBlank;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.SupportedLanguageIsoCode;
-
-import javax.validation.constraints.NotBlank;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class X28LanguageSkillDto {
 
@@ -26,6 +28,10 @@ public class X28LanguageSkillDto {
         this.languageIsoCode = languageIsoCode;
         this.spokenLevel = spokenLevel;
         this.writtenLevel = writtenLevel;
+    }
+
+    public LanguageSkillDto toLanguageSkillDto() {
+        return new LanguageSkillDto(this.languageIsoCode, this.spokenLevel, this.writtenLevel);
     }
 
     public String getLanguageIsoCode() {
