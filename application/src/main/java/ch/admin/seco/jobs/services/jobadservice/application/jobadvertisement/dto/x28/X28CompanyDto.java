@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 
 import javax.validation.constraints.NotBlank;
@@ -157,24 +158,8 @@ public class X28CompanyDto {
         this.surrogate = surrogate;
     }
 
-    public static X28CompanyDto toDto(Company displayCompany) {
-        if (displayCompany == null) {
-            return null;
-        }
-        X28CompanyDto companyDto = new X28CompanyDto();
-        companyDto.setName(displayCompany.getName());
-        companyDto.setStreet(displayCompany.getStreet());
-        companyDto.setHouseNumber(displayCompany.getHouseNumber());
-        companyDto.setPostalCode(displayCompany.getPostalCode());
-        companyDto.setCity(displayCompany.getCity());
-        companyDto.setCountryIsoCode(displayCompany.getCountryIsoCode());
-        companyDto.setPostOfficeBoxNumber(displayCompany.getPostOfficeBoxNumber());
-        companyDto.setPostOfficeBoxPostalCode(displayCompany.getPostOfficeBoxPostalCode());
-        companyDto.setPostOfficeBoxCity(displayCompany.getPostOfficeBoxCity());
-        companyDto.setPhone(displayCompany.getPhone());
-        companyDto.setEmail(displayCompany.getEmail());
-        companyDto.setWebsite(displayCompany.getWebsite());
-        companyDto.setSurrogate(displayCompany.isSurrogate());
-        return companyDto;
+    public CompanyDto toCompanyDto() {
+        return new CompanyDto(name, street, houseNumber, postalCode, city, countryIsoCode, postOfficeBoxNumber,
+                postOfficeBoxPostalCode, postOfficeBoxCity, phone, email, website, surrogate);
     }
 }
