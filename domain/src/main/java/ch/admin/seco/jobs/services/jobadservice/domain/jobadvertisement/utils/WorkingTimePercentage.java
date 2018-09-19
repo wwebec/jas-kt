@@ -6,8 +6,8 @@ public class WorkingTimePercentage {
     private int max;
 
     public WorkingTimePercentage(int min, int max) {
-        this.min = min;
-        this.max = max;
+        this.min = Math.min(min, max);
+        this.max = Math.max(min, max);
     }
 
     public int getMin() {
