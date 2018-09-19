@@ -1,11 +1,29 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.util.StringUtils.hasText;
-import static org.springframework.util.StringUtils.isEmpty;
-import static org.springframework.util.StringUtils.trimAllWhitespace;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
+import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import org.apache.commons.lang3.EnumUtils;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,32 +35,10 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
-import org.apache.commons.lang3.EnumUtils;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.util.StringUtils;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.*;
 
 class JobAdvertisementDtoAssembler {
 
@@ -55,6 +51,7 @@ class JobAdvertisementDtoAssembler {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(ORACLE_DATE_FORMAT);
     private static final EmailValidator EMAIL_VALIDATOR = new EmailValidator();
     private static final String DEFAULT_AVAM_OCCUPATION_CODE = "99999";
+    private static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
 
     CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto(Oste x28JobAdvertisement) {
         LocalDate publicationStartDate = parseDate(x28JobAdvertisement.getAnmeldeDatum());
@@ -82,26 +79,26 @@ class JobAdvertisementDtoAssembler {
     }
 
     private LocalDate determineStartDate(LocalDate startDate, LocalDate endDate) {
-        if(startDate == null) {
+        if (startDate == null) {
             return null;
         }
-        if(endDate == null) {
+        if (endDate == null) {
             return startDate;
         }
-        if(startDate.isAfter(endDate)) {
+        if (startDate.isAfter(endDate)) {
             return endDate;
         }
         return startDate;
     }
 
     private LocalDate determineEndDate(LocalDate startDate, LocalDate endDate) {
-        if(endDate == null) {
+        if (endDate == null) {
             return null;
         }
-        if(startDate == null) {
+        if (startDate == null) {
             return endDate;
         }
-        if(endDate.isBefore(startDate)) {
+        if (endDate.isBefore(startDate)) {
             return startDate;
         }
         return endDate;
@@ -194,14 +191,25 @@ class JobAdvertisementDtoAssembler {
 
     private CreateLocationDto createLocation(Oste x28JobAdvertisement) {
         CreateLocationDto createLocationDto = extractLocation(x28JobAdvertisement.getArbeitsortText());
-        if (createLocationDto != null) {
-            if (x28JobAdvertisement.getArbeitsortPlz() != null) {
-                createLocationDto.setPostalCode(x28JobAdvertisement.getArbeitsortPlz());
-            }
+
+        if (createLocationDto == null) {
+            return null;
+        }
+
+        if (x28JobAdvertisement.getArbeitsortPlz() != null) {
+            createLocationDto.setPostalCode(x28JobAdvertisement.getArbeitsortPlz());
+        }
+
+        if (createLocationDto.getCountryIsoCode() == null) {
             if (LICHTENSTEIN_ISO_CODE.equals(x28JobAdvertisement.getArbeitsortKanton())) {
                 createLocationDto.setCountryIsoCode(LICHTENSTEIN_ISO_CODE);
+            } else if (x28JobAdvertisement.getArbeitsortAusland() != null) {
+                createLocationDto.setCountryIsoCode(x28JobAdvertisement.getArbeitsortAusland());
+            } else {
+                createLocationDto.setCountryIsoCode(COUNTRY_ISO_CODE_SWITZERLAND);
             }
         }
+
         return createLocationDto;
     }
 
@@ -223,13 +231,13 @@ class JobAdvertisementDtoAssembler {
         );
     }
 
-    private ContactDto createContact(Oste x28JobAdvertisement) {
+    private X28ContactDto createContact(Oste x28JobAdvertisement) {
         if (hasText(x28JobAdvertisement.getKpAnredeCode()) ||
                 hasText(x28JobAdvertisement.getKpVorname()) ||
                 hasText(x28JobAdvertisement.getKpName()) ||
                 hasText(x28JobAdvertisement.getKpTelefonNr()) ||
                 hasText(x28JobAdvertisement.getKpEMail())) {
-            return new ContactDto(
+            return new X28ContactDto(
                     resolveSalutation(x28JobAdvertisement.getKpAnredeCode()),
                     x28JobAdvertisement.getKpVorname(),
                     x28JobAdvertisement.getKpName(),
