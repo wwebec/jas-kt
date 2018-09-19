@@ -40,28 +40,27 @@ public class CreateJobAdvertisementFromX28Dto {
     private String jobCenterCode;
 
     @Valid
-    private X28ContactDto contact;
+    private X28ContactDto contact; // can be null in the domain
 
     @Valid
     @NotNull
-    private EmploymentDto employment;
+    private EmploymentDto employment; // can not be null in the domain
 
     @Valid
     @NotNull
-    private X28CompanyDto company;
+    private X28CompanyDto company; // can not be null in the domain
 
     @Valid
-    @NotNull
-    private X28LocationDto location;
+    private X28LocationDto location;  // can be null in the domain
 
     @Valid
     @NotEmpty
-    private List<X28OccupationDto> occupations;
+    private List<X28OccupationDto> occupations; // can not be null or empty in the domain
 
     private String professionCodes;
 
     @Valid
-    private List<X28LanguageSkillDto> languageSkills;
+    private List<X28LanguageSkillDto> languageSkills; // can be null or empty in the domain
 
     private LocalDate publicationStartDate;
 
