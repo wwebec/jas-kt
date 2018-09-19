@@ -1,9 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-
 import javax.validation.constraints.NotBlank;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
 
 public class X28CompanyDto {
 
@@ -159,7 +158,19 @@ public class X28CompanyDto {
     }
 
     public CompanyDto toCompanyDto() {
-        return new CompanyDto(name, street, houseNumber, postalCode, city, countryIsoCode, postOfficeBoxNumber,
-                postOfficeBoxPostalCode, postOfficeBoxCity, phone, email, website, surrogate);
+        return new CompanyDto(name,
+                street,
+                houseNumber,
+                postalCode,
+                city,
+                countryIsoCode,
+                postOfficeBoxNumber,
+                postOfficeBoxPostalCode,
+                postOfficeBoxCity,
+                phone,
+                email,
+                website,
+                surrogate
+        );
     }
 }

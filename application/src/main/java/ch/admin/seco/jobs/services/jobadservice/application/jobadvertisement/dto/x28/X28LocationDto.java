@@ -1,8 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-
 import javax.validation.constraints.Size;
+
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 
 public class X28LocationDto {
 
@@ -63,7 +63,7 @@ public class X28LocationDto {
         return this;
     }
 
-    public CreateLocationDto getCreateLocationDto() {
+    public CreateLocationDto toCreateLocationDto() {
         return new CreateLocationDto(remarks, city, postalCode, countryIsoCode);
     }
 }

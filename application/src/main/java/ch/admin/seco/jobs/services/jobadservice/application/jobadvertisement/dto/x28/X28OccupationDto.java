@@ -4,9 +4,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class X28OccupationDto {
 
     private String avamOccupationCode;
@@ -55,13 +52,6 @@ public class X28OccupationDto {
 
     public void setEducationCode(String educationCode) {
         this.educationCode = educationCode;
-    }
-
-    public static List<X28OccupationDto> toDto(List<Occupation> occupations) {
-        if (occupations != null) {
-            return occupations.stream().map(X28OccupationDto::toDto).collect(Collectors.toList());
-        }
-        return null;
     }
 
     public OccupationDto toOccupationDto() {
