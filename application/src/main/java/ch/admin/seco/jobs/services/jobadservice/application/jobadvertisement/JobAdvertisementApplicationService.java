@@ -40,19 +40,17 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
@@ -215,12 +213,12 @@ public class JobAdvertisementApplicationService {
 
         checkIfJobAdvertisementAlreadyExists(createJobAdvertisementFromX28Dto);
 
-        Location location = toLocation(createJobAdvertisementFromX28Dto.getLocation());
+        Location location = toLocation(createJobAdvertisementFromX28Dto.getCreateLocationDto());
         location = locationService.enrichCodes(location);
 
-        List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromX28Dto.getOccupations());
+        List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromX28Dto.getOccupationDtos());
 
-        Company company = toCompany(createJobAdvertisementFromX28Dto.getCompany());
+        Company company = toCompany(createJobAdvertisementFromX28Dto.getCompanyDto());
         JobContent jobContent = new JobContent.Builder()
                 .setNumberOfJobs(createJobAdvertisementFromX28Dto.getNumberOfJobs())
                 .setJobDescriptions(Collections.singletonList(
@@ -237,8 +235,8 @@ public class JobAdvertisementApplicationService {
                 .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
                 .setDisplayCompany(determineDisplayCompany(createJobAdvertisementFromX28Dto))
                 .setCompany(company)
-                .setPublicContact(toPublicContact(createJobAdvertisementFromX28Dto.getContact()))
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkills()))
+                .setPublicContact(toPublicContact(createJobAdvertisementFromX28Dto.getPublicContactDto()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkillDtos()))
                 .build();
 
         LocalDate publicationStartDate = createJobAdvertisementFromX28Dto.getPublicationStartDate();
@@ -254,7 +252,7 @@ public class JobAdvertisementApplicationService {
                 .setStellennummerAvam(createJobAdvertisementFromX28Dto.getStellennummerAvam())
                 .setFingerprint(createJobAdvertisementFromX28Dto.getFingerprint())
                 .setJobContent(jobContent)
-                .setContact(toContact(createJobAdvertisementFromX28Dto.getContact()))
+                .setContact(toContact(createJobAdvertisementFromX28Dto.getContactDto()))
                 .setPublication(
                         new Publication.Builder()
                                 .setStartDate(publicationStartDate)
@@ -753,7 +751,7 @@ public class JobAdvertisementApplicationService {
 
     private Company determineDisplayCompany(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
         return this.determineDisplayCompany(
-                toCompany(createJobAdvertisementFromX28Dto.getCompany()),
+                toCompany(createJobAdvertisementFromX28Dto.getCompanyDto()),
                 createJobAdvertisementFromX28Dto.isCompanyAnonymous(),
                 createJobAdvertisementFromX28Dto.getJobCenterCode()
         );
@@ -847,34 +845,7 @@ public class JobAdvertisementApplicationService {
         return null;
     }
 
-    private PublicContact toPublicContact(X28ContactDto contactDto) {
-        if (contactDto != null) {
-            return new PublicContact.Builder()
-                    .setSalutation(contactDto.getSalutation())
-                    .setFirstName(contactDto.getFirstName())
-                    .setLastName(contactDto.getLastName())
-                    .setPhone(contactDto.getPhone())
-                    .setEmail(contactDto.getEmail())
-                    .build();
-        }
-        return null;
-    }
-
     private Contact toContact(ContactDto contactDto) {
-        if (contactDto != null) {
-            return new Contact.Builder()
-                    .setSalutation(contactDto.getSalutation())
-                    .setFirstName(contactDto.getFirstName())
-                    .setLastName(contactDto.getLastName())
-                    .setPhone(contactDto.getPhone())
-                    .setEmail(contactDto.getEmail())
-                    .setLanguage(new Locale(contactDto.getLanguageIsoCode()))
-                    .build();
-        }
-        return null;
-    }
-
-    private Contact toContact(X28ContactDto contactDto) {
         if (contactDto != null) {
             return new Contact.Builder()
                     .setSalutation(contactDto.getSalutation())
@@ -897,22 +868,6 @@ public class JobAdvertisementApplicationService {
                     .setCity(createLocationDto.getCity())
                     .setPostalCode(createLocationDto.getPostalCode())
                     .setCountryIsoCode(countryIsoCode)
-                    .build();
-        }
-        return null;
-    }
-
-    private Location toLocation(LocationDto locationDto) {
-        if (locationDto != null) {
-            return new Location.Builder()
-                    .setRemarks(locationDto.getRemarks())
-                    .setCity(locationDto.getCity())
-                    .setPostalCode(locationDto.getPostalCode())
-                    .setCommunalCode(locationDto.getCommunalCode())
-                    .setRegionCode(locationDto.getRegionCode())
-                    .setCantonCode(locationDto.getCantonCode())
-                    .setCountryIsoCode(locationDto.getCountryIsoCode())
-                    .setCoordinates(locationDto.getCoordinates())
                     .build();
         }
         return null;

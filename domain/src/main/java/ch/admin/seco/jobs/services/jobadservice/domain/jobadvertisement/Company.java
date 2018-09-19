@@ -19,20 +19,26 @@ public class Company implements ValueObject<Company> {
 
     private String street;
 
+    // TODO @Size(max = 10)
     private String houseNumber;
 
     private String postalCode;
 
+    // TODO @Size(max = 100)
     private String city;
 
+    // TODO @Size(max = 2)
     private String countryIsoCode;
 
+    // TODO @Size(max = 10)
     private String postOfficeBoxNumber;
 
     private String postOfficeBoxPostalCode;
 
+    // TODO @Size(max = 100)
     private String postOfficeBoxCity;
 
+    // TODO @Size(max = 2)
     private String phone;
 
     private String email;

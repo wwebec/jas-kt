@@ -1,11 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Contact;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
-
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 public class X28ContactDto {
 
@@ -32,6 +29,14 @@ public class X28ContactDto {
         this.phone = phone;
         this.email = email;
         this.languageIsoCode = languageIsoCode;
+    }
+
+    public ContactDto toContactDto() {
+        return new ContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email, this.languageIsoCode);
+    }
+
+    public PublicContactDto toPublicContactDto() {
+        return new PublicContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email);
     }
 
     public Salutation getSalutation() {
@@ -82,17 +87,4 @@ public class X28ContactDto {
         this.languageIsoCode = languageIsoCode;
     }
 
-    public static X28ContactDto toDto(Contact contact) {
-        if (contact == null) {
-            return null;
-        }
-        X28ContactDto contactDto = new X28ContactDto();
-        contactDto.setSalutation(contact.getSalutation());
-        contactDto.setFirstName(contact.getFirstName());
-        contactDto.setLastName(contact.getLastName());
-        contactDto.setPhone(contact.getPhone());
-        contactDto.setEmail(contact.getEmail());
-        contactDto.setLanguageIsoCode(contact.getLanguage().getLanguage());
-        return contactDto;
-    }
 }

@@ -28,16 +28,15 @@ import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28LocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
@@ -106,7 +105,7 @@ public class JobAdvertisementApplicationServiceForX28Test {
     @Test
     public void createFromX28() {
         //Prepare
-        Company company = new Company.Builder()
+        X28CompanyDto x28CompanyDto = new X28CompanyDto()
                 .setName("name")
                 .setStreet("street")
                 .setHouseNumber("houseNumber")
@@ -115,8 +114,8 @@ public class JobAdvertisementApplicationServiceForX28Test {
                 .setCountryIsoCode("CH")
                 .setPhone("phone")
                 .setEmail("email")
-                .setWebsite("website")
-                .build();
+                .setWebsite("website");
+
         CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto(
                 null,
                 null,
@@ -128,11 +127,11 @@ public class JobAdvertisementApplicationServiceForX28Test {
                 null,
                 null,
                 new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
-                CompanyDto.toDto(company),
-                new CreateLocationDto("remarks", "city", "postalCode", "CH"),
-                Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
+                x28CompanyDto,
+                new X28LocationDto("remarks", "city", "postalCode", "CH"),
+                Collections.singletonList(new X28OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
                 "1,2",
-                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
+                Collections.singletonList(new X28LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
                 TimeMachine.now().toLocalDate(),
                 null,
                 false
@@ -151,7 +150,10 @@ public class JobAdvertisementApplicationServiceForX28Test {
         assertThat(jobAdvertisement.getPublication().isCompanyAnonymous()).isFalse();
 
         assertThat(jobAdvertisement.isReportingObligation()).isFalse();
-        assertThat(jobAdvertisement.getJobContent().getDisplayCompany()).isEqualTo(company);
+        assertThat(jobAdvertisement.getJobContent().getDisplayCompany()).isNotNull();
+        assertThat(jobAdvertisement.getJobContent().getDisplayCompany().getName()).isEqualTo(x28CompanyDto.getName());
+        assertThat(jobAdvertisement.getJobContent().getDisplayCompany().getCity()).isEqualTo(x28CompanyDto.getCity());
+        assertThat(jobAdvertisement.getJobContent().getDisplayCompany().getStreet()).isEqualTo(x28CompanyDto.getStreet());
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_PUBLISH_PUBLIC.getDomainEventType());
     }
@@ -170,11 +172,11 @@ public class JobAdvertisementApplicationServiceForX28Test {
                 null,
                 null,
                 new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
-                new CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
-                new CreateLocationDto(null, "city", "postalCode", null),
-                Collections.singletonList(new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
+                new X28CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
+                new X28LocationDto(null, "city", "postalCode", null),
+                Collections.singletonList(new X28OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
                 "1,2",
-                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
+                Collections.singletonList(new X28LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
                 TimeMachine.now().toLocalDate(),
                 null,
                 false

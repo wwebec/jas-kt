@@ -38,7 +38,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.OsteList;
 

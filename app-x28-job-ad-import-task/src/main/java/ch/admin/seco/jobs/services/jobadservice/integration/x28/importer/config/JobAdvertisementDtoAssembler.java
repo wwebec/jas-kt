@@ -1,12 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.*;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
@@ -56,26 +51,27 @@ class JobAdvertisementDtoAssembler {
     CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto(Oste x28JobAdvertisement) {
         LocalDate publicationStartDate = parseDate(x28JobAdvertisement.getAnmeldeDatum());
         LocalDate publicationEndDate = parseDate(x28JobAdvertisement.getGueltigkeit());
-        return new CreateJobAdvertisementFromX28Dto(
-                x28JobAdvertisement.getStellennummerEGov(),
-                x28JobAdvertisement.getStellennummerAvam(),
-                sanitize(x28JobAdvertisement.getBezeichnung()),
-                sanitize(x28JobAdvertisement.getBeschreibung()),
-                x28JobAdvertisement.getGleicheOste(),
-                x28JobAdvertisement.getFingerprint(),
-                x28JobAdvertisement.getUrl(),
-                x28JobAdvertisement.getArbeitsamtbereich(),
-                createContact(x28JobAdvertisement),
-                createEmployment(x28JobAdvertisement),
-                createCompany(x28JobAdvertisement),
-                createLocation(x28JobAdvertisement),
-                createOccupations(x28JobAdvertisement),
-                createProfessionCodes(x28JobAdvertisement),
-                createLanguageSkills(x28JobAdvertisement),
-                determineStartDate(publicationStartDate, publicationEndDate),
-                determineEndDate(publicationStartDate, publicationEndDate),
-                fallbackAwareBoolean(x28JobAdvertisement.isWwwAnonym(), false)
-        );
+
+        return new CreateJobAdvertisementFromX28Dto()
+                .setStellennummerEgov(x28JobAdvertisement.getStellennummerEGov())
+                .setStellennummerAvam(x28JobAdvertisement.getStellennummerAvam())
+                .setTitle(sanitize(x28JobAdvertisement.getBezeichnung()))
+                .setDescription(sanitize(x28JobAdvertisement.getBeschreibung()))
+                .setNumberOfJobs(x28JobAdvertisement.getGleicheOste())
+                .setFingerprint(x28JobAdvertisement.getFingerprint())
+                .setExternalUrl(x28JobAdvertisement.getUrl())
+                .setJobCenterCode(x28JobAdvertisement.getArbeitsamtbereich())
+                .setContact(createContact(x28JobAdvertisement))
+                .setEmployment(createEmployment(x28JobAdvertisement))
+                .setCompany(createCompany(x28JobAdvertisement))
+                .setLocation(createLocation(x28JobAdvertisement))
+                .setOccupations(createOccupations(x28JobAdvertisement))
+                .setProfessionCodes(createProfessionCodes(x28JobAdvertisement))
+                .setLanguageSkills(createLanguageSkills(x28JobAdvertisement))
+                .setPublicationStartDate(determineStartDate(publicationStartDate, publicationEndDate))
+                .setPublicationEndDate(determineEndDate(publicationStartDate, publicationEndDate))
+                .setCompanyAnonymous(fallbackAwareBoolean(x28JobAdvertisement.isWwwAnonym(), false));
+
     }
 
     private LocalDate determineStartDate(LocalDate startDate, LocalDate endDate) {
@@ -104,7 +100,7 @@ class JobAdvertisementDtoAssembler {
         return endDate;
     }
 
-    private List<LanguageSkillDto> createLanguageSkills(Oste x28JobAdvertisement) {
+    private List<X28LanguageSkillDto> createLanguageSkills(Oste x28JobAdvertisement) {
         return Stream
                 .of(
                         createLanguageSkillDto(x28JobAdvertisement.getSk1SpracheCode(), x28JobAdvertisement.getSk1MuendlichCode(), x28JobAdvertisement.getSk1SchriftlichCode()),
@@ -117,7 +113,7 @@ class JobAdvertisementDtoAssembler {
                 .collect(toList());
     }
 
-    private LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
+    private X28LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
         if (hasText(spracheCode)) {
             final String languageIsoCode;
             final LanguageLevel spokenLevel;
@@ -140,7 +136,7 @@ class JobAdvertisementDtoAssembler {
             }
 
             if (hasText(languageIsoCode)) {
-                return new LanguageSkillDto(languageIsoCode, spokenLevel, writtenLevel);
+                return new X28LanguageSkillDto(languageIsoCode, spokenLevel, writtenLevel);
             } else {
                 LOGGER.warn("No languageIsoCode was found for: {} ", spracheCode);
             }
@@ -158,24 +154,24 @@ class JobAdvertisementDtoAssembler {
         return null;
     }
 
-    private List<OccupationDto> createOccupations(Oste x28JobAdvertisement) {
-        List<OccupationDto> occupations = new ArrayList<>();
+    private List<X28OccupationDto> createOccupations(Oste x28JobAdvertisement) {
+        List<X28OccupationDto> occupations = new ArrayList<>();
         if (hasText(x28JobAdvertisement.getBq1AvamBerufNr())) {
-            occupations.add(new OccupationDto(
+            occupations.add(new X28OccupationDto(
                     fallbackAwareAvamOccuptionCode(x28JobAdvertisement.getBq1AvamBerufNr()),
                     resolveExperience(x28JobAdvertisement.getBq1ErfahrungCode()),
                     x28JobAdvertisement.getBq1AusbildungCode()
             ));
         }
         if (hasText(x28JobAdvertisement.getBq2AvamBerufNr())) {
-            occupations.add(new OccupationDto(
+            occupations.add(new X28OccupationDto(
                     fallbackAwareAvamOccuptionCode(x28JobAdvertisement.getBq2AvamBerufNr()),
                     resolveExperience(x28JobAdvertisement.getBq2ErfahrungCode()),
                     x28JobAdvertisement.getBq2AusbildungCode()
             ));
         }
         if (hasText(x28JobAdvertisement.getBq3AvamBerufNr())) {
-            occupations.add(new OccupationDto(
+            occupations.add(new X28OccupationDto(
                     fallbackAwareAvamOccuptionCode(x28JobAdvertisement.getBq3AvamBerufNr()),
                     resolveExperience(x28JobAdvertisement.getBq3ErfahrungCode()),
                     x28JobAdvertisement.getBq3AusbildungCode()
@@ -183,14 +179,14 @@ class JobAdvertisementDtoAssembler {
         }
 
         if (occupations.isEmpty()) {
-            occupations.add(new OccupationDto(DEFAULT_AVAM_OCCUPATION_CODE, null, null));
+            occupations.add(new X28OccupationDto(DEFAULT_AVAM_OCCUPATION_CODE, null, null));
         }
 
         return occupations;
     }
 
-    private CreateLocationDto createLocation(Oste x28JobAdvertisement) {
-        CreateLocationDto createLocationDto = extractLocation(x28JobAdvertisement.getArbeitsortText());
+    private X28LocationDto createLocation(Oste x28JobAdvertisement) {
+        X28LocationDto createLocationDto = extractLocation(x28JobAdvertisement.getArbeitsortText());
 
         if (createLocationDto == null) {
             return null;
@@ -213,8 +209,8 @@ class JobAdvertisementDtoAssembler {
         return createLocationDto;
     }
 
-    private CompanyDto createCompany(Oste x28JobAdvertisement) {
-        return new CompanyDto(
+    private X28CompanyDto createCompany(Oste x28JobAdvertisement) {
+        return new X28CompanyDto(
                 x28JobAdvertisement.getUntName(),
                 x28JobAdvertisement.getUntStrasse(),
                 x28JobAdvertisement.getUntHausNr(),
@@ -337,7 +333,7 @@ class JobAdvertisementDtoAssembler {
         return null;
     }
 
-    private CreateLocationDto extractLocation(String localityText) {
+    private X28LocationDto extractLocation(String localityText) {
         if (hasText(localityText)) {
             Matcher countryZipCodeCityMatcher = COUNTRY_ZIPCODE_CITY_PATTERN.matcher(localityText);
             if (countryZipCodeCityMatcher.find()) {
@@ -356,7 +352,7 @@ class JobAdvertisementDtoAssembler {
                         city = StringUtils.trimWhitespace(cityCantonMatcher.group(1));
                     }
                 }
-                return new CreateLocationDto(null, city, postalCode, countryIsoCode);
+                return new X28LocationDto(null, city, postalCode, countryIsoCode);
             }
         }
         return null;
