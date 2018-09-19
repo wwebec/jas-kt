@@ -6,6 +6,7 @@ import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebro
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.JobAdvertisementAction.REJECT;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.ACTION;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.PARTITION_KEY;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.PAYLOAD_TYPE;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.RELEVANT_ID;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.SOURCE_SYSTEM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders.TARGET_SYSTEM;
@@ -39,6 +40,7 @@ public class AvamSource {
                 .setHeader(ACTION, APPROVE.name())
                 .setHeader(SOURCE_SYSTEM, AVAM.name())
                 .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE.name())
+                .setHeader(PAYLOAD_TYPE, approvalDto.getClass().getSimpleName())
                 .build());
     }
 
@@ -50,6 +52,7 @@ public class AvamSource {
                 .setHeader(ACTION, REJECT.name())
                 .setHeader(SOURCE_SYSTEM, AVAM.name())
                 .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE.name())
+                .setHeader(PAYLOAD_TYPE, rejectionDto.getClass().getSimpleName())
                 .build());
     }
 
@@ -61,6 +64,7 @@ public class AvamSource {
                 .setHeader(ACTION, CREATE_FROM_AVAM.name())
                 .setHeader(SOURCE_SYSTEM, AVAM.name())
                 .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE.name())
+                .setHeader(PAYLOAD_TYPE, createJobAdvertisementFromAvamDto.getClass().getSimpleName())
                 .build());
     }
 
@@ -72,6 +76,7 @@ public class AvamSource {
                 .setHeader(ACTION, CANCEL.name())
                 .setHeader(SOURCE_SYSTEM, AVAM.name())
                 .setHeader(TARGET_SYSTEM, JOB_AD_SERVICE.name())
+                .setHeader(PAYLOAD_TYPE, cancellationDto.getClass().getSimpleName())
                 .build());
     }
 }
