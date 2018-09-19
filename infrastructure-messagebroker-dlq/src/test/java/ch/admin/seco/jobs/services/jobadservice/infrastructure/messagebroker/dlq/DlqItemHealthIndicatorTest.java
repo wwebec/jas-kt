@@ -41,7 +41,7 @@ public class DlqItemHealthIndicatorTest {
     @Test
     public void testHealthIsDown() {
         // given
-        dlqItemRepository.save(new DLQItem(LocalDateTime.now(), "TEST-H", "TEST-Payload", "TEST-NAME", "TEST-AGGREGATEID"));
+        dlqItemRepository.save(new DLQItem(LocalDateTime.now(), "TEST-H", "Test-Type","TEST-Payload", "TEST-NAME", "TEST-AGGREGATEID"));
 
         // when
         Health.Builder builder = new Health.Builder();

@@ -32,6 +32,9 @@ public class DLQItem {
     @Column(length = 4000)
     private String headers;
 
+    @NotBlank
+    private String payloadType;
+
     @JsonRawValue
     @NotBlank
     @Column(length = 4000)
@@ -43,7 +46,8 @@ public class DLQItem {
     @NotBlank
     private String relevantId;
 
-    DLQItem(LocalDateTime errorTime, String headers, String payload, String originalTopic, String relevantId) {
+    DLQItem(LocalDateTime errorTime, String headers, String payloadType, String payload, String originalTopic, String relevantId) {
+        this.payloadType = payloadType;
         this.relevantId = relevantId;
         this.id = IdGenerator.timeBasedUUID().toString();
         this.errorTime = errorTime == null ? LocalDateTime.now() : errorTime;
@@ -88,6 +92,10 @@ public class DLQItem {
     public DLQItem setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
         return this;
+    }
+
+    public String getPayloadType() {
+        return payloadType;
     }
 
     @Override

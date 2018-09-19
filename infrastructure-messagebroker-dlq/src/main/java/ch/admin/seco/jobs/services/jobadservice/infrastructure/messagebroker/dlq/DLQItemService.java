@@ -22,16 +22,14 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.transaction.annotation.Transactional;
 
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders;
 
 @Transactional
 public class DLQItemService {
-
-    static final String RELEVANT_ID_KEY = "relevantId";
 
     static final String KAFKA_RECEIVED_TIMESTAMP = "kafka_receivedTimestamp";
 
@@ -40,6 +38,8 @@ public class DLQItemService {
     static final String X_EXCEPTION_STACKTRACE = "x-exception-stacktrace";
 
     static final String X_ORIGINAL_TOPIC = "x-original-topic";
+
+    private static final String STRING_FALLBACK_TYPE = "UNKNOWN";
 
     private final Logger LOG = LoggerFactory.getLogger(DLQItemService.class);
 
@@ -60,12 +60,12 @@ public class DLQItemService {
 
     @StreamListener(target = JOB_AD_EVENT_DLQ_CHANNEL)
     public void handleEventDLQMessage(Message<?> message) {
-        doHandle(message, this::extractPartitionKey);
+        doHandle(message, this::extractRelevantId);
     }
 
     @StreamListener(target = JOB_AD_ACTION_DLQ_CHANNEL)
     public void handleActionDLQMessage(Message<?> message) {
-        doHandle(message, this::extractPartitionKey);
+        doHandle(message, this::extractRelevantId);
     }
 
     public long count() {
@@ -119,6 +119,7 @@ public class DLQItemService {
         final DLQItem dlqItem = new DLQItem(
                 errorTime,
                 header,
+                extractString(message.getHeaders().get(MessageHeaders.PAYLOAD_TYPE)),
                 payload,
                 extractString(message.getHeaders().get(X_ORIGINAL_TOPIC)),
                 relevantId
@@ -128,11 +129,11 @@ public class DLQItemService {
     }
 
 
-    private String extractPartitionKey(Message<?> message) {
-        return extractString(message.getHeaders().get(RELEVANT_ID_KEY));
+    private String extractRelevantId(Message<?> message) {
+        return extractString(message.getHeaders().get(MessageHeaders.RELEVANT_ID));
     }
 
-    private Map<String, String> extractHeaderAsString(MessageHeaders headers) {
+    private Map<String, String> extractHeaderAsString(org.springframework.messaging.MessageHeaders headers) {
         Map<String, String> result = new HashMap<>();
         headers.forEach((key, value) -> result.put(key, extractString(value)));
         return result;
@@ -151,11 +152,13 @@ public class DLQItemService {
     }
 
     private String extractString(Object value) {
+        if (value == null) {
+            return STRING_FALLBACK_TYPE;
+        }
         if (value instanceof byte[]) {
             return new String((byte[]) value);
-        } else {
-            return Objects.toString(value);
         }
+        return Objects.toString(value);
     }
 
     private LocalDateTime extractLocalDateTime(Object value) {
