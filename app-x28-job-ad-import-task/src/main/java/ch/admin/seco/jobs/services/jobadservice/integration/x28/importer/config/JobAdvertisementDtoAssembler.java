@@ -148,6 +148,11 @@ class JobAdvertisementDtoAssembler {
                     x28JobAdvertisement.getBq3AusbildungCode()
             ));
         }
+
+        if (occupations.isEmpty()) {
+            occupations.add(new OccupationDto(DEFAULT_AVAM_OCCUPATION_CODE, null, null));
+        }
+
         return occupations;
     }
 
