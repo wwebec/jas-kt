@@ -11,15 +11,24 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class DLQItemProperties {
 
+    private boolean mailSendingEnabled = true;
+
     @NotEmpty
     private List<String> receivers;
+
+    public boolean isMailSendingEnabled() {
+        return mailSendingEnabled;
+    }
+
+    public void setMailSendingEnabled(boolean mailSendingEnabled) {
+        this.mailSendingEnabled = mailSendingEnabled;
+    }
 
     public List<String> getReceivers() {
         return receivers;
     }
 
-    public DLQItemProperties setReceivers(List<String> receivers) {
+    public void setReceivers(List<String> receivers) {
         this.receivers = receivers;
-        return this;
     }
 }

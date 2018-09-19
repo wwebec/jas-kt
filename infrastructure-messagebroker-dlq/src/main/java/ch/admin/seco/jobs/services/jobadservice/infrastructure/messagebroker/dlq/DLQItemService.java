@@ -88,7 +88,9 @@ public class DLQItemService {
         try {
             DLQItem dlqItem = createDlqItem(message, idMapper);
             this.dlqItemRepository.save(dlqItem);
-            this.mailSenderService.send(createMailSenderData(message, dlqItem));
+            if (this.dlqItemProperties.isMailSendingEnabled()) {
+                this.mailSenderService.send(createMailSenderData(message, dlqItem));
+            }
         } catch (Exception e) {
             throw new DLQItemProcessingException(message, e);
         }
