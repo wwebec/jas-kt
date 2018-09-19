@@ -102,8 +102,9 @@ public class DLQItemService {
         mailVariables.put("originalTopic", dlqItem.getOriginalTopic());
         mailVariables.put("exceptionMessage", fallbackAwareString(message.getHeaders().get(X_EXCEPTION_MESSAGE)));
         mailVariables.put("exceptionStacktrace", fallbackAwareString(message.getHeaders().get(X_EXCEPTION_STACKTRACE)));
-        mailVariables.put("payloadType", message.getPayload().getClass().getSimpleName());
+        mailVariables.put("payloadType", dlqItem.getPayloadType());
         mailVariables.put("relevantId", dlqItem.getRelevantId());
+
         return new MailSenderData.Builder()
                 .setTo(dlqItemProperties.getReceivers().toArray(new String[0]))
                 .setSubject("mail.dlq.notification.subject")
