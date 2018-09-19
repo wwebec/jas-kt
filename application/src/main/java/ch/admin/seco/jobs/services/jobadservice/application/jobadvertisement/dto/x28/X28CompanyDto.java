@@ -33,7 +33,7 @@ public class X28CompanyDto {
 
     private boolean surrogate;
 
-    protected X28CompanyDto() {
+    public X28CompanyDto() {
         // For reflection libs
     }
 
@@ -57,104 +57,117 @@ public class X28CompanyDto {
         return name;
     }
 
-    public void setName(String name) {
+    public X28CompanyDto setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getStreet() {
         return street;
     }
 
-    public void setStreet(String street) {
+    public X28CompanyDto setStreet(String street) {
         this.street = street;
+        return this;
     }
 
     public String getHouseNumber() {
         return houseNumber;
     }
 
-    public void setHouseNumber(String houseNumber) {
+    public X28CompanyDto setHouseNumber(String houseNumber) {
         this.houseNumber = houseNumber;
+        return this;
     }
 
     public String getPostalCode() {
         return postalCode;
     }
 
-    public void setPostalCode(String postalCode) {
+    public X28CompanyDto setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+        return this;
     }
 
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public X28CompanyDto setCity(String city) {
         this.city = city;
+        return this;
     }
 
     public String getCountryIsoCode() {
         return countryIsoCode;
     }
 
-    public void setCountryIsoCode(String countryIsoCode) {
+    public X28CompanyDto setCountryIsoCode(String countryIsoCode) {
         this.countryIsoCode = countryIsoCode;
+        return this;
     }
 
     public String getPostOfficeBoxNumber() {
         return postOfficeBoxNumber;
     }
 
-    public void setPostOfficeBoxNumber(String postOfficeBoxNumber) {
+    public X28CompanyDto setPostOfficeBoxNumber(String postOfficeBoxNumber) {
         this.postOfficeBoxNumber = postOfficeBoxNumber;
+        return this;
     }
 
     public String getPostOfficeBoxPostalCode() {
         return postOfficeBoxPostalCode;
     }
 
-    public void setPostOfficeBoxPostalCode(String postOfficeBoxPostalCode) {
+    public X28CompanyDto setPostOfficeBoxPostalCode(String postOfficeBoxPostalCode) {
         this.postOfficeBoxPostalCode = postOfficeBoxPostalCode;
+        return this;
     }
 
     public String getPostOfficeBoxCity() {
         return postOfficeBoxCity;
     }
 
-    public void setPostOfficeBoxCity(String postOfficeBoxCity) {
+    public X28CompanyDto setPostOfficeBoxCity(String postOfficeBoxCity) {
         this.postOfficeBoxCity = postOfficeBoxCity;
+        return this;
     }
 
     public String getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public X28CompanyDto setPhone(String phone) {
         this.phone = phone;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public X28CompanyDto setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     public String getWebsite() {
         return website;
     }
 
-    public void setWebsite(String website) {
+    public X28CompanyDto setWebsite(String website) {
         this.website = website;
+        return this;
     }
 
     public boolean isSurrogate() {
         return surrogate;
     }
 
-    public void setSurrogate(boolean surrogate) {
+    public X28CompanyDto setSurrogate(boolean surrogate) {
         this.surrogate = surrogate;
+        return this;
     }
 
     public CompanyDto toCompanyDto() {
