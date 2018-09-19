@@ -36,7 +36,7 @@ public class DLQItem {
     private String payloadType;
 
     @JsonRawValue
-    @NotBlank
+    @NotNull
     @Column(length = 4000)
     private String payload;
 

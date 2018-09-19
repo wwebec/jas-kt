@@ -39,7 +39,7 @@ public class DLQItemService {
 
     static final String X_ORIGINAL_TOPIC = "x-original-topic";
 
-    private static final String STRING_FALLBACK_TYPE = "UNKNOWN";
+    private static final String FALLBACK_STRING = "UNKNOWN";
 
     private final Logger LOG = LoggerFactory.getLogger(DLQItemService.class);
 
@@ -98,8 +98,8 @@ public class DLQItemService {
         final Map<String, Object> mailVariables = new HashMap<>();
         mailVariables.put("dlqItemId", dlqItem.getId());
         mailVariables.put("originalTopic", dlqItem.getOriginalTopic());
-        mailVariables.put("exceptionMessage", extractString(message.getHeaders().get(X_EXCEPTION_MESSAGE)));
-        mailVariables.put("exceptionStacktrace", extractString(message.getHeaders().get(X_EXCEPTION_STACKTRACE)));
+        mailVariables.put("exceptionMessage", fallbackAwareString(message.getHeaders().get(X_EXCEPTION_MESSAGE)));
+        mailVariables.put("exceptionStacktrace", fallbackAwareString(message.getHeaders().get(X_EXCEPTION_STACKTRACE)));
         mailVariables.put("payloadType", message.getPayload().getClass().getSimpleName());
         mailVariables.put("relevantId", dlqItem.getRelevantId());
         return new MailSenderData.Builder()
@@ -119,9 +119,9 @@ public class DLQItemService {
         final DLQItem dlqItem = new DLQItem(
                 errorTime,
                 header,
-                extractString(message.getHeaders().get(MessageHeaders.PAYLOAD_TYPE)),
+                fallbackAwareString(message.getHeaders().get(MessageHeaders.PAYLOAD_TYPE)),
                 payload,
-                extractString(message.getHeaders().get(X_ORIGINAL_TOPIC)),
+                fallbackAwareString(message.getHeaders().get(X_ORIGINAL_TOPIC)),
                 relevantId
         );
         LOG.debug("Error message received: [timestamp: {}, header:{}, payload:{}]", errorTime, header, payload);
@@ -130,30 +130,32 @@ public class DLQItemService {
 
 
     private String extractRelevantId(Message<?> message) {
-        return extractString(message.getHeaders().get(MessageHeaders.RELEVANT_ID));
+        return fallbackAwareString(message.getHeaders().get(MessageHeaders.RELEVANT_ID));
     }
 
     private Map<String, String> extractHeaderAsString(org.springframework.messaging.MessageHeaders headers) {
         Map<String, String> result = new HashMap<>();
-        headers.forEach((key, value) -> result.put(key, extractString(value)));
+        headers.forEach((key, value) -> result.put(key, fallbackAwareString(value)));
         return result;
     }
 
     private <T> String extractPayload(T payload) {
+        if (payload == null) {
+            return FALLBACK_STRING;
+        }
         if (payload instanceof byte[]) {
-            return extractString(payload);
-        } else {
-            try {
-                return objectMapper.writeValueAsString(payload);
-            } catch (JsonProcessingException e) {
-                throw new IllegalStateException("Could serialize as JSON ", e);
-            }
+            return fallbackAwareString(payload);
+        }
+        try {
+            return objectMapper.writeValueAsString(payload);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Could serialize as JSON ", e);
         }
     }
 
-    private String extractString(Object value) {
+    private String fallbackAwareString(Object value) {
         if (value == null) {
-            return STRING_FALLBACK_TYPE;
+            return FALLBACK_STRING;
         }
         if (value instanceof byte[]) {
             return new String((byte[]) value);
