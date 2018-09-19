@@ -16,14 +16,18 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 @Access(AccessType.FIELD)
 public class Occupation implements ValueObject<Occupation> {
 
+    // TODO @Size(max = 16)
     private String avamOccupationCode;
 
+    // TODO @Size(max = 16)
     @Column(name = "SBN3_CODE")
     private String sbn3Code;
 
+    // TODO @Size(max = 16)
     @Column(name = "SBN5_CODE")
     private String sbn5Code;
 
+    // TODO @Size(max = 16)
     private String bfsCode;
 
     private String label;
@@ -31,6 +35,7 @@ public class Occupation implements ValueObject<Occupation> {
     @Enumerated(EnumType.STRING)
     private WorkExperience workExperience;
 
+    // TODO @Size(max = 16)
     private String educationCode;
 
     protected Occupation() {
