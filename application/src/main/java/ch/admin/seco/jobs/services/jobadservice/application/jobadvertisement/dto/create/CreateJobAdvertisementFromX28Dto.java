@@ -1,18 +1,17 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
-import java.time.LocalDate;
-import java.util.List;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28ContactDto;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
+import java.time.LocalDate;
+import java.util.List;
 
 public class CreateJobAdvertisementFromX28Dto {
 
@@ -36,7 +35,7 @@ public class CreateJobAdvertisementFromX28Dto {
     private String jobCenterCode;
 
     @Valid
-    private ContactDto contact;
+    private X28ContactDto contact;
 
     @Valid
     @NotNull
@@ -69,7 +68,7 @@ public class CreateJobAdvertisementFromX28Dto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title, String description, String numberOfJobs, String fingerprint, String externalUrl, String jobCenterCode, ContactDto contact, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean companyAnonymous) {
+    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title, String description, String numberOfJobs, String fingerprint, String externalUrl, String jobCenterCode, X28ContactDto contact, EmploymentDto employment, CompanyDto company, CreateLocationDto location, List<OccupationDto> occupations, String professionCodes, List<LanguageSkillDto> languageSkills, LocalDate publicationStartDate, LocalDate publicationEndDate, boolean companyAnonymous) {
         this.stellennummerEgov = stellennummerEgov;
         this.stellennummerAvam = stellennummerAvam;
         this.title = title;
@@ -154,11 +153,11 @@ public class CreateJobAdvertisementFromX28Dto {
         this.jobCenterCode = jobCenterCode;
     }
 
-    public ContactDto getContact() {
+    public X28ContactDto getContact() {
         return contact;
     }
 
-    public void setContact(ContactDto contact) {
+    public void setContact(X28ContactDto contact) {
         this.contact = contact;
     }
 
