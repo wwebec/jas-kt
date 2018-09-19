@@ -27,6 +27,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -55,7 +56,8 @@ public class DLQItemServiceTest {
                 .setHeader(DLQItemService.KAFKA_RECEIVED_TIMESTAMP, 1536573600000L)
                 .setHeader(DLQItemService.X_EXCEPTION_STACKTRACE, "Test-Stacktrace")
                 .setHeader(DLQItemService.X_ORIGINAL_TOPIC, "Test-Original-Topic")
-                .setHeader(DLQItemService.RELEVANT_ID_KEY, testingJobAd.getId().getValue())
+                .setHeader(MessageHeaders.RELEVANT_ID, testingJobAd.getId().getValue())
+                .setHeader(MessageHeaders.PAYLOAD_TYPE, testingJobAd.getClass().getSimpleName())
                 .build();
 
         // when
@@ -75,6 +77,8 @@ public class DLQItemServiceTest {
 
         DLQItem dlqItem = dlqItems.get(0);
         assertThat(dlqItem.getErrorTime()).isEqualTo(LocalDateTime.ofInstant(Instant.ofEpochMilli(1536573600000L), ZoneId.systemDefault()));
+        assertThat(dlqItem.getPayloadType()).isEqualTo(testingJobAd.getClass().getSimpleName());
+        assertThat(dlqItem.getRelevantId()).isEqualTo(testingJobAd.getId().getValue());
 
         JobAdvertisement savedJobAdPayload = objectMapper.readValue(dlqItem.getPayload(), JobAdvertisement.class);
         assertThat(savedJobAdPayload).isEqualTo(testingJobAd);

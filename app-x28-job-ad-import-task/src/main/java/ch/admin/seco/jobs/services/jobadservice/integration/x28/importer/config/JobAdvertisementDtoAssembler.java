@@ -46,6 +46,7 @@ class JobAdvertisementDtoAssembler {
     private static final String ORACLE_DATE_FORMAT = "yyyy-MM-dd-HH.mm.ss.SSSSSS";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(ORACLE_DATE_FORMAT);
     private static final EmailValidator EMAIL_VALIDATOR = new EmailValidator();
+    private static final String DEFAULT_AVAM_OCCUPATION_CODE = "99999";
 
     CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto(Oste x28JobAdvertisement) {
         return new CreateJobAdvertisementFromX28Dto(
@@ -66,7 +67,7 @@ class JobAdvertisementDtoAssembler {
                 createLanguageSkills(x28JobAdvertisement),
                 parseDate(x28JobAdvertisement.getAnmeldeDatum()),
                 parseDate(x28JobAdvertisement.getGueltigkeit()),
-                safeBoolean(x28JobAdvertisement.isWwwAnonym(), false)
+                fallbackAwareBoolean(x28JobAdvertisement.isWwwAnonym(), false)
         );
     }
 
@@ -128,25 +129,30 @@ class JobAdvertisementDtoAssembler {
         List<OccupationDto> occupations = new ArrayList<>();
         if (hasText(x28JobAdvertisement.getBq1AvamBerufNr())) {
             occupations.add(new OccupationDto(
-                    x28JobAdvertisement.getBq1AvamBerufNr(),
+                    fallbackAwareAvamOccuptionCode(x28JobAdvertisement.getBq1AvamBerufNr()),
                     resolveExperience(x28JobAdvertisement.getBq1ErfahrungCode()),
                     x28JobAdvertisement.getBq1AusbildungCode()
             ));
         }
         if (hasText(x28JobAdvertisement.getBq2AvamBerufNr())) {
             occupations.add(new OccupationDto(
-                    x28JobAdvertisement.getBq2AvamBerufNr(),
+                    fallbackAwareAvamOccuptionCode(x28JobAdvertisement.getBq2AvamBerufNr()),
                     resolveExperience(x28JobAdvertisement.getBq2ErfahrungCode()),
                     x28JobAdvertisement.getBq2AusbildungCode()
             ));
         }
         if (hasText(x28JobAdvertisement.getBq3AvamBerufNr())) {
             occupations.add(new OccupationDto(
-                    x28JobAdvertisement.getBq3AvamBerufNr(),
+                    fallbackAwareAvamOccuptionCode(x28JobAdvertisement.getBq3AvamBerufNr()),
                     resolveExperience(x28JobAdvertisement.getBq3ErfahrungCode()),
                     x28JobAdvertisement.getBq3AusbildungCode()
             ));
         }
+
+        if (occupations.isEmpty()) {
+            occupations.add(new OccupationDto(DEFAULT_AVAM_OCCUPATION_CODE, null, null));
+        }
+
         return occupations;
     }
 
@@ -207,8 +213,8 @@ class JobAdvertisementDtoAssembler {
                 startDate,
                 endDate,
                 false,
-                safeBoolean(x28JobAdvertisement.isAbSofort(), false),
-                safeBoolean(x28JobAdvertisement.isUnbefristet(), (endDate != null)),
+                fallbackAwareBoolean(x28JobAdvertisement.isAbSofort(), false),
+                fallbackAwareBoolean(x28JobAdvertisement.isUnbefristet(), (endDate != null)),
                 workingTimePercentage.getMin(),
                 workingTimePercentage.getMax(),
                 null
@@ -319,8 +325,12 @@ class JobAdvertisementDtoAssembler {
         return LocalDate.parse(startDate, DATE_FORMATTER);
     }
 
-    private boolean safeBoolean(Boolean value, boolean defaultValue) {
+    private boolean fallbackAwareBoolean(Boolean value, boolean defaultValue) {
         return (value != null) ? value : defaultValue;
+    }
+
+    private String fallbackAwareAvamOccuptionCode(String avamOccupationCode) {
+        return hasText(avamOccupationCode) ? avamOccupationCode : DEFAULT_AVAM_OCCUPATION_CODE;
     }
 
 }

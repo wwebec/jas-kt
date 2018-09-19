@@ -18,7 +18,7 @@ public class DLQItemRepositoryTest {
 
     @Test
     public void testSave() {
-        DLQItem entity = new DLQItem(LocalDateTime.now(), "test-headers", "test-payload", "test-dlqname", "test-aggregate-id");
+        DLQItem entity = new DLQItem(LocalDateTime.now(), "test-headers", "Test-Type", "test-payload", "test-dlqname", "test-aggregate-id");
 
         dlqItemRepository.save(entity);
     }

@@ -22,16 +22,14 @@ import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
 import org.springframework.transaction.annotation.Transactional;
 
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderService;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.MessageHeaders;
 
 @Transactional
 public class DLQItemService {
-
-    static final String RELEVANT_ID_KEY = "relevantId";
 
     static final String KAFKA_RECEIVED_TIMESTAMP = "kafka_receivedTimestamp";
 
@@ -40,6 +38,8 @@ public class DLQItemService {
     static final String X_EXCEPTION_STACKTRACE = "x-exception-stacktrace";
 
     static final String X_ORIGINAL_TOPIC = "x-original-topic";
+
+    private static final String FALLBACK_STRING = "UNKNOWN";
 
     private final Logger LOG = LoggerFactory.getLogger(DLQItemService.class);
 
@@ -60,12 +60,12 @@ public class DLQItemService {
 
     @StreamListener(target = JOB_AD_EVENT_DLQ_CHANNEL)
     public void handleEventDLQMessage(Message<?> message) {
-        doHandle(message, this::extractPartitionKey);
+        doHandle(message, this::extractRelevantId);
     }
 
     @StreamListener(target = JOB_AD_ACTION_DLQ_CHANNEL)
     public void handleActionDLQMessage(Message<?> message) {
-        doHandle(message, this::extractPartitionKey);
+        doHandle(message, this::extractRelevantId);
     }
 
     public long count() {
@@ -98,8 +98,8 @@ public class DLQItemService {
         final Map<String, Object> mailVariables = new HashMap<>();
         mailVariables.put("dlqItemId", dlqItem.getId());
         mailVariables.put("originalTopic", dlqItem.getOriginalTopic());
-        mailVariables.put("exceptionMessage", extractString(message.getHeaders().get(X_EXCEPTION_MESSAGE)));
-        mailVariables.put("exceptionStacktrace", extractString(message.getHeaders().get(X_EXCEPTION_STACKTRACE)));
+        mailVariables.put("exceptionMessage", fallbackAwareString(message.getHeaders().get(X_EXCEPTION_MESSAGE)));
+        mailVariables.put("exceptionStacktrace", fallbackAwareString(message.getHeaders().get(X_EXCEPTION_STACKTRACE)));
         mailVariables.put("payloadType", message.getPayload().getClass().getSimpleName());
         mailVariables.put("relevantId", dlqItem.getRelevantId());
         return new MailSenderData.Builder()
@@ -119,8 +119,9 @@ public class DLQItemService {
         final DLQItem dlqItem = new DLQItem(
                 errorTime,
                 header,
+                fallbackAwareString(message.getHeaders().get(MessageHeaders.PAYLOAD_TYPE)),
                 payload,
-                extractString(message.getHeaders().get(X_ORIGINAL_TOPIC)),
+                fallbackAwareString(message.getHeaders().get(X_ORIGINAL_TOPIC)),
                 relevantId
         );
         LOG.debug("Error message received: [timestamp: {}, header:{}, payload:{}]", errorTime, header, payload);
@@ -128,34 +129,38 @@ public class DLQItemService {
     }
 
 
-    private String extractPartitionKey(Message<?> message) {
-        return extractString(message.getHeaders().get(RELEVANT_ID_KEY));
+    private String extractRelevantId(Message<?> message) {
+        return fallbackAwareString(message.getHeaders().get(MessageHeaders.RELEVANT_ID));
     }
 
-    private Map<String, String> extractHeaderAsString(MessageHeaders headers) {
+    private Map<String, String> extractHeaderAsString(org.springframework.messaging.MessageHeaders headers) {
         Map<String, String> result = new HashMap<>();
-        headers.forEach((key, value) -> result.put(key, extractString(value)));
+        headers.forEach((key, value) -> result.put(key, fallbackAwareString(value)));
         return result;
     }
 
     private <T> String extractPayload(T payload) {
+        if (payload == null) {
+            return FALLBACK_STRING;
+        }
         if (payload instanceof byte[]) {
-            return extractString(payload);
-        } else {
-            try {
-                return objectMapper.writeValueAsString(payload);
-            } catch (JsonProcessingException e) {
-                throw new IllegalStateException("Could serialize as JSON ", e);
-            }
+            return fallbackAwareString(payload);
+        }
+        try {
+            return objectMapper.writeValueAsString(payload);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("Could serialize as JSON ", e);
         }
     }
 
-    private String extractString(Object value) {
+    private String fallbackAwareString(Object value) {
+        if (value == null) {
+            return FALLBACK_STRING;
+        }
         if (value instanceof byte[]) {
             return new String((byte[]) value);
-        } else {
-            return Objects.toString(value);
         }
+        return Objects.toString(value);
     }
 
     private LocalDateTime extractLocalDateTime(Object value) {
