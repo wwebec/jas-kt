@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.validation.Validator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.zeroturnaround.zip.ZipUtil;
@@ -36,6 +38,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.OsteList;
 
@@ -46,25 +49,31 @@ public class X28JobAdImportTaskConfig {
     private static final String PARAMETER_LAST_MODIFIED_TIME = "LAST_MODIFIED_TIME";
 
     private final JobBuilderFactory jobBuilderFactory;
+
     private final StepBuilderFactory stepBuilderFactory;
+
     private final MessageChannel messageBrokerOutputChannel;
+
     private final MessageSource<File> x28JobAdDataFileMessageSource;
+
+    private final Validator validator;
 
     @Autowired
     public X28JobAdImportTaskConfig(
             JobBuilderFactory jobBuilderFactory,
             StepBuilderFactory stepBuilderFactory,
             MessageSource<File> x28JobAdDataFileMessageSource,
-            MessageChannel output) {
+            MessageChannel output,
+            Validator validator) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
         this.x28JobAdDataFileMessageSource = x28JobAdDataFileMessageSource;
         this.messageBrokerOutputChannel = output;
+        this.validator = validator;
     }
 
     @Bean
-    public Job x28ImportJob(
-            StaxEventItemReader<Oste> xmlFileReader, X28JobAdWriter x28JobAdWriter, X28Properties x28Properties) {
+    public Job x28ImportJob(StaxEventItemReader<Oste> xmlFileReader, X28JobAdWriter x28JobAdWriter, X28Properties x28Properties) {
         return jobBuilderFactory.get("x28-jobad-xml-import")
                 .incrementer(new RunIdIncrementer())
                 .listener(new CleanupXmlFileJobExecutionListener())
@@ -78,8 +87,9 @@ public class X28JobAdImportTaskConfig {
                 .to(stepBuilderFactory
                         .get("send-to-job-ad-service")
                         .listener(itemLoggerListener())
-                        .<Oste, Oste>chunk(10)
+                        .<Oste, CreateJobAdvertisementFromX28Dto>chunk(10)
                         .reader(xmlFileReader)
+                        .processor(x28ItemProcessor())
                         .writer(x28JobAdWriter)
                         .build())
                 .build()
@@ -89,6 +99,11 @@ public class X28JobAdImportTaskConfig {
     @Bean
     public ItemLoggerListener itemLoggerListener() {
         return new ItemLoggerListener();
+    }
+
+    @Bean
+    public X28ItemProcessor x28ItemProcessor() {
+        return new X28ItemProcessor(validator);
     }
 
     @Bean
