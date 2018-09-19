@@ -49,6 +49,8 @@ class JobAdvertisementDtoAssembler {
     private static final String DEFAULT_AVAM_OCCUPATION_CODE = "99999";
 
     CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto(Oste x28JobAdvertisement) {
+        LocalDate publicationStartDate = parseDate(x28JobAdvertisement.getAnmeldeDatum());
+        LocalDate publicationEndDate = parseDate(x28JobAdvertisement.getGueltigkeit());
         return new CreateJobAdvertisementFromX28Dto(
                 x28JobAdvertisement.getStellennummerEGov(),
                 x28JobAdvertisement.getStellennummerAvam(),
@@ -65,10 +67,36 @@ class JobAdvertisementDtoAssembler {
                 createOccupations(x28JobAdvertisement),
                 createProfessionCodes(x28JobAdvertisement),
                 createLanguageSkills(x28JobAdvertisement),
-                parseDate(x28JobAdvertisement.getAnmeldeDatum()),
-                parseDate(x28JobAdvertisement.getGueltigkeit()),
+                getStartDate(publicationStartDate, publicationEndDate),
+                getEndDate(publicationStartDate, publicationEndDate),
                 fallbackAwareBoolean(x28JobAdvertisement.isWwwAnonym(), false)
         );
+    }
+
+    private LocalDate getStartDate(LocalDate startDate, LocalDate endDate) {
+        if(startDate == null) {
+            return null;
+        }
+        if(endDate == null) {
+            return startDate;
+        }
+        if(startDate.isAfter(endDate)) {
+            return endDate;
+        }
+        return startDate;
+    }
+
+    private LocalDate getEndDate(LocalDate startDate, LocalDate endDate) {
+        if(endDate == null) {
+            return null;
+        }
+        if(startDate == null) {
+            return endDate;
+        }
+        if(endDate.isBefore(startDate)) {
+            return startDate;
+        }
+        return endDate;
     }
 
     private List<LanguageSkillDto> createLanguageSkills(Oste x28JobAdvertisement) {
