@@ -26,7 +26,7 @@ public class X28LanguageSkillDto {
         this.writtenLevel = writtenLevel;
     }
 
-    public LanguageSkillDto toLanguageSkillDto() {
+    LanguageSkillDto toLanguageSkillDto() {
         return new LanguageSkillDto(this.languageIsoCode, this.spokenLevel, this.writtenLevel);
     }
 

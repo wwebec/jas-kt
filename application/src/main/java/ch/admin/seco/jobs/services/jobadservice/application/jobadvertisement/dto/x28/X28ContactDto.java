@@ -31,6 +31,14 @@ public class X28ContactDto {
         this.languageIsoCode = languageIsoCode;
     }
 
+    public ContactDto toContactDto() {
+        return new ContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email, this.languageIsoCode);
+    }
+
+    public PublicContactDto toPublicContactDto() {
+        return new PublicContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email);
+    }
+
     public Salutation getSalutation() {
         return salutation;
     }
@@ -77,14 +85,6 @@ public class X28ContactDto {
 
     public void setLanguageIsoCode(String languageIsoCode) {
         this.languageIsoCode = languageIsoCode;
-    }
-
-    public ContactDto toContactDto() {
-        return new ContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email, this.languageIsoCode);
-    }
-
-    public PublicContactDto toPublicContactDto() {
-        return new PublicContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email);
     }
 
 }

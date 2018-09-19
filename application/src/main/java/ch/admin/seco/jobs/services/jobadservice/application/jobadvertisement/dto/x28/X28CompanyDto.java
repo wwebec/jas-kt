@@ -53,6 +53,23 @@ public class X28CompanyDto {
         this.surrogate = surrogate;
     }
 
+    public CompanyDto toCompanyDto() {
+        return new CompanyDto(name,
+                street,
+                houseNumber,
+                postalCode,
+                city,
+                countryIsoCode,
+                postOfficeBoxNumber,
+                postOfficeBoxPostalCode,
+                postOfficeBoxCity,
+                phone,
+                email,
+                website,
+                surrogate
+        );
+    }
+
     public String getName() {
         return name;
     }
@@ -168,22 +185,5 @@ public class X28CompanyDto {
     public X28CompanyDto setSurrogate(boolean surrogate) {
         this.surrogate = surrogate;
         return this;
-    }
-
-    public CompanyDto toCompanyDto() {
-        return new CompanyDto(name,
-                street,
-                houseNumber,
-                postalCode,
-                city,
-                countryIsoCode,
-                postOfficeBoxNumber,
-                postOfficeBoxPostalCode,
-                postOfficeBoxCity,
-                phone,
-                email,
-                website,
-                surrogate
-        );
     }
 }

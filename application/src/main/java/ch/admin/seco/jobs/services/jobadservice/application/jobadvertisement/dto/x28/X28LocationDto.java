@@ -15,7 +15,6 @@ public class X28LocationDto {
 
     private String countryIsoCode;
 
-
     protected X28LocationDto() {
         // For reflection libs
     }
@@ -25,6 +24,10 @@ public class X28LocationDto {
         this.city = city;
         this.postalCode = postalCode;
         this.countryIsoCode = countryIsoCode;
+    }
+
+    CreateLocationDto toCreateLocationDto() {
+        return new CreateLocationDto(remarks, city, postalCode, countryIsoCode);
     }
 
     public String getRemarks() {
@@ -63,7 +66,4 @@ public class X28LocationDto {
         return this;
     }
 
-    public CreateLocationDto toCreateLocationDto() {
-        return new CreateLocationDto(remarks, city, postalCode, countryIsoCode);
-    }
 }
