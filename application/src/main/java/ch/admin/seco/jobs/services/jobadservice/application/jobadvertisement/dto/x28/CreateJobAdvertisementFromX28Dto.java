@@ -100,6 +100,56 @@ public class CreateJobAdvertisementFromX28Dto {
         this.companyAnonymous = companyAnonymous;
     }
 
+    public List<LanguageSkillDto> toLanguageSkillDtos() {
+        if (this.languageSkills == null) {
+            return Collections.emptyList();
+        }
+        return this.languageSkills.stream()
+                .map(X28LanguageSkillDto::toLanguageSkillDto)
+                .collect(Collectors.toList());
+    }
+
+    public ContactDto toContactDto() {
+        if (contact == null) {
+            return null;
+        }
+        return contact.toContactDto();
+    }
+
+    public PublicContactDto toPublicContactDto() {
+        if (contact == null) {
+            return null;
+        }
+        return contact.toPublicContactDto();
+    }
+
+    public CompanyDto toCompanyDto() {
+        if (company == null) {
+            return null;
+        }
+
+        return company.toCompanyDto();
+    }
+
+    public CreateLocationDto toCreateLocationDto() {
+        if (location == null) {
+            return null;
+        }
+
+        return location.toCreateLocationDto();
+    }
+
+    public List<OccupationDto> toOccupationDtos() {
+        if (occupations == null) {
+            return Collections.emptyList();
+        }
+
+        return occupations
+                .stream()
+                .map(X28OccupationDto::toOccupationDto)
+                .collect(Collectors.toList());
+    }
+
     public String getStellennummerEgov() {
         return stellennummerEgov;
     }
@@ -176,20 +226,6 @@ public class CreateJobAdvertisementFromX28Dto {
         return contact;
     }
 
-    public ContactDto getContactDto() {
-        if (contact == null) {
-            return null;
-        }
-        return contact.toContactDto();
-    }
-
-    public PublicContactDto getPublicContactDto() {
-        if (contact == null) {
-            return null;
-        }
-        return contact.toPublicContactDto();
-    }
-
     public CreateJobAdvertisementFromX28Dto setContact(X28ContactDto contact) {
         this.contact = contact;
         return this;
@@ -208,14 +244,6 @@ public class CreateJobAdvertisementFromX28Dto {
         return company;
     }
 
-    public CompanyDto getCompanyDto() {
-        if (company == null) {
-            return null;
-        }
-
-        return company.toCompanyDto();
-    }
-
     public CreateJobAdvertisementFromX28Dto setCompany(X28CompanyDto company) {
         this.company = company;
         return this;
@@ -225,15 +253,6 @@ public class CreateJobAdvertisementFromX28Dto {
         return location;
     }
 
-    public CreateLocationDto getCreateLocationDto() {
-        if (location == null) {
-            return null;
-        }
-
-        return location.toCreateLocationDto();
-    }
-
-
     public CreateJobAdvertisementFromX28Dto setLocation(X28LocationDto location) {
         this.location = location;
         return this;
@@ -241,17 +260,6 @@ public class CreateJobAdvertisementFromX28Dto {
 
     public List<X28OccupationDto> getOccupations() {
         return occupations;
-    }
-
-    public List<OccupationDto> getOccupationDtos() {
-        if (occupations == null) {
-            return Collections.emptyList();
-        }
-
-        return occupations
-                .stream()
-                .map(X28OccupationDto::toOccupationDto)
-                .collect(Collectors.toList());
     }
 
     public CreateJobAdvertisementFromX28Dto setOccupations(List<X28OccupationDto> occupations) {
@@ -271,16 +279,6 @@ public class CreateJobAdvertisementFromX28Dto {
     public List<X28LanguageSkillDto> getLanguageSkills() {
         return languageSkills;
     }
-
-    public List<LanguageSkillDto> getLanguageSkillDtos() {
-        if (this.languageSkills == null) {
-            return Collections.emptyList();
-        }
-        return this.languageSkills.stream()
-                .map(X28LanguageSkillDto::toLanguageSkillDto)
-                .collect(Collectors.toList());
-    }
-
 
     public CreateJobAdvertisementFromX28Dto setLanguageSkills(List<X28LanguageSkillDto> languageSkills) {
         this.languageSkills = languageSkills;

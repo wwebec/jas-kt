@@ -31,11 +31,11 @@ public class X28ContactDto {
         this.languageIsoCode = languageIsoCode;
     }
 
-    public ContactDto toContactDto() {
+    ContactDto toContactDto() {
         return new ContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email, this.languageIsoCode);
     }
 
-    public PublicContactDto toPublicContactDto() {
+    PublicContactDto toPublicContactDto() {
         return new PublicContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email);
     }
 

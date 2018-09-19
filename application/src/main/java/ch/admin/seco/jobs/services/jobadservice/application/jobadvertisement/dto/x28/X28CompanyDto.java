@@ -53,7 +53,7 @@ public class X28CompanyDto {
         this.surrogate = surrogate;
     }
 
-    public CompanyDto toCompanyDto() {
+    CompanyDto toCompanyDto() {
         return new CompanyDto(name,
                 street,
                 houseNumber,

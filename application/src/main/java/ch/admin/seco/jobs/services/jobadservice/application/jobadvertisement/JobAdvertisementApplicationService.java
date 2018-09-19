@@ -213,12 +213,12 @@ public class JobAdvertisementApplicationService {
 
         checkIfJobAdvertisementAlreadyExists(createJobAdvertisementFromX28Dto);
 
-        Location location = toLocation(createJobAdvertisementFromX28Dto.getCreateLocationDto());
+        Location location = toLocation(createJobAdvertisementFromX28Dto.toCreateLocationDto());
         location = locationService.enrichCodes(location);
 
-        List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromX28Dto.getOccupationDtos());
+        List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromX28Dto.toOccupationDtos());
 
-        Company company = toCompany(createJobAdvertisementFromX28Dto.getCompanyDto());
+        Company company = toCompany(createJobAdvertisementFromX28Dto.toCompanyDto());
         JobContent jobContent = new JobContent.Builder()
                 .setNumberOfJobs(createJobAdvertisementFromX28Dto.getNumberOfJobs())
                 .setJobDescriptions(Collections.singletonList(
@@ -235,8 +235,8 @@ public class JobAdvertisementApplicationService {
                 .setEmployment(toEmployment(createJobAdvertisementFromX28Dto.getEmployment()))
                 .setDisplayCompany(determineDisplayCompany(createJobAdvertisementFromX28Dto))
                 .setCompany(company)
-                .setPublicContact(toPublicContact(createJobAdvertisementFromX28Dto.getPublicContactDto()))
-                .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.getLanguageSkillDtos()))
+                .setPublicContact(toPublicContact(createJobAdvertisementFromX28Dto.toPublicContactDto()))
+                .setLanguageSkills(toLanguageSkills(createJobAdvertisementFromX28Dto.toLanguageSkillDtos()))
                 .build();
 
         LocalDate publicationStartDate = createJobAdvertisementFromX28Dto.getPublicationStartDate();
@@ -252,7 +252,7 @@ public class JobAdvertisementApplicationService {
                 .setStellennummerAvam(createJobAdvertisementFromX28Dto.getStellennummerAvam())
                 .setFingerprint(createJobAdvertisementFromX28Dto.getFingerprint())
                 .setJobContent(jobContent)
-                .setContact(toContact(createJobAdvertisementFromX28Dto.getContactDto()))
+                .setContact(toContact(createJobAdvertisementFromX28Dto.toContactDto()))
                 .setPublication(
                         new Publication.Builder()
                                 .setStartDate(publicationStartDate)
@@ -751,7 +751,7 @@ public class JobAdvertisementApplicationService {
 
     private Company determineDisplayCompany(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
         return this.determineDisplayCompany(
-                toCompany(createJobAdvertisementFromX28Dto.getCompanyDto()),
+                toCompany(createJobAdvertisementFromX28Dto.toCompanyDto()),
                 createJobAdvertisementFromX28Dto.isCompanyAnonymous(),
                 createJobAdvertisementFromX28Dto.getJobCenterCode()
         );
