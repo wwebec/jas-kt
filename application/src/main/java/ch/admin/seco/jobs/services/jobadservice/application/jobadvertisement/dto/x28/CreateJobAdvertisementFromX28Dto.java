@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 
 import javax.validation.Valid;
@@ -8,7 +9,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CreateJobAdvertisementFromX28Dto {
 
@@ -197,7 +200,7 @@ public class CreateJobAdvertisementFromX28Dto {
     }
 
     public CreateLocationDto getCreateLocationDto() {
-        if(location == null) {
+        if (location == null) {
             return null;
         }
 
@@ -212,6 +215,17 @@ public class CreateJobAdvertisementFromX28Dto {
 
     public List<X28OccupationDto> getOccupations() {
         return occupations;
+    }
+
+    public List<OccupationDto> getOccupationDtos() {
+        if (occupations == null) {
+            return Collections.emptyList();
+        }
+
+        return occupations
+                .stream()
+                .map(X28OccupationDto::toOccupationDto)
+                .collect(Collectors.toList());
     }
 
     public CreateJobAdvertisementFromX28Dto setOccupations(List<X28OccupationDto> occupations) {

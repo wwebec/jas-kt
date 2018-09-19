@@ -1,5 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
@@ -61,5 +62,9 @@ public class X28OccupationDto {
             return occupations.stream().map(X28OccupationDto::toDto).collect(Collectors.toList());
         }
         return null;
+    }
+
+    public OccupationDto toOccupationDto() {
+        return new OccupationDto(avamOccupationCode, workExperience, educationCode);
     }
 }

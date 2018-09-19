@@ -215,10 +215,10 @@ public class JobAdvertisementApplicationService {
 
         checkIfJobAdvertisementAlreadyExists(createJobAdvertisementFromX28Dto);
 
-        Location location = toLocation(createJobAdvertisementFromX28Dto.getLocation());
+        Location location = toLocation(createJobAdvertisementFromX28Dto.getCreateLocationDto());
         location = locationService.enrichCodes(location);
 
-        List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromX28Dto.getOccupations());
+        List<Occupation> occupations = enrichAndToOccupations(createJobAdvertisementFromX28Dto.getOccupationDtos());
 
         Company company = toCompany(createJobAdvertisementFromX28Dto.getCompany());
         JobContent jobContent = new JobContent.Builder()
