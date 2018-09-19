@@ -77,6 +77,8 @@ public class DLQItemServiceTest {
 
         DLQItem dlqItem = dlqItems.get(0);
         assertThat(dlqItem.getErrorTime()).isEqualTo(LocalDateTime.ofInstant(Instant.ofEpochMilli(1536573600000L), ZoneId.systemDefault()));
+        assertThat(dlqItem.getPayloadType()).isEqualTo(testingJobAd.getClass().getSimpleName());
+        assertThat(dlqItem.getRelevantId()).isEqualTo(testingJobAd.getId().getValue());
 
         JobAdvertisement savedJobAdPayload = objectMapper.readValue(dlqItem.getPayload(), JobAdvertisement.class);
         assertThat(savedJobAdPayload).isEqualTo(testingJobAd);
