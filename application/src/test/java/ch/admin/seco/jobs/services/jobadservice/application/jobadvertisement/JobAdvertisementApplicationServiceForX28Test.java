@@ -116,26 +116,25 @@ public class JobAdvertisementApplicationServiceForX28Test {
                 .setEmail("email")
                 .setWebsite("website");
 
-        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto(
-                null,
-                null,
-                "title",
-                "description",
-                null,
-                "fingerprint",
-                "url",
-                null,
-                null,
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
-                x28CompanyDto,
-                new X28LocationDto("remarks", "city", "postalCode", "CH"),
-                Collections.singletonList(new X28OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
-                "1,2",
-                Collections.singletonList(new X28LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
-                TimeMachine.now().toLocalDate(),
-                null,
-                false
-        );
+        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto()
+                .setStellennummerEgov(null)
+                .setStellennummerAvam(null)
+                .setTitle("title")
+                .setDescription("description")
+                .setNumberOfJobs(null)
+                .setFingerprint("fingerprint")
+                .setExternalUrl("url")
+                .setJobCenterCode(null)
+                .setContact(null)
+                .setEmployment(new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null))
+                .setCompany(x28CompanyDto)
+                .setLocation(new X28LocationDto("remarks", "city", "postalCode", "CH"))
+                .setOccupations(Collections.singletonList(new X28OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")))
+                .setProfessionCodes("1,2")
+                .setLanguageSkills(Collections.singletonList(new X28LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)))
+                .setPublicationStartDate(TimeMachine.now().toLocalDate())
+                .setPublicationEndDate(null)
+                .setCompanyAnonymous(false);
 
         //Execute
         JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);
@@ -161,26 +160,25 @@ public class JobAdvertisementApplicationServiceForX28Test {
     @Test
     public void createFromX28WithEmptyCountry() {
         //Prepare
-        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto(
-                null,
-                null,
-                "title",
-                "description",
-                null,
-                "fingerprint",
-                "url",
-                null,
-                null,
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
-                new X28CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false),
-                new X28LocationDto(null, "city", "postalCode", null),
-                Collections.singletonList(new X28OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
-                "1,2",
-                Collections.singletonList(new X28LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
-                TimeMachine.now().toLocalDate(),
-                null,
-                false
-        );
+        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto()
+                .setStellennummerEgov(null)
+                .setStellennummerAvam(null)
+                .setTitle("title")
+                .setDescription("description")
+                .setNumberOfJobs(null)
+                .setFingerprint("fingerprint")
+                .setExternalUrl("url")
+                .setJobCenterCode(null)
+                .setContact(null)
+                .setEmployment(new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null))
+                .setCompany(new X28CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false))
+                .setLocation(new X28LocationDto(null, "city", "postalCode", null))
+                .setOccupations(Collections.singletonList(new X28OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")))
+                .setProfessionCodes("1,2")
+                .setLanguageSkills(Collections.singletonList(new X28LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)))
+                .setPublicationStartDate(TimeMachine.now().toLocalDate())
+                .setPublicationEndDate(null)
+                .setCompanyAnonymous(false);
 
         //Execute
         JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);

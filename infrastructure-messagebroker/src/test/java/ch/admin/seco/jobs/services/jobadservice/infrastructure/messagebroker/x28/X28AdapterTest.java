@@ -118,25 +118,25 @@ public class X28AdapterTest {
     }
 
     private CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto() {
-        return new CreateJobAdvertisementFromX28Dto(
-                "stellennummerEgov",
-                "stellennummerAvam",
-                "title",
-                "descriotion",
-                "numberOfJobs",
-                "fingerprint",
-                "externalUrl",
-                "jobCenterCode",
-                new X28ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 100, 100, null),
-                new X28CompanyDto("companyName", "companyStreet", "companyHouseNumber", "companyPostalCode", "companyCity", "CH", null, null, null, "companyPhone", "companyEmail", "companyWebside", false),
-                new X28LocationDto(null, "locationCity", "locationPostalCode", "CH"),
-                Collections.singletonList(new X28OccupationDto("avamOccupationCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")),
-                "professionCodes",
-                Collections.singletonList(new X28LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.INTERMEDIATE)),
-                LocalDate.of(2018, 1, 1),
-                LocalDate.of(2018, 12, 31),
-                false
-        );
+        return new CreateJobAdvertisementFromX28Dto()
+                .setStellennummerEgov("stellennummerEgov")
+                .setStellennummerAvam("stellennummerAvam")
+                .setTitle("title")
+                .setDescription("description")
+                .setNumberOfJobs("numberOfJobs")
+                .setFingerprint("fingerprint")
+                .setExternalUrl("externalUrl")
+                .setJobCenterCode("jobCenterCode")
+                .setContact(new X28ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"))
+                .setEmployment(new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 100, 100, null))
+                .setCompany(new X28CompanyDto("companyName", "companyStreet", "companyHouseNumber", "companyPostalCode", "companyCity", "CH", null, null, null, "companyPhone", "companyEmail", "companyWebside", false))
+                .setLocation(new X28LocationDto(null, "locationCity", "locationPostalCode", "CH"))
+                .setOccupations(Collections.singletonList(new X28OccupationDto("avamOccupationCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")))
+                .setProfessionCodes("professionCodes")
+                .setLanguageSkills(Collections.singletonList(new X28LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.INTERMEDIATE)))
+                .setPublicationStartDate(LocalDate.of(2018, 1, 1))
+                .setPublicationEndDate(LocalDate.of(2018, 12, 31))
+                .setCompanyAnonymous(false);
     }
+
 }

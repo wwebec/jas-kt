@@ -68,38 +68,6 @@ public class CreateJobAdvertisementFromX28Dto {
 
     private boolean companyAnonymous;
 
-    public CreateJobAdvertisementFromX28Dto() {
-        // For reflection libs
-    }
-
-    public CreateJobAdvertisementFromX28Dto(String stellennummerEgov, String stellennummerAvam, String title,
-            String description, String numberOfJobs, String fingerprint,
-            String externalUrl, String jobCenterCode, X28ContactDto contact,
-            EmploymentDto employment, X28CompanyDto company, X28LocationDto location,
-            List<X28OccupationDto> occupations, String professionCodes,
-            List<X28LanguageSkillDto> languageSkills, LocalDate publicationStartDate,
-            LocalDate publicationEndDate, boolean companyAnonymous) {
-
-        this.stellennummerEgov = stellennummerEgov;
-        this.stellennummerAvam = stellennummerAvam;
-        this.title = title;
-        this.description = description;
-        this.numberOfJobs = numberOfJobs;
-        this.fingerprint = fingerprint;
-        this.externalUrl = externalUrl;
-        this.jobCenterCode = jobCenterCode;
-        this.contact = contact;
-        this.employment = employment;
-        this.company = company;
-        this.location = location;
-        this.occupations = occupations;
-        this.professionCodes = professionCodes;
-        this.languageSkills = languageSkills;
-        this.publicationStartDate = publicationStartDate;
-        this.publicationEndDate = publicationEndDate;
-        this.companyAnonymous = companyAnonymous;
-    }
-
     public List<LanguageSkillDto> toLanguageSkillDtos() {
         if (this.languageSkills == null) {
             return Collections.emptyList();
