@@ -1,9 +1,10 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.x28;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createContact;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createJobContent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createOwner;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdTestFixture.job01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testContact;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testOwner;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
+import static java.time.LocalDate.now;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -32,7 +33,6 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28LanguageSkillDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28LocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
@@ -80,7 +80,7 @@ public class X28AdapterTest {
 
     @Test
     public void shouldUpdatefromEgov() {
-        when(jobAdvertisementRepository.findByStellennummerEgov(any())).thenReturn(Optional.of(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_01, "fingerprint", JobAdvertisementStatus.PUBLISHED_PUBLIC)));
+        when(jobAdvertisementRepository.findByStellennummerEgov(any())).thenReturn(Optional.of(createExternalJobWithStatus(job01.id(), "fingerprint", JobAdvertisementStatus.PUBLISHED_PUBLIC)));
         when(jobAdvertisementRepository.findByStellennummerAvam(any())).thenReturn(Optional.empty());
         CreateJobAdvertisementFromX28Dto x28Dto = createJobAdvertisementFromX28Dto();
 
@@ -93,7 +93,7 @@ public class X28AdapterTest {
     @Test
     public void shouldUpdatefromAvam() {
         when(jobAdvertisementRepository.findByStellennummerEgov(any())).thenReturn(Optional.empty());
-        when(jobAdvertisementRepository.findByStellennummerAvam(any())).thenReturn(Optional.of(createExternalJobWithStatus(JOB_ADVERTISEMENT_ID_01, "fingerprint", JobAdvertisementStatus.PUBLISHED_PUBLIC)));
+        when(jobAdvertisementRepository.findByStellennummerAvam(any())).thenReturn(Optional.of(createExternalJobWithStatus(job01.id(), "fingerprint", JobAdvertisementStatus.PUBLISHED_PUBLIC)));
         CreateJobAdvertisementFromX28Dto x28Dto = createJobAdvertisementFromX28Dto();
 
         sut.handleCreateFromX28Action(x28Dto);
@@ -106,10 +106,10 @@ public class X28AdapterTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setFingerprint(fingerprint)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setContact(createContact(jobAdvertisementId))
-                .setJobContent(createJobContent(jobAdvertisementId))
-                .setPublication(new Publication.Builder().setEndDate(TimeMachine.now().toLocalDate()).build())
+                .setOwner(testOwner(jobAdvertisementId))
+                .setContact(testContact(jobAdvertisementId))
+                .setJobContent(testJobContent(jobAdvertisementId))
+                .setPublication(new Publication.Builder().setEndDate(now()).build())
                 .setSourceSystem(SourceSystem.EXTERN)
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStellennummerAvam(null)

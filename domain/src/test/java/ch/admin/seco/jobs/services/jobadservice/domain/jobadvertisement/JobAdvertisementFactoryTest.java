@@ -1,20 +1,23 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdTestFixture.job01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testContact;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
-
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createContact;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createJobContent;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
 
 public class JobAdvertisementFactoryTest {
 
@@ -23,15 +26,16 @@ public class JobAdvertisementFactoryTest {
     private DomainEventMockUtils domainEventMockUtils;
     private JobAdvertisementFactory jobAdvertisementFactory;
 
+    @Mock
+    private JobAdvertisementRepository repository;
+
     @Before
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
         JobAdvertisementRepository jobAdvertisementRepository = spy(TestJobAdvertisementRepository.class);
         DataFieldMaxValueIncrementer stellennummerEgovGenerator = spy(DataFieldMaxValueIncrementer.class);
         AccessTokenGenerator accessTokenGenerator = spy(AccessTokenGenerator.class);
-
         when(stellennummerEgovGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
-
         jobAdvertisementFactory = new JobAdvertisementFactory(jobAdvertisementRepository, accessTokenGenerator, stellennummerEgovGenerator);
     }
 
@@ -42,17 +46,13 @@ public class JobAdvertisementFactoryTest {
 
     @Test
     public void testCreateFromWebForm() {
-        //Prepare
-        JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(createAuditUser())
-                .setContact(createContact(JOB_ADVERTISEMENT_ID_01))
-                .setJobContent(createJobContent(JOB_ADVERTISEMENT_ID_01))
-                .setPublication(new Publication.Builder().build())
-                .build();
+        //given
+        JobAdvertisementCreator creator = testJobAdvertisementCreator();
 
-        //Execute
+        //when
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(creator);
 
-        //Validate
+        //then
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.JOBROOM);
         assertThat(jobAdvertisement.getStellennummerEgov()).isEqualTo(TEST_STELLEN_NUMMER_EGOV);
@@ -64,11 +64,7 @@ public class JobAdvertisementFactoryTest {
     @Test
     public void createFromApi() {
         //Prepare
-        JobAdvertisementCreator creator = new JobAdvertisementCreator.Builder(createAuditUser())
-                .setContact(createContact(JOB_ADVERTISEMENT_ID_01))
-                .setJobContent(createJobContent(JOB_ADVERTISEMENT_ID_01))
-                .setPublication(new Publication.Builder().build())
-                .build();
+        JobAdvertisementCreator creator = testJobAdvertisementCreator();
 
         //Execute
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromApi(creator);
@@ -82,6 +78,14 @@ public class JobAdvertisementFactoryTest {
         assertThat(jobAdvertisementEvent.getAggregateId()).isEqualTo(jobAdvertisement.getId());
     }
 
+    public static JobAdvertisementCreator testJobAdvertisementCreator() {
+        return new JobAdvertisementCreator.Builder(createAuditUser())
+                .setContact(testContact(job01.id()))
+                .setJobContent(testJobContent(job01.id()))
+                .setPublication(new Publication.Builder().build())
+                .build();
+    }
+
     @SuppressWarnings("unchecked")
     static abstract class TestJobAdvertisementRepository implements JobAdvertisementRepository {
 
@@ -91,7 +95,7 @@ public class JobAdvertisementFactoryTest {
         }
     }
 
-    private AuditUser createAuditUser() {
+    private static AuditUser createAuditUser() {
         return new AuditUser("user-1","extern-1", "company-1", "My", "User", "my.user@example.org");
     }
 }

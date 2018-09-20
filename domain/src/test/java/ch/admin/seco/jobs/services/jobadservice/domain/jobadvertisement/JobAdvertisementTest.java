@@ -1,8 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createContact;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createJobContent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.createOwner;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyTestFixture.testCompany;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentTestFixture.testEmploymentPermanent;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdTestFixture.job01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.prepareJobAdvertisementBuilder;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisement;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisementWithId01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.fixture.JobCenterTestFixture.testJobCenter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -13,11 +18,9 @@ import org.junit.Test;
 
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.ConditionException;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddress;
 
 public class JobAdvertisementTest {
 
@@ -33,42 +36,21 @@ public class JobAdvertisementTest {
         domainEventMockUtils.clearEvents();
     }
 
-    // @Test
+    //@Test
     public void testUpdate() {
-        //Prepare
-        JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
-                .setId(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01)
-                .setOwner(createOwner(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setContact(createContact(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setJobContent(createJobContent(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setPublication(new Publication.Builder().build())
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
-                .build();
+        //given
+        JobAdvertisement jobAdvertisement = testJobAdvertisementWithId01();
 
-        //Execute
+        //when
         jobAdvertisement.update(
                 new JobAdvertisementUpdater.Builder(null)
                         .setCompany(
-                                new Company.Builder()
-                                        .setName("name")
-                                        .setStreet("street")
-                                        .setHouseNumber("houseNumber")
-                                        .setPostalCode("postalCode")
-                                        .setCity("city")
-                                        .setCountryIsoCode("countryIsoCode")
-                                        .setPostOfficeBoxNumber("postOfficeBoxNumber")
-                                        .setPostOfficeBoxPostalCode("postOfficeBoxPostalCode")
-                                        .setPostOfficeBoxCity("postOfficeBoxCity")
-                                        .setPhone("phone")
-                                        .setEmail("email")
-                                        .setWebsite("website")
-                                        .build()
+                                testCompany()
                         )
                         .build()
         );
 
-        //Validate
+        //then
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
 
         Company company = jobAdvertisement.getJobContent().getCompany();
@@ -87,167 +69,54 @@ public class JobAdvertisementTest {
         assertThat(company.getWebsite()).isEqualTo("website");
 
         JobAdvertisementEvent jobAdvertisementEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED.getDomainEventType());
-        assertThat(jobAdvertisementEvent.getAggregateId()).isEqualTo(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
+        assertThat(jobAdvertisementEvent.getAggregateId()).isEqualTo(job01.id());
     }
 
     @Test
     public void testInspect() {
-        //Prepare
-        JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
-                .setId(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01)
-                .setOwner(createOwner(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setContact(createContact(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setJobContent(createJobContent(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setPublication(new Publication.Builder().build())
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
-                .setStellennummerEgov("stellennummerEgov")
-                .build();
+        //given
+        JobAdvertisement jobAdvertisement = testJobAdvertisement();
 
-        //Execute
+        //when
         jobAdvertisement.inspect();
 
-        //Validate
+        //then
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.INSPECTING);
 
         JobAdvertisementEvent jobAdvertisementEvent = domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_INSPECTING.getDomainEventType());
-        assertThat(jobAdvertisementEvent.getAggregateId()).isEqualTo(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
-    }
-
-    //@Test
-    public void testApprove() {
-    }
-
-    //@Test
-    public void testReject() {
-    }
-
-    //@Test
-    public void testCancel() {
-    }
-
-    //@Test
-    public void testRefining() {
-    }
-
-    //@Test
-    public void testPublishRestricted() {
-    }
-
-    //@Test
-    public void testPublishPublic() {
-    }
-
-    //@Test
-    public void testArchive() {
+        assertThat(jobAdvertisementEvent.getAggregateId()).isEqualTo(job01.id());
     }
 
     @Test
     public void testShortTermValidation() {
-        //Prepare
-        final JobContent jobContent = createJobContent(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
-        jobContent.setEmployment(new Employment.Builder()
-                .setStartDate(TimeMachine.now().toLocalDate())
-                .setEndDate(TimeMachine.now().plusDays(31).toLocalDate())
-                .setShortEmployment(true)
-                .setImmediately(false)
-                .setPermanent(true)
-                .setWorkloadPercentageMin(80)
-                .setWorkloadPercentageMax(100)
-                .build());
-        final JobAdvertisement.Builder jobAdvertisementBuilder = new JobAdvertisement.Builder()
-                .setId(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01)
-                .setOwner(createOwner(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setContact(createContact(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setJobContent(jobContent)
-                .setPublication(new Publication.Builder().build())
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED);
+        //given
+        JobContent jobContent = testJobContent(job01.id());
+        jobContent.setEmployment(testEmploymentPermanent());
 
-        //Execute
-        final ConditionException exception = catchThrowableOfType(jobAdvertisementBuilder::build, ConditionException.class);
+        //when
+        ConditionException exception = catchThrowableOfType(prepareJobAdvertisementBuilder(jobContent)::build, ConditionException.class);
 
-        //Validate
+        //then
         assertThat(exception).isNotNull();
         assertThat(exception.getMessage()).contains("Employment is short-term and permanent at the same time");
     }
 
     @Test
     public void testUpdateJobCenter() {
-        final JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
-                .setId(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01)
-                .setJobCenterCode("jobCenterCode")
-                .setOwner(createOwner(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setContact(createContact(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setJobContent(createJobContent(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setPublication(new Publication.Builder().setCompanyAnonymous(true).build())
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
-                .build();
-        final JobCenter jobCenter = new JobCenter(
-                "jobCenterId",
-                "jobCenterCode",
-                "jobCenterEmail",
-                "jobCenterPhone",
-                "jobCenterFax",
-                true,
-                new JobCenterAddress(
-                        "jobCenterName",
-                        "jobCenterCity",
-                        "jobCenterStreet",
-                        "jobCenterHouseNumber",
-                        "jobCenterZipCode"
-                )
-        );
-
+        JobAdvertisement jobAdvertisement = testJobAdvertisement(job01.id(), testJobContent(job01.id()), "jobCenterCode");
+        JobCenter jobCenter = testJobCenter();
         jobAdvertisement.updateJobCenter(jobCenter);
 
-        assertThat(jobAdvertisement.getJobContent().getDisplayCompany().getName()).isEqualTo("jobCenterName");
+        assertThat(jobAdvertisement.getJobContent().getDisplayCompany().getName()).isEqualTo("name");
     }
 
     @Test
     public void testShouldNotUpdateJobCenter() {
-        JobContent jobContent = createJobContent(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01);
-        jobContent.setDisplayCompany(new Company.Builder(new JobCenter(
-                "jobCenterOtherId",
-                "jobCenterOtherCode",
-                "jobCenterOtherEmail",
-                "jobCenterOtherPhone",
-                "jobCenterOtherFax",
-                true,
-                new JobCenterAddress(
-                        "jobCenterOtherName",
-                        "jobCenterOtherCity",
-                        "jobCenterOtherStreet",
-                        "jobCenterOtherHouseNumber",
-                        "jobCenterOtherZipCode"
-                )
-        )).build());
-        final JobAdvertisement jobAdvertisement = new JobAdvertisement.Builder()
-                .setId(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01)
-                .setJobCenterCode("jobCenterCodeOther")
-                .setOwner(createOwner(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setContact(createContact(JobAdvertisementTestDataProvider.JOB_ADVERTISEMENT_ID_01))
-                .setJobContent(jobContent)
-                .setPublication(new Publication.Builder().setCompanyAnonymous(true).build())
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.CREATED)
-                .build();
-        final JobCenter jobCenter = new JobCenter(
-                "jobCenterId",
-                "jobCenterCode",
-                "jobCenterEmail",
-                "jobCenterPhone",
-                "jobCenterFax",
-                true,
-                new JobCenterAddress(
-                        "jobCenterName",
-                        "jobCenterCity",
-                        "jobCenterStreet",
-                        "jobCenterHouseNumber",
-                        "jobCenterZipCode"
-                )
-        );
+        JobAdvertisementId id = job01.id();
+        JobContent jobContent = testJobContent(id);
+        jobContent.setDisplayCompany(testCompany());
+        JobAdvertisement jobAdvertisement = testJobAdvertisement(id, jobContent, "jobCenterCodeOther");
+        JobCenter jobCenter = testJobCenter();
 
         assertThatThrownBy(() -> jobAdvertisement.updateJobCenter(jobCenter))
                 .isInstanceOf(IllegalArgumentException.class)
