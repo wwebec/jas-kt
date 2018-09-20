@@ -24,4 +24,5 @@
     <include file="classpath:/liquibase/changelog/20180918160000_changed_entity_DLQitem.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180918220000_update_DLQitem_relevant_id.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180919120000_update_DLQitem_payload_type.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20180920080000_update_JobAdvertisement_display_company.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
