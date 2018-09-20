@@ -33,7 +33,7 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin: 'idea'
+//    apply plugin: 'idea'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'propdeps'
 

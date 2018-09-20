@@ -1,19 +1,20 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
-
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamAction;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.TOsteEgov;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.TOsteEgov;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.WSArbeitsform;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.WSArbeitsformArray;
 import org.springframework.util.Assert;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.SOURCE_SYSTEM;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.WORK_FORMS;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.formatLocalDate;
 import static org.springframework.util.StringUtils.hasText;
 
-@Deprecated
-public class AvamJobAdvertisementAssemblerV1 {
+public class AvamJobAdvertisementAssembler {
 
     private static boolean safeBoolean(Boolean value) {
         return (value != null) ? value : false;
@@ -49,12 +50,14 @@ public class AvamJobAdvertisementAssemblerV1 {
         //TODO: Review if we need to check nullability
         Assert.notNull(publication, "jobAdvertisement.getPublication can not be null");
 
-        avamJobAdvertisement.setGueltigkeit(formatLocalDate(publication.getEndDate()));
+        avamJobAdvertisement.setGueltigkeit(null);
 
         avamJobAdvertisement.setEures(publication.isEuresDisplay());
         avamJobAdvertisement.setEuresAnonym(publication.isEuresAnonymous());
         avamJobAdvertisement.setPublikation(publication.isPublicDisplay());
         avamJobAdvertisement.setAnonym(publication.isCompanyAnonymous());
+        avamJobAdvertisement.setLoginPublikation(publication.isRestrictedDisplay());
+        avamJobAdvertisement.setLoginAnonym(publication.isCompanyAnonymous());
 
         final JobContent jobContent = jobAdvertisement.getJobContent();
         //TODO: Review if we need to check nullability
@@ -71,13 +74,19 @@ public class AvamJobAdvertisementAssemblerV1 {
         avamJobAdvertisement.setBezeichnung(defaultJobDescription.getTitle());
         avamJobAdvertisement.setBeschreibung(defaultJobDescription.getDescription());
 
+        avamJobAdvertisement.setGleicheOste(jobContent.getNumberOfJobs());
         fillEmployment(avamJobAdvertisement, jobContent.getEmployment());
         fillApplyChannel(avamJobAdvertisement, jobContent.getApplyChannel());
         fillCompany(avamJobAdvertisement, jobContent.getCompany());
+        fillEmployer(avamJobAdvertisement, jobContent.getEmployer());
         fillContact(avamJobAdvertisement, jobAdvertisement.getContact());
         fillLocation(avamJobAdvertisement, jobContent.getLocation());
         fillOccupation(avamJobAdvertisement, jobContent.getOccupations());
         fillLangaugeSkills(avamJobAdvertisement, jobContent.getLanguageSkills());
+
+        avamJobAdvertisement.setMeldepflicht(jobAdvertisement.isReportingObligation());
+        avamJobAdvertisement.setSperrfrist(formatLocalDate(jobAdvertisement.getReportingObligationEndDate()));
+        avamJobAdvertisement.setQuelleCode(SOURCE_SYSTEM.getLeft(jobAdvertisement.getSourceSystem()));
 
         return avamJobAdvertisement;
     }
@@ -96,8 +105,26 @@ public class AvamJobAdvertisementAssemblerV1 {
         if (!permanent) {
             avamJobAdvertisement.setVertragsdauer(formatLocalDate(employment.getEndDate()));
         }
+        avamJobAdvertisement.setKurzeinsatz(employment.isShortEmployment());
+
         avamJobAdvertisement.setPensumVon((short) employment.getWorkloadPercentageMin());
         avamJobAdvertisement.setPensumBis((short) employment.getWorkloadPercentageMax());
+
+        if (employment.getWorkForms() != null) {
+            List<WSArbeitsform> wsArbeitsformList = employment.getWorkForms()
+                    .stream()
+                    .map(WORK_FORMS::getLeft)
+                    .map(arbeitsformCode -> {
+                        WSArbeitsform wsArbeitsform = new WSArbeitsform();
+                        wsArbeitsform.setArbeitsformCode(arbeitsformCode);
+                        return wsArbeitsform;
+                    })
+                    .collect(Collectors.toList());
+
+            WSArbeitsformArray wsArbeitsformArray = new WSArbeitsformArray();
+            wsArbeitsformArray.getWSArbeitsformArrayItem().addAll(wsArbeitsformList);
+            avamJobAdvertisement.setArbeitsformCodeList(wsArbeitsformArray);
+        }
     }
 
     private void fillApplyChannel(TOsteEgov avamJobAdvertisement, ApplyChannel applyChannel) {
@@ -105,7 +132,7 @@ public class AvamJobAdvertisementAssemblerV1 {
             return;
         }
         avamJobAdvertisement.setBewerSchriftlich(hasText(applyChannel.getMailAddress()));
-        avamJobAdvertisement.setBewerElektronisch(hasText(applyChannel.getEmailAddress()));
+        avamJobAdvertisement.setBewerElektronisch(hasText(applyChannel.getEmailAddress()) || hasText(applyChannel.getFormUrl()));
         avamJobAdvertisement.setUntEmail(applyChannel.getEmailAddress());
         avamJobAdvertisement.setUntUrl(applyChannel.getFormUrl()); // actually used for 'Online Bewerbung' instead 'home page'
         avamJobAdvertisement.setBewerTelefonisch(hasText(applyChannel.getPhoneNumber()));
@@ -126,6 +153,17 @@ public class AvamJobAdvertisementAssemblerV1 {
         avamJobAdvertisement.setUntPostfachPlz(company.getPostOfficeBoxPostalCode());
         avamJobAdvertisement.setUntPostfachOrt(company.getPostOfficeBoxCity());
         avamJobAdvertisement.setUntLand(company.getCountryIsoCode());
+        avamJobAdvertisement.setAuftraggeber(company.isSurrogate());
+    }
+
+    private void fillEmployer(TOsteEgov avamJobAdvertisement, Employer employer) {
+        if (employer == null) {
+            return;
+        }
+        avamJobAdvertisement.setAuftraggeberName(employer.getName());
+        avamJobAdvertisement.setAuftraggeberPlz(employer.getPostalCode());
+        avamJobAdvertisement.setAuftraggeberOrt(employer.getCity());
+        avamJobAdvertisement.setAuftraggeberLand(employer.getCountryIsoCode());
     }
 
     private void fillContact(TOsteEgov avamJobAdvertisement, Contact contact) {
@@ -136,7 +174,17 @@ public class AvamJobAdvertisementAssemblerV1 {
         avamJobAdvertisement.setKpVorname(contact.getFirstName());
         avamJobAdvertisement.setKpName(contact.getLastName());
         avamJobAdvertisement.setKpTelefonNr(contact.getPhone());
-        avamJobAdvertisement.setKpEmail(contact.getEmail());
+        // FIXME: Temparory fix for mulitple email-addresses. to be remove after 01.09.2018 or handled otherwise
+        avamJobAdvertisement.setKpEmail(fetchFirstEmail(contact.getEmail()));
+        //avamJobAdvertisement.setKpEmail(contact.getEmail());
+    }
+
+    static String fetchFirstEmail(String email) {
+        if (hasText(email)) {
+            String[] tokens = email.split(",\\s*");
+            return tokens[0];
+        }
+        return null;
     }
 
     private void fillLocation(TOsteEgov avamJobAdvertisement, Location location) {
@@ -146,7 +194,7 @@ public class AvamJobAdvertisementAssemblerV1 {
         avamJobAdvertisement.setArbeitsOrtText(location.getRemarks());
         avamJobAdvertisement.setArbeitsOrtOrt(location.getCity());
         avamJobAdvertisement.setArbeitsOrtPlz(location.getPostalCode());
-        avamJobAdvertisement.setArbeitsOrtGemeinde(location.getCommunalCode());
+        //avamJobAdvertisement.setArbeitsOrtGemeindeNr(location.getCommunalCode());
         avamJobAdvertisement.setArbeitsOrtLand(location.getCountryIsoCode());
     }
 
@@ -157,6 +205,7 @@ public class AvamJobAdvertisementAssemblerV1 {
         if (occupations.size() > 0) {
             Occupation occupation = occupations.get(0);
             avamJobAdvertisement.setBq1AvamBeruf(occupation.getLabel());
+            avamJobAdvertisement.setBq1AvamBerufNr(occupation.getAvamOccupationCode());
             avamJobAdvertisement.setBq1ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             avamJobAdvertisement.setBq1AusbildungCode(occupation.getEducationCode());
         }
@@ -164,12 +213,14 @@ public class AvamJobAdvertisementAssemblerV1 {
         if (occupations.size() > 1) {
             Occupation occupation = occupations.get(1);
             tOsteEgov.setBq2AvamBeruf(occupation.getLabel());
+            tOsteEgov.setBq2AvamBerufNr(occupation.getAvamOccupationCode());
             tOsteEgov.setBq2ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq2AusbildungCode(occupation.getEducationCode());
         }
         if (occupations.size() > 2) {
             Occupation occupation = occupations.get(2);
             tOsteEgov.setBq3AvamBeruf(occupation.getLabel());
+            tOsteEgov.setBq3AvamBerufNr(occupation.getAvamOccupationCode());
             tOsteEgov.setBq3ErfahrungCode(AvamCodeResolver.EXPERIENCES.getLeft(occupation.getWorkExperience()));
             tOsteEgov.setBq3AusbildungCode(occupation.getEducationCode());
         }

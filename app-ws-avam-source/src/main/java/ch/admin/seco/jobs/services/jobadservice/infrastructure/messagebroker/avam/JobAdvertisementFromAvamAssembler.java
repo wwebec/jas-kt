@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v2;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
@@ -10,8 +10,8 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.WSArbeitsformArray;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2.WSOsteEgov;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSArbeitsformArray;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSOsteEgov;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -37,9 +37,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.StringUtils.hasText;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 
-public class JobAdvertisementFromAvamAssemblerV2 {
+public class JobAdvertisementFromAvamAssembler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JobAdvertisementFromAvamAssemblerV2.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JobAdvertisementFromAvamAssembler.class);
     private static final EmailValidator emailValidator = new EmailValidator();
 
     private static boolean safeBoolean(Boolean value, boolean defaultValue) {
@@ -196,7 +196,7 @@ public class JobAdvertisementFromAvamAssemblerV2 {
                 .of(
                         createOccupationDto(avamJobAdvertisement.getBq1AvamBerufNr(), avamJobAdvertisement.getBq1ErfahrungCode(), avamJobAdvertisement.getBq1AusbildungCode()),
                         createOccupationDto(avamJobAdvertisement.getBq2AvamBerufNr(), avamJobAdvertisement.getBq2ErfahrungCode(), avamJobAdvertisement.getBq2AusbildungCode()),
-                        createOccupationDto(avamJobAdvertisement.getBq2AvamBerufNr(), avamJobAdvertisement.getBq3ErfahrungCode(), avamJobAdvertisement.getBq2AusbildungCode())
+                        createOccupationDto(avamJobAdvertisement.getBq3AvamBerufNr(), avamJobAdvertisement.getBq3ErfahrungCode(), avamJobAdvertisement.getBq3AusbildungCode())
                 )
                 .filter(Objects::nonNull)
                 .collect(toList());

@@ -19,16 +19,10 @@ task genJaxb {
             mkdir(dir: sourcesDir)
             mkdir(dir: classesDir)
 
-            xjc(destdir: sourcesDir, package: 'ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v1') {
-                schema(dir: schemaDir, includes: 'v1/*.wsdl')
+            xjc(destdir: sourcesDir, package: 'ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source') {
+                schema(dir: schemaDir, includes: '*.wsdl')
                 arg(value: '-wsdl')
-                produces(dir: sourcesDir, includes: '**/v1/*.java')
-            }
-
-            xjc(destdir: sourcesDir, package: 'ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.v2') {
-                schema(dir: schemaDir, includes: 'v2/*.wsdl')
-                arg(value: '-wsdl')
-                produces(dir: sourcesDir, includes: '**/v2/*.java')
+                produces(dir: sourcesDir, includes: '**/*.java')
             }
 
             javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,

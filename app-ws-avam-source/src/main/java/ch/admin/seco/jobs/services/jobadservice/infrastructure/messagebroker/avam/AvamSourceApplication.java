@@ -24,7 +24,6 @@ public class AvamSourceApplication {
 
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(AvamSourceApplication.class);
-        app.setDefaultProperties(new HashMap<>(singletonMap(DEFAULT_PROFILES_PROPERTY_NAME, ProfileRegistry.AVAM_WSDL_V2)));
         app.run(args);
     }
 }

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions targetNamespace="http://ws.web.egov.avam.bit.admin.ch" xmlns="http://schemas.xmlsoap.org/wsdl/"
+			 xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://ws.web.egov.avam.bit.admin.ch"
+			 xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="http://valueobjects.common.avam.bit.admin.ch">
+
+<documentation>
+		Schnittstelle zu SECO eGov
+		==========================
+
+		Die Schnittstelle wurde möglichst einfach gestaltet. Es gibt auf beiden
+		Seiten der Schnittstelle einen Service, der die verschiedenen Operationen
+		implementiert.
+		Es wurde besonders darauf geachtet, dass die WSDL-Dateien kompatibel zu AJAX2 sind, 
+		da eGov seine WS-Clients und -Services mit AJAX implementieren will.
+
+		Sicherheit
+		==========
+
+		Die Verbindungen zwischen eGov und AVAM werden über HTTPS abgewickelt.
+		Die entsprechenden Zertifikate müssen in beiden Systemen installiert sein.
+		Der Anfrageteil (HTTP-POST) wird zudem mit einem technischen User und
+		einem Passwort innerhalb der SOAP-Nachricht gesichert.
+
+		Operationen
+		===========
+
+		- Oste in AVAM eintragen
+		- Lesen der für eGov relevanten T_Code Einträgen.
+		- Publikation des STES im eGov
+		- Abfragen von RAV-Adressen
+		- Abfragen von RAV-Sachbearbeitern
+	</documentation>
+
+	<types>
+		<xs:schema>
+			<xs:import namespace="http://valueobjects.common.avam.bit.admin.ch" schemaLocation="EgovToAVAM.xsd"/>
+		</xs:schema>
+	</types>
+
+	<!--
+		Nachrichten Deklaration
+	 -->
+	<message name="deliverOsteResponse">
+		<part element="xsd1:deliverOsteResponse" name="parameters"/>
+	</message>
+	<message name="deliverOsteRequest">
+		<part element="xsd1:deliverOste" name="parameters"/>
+	</message>
+	<message name="getCodeResponse">
+		<part element="xsd1:getCodeResponse" name="parameters"/>
+	</message>
+	<message name="getCodeRequest">
+		<part element="xsd1:getCode" name="parameters"/>
+	</message>
+	<message name="getRavAdressenResponse">
+		<part element="xsd1:getRavAdressenResponse" name="parameters"/>
+	</message>
+	<message name="getRavAdressenRequest">
+		<part element="xsd1:getRavAdressen" name="parameters"/>
+	</message>
+	<message name="getRavSachbearbeiterResponse">
+		<part element="xsd1:getRavSachbearbeiterResponse" name="parameters"/>
+	</message>
+	<message name="getRavSachbearbeiterRequest">
+		<part element="xsd1:getRavSachbearbeiter" name="parameters"/>
+	</message>
+
+	<!--
+		Port Deklaration
+	 -->
+	<portType name="EgovPortType">
+		<operation name="deliverOste">
+			<input message="tns:deliverOsteRequest" name="deliverOsteRequest"/>
+			<output message="tns:deliverOsteResponse" name="deliverOsteResponse"/>
+		</operation>
+		<operation name="getCode">
+			<input message="tns:getCodeRequest" name="getCodeRequest"/>
+			<output message="tns:getCodeResponse" name="getCodeResponse"/>
+		</operation>
+		<operation name="getRavAdressen">
+			<input message="tns:getRavAdressenRequest" name="getRavAdressenRequest"/>
+			<output message="tns:getRavAdressenResponse" name="getRavAdressenResponse"/>
+		</operation>
+		<operation name="getRavSachbearbeiter">
+			<input message="tns:getRavSachbearbeiterRequest" name="getRavSachbearbeiterRequest"/>
+			<output message="tns:getRavSachbearbeiterResponse" name="getRavSachbearbeiterResponse"/>
+		</operation>
+	</portType>
+
+	<!--
+		Port Binding
+	 -->
+	<binding name="EgovPortBinding" type="tns:EgovPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<operation name="deliverOste">
+			<soap:operation soapAction="deliverOste" style="document"/>
+			<input name="deliverOsteRequest">
+				<soap:body use="literal"/>
+			</input>
+			<output name="deliverOsteResponse">
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="getCode">
+			<soap:operation soapAction="getCode" style="document"/>
+			<input name="getCodeRequest">
+				<soap:body use="literal"/>
+			</input>
+			<output name="getCodeResponse">
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="getRavAdressen">
+			<soap:operation soapAction="getRavAdressen" style="document"/>
+			<input name="getRavAdressenRequest">
+				<soap:body use="literal"/>
+			</input>
+			<output name="getRavAdressenResponse">
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+		<operation name="getRavSachbearbeiter">
+			<soap:operation soapAction="getRavSachbearbeiter" style="document"/>
+			<input name="getRavSachbearbeiterRequest">
+				<soap:body use="literal"/>
+			</input>
+			<output name="getRavSachbearbeiterResponse">
+				<soap:body use="literal"/>
+			</output>
+		</operation>
+	</binding>
+
+	<!--
+		Service Deklaration
+	 -->
+	<service name="EgovService">
+		<port binding="tns:EgovPortBinding" name="EgovService">
+			<soap:address location="http://localhost:9080/AVAM_Web/services/EgovService"/>
+		</port>
+	</service>
+</definitions>

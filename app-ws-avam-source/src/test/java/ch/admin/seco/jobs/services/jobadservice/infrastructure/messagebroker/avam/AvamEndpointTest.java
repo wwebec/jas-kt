@@ -41,9 +41,8 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = AvamSourceApplication.class)
-@ActiveProfiles(ProfileRegistry.AVAM_WSDL_V1)
 @DirtiesContext
-public class AvamEndpointV1Test {
+public class AvamEndpointTest {
 
     private MockWebServiceClient mockWebServiceClient;
 
@@ -64,7 +63,7 @@ public class AvamEndpointV1Test {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Value("classpath:/schema/v1/AVAMToEgov.xsd")
+    @Value("classpath:/schema/AVAMToEgov.xsd")
     private Resource secoEgovServiceXsdResource;
 
     @Before
@@ -108,6 +107,9 @@ public class AvamEndpointV1Test {
         RejectionDto rejectionDto = rejectionDtoJacksonTester.parse(received.getPayload()).getObject();
         assertThat(rejectionDto.getStellennummerEgov()).isEqualTo("EGOV-0002");
         assertThat(rejectionDto.getStellennummerAvam()).isEqualTo("AVAM-0002");
+        assertThat(rejectionDto.getDate()).isEqualTo("2018-03-03");
+        assertThat(rejectionDto.getCode()).isEqualTo("REJECT-CODE");
+        assertThat(rejectionDto.getReason()).isEqualTo("REJECT-REASON");
     }
 
     @Test

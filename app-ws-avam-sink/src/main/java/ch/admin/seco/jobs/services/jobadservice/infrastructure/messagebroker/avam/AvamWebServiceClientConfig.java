@@ -1,24 +1,19 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.v1;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOste;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOsteResponse;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
-import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamProperties;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamWebServiceClient;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.DeliverOste;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.v1.DeliverOsteResponse;
-
-@Deprecated
 @Configuration
-@Profile(ProfileRegistry.AVAM_WSDL_V1)
-public class AvamWebServiceClientV1Config {
+@EnableConfigurationProperties(AvamProperties.class)
+public class AvamWebServiceClientConfig {
     private final AvamProperties avamProperties;
 
-    public AvamWebServiceClientV1Config(AvamProperties avamProperties) {
+    public AvamWebServiceClientConfig(AvamProperties avamProperties) {
         this.avamProperties = avamProperties;
     }
 
@@ -33,7 +28,7 @@ public class AvamWebServiceClientV1Config {
 
     @Bean
     public AvamWebServiceClient avamService() {
-        return new AvamWebServiceClientV1(
+        return new AvamWebServiceClient(
                 webServiceTemplate(),
                 avamProperties.getUsername(),
                 avamProperties.getPassword());
