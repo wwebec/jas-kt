@@ -1,8 +1,8 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyTestFixture.testCompany;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentTestFixture.testEmploymentPermanent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdTestFixture.job01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentFixture.testEmployment;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.prepareJobAdvertisementBuilder;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisement;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisementWithId01;
@@ -42,10 +42,9 @@ public class JobAdvertisementTest {
         JobAdvertisement jobAdvertisement = testJobAdvertisementWithId01();
 
         //when
-        jobAdvertisement.update(
-                new JobAdvertisementUpdater.Builder(null)
-                        .setCompany(
-                                testCompany()
+        jobAdvertisement.update(new JobAdvertisementUpdater.Builder(null)
+                        .setCompany(testCompany()
+                                .build()
                         )
                         .build()
         );
@@ -91,7 +90,11 @@ public class JobAdvertisementTest {
     public void testShortTermValidation() {
         //given
         JobContent jobContent = testJobContent(job01.id());
-        jobContent.setEmployment(testEmploymentPermanent());
+        jobContent.setEmployment(testEmployment()
+                .setShortEmployment(true)
+                .setPermanent(true)
+                .build()
+        );
 
         //when
         ConditionException exception = catchThrowableOfType(prepareJobAdvertisementBuilder(jobContent)::build, ConditionException.class);
@@ -114,7 +117,7 @@ public class JobAdvertisementTest {
     public void testShouldNotUpdateJobCenter() {
         JobAdvertisementId id = job01.id();
         JobContent jobContent = testJobContent(id);
-        jobContent.setDisplayCompany(testCompany());
+        jobContent.setDisplayCompany(testCompany().build());
         JobAdvertisement jobAdvertisement = testJobAdvertisement(id, jobContent, "jobCenterCodeOther");
         JobCenter jobCenter = testJobCenter();
 

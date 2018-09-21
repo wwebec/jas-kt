@@ -5,9 +5,9 @@ import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisem
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.CreateJobAdvertisementFromX28DtoTestFixture.createCreateJobAdvertisementDto;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.CreateJobAdvertisementFromX28DtoTestFixture.testCreateJobAdvertisementFromX28Dto;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.X28CompanyDtoTestFixture.testX28CompanyDto;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdTestFixture.job01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisementWithCreatedStatus;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationTestFixture.testLocation;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationFixture.testLocation;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -73,7 +73,7 @@ public class JobAdvertisementApplicationServiceForX28Test {
     @Before
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
-        when(locationService.enrichCodes(any())).thenReturn(testLocation());
+        when(locationService.enrichCodes(any())).thenReturn(testLocation().build());
         when(locationService.isLocationValid(any())).thenReturn(Boolean.TRUE);
         when(egovNumberGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
     }

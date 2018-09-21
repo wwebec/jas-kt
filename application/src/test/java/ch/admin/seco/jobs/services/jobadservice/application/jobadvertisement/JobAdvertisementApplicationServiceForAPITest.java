@@ -2,8 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
 
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.CreateJobAdvertisementDtoTestFixture.testCreateJobAdvertisementDto;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationTestFixture.testLocation;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyTestFixture.testCompany;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationFixture.testLocation;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -70,7 +70,7 @@ public class JobAdvertisementApplicationServiceForAPITest {
     @Before
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
-        when(locationService.enrichCodes(any())).thenReturn(testLocation());
+        when(locationService.enrichCodes(any())).thenReturn(testLocation().build());
         when(locationService.isLocationValid(any())).thenReturn(Boolean.TRUE);
         when(egovNumberGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
     }
@@ -83,7 +83,7 @@ public class JobAdvertisementApplicationServiceForAPITest {
     @Test
     public void createFromApi() {
         //given
-         Company company = testCompany();
+         Company company = testCompany().build();
          CreateJobAdvertisementDto createJobAdvertisementDto = testCreateJobAdvertisementDto(company);
 
         //when

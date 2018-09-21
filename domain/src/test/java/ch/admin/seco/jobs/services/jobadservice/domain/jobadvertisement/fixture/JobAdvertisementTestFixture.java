@@ -4,28 +4,25 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.J
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.INSPECTING;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.EXTERN;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.JOBROOM;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyTestFixture.testCompany;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyTestFixture.testCompanyWithNameAndCityAndPostalCode;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentTestFixture.testEmployment;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdTestFixture.job01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompanyEmpty;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentFixture.testEmployment;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.createJobDescriptions;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.createLanguageSkills;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.createPublicContact;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testApplyChannel;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testContact;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testLanguageSkill;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testLocation;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testOccupation;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testOwner;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testOwnerWithCompanyId;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.prepareJobContentBuilder;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobDescriptionTextFixture.testJobDescription;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationTestFixture.testEmptyPublication;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationTestFixture.testPublication;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationTestFixture.testPublicationWithAnonymousCompany;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationTestFixture.testPublicationWithEndDate;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationTestFixture.testPublicationWithStartDate;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobDescriptionFixture.testJobDescription;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationFixture.testLocation;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationFixture.testPublication;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationFixture.testPublicationEmpty;
 import static java.time.LocalDate.now;
 import static java.util.Collections.singletonList;
 
@@ -45,6 +42,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Owner;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 
+
 public class JobAdvertisementTestFixture {
 
     private static final String STELLENNUMMER_AVAM = "avam";
@@ -61,11 +59,15 @@ public class JobAdvertisementTestFixture {
     }
 
     public static JobAdvertisement.Builder prepareJobAdvertisementBuilder(JobContent jobContent) {
-        return prepareJobAdvertisementBuilder(jobContent, testEmptyPublication());
+        return prepareJobAdvertisementBuilder(jobContent, testPublication()
+                .setPublicDisplay(true)
+                .build());
     }
 
     public static JobAdvertisement testJobAdvertisementWithId01() {
-        return prepareJobAdvertisementBuilder(testJobContent(job01.id()), testPublication()).build();
+        return prepareJobAdvertisementBuilder(testJobContent(job01.id()), testPublication()
+                .setPublicDisplay(true)
+                .build()).build();
     }
 
     public static JobAdvertisement testJobAdvertisement() {
@@ -73,12 +75,13 @@ public class JobAdvertisementTestFixture {
                 .setStellennummerEgov("stellennummerEgov")
                 .build();
     }
+
     public static JobAdvertisement testJobAdvertisementJobWithStatusAndReportingObligationEndDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate reportingObligationEndDate) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setOwner(testOwner(jobAdvertisementId))
                 .setSourceSystem(JOBROOM)
-                .setPublication(testEmptyPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(testJobContent(jobAdvertisementId))
                 .setStatus(status)
                 .setStellennummerEgov(jobAdvertisementId.getValue())
@@ -88,11 +91,17 @@ public class JobAdvertisementTestFixture {
     }
 
     public static JobAdvertisement testJobAdvertisementWithStatusAndPublicationEndDate(JobAdvertisementId id, JobAdvertisementStatus status, LocalDate publicationEndDate) {
-        return testJobAdvertisementWithStatusAndPublication(id, status, testPublicationWithEndDate(publicationEndDate));
+        return testJobAdvertisementWithStatusAndPublication(id, status, testPublicationEmpty()
+                .setEndDate(publicationEndDate)
+                .build());
     }
 
     public static JobAdvertisement testJobAdvertisementWithStatusAndPublicationStartDate(JobAdvertisementId id, JobAdvertisementStatus status, LocalDate publicationStartDate) {
-        return testJobAdvertisementWithStatusAndPublication(id, status, testPublicationWithStartDate(publicationStartDate));
+        return testJobAdvertisementWithStatusAndPublication(id, status, testPublication()
+                .setPublicDisplay(true)
+                .setStartDate(publicationStartDate)
+                .setEndDate(publicationStartDate.plusMonths(1))
+                .build());
     }
 
     public static JobAdvertisement testJobAdvertisementWithCreatedStatus() {
@@ -104,11 +113,18 @@ public class JobAdvertisementTestFixture {
     }
 
     public static JobAdvertisement testJobAdvertisementWithAnonymousCompany(JobAdvertisementId id, JobAdvertisementStatus status, String jobCenterCode) {
-        Publication publication = testPublicationWithAnonymousCompany();
+        Publication publication = testPublicationEmpty()
+                .setCompanyAnonymous(true)
+                .build();
         JobContent jobContent = prepareJobContentBuilder(id)
                 .setJobDescriptions(createJobDescriptions())
                 .setLanguageSkills(createLanguageSkills())
-                .setDisplayCompany(testCompanyWithNameAndCityAndPostalCode())
+                .setDisplayCompany(testCompanyEmpty()
+                        .setName("Test-Company")
+                        .setCity("Test-Cizy")
+                        .setPostalCode("1234")
+                        .build()
+                )
                 .build();
         return new JobAdvertisement.Builder()
                 .setId(id)
@@ -132,7 +148,7 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(JOBROOM)
                 .setContact(testContact(job01.id()))
                 .setJobContent(testJobContent(job01.id()))
-                .setPublication(testEmptyPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setStellennummerEgov(job01.id().getValue())
                 .setStellennummerAvam(STELLENNUMMER_AVAM)
                 .setStatus(status)
@@ -145,7 +161,7 @@ public class JobAdvertisementTestFixture {
                 .setId(id)
                 .setOwner(testOwner(id))
                 .setSourceSystem(sourceSystem)
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(testJobContent(id))
                 .setStatus(CREATED)
                 .setReportToAvam(reportToAvam)
@@ -160,7 +176,9 @@ public class JobAdvertisementTestFixture {
                 .setOwner(testOwner(id))
                 .setContact(testContact(id))
                 .setJobContent(jobContent)
-                .setPublication(testPublicationWithAnonymousCompany())
+                .setPublication(testPublication()
+                        .setCompanyAnonymous(true)
+                        .build())
                 .setSourceSystem(JOBROOM)
                 .setStatus(CREATED)
                 .build();
@@ -187,7 +205,10 @@ public class JobAdvertisementTestFixture {
                 .setOwner(testOwner(jobAdvertisementId))
                 .setContact(testContact(jobAdvertisementId))
                 .setJobContent(testJobContent(jobAdvertisementId))
-                .setPublication(PublicationTestFixture.testPublicationWithEndDate((now())))
+                .setPublication(testPublication()
+                        .setPublicDisplay(true)
+                        .setEndDate(now())
+                        .build())
                 .setSourceSystem(EXTERN)
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setStellennummerAvam(null)
@@ -195,13 +216,13 @@ public class JobAdvertisementTestFixture {
                 .build();
     }
 
-    public static  JobAdvertisement createJob(JobAdvertisementId jobAdvertisementId) {
+    public static JobAdvertisement createJob(JobAdvertisementId jobAdvertisementId) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(testJobContent(jobAdvertisementId))
                 .build();
 
@@ -220,18 +241,17 @@ public class JobAdvertisementTestFixture {
                 .setOwner(testOwnerWithCompanyId(jobAdvertisementId, companyId))
                 .setPublication(publication)
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(singletonList(testJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(testCompany(jobAdvertisementId))
-                        .setCompany(testCompany(jobAdvertisementId))
+                        .setJobDescriptions(singletonList(JobDescriptionFixture.of(jobAdvertisementId).build()))
+                        .setDisplayCompany(CompanyFixture.of(jobAdvertisementId).build())
+                        .setCompany(CompanyFixture.of(jobAdvertisementId).build())
                         .setLanguageSkills(singletonList(testLanguageSkill()))
-                        .setEmployment(testEmployment())
+                        .setEmployment(testEmployment().setShortEmployment(true).build())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
                         .setApplyChannel(testApplyChannel())
-                        .setLocation(testLocation())
+                        .setLocation(testLocation().build())
                         .setOccupations(singletonList(testOccupation()))
                         .build())
                 .build();
-
     }
 
 
@@ -241,7 +261,7 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication(false, false))
+                .setPublication(testPublication().build())
                 .setJobContent(testJobContent(jobAdvertisementId))
                 .setReportingObligation(true)
                 .build();
@@ -254,7 +274,10 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication(true, true))
+                .setPublication(testPublication()
+                        .setPublicDisplay(true)
+                        .setRestrictedDisplay(true)
+                        .build())
                 .setJobContent(testJobContent(jobAdvertisementId))
                 .setReportingObligation(true)
                 .build();
@@ -267,7 +290,9 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication(false, true))
+                .setPublication(testPublication()
+                        .setRestrictedDisplay(true)
+                        .build())
                 .setJobContent(testJobContent(jobAdvertisementId))
                 .setReportingObligation(true)
                 .build();
@@ -280,7 +305,9 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication(true, false))
+                .setPublication(testPublication()
+                        .setPublicDisplay(true)
+                        .build())
                 .setJobContent(testJobContent(jobAdvertisementId))
                 .setReportingObligation(true)
                 .build();
@@ -293,7 +320,7 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_RESTRICTED)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(testJobContent(jobAdvertisementId))
                 .setReportingObligation(true)
                 .build();
@@ -306,11 +333,11 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(singletonList(testJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(testCompany(jobAdvertisementId))
-                        .setCompany(testCompany(jobAdvertisementId))
+                        .setJobDescriptions(singletonList(JobDescriptionFixture.of(jobAdvertisementId).build()))
+                        .setDisplayCompany(CompanyFixture.of(jobAdvertisementId).build())
+                        .setCompany(CompanyFixture.of(jobAdvertisementId).build())
                         .setLanguageSkills(singletonList(testLanguageSkill()))
                         .setEmployment(new Employment.Builder()
                                 .setStartDate(now())
@@ -322,7 +349,7 @@ public class JobAdvertisementTestFixture {
                                 .build())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
                         .setApplyChannel(testApplyChannel())
-                        .setLocation(testLocation())
+                        .setLocation(testLocation().build())
                         .setOccupations(singletonList(testOccupation()))
                         .build())
                 .build();
@@ -335,16 +362,20 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(singletonList(testJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(testCompany(companyName))
-                        .setCompany(testCompany(companyName))
+                        .setJobDescriptions(singletonList(JobDescriptionFixture.of(jobAdvertisementId).build()))
+                        .setDisplayCompany(testCompany()
+                                .setName(companyName)
+                                .build())
+                        .setCompany(testCompany()
+                                .setName(companyName)
+                                .build())
                         .setLanguageSkills(singletonList(testLanguageSkill()))
-                        .setEmployment(testEmployment())
+                        .setEmployment(testEmployment().setShortEmployment(true).build())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
                         .setApplyChannel(testApplyChannel())
-                        .setLocation(testLocation())
+                        .setLocation(testLocation().build())
                         .setOccupations(singletonList(testOccupation()))
                         .build())
                 .build();
@@ -359,7 +390,6 @@ public class JobAdvertisementTestFixture {
         Owner owner = testOwnerWithCompanyId(jobAdvertisementId, companyId);
         return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM, owner);
     }
-
 
 
     public static JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem) {
@@ -377,16 +407,19 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(sourceSystem)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(owner)
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(singletonList(testJobDescription(title, description)))
-                        .setDisplayCompany(testCompany(jobAdvertisementId))
-                        .setCompany(testCompany(jobAdvertisementId))
+                        .setJobDescriptions(singletonList(testJobDescription()
+                                .setDescription(description)
+                                .setTitle(title)
+                                .build()))
+                        .setDisplayCompany(CompanyFixture.of(jobAdvertisementId).build())
+                        .setCompany(CompanyFixture.of(jobAdvertisementId).build())
                         .setLanguageSkills(skills)
-                        .setEmployment(testEmployment())
+                        .setEmployment(testEmployment().setShortEmployment(true).build())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
                         .setApplyChannel(testApplyChannel())
-                        .setLocation(testLocation())
+                        .setLocation(testLocation().build())
                         .setOccupations(singletonList(testOccupation()))
                         .build())
                 .build();
@@ -409,16 +442,16 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(singletonList(testJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(testCompany(jobAdvertisementId))
-                        .setCompany(testCompany(jobAdvertisementId))
+                        .setJobDescriptions(singletonList(JobDescriptionFixture.of(jobAdvertisementId).build()))
+                        .setDisplayCompany(CompanyFixture.of(jobAdvertisementId).build())
+                        .setCompany(CompanyFixture.of(jobAdvertisementId).build())
                         .setLanguageSkills(singletonList(testLanguageSkill()))
                         .setEmployment(employment)
                         .setPublicContact(createPublicContact(jobAdvertisementId))
                         .setApplyChannel(testApplyChannel())
-                        .setLocation(testLocation())
+                        .setLocation(testLocation().build())
                         .setOccupations(singletonList(testOccupation()))
                         .build())
                 .build();
@@ -430,17 +463,17 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(new JobContent.Builder()
                         .setX28OccupationCodes(x28Codes)
-                        .setJobDescriptions(singletonList(testJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(testCompany(jobAdvertisementId))
-                        .setCompany(testCompany(jobAdvertisementId))
+                        .setJobDescriptions(singletonList(JobDescriptionFixture.of(jobAdvertisementId).build()))
+                        .setDisplayCompany(CompanyFixture.of(jobAdvertisementId).build())
+                        .setCompany(CompanyFixture.of(jobAdvertisementId).build())
                         .setLanguageSkills(singletonList(testLanguageSkill()))
-                        .setEmployment(testEmployment())
+                        .setEmployment(testEmployment().setShortEmployment(true).build())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
                         .setApplyChannel(testApplyChannel())
-                        .setLocation(testLocation())
+                        .setLocation(testLocation().build())
                         .setOccupations(singletonList(testOccupation()))
                         .build())
                 .build();
@@ -452,16 +485,16 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(singletonList(testJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(testCompany(jobAdvertisementId))
-                        .setCompany(testCompany(jobAdvertisementId))
+                        .setJobDescriptions(singletonList(JobDescriptionFixture.of(jobAdvertisementId).build()))
+                        .setDisplayCompany(CompanyFixture.of(jobAdvertisementId).build())
+                        .setCompany(CompanyFixture.of(jobAdvertisementId).build())
                         .setLanguageSkills(singletonList(testLanguageSkill()))
-                        .setEmployment(testEmployment())
+                        .setEmployment(testEmployment().setShortEmployment(true).build())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
                         .setApplyChannel(testApplyChannel())
-                        .setLocation(testLocation())
+                        .setLocation(testLocation().build())
                         .setOccupations(singletonList(occupation))
                         .build())
                 .build();
@@ -473,13 +506,13 @@ public class JobAdvertisementTestFixture {
                 .setSourceSystem(SourceSystem.JOBROOM)
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(testOwner(jobAdvertisementId))
-                .setPublication(testPublication())
+                .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(singletonList(testJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(testCompany(jobAdvertisementId))
-                        .setCompany(testCompany(jobAdvertisementId))
+                        .setJobDescriptions(singletonList(JobDescriptionFixture.of(jobAdvertisementId).build()))
+                        .setDisplayCompany(CompanyFixture.of(jobAdvertisementId).build())
+                        .setCompany(CompanyFixture.of(jobAdvertisementId).build())
                         .setLanguageSkills(singletonList(testLanguageSkill()))
-                        .setEmployment(testEmployment())
+                        .setEmployment(testEmployment().setShortEmployment(true).build())
                         .setPublicContact(createPublicContact(jobAdvertisementId))
                         .setApplyChannel(testApplyChannel())
                         .setLocation(location)

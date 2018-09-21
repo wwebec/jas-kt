@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyTestFixture.testCompany;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -44,6 +44,6 @@ public class CreateJobAdvertisementDtoTestFixture {
     }
 
     public  static CreateJobAdvertisementDto testCreateJobAdvertisementDto() {
-        return testCreateJobAdvertisementDto(testCompany());
+        return testCreateJobAdvertisementDto(testCompany().build());
     }
 }

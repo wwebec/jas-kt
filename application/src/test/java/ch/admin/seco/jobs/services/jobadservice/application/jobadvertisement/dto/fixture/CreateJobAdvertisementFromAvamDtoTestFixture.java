@@ -3,9 +3,9 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationServiceForAvamTest.STELLENNUMMER_AVAM;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.PublicationDtoTestFixture.testPublicationDto;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.PublicationDtoTestFixture.testPublicationDtoWithCompanyAnonymous;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyTestFixture.testCompany;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel.PROFICIENT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience.MORE_THAN_1_YEAR;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
 import static java.time.LocalDate.now;
 import static java.util.Arrays.asList;
 
@@ -22,18 +22,17 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 
 public class CreateJobAdvertisementFromAvamDtoTestFixture {
 
     public static CreateJobAdvertisementFromAvamDto testCreateJobAdvertisementDto() {
-        return testCreateJobAdvertisementDto(testCompany(), testPublicationDto());
+        return testCreateJobAdvertisementDto(testCompany().build(), testPublicationDto());
     }
 
     public static CreateJobAdvertisementFromAvamDto testCreateJobAdvertisementDtoWithCompanyAnonymous() {
-        return testCreateJobAdvertisementDto(testCompany(), testPublicationDtoWithCompanyAnonymous());
+        return testCreateJobAdvertisementDto(testCompany().build(), testPublicationDtoWithCompanyAnonymous());
     }
 
     private static CreateJobAdvertisementFromAvamDto testCreateJobAdvertisementDto(Company company, PublicationDto publicationDto) {

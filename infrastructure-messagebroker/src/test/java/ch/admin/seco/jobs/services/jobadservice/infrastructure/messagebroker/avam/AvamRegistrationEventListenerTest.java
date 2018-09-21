@@ -2,7 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testOwner;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationTestFixture.testPublication;
+
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationFixture.testPublication;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -29,7 +30,9 @@ public class AvamRegistrationEventListenerTest {
             .setSourceSystem(SourceSystem.JOBROOM)
             .setJobContent(testJobContent(ID))
             .setOwner(testOwner(ID))
-            .setPublication(testPublication())
+            .setPublication(testPublication()
+                    .setPublicDisplay(true)
+                    .build())
             .setReportToAvam(true)
             .setReportingObligation(true)
             .build();
