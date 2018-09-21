@@ -5,7 +5,7 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.f
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testDisplayCompany;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmployerFixture.testEmployer;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentFixture.testEmployment;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobCenterFixture.testJobCenter;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.fixture.JobCenterFixture.testJobCenter;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobDescriptionFixture.testJobDescription;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LanguageSkillFixture.testLanguageSkill;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationFixture.testLocation;

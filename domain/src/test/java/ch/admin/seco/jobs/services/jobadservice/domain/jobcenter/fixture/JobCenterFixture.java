@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture;
+package ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.fixture;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
 
