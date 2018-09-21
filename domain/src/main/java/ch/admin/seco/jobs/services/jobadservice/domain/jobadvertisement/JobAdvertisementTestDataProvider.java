@@ -53,7 +53,8 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
 
     public static JobContent.Builder prepareJobContentBuilder(JobAdvertisementId jobAdvertisementId, JobDescription jobDescription, Occupation occupation, Location location) {
         return new JobContent.Builder()
-                .setJobDescriptions(Collections.singletonList(jobDescription))
+                .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                 .setDisplayCompany(createCompany(jobAdvertisementId))
                 .setCompany(createCompany(jobAdvertisementId))
                 .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
@@ -68,10 +69,10 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     public static JobContent createJobContent(JobAdvertisementId jobAdvertisementId,
             String title, String description,
             Occupation occupation, Location location, Employment employment) {
-        JobDescription jobDescription = createJobDescription(title, description);
         PublicContact publicContact = createPublicContact(jobAdvertisementId);
         return new JobContent.Builder()
-                .setJobDescriptions(Collections.singletonList(jobDescription))
+                .setTitle(title)
+                .setDescription(description)
                 .setDisplayCompany(createCompany(jobAdvertisementId))
                 .setCompany(createCompany(jobAdvertisementId))
                 .setLanguageSkills(Collections.singletonList(createLanguageSkill()))

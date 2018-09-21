@@ -22,18 +22,16 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
 @Embeddable
 public class JobContent implements ValueObject<JobContent> {
 
+    private String title;
+
+    private String description;
+
     private String externalUrl;
 
     @Column(name = "X28_OCCUPATION_CODES")
     private String x28OccupationCodes;
 
     private String numberOfJobs;
-
-    @ElementCollection
-    @CollectionTable(name = "JOB_ADVERTISEMENT_DESCRIPTION", joinColumns = @JoinColumn(name = "JOB_ADVERTISEMENT_ID"))
-    @Valid
-    @NotEmpty
-    private List<JobDescription> jobDescriptions = new ArrayList<>();
 
     @Embedded
     @AttributeOverrides({
@@ -156,19 +154,38 @@ public class JobContent implements ValueObject<JobContent> {
     }
 
     public JobContent(Builder builder) {
+        this.setTitle(builder.title);
+        this.setDescription(builder.description);
         this.externalUrl = builder.externalUrl;
         this.x28OccupationCodes = builder.x28OccupationCodes;
         this.numberOfJobs = builder.numberOfJobs;
         this.displayCompany = builder.displayCompany;
         this.setCompany(builder.company);
         this.employer = builder.employer;
-        this.setJobDescriptions(builder.jobDescriptions);
         this.setLanguageSkills(builder.languageSkills);
         this.setEmployment(builder.employment);
         this.publicContact = builder.publicContact;
         this.applyChannel = builder.applyChannel;
         this.location = builder.location;
         this.setOccupations(builder.occupations);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    void setTitle(String title) {
+        Condition.notBlank(title, "Title can't be null or empty");
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    void setDescription(String description) {
+        Condition.notBlank(description, "Description can't be null or empty");
+        this.title = description;
     }
 
     public String getExternalUrl() {
@@ -193,16 +210,6 @@ public class JobContent implements ValueObject<JobContent> {
 
     void setNumberOfJobs(String numberOfJobs) {
         this.numberOfJobs = numberOfJobs;
-    }
-
-    public List<JobDescription> getJobDescriptions() {
-        return jobDescriptions;
-    }
-
-    void setJobDescriptions(List<JobDescription> jobDescriptions) {
-        Condition.notEmpty(jobDescriptions, "Job descriptions can't be null or empty");
-        this.jobDescriptions.clear();
-        this.jobDescriptions.addAll(jobDescriptions);
     }
 
     public Company getDisplayCompany() {
@@ -285,10 +292,11 @@ public class JobContent implements ValueObject<JobContent> {
         if (this == o) { return true; }
         if (o == null || getClass() != o.getClass()) { return false; }
         JobContent that = (JobContent) o;
-        return Objects.equals(externalUrl, that.externalUrl) &&
+        return Objects.equals(title, that.title) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(externalUrl, that.externalUrl) &&
                 Objects.equals(x28OccupationCodes, that.x28OccupationCodes) &&
                 Objects.equals(numberOfJobs, that.numberOfJobs) &&
-                Objects.equals(jobDescriptions, that.jobDescriptions) &&
                 Objects.equals(displayCompany, that.displayCompany) &&
                 Objects.equals(company, that.company) &&
                 Objects.equals(employer, that.employer) &&
@@ -302,16 +310,17 @@ public class JobContent implements ValueObject<JobContent> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(externalUrl, x28OccupationCodes, numberOfJobs, jobDescriptions, displayCompany, company, employer, employment, location, occupations, languageSkills, applyChannel, publicContact);
+        return Objects.hash(title, description, externalUrl, x28OccupationCodes, numberOfJobs, displayCompany, company, employer, employment, location, occupations, languageSkills, applyChannel, publicContact);
     }
 
     @Override
     public String toString() {
         return "JobContent{" +
-                "externalUrl='" + externalUrl + '\'' +
+                "title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", externalUrl='" + externalUrl + '\'' +
                 ", x28OccupationCodes=" + x28OccupationCodes +
                 ", numberOfJobs=" + numberOfJobs +
-                ", jobDescriptions=" + jobDescriptions +
                 ", displayCompany=" + displayCompany +
                 ", company=" + company +
                 ", employer=" + employer +
@@ -327,10 +336,11 @@ public class JobContent implements ValueObject<JobContent> {
 
     public static final class Builder {
 
+        private String title;
+        private String description;
         private String externalUrl;
         private String x28OccupationCodes;
         private String numberOfJobs;
-        private List<JobDescription> jobDescriptions;
         private Company displayCompany;
         private Company company;
         private Employer employer;
@@ -342,6 +352,16 @@ public class JobContent implements ValueObject<JobContent> {
         private PublicContact publicContact;
 
         public Builder() {
+        }
+
+        public Builder setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
         }
 
         public Builder setExternalUrl(String externalUrl) {
@@ -356,11 +376,6 @@ public class JobContent implements ValueObject<JobContent> {
 
         public Builder setNumberOfJobs(String numberOfJobs) {
             this.numberOfJobs = numberOfJobs;
-            return this;
-        }
-
-        public Builder setJobDescriptions(List<JobDescription> jobDescriptions) {
-            this.jobDescriptions = jobDescriptions;
             return this;
         }
 

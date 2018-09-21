@@ -8,6 +8,10 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobConte
 
 public class JobContentDto {
 
+    private String title;
+
+    private String description;
+
     private String externalUrl;
 
     private String numberOfJobs;
@@ -38,6 +42,22 @@ public class JobContentDto {
 
     protected JobContentDto() {
         // For reflection libs
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getExternalUrl() {
@@ -122,9 +142,10 @@ public class JobContentDto {
 
     public static JobContentDto toDto(JobContent jobContent) {
         JobContentDto jobContentDto = new JobContentDto();
+        jobContentDto.setTitle(jobContent.getTitle());
+        jobContentDto.setDescription(jobContent.getDescription());
         jobContentDto.setExternalUrl(jobContent.getExternalUrl());
         jobContentDto.setNumberOfJobs(jobContent.getNumberOfJobs());
-        jobContentDto.setJobDescriptions(JobDescriptionDto.toDto(jobContent.getJobDescriptions()));
         jobContentDto.setCompany(CompanyDto.toDto(jobContent.getDisplayCompany()));
         jobContentDto.setEmployment(EmploymentDto.toDto(jobContent.getEmployment()));
         jobContentDto.setLocation(LocationDto.toDto(jobContent.getLocation()));
