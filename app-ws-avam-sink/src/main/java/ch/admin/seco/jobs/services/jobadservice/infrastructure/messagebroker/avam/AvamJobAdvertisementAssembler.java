@@ -62,19 +62,10 @@ public class AvamJobAdvertisementAssembler {
         final JobContent jobContent = jobAdvertisement.getJobContent();
         //TODO: Review if we need to check nullability
         Assert.notNull(jobContent, "jobAdvertisement.getJobContent can not be null");
-
-        //TODO: Check which description has to be use
-        final JobDescription defaultJobDescription = jobContent.getJobDescriptions().stream()
-                .findFirst()
-                .orElse(null);
-
-        //TODO: Review if we need to check nullability
-        Assert.notNull(defaultJobDescription, "jobContent.getJobDescriptions can not be empty");
-
-        avamJobAdvertisement.setBezeichnung(defaultJobDescription.getTitle());
-        avamJobAdvertisement.setBeschreibung(defaultJobDescription.getDescription());
-
+        avamJobAdvertisement.setBezeichnung(jobContent.getTitle());
+        avamJobAdvertisement.setBeschreibung(jobContent.getDescription());
         avamJobAdvertisement.setGleicheOste(jobContent.getNumberOfJobs());
+
         fillEmployment(avamJobAdvertisement, jobContent.getEmployment());
         fillApplyChannel(avamJobAdvertisement, jobContent.getApplyChannel());
         fillCompany(avamJobAdvertisement, jobContent.getCompany());

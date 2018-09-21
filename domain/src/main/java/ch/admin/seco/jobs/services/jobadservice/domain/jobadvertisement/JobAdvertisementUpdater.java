@@ -13,7 +13,8 @@ public class JobAdvertisementUpdater {
     static final String SECTION_X28_OCCUPATION_CODES = "SECTION_X28_OCCUPATION_CODES";
     static final String SECTION_NUMBER_OF_JOBS = "SECTION_NUMBER_OF_JOBS";
     static final String SECTION_REPORTING_OBLIGATION = "SECTION_REPORTING_OBLIGATION";
-    static final String SECTION_JOBDESCRIPTION = "SECTION_JOBDESCRIPTION";
+    static final String SECTION_TITLE = "SECTION_TITLE";
+    static final String SECTION_DESCRIPTION = "SECTION_DESCRIPTION";
     static final String SECTION_PUBLICATION = "SECTION_PUBLICATION";
     static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
     static final String SECTION_JOB_CENTER_CODE = "SECTION_JOB_CENTER_CODE";
@@ -191,6 +192,18 @@ public class JobAdvertisementUpdater {
             return new JobAdvertisementUpdater(this);
         }
 
+        public Builder setTitle(String title) {
+            this.changedSections.add(SECTION_TITLE);
+            this.title = title;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.changedSections.add(SECTION_DESCRIPTION);
+            this.description = description;
+            return this;
+        }
+
         public Builder setFingerprint(String fingerprint) {
             this.changedSections.add(SECTION_FINGERPRINT);
             this.fingerprint = fingerprint;
@@ -213,13 +226,6 @@ public class JobAdvertisementUpdater {
             this.changedSections.add(SECTION_REPORTING_OBLIGATION);
             this.reportingObligation = reportingObligation;
             this.reportingObligationEndDate = reportingObligationEndDate;
-            return this;
-        }
-
-        public Builder setJobDescription(String title, String description) {
-            this.changedSections.add(SECTION_JOBDESCRIPTION);
-            this.title = title;
-            this.description = description;
             return this;
         }
 

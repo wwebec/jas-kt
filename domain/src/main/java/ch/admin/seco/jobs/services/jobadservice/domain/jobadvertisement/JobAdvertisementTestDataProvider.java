@@ -48,13 +48,19 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     }
 
     public static JobContent.Builder prepareJobContentBuilder(JobAdvertisementId jobAdvertisementId) {
-        return prepareJobContentBuilder(jobAdvertisementId, createJobDescription(jobAdvertisementId), createOccupation(), createLocation());
+        return prepareJobContentBuilder(
+                jobAdvertisementId,
+                String.format("title-%s", jobAdvertisementId.getValue()),
+                String.format("description-%s", jobAdvertisementId.getValue()),
+                createOccupation(),
+                createLocation()
+        );
     }
 
-    public static JobContent.Builder prepareJobContentBuilder(JobAdvertisementId jobAdvertisementId, JobDescription jobDescription, Occupation occupation, Location location) {
+    public static JobContent.Builder prepareJobContentBuilder(JobAdvertisementId jobAdvertisementId, String title, String description, Occupation occupation, Location location) {
         return new JobContent.Builder()
-                .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
-                .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
+                .setTitle(title)
+                .setDescription(description)
                 .setDisplayCompany(createCompany(jobAdvertisementId))
                 .setCompany(createCompany(jobAdvertisementId))
                 .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
@@ -134,24 +140,6 @@ public class JobAdvertisementTestDataProvider implements TestDataProvider<JobAdv
     public static Occupation createOccupation() {
         return new Occupation.Builder()
                 .setAvamOccupationCode("avamOccupationCode")
-                .build();
-    }
-
-    public static JobDescription createJobDescription(String title, String description) {
-        return new JobDescription.Builder()
-                .setLanguage(Locale.GERMAN)
-                .setTitle(title)
-                .setDescription(description)
-                .build();
-    }
-
-    public static JobDescription createJobDescription(JobAdvertisementId jobAdvertisementId) {
-        String title = String.format("title-%s", jobAdvertisementId.getValue());
-        String description = String.format("description-%s", jobAdvertisementId.getValue());
-        return new JobDescription.Builder()
-                .setLanguage(Locale.GERMAN)
-                .setTitle(title)
-                .setDescription(description)
                 .build();
     }
 

@@ -1,14 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobContentDto;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
 import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementDocument;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementElasticsearchRepository;
-
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.Operator;
@@ -36,9 +35,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.ARCHIVED;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.*;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.ElasticsearchIndexService.INDEX_NAME_JOB_ADVERTISEMENT;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.ElasticsearchIndexService.TYPE_JOB_ADVERTISEMENT;
 import static org.apache.commons.lang3.ArrayUtils.*;
@@ -60,7 +57,7 @@ public class JobAdvertisementSearchService {
     private static final String PATH_EGOV_JOB_ID = PATH_CTX + "stellennummerEgov";
     private static final String PATH_COMPANY_NAME = PATH_CTX + "jobContent.displayCompany.name";
     private static final String PATH_OWNER_COMPANY_ID = PATH_CTX + "owner.companyId";
-    private static final String PATH_DESCRIPTION = PATH_CTX + "jobContent.jobDescriptions.description";
+    private static final String PATH_DESCRIPTION = PATH_CTX + "jobContent.description";
     private static final String PATH_LOCATION_CANTON_CODE = PATH_CTX + "jobContent.location.cantonCode";
     private static final String PATH_LOCATION_COMMUNAL_CODE = PATH_CTX + "jobContent.location.communalCode";
     private static final String PATH_LOCATION_REGION_CODE = PATH_CTX + "jobContent.location.regionCode";
@@ -74,7 +71,7 @@ public class JobAdvertisementSearchService {
     private static final String PATH_PUBLICATION_RESTRICTED_DISPLAY = PATH_CTX + "publication.restrictedDisplay";
     private static final String PATH_PUBLICATION_PUBLIC_DISPLAY = PATH_CTX + "publication.publicDisplay";
     private static final String PATH_PUBLICATION_START_DATE = PATH_CTX + "publication.startDate";
-    private static final String PATH_TITLE = PATH_CTX + "jobContent.jobDescriptions.title";
+    private static final String PATH_TITLE = PATH_CTX + "jobContent.title";
     private static final String PATH_STATUS = PATH_CTX + "status";
     private static final String PATH_SOURCE_SYSTEM = PATH_CTX + "sourceSystem";
     private static final String PATH_WORKLOAD_PERCENTAGE_MAX = PATH_CTX + "jobContent.employment.workloadPercentageMax";
@@ -401,18 +398,13 @@ public class JobAdvertisementSearchService {
     }
 
     private static JobAdvertisementDto highlightFields(JobAdvertisementDto jobAdvertisementDto, Map<String, HighlightField> highlightFieldMap) {
-        for (JobDescriptionDto jobDescriptionDto : jobAdvertisementDto.getJobContent().getJobDescriptions()) {
-
-            if (highlightFieldMap.containsKey(PATH_TITLE)) {
-                jobDescriptionDto.setTitle(highlightFieldMap.get(PATH_TITLE).getFragments()[0].toString());
-            }
-
-            if (highlightFieldMap.containsKey(PATH_DESCRIPTION)) {
-                jobDescriptionDto.setDescription(highlightFieldMap.get(PATH_DESCRIPTION).getFragments()[0].toString());
-            }
-
+        JobContentDto jobContentDto = jobAdvertisementDto.getJobContent();
+        if (highlightFieldMap.containsKey(PATH_TITLE)) {
+            jobContentDto.setTitle(highlightFieldMap.get(PATH_TITLE).getFragments()[0].toString());
         }
-
+        if (highlightFieldMap.containsKey(PATH_DESCRIPTION)) {
+            jobContentDto.setDescription(highlightFieldMap.get(PATH_DESCRIPTION).getFragments()[0].toString());
+        }
         return jobAdvertisementDto;
     }
 }

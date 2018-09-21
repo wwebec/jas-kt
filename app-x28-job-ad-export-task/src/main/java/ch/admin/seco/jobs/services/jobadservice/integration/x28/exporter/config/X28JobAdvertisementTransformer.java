@@ -25,8 +25,9 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
         x28JobAdvertisement.setFingerprint(jobAdvertisement.getFingerprint());
         x28JobAdvertisement.setArbeitsamtbereich(jobAdvertisement.getJobCenterCode());
         x28JobAdvertisement.setGleicheOste(jobContent.getNumberOfJobs());
+        x28JobAdvertisement.setBezeichnung(jobContent.getTitle());
+        x28JobAdvertisement.setBeschreibung(jobContent.getDescription());
 
-        mapTitleAndDescription(jobContent.getJobDescriptions(), x28JobAdvertisement);
         mapOccupation(jobContent.getOccupations(), x28JobAdvertisement);
         mapLocation(jobContent.getLocation(), x28JobAdvertisement);
         mapPublication(jobAdvertisement.getPublication(), x28JobAdvertisement);
@@ -132,14 +133,6 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
             x28JobAdvertisement.setArbeitsortPlz(location.getPostalCode());
             x28JobAdvertisement.setArbeitsortRegion(location.getRegionCode());
             x28JobAdvertisement.setArbeitsortText(location.getCity());
-        }
-    }
-
-    private void mapTitleAndDescription(List<JobDescription> jobDescriptions, Oste x28JobAdvertisement) {
-        if (!isEmpty(jobDescriptions)) {
-            JobDescription jobDescription = jobDescriptions.get(0);
-            x28JobAdvertisement.setBezeichnung(jobDescription.getTitle());
-            x28JobAdvertisement.setBeschreibung(jobDescription.getDescription());
         }
     }
 

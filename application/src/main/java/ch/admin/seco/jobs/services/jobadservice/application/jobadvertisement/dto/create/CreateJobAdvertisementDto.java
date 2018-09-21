@@ -1,23 +1,19 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
 
-import java.util.List;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmployerDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
+import java.util.List;
 
 public class CreateJobAdvertisementDto {
+
+    @NotBlank
+    private String title;
+
+    @NotBlank
+    private String description;
 
     private boolean reportToAvam;
 
@@ -34,11 +30,6 @@ public class CreateJobAdvertisementDto {
     private PublicationDto publication;
 
     private String numberOfJobs;
-
-    @Valid
-    @NotNull
-    @NotEmpty
-    private List<JobDescriptionDto> jobDescriptions;
 
     @Valid
     @NotNull
@@ -72,14 +63,15 @@ public class CreateJobAdvertisementDto {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ContactDto contact, PublicationDto publication, String numberOfJobs, List<JobDescriptionDto> jobDescriptions, CompanyDto company, EmployerDto employer, EmploymentDto employment, CreateLocationDto location, OccupationDto occupation, List<LanguageSkillDto> languageSkills, ApplyChannelDto applyChannel, PublicContactDto publicContact) {
+    public CreateJobAdvertisementDto(String title, String description, boolean reportToAvam, String externalUrl, String externalReference, ContactDto contact, PublicationDto publication, String numberOfJobs, CompanyDto company, EmployerDto employer, EmploymentDto employment, CreateLocationDto location, OccupationDto occupation, List<LanguageSkillDto> languageSkills, ApplyChannelDto applyChannel, PublicContactDto publicContact) {
+        this.title = title;
+        this.description = description;
         this.reportToAvam = reportToAvam;
         this.externalUrl = externalUrl;
         this.externalReference = externalReference;
         this.contact = contact;
         this.publication = publication;
         this.numberOfJobs = numberOfJobs;
-        this.jobDescriptions = jobDescriptions;
         this.company = company;
         this.employer = employer;
         this.employment = employment;
@@ -88,6 +80,22 @@ public class CreateJobAdvertisementDto {
         this.languageSkills = languageSkills;
         this.applyChannel = applyChannel;
         this.publicContact = publicContact;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isReportToAvam() {
@@ -136,14 +144,6 @@ public class CreateJobAdvertisementDto {
 
     public void setNumberOfJobs(String numberOfJobs) {
         this.numberOfJobs = numberOfJobs;
-    }
-
-    public List<JobDescriptionDto> getJobDescriptions() {
-        return jobDescriptions;
-    }
-
-    public void setJobDescriptions(List<JobDescriptionDto> jobDescriptions) {
-        this.jobDescriptions = jobDescriptions;
     }
 
     public CompanyDto getCompany() {

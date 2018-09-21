@@ -106,20 +106,13 @@
                   }
                 }
               },
-              "jobDescriptions": {
-                "properties": {
-                  "description": {
-                    "type": "text",
-                    "analyzer": "ascii_folding"
-                  },
-                  "language": {
-                    "type": "text"
-                  },
-                  "title": {
-                    "type": "text",
-                    "analyzer": "ascii_folding"
-                  }
-                }
+              "description": {
+                "type": "text",
+                "analyzer": "ascii_folding"
+              },
+              "title": {
+                "type": "text",
+                "analyzer": "ascii_folding"
               },
               "languageSkills": {
                 "properties": {

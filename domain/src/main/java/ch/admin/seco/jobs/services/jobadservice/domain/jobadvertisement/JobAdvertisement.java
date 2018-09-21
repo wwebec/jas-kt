@@ -457,10 +457,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             reportingObligationEndDate = updater.getReportingObligationEndDate();
         }
 
-        if (updater.hasAnyChangesIn(SECTION_JOBDESCRIPTION) && (hasChanged(jobContent.getTitle(), updater.getTitle()) || hasChanged(jobContent.getDescription(), updater.getDescription()))) {
+        if (updater.hasAnyChangesIn(SECTION_TITLE) && hasChanged(jobContent.getTitle(), updater.getTitle())) {
             changeLog.add("title", jobContent.getTitle(), updater.getTitle());
-            changeLog.add("description", jobContent.getDescription(), updater.getDescription());
             jobContent.setTitle(updater.getTitle());
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_DESCRIPTION) && hasChanged(jobContent.getDescription(), updater.getDescription())) {
+            changeLog.add("description", jobContent.getDescription(), updater.getDescription());
             jobContent.setDescription(updater.getDescription());
         }
 

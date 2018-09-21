@@ -1,27 +1,13 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamJobAdvertisementAssembler.fetchFirstEmail;
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Collections;
-import java.util.Locale;
-
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.TOsteEgov;
 import org.junit.Test;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employer;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobContent;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescription;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Owner;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publication;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.TOsteEgov;
+import java.util.Collections;
+
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamJobAdvertisementAssembler.fetchFirstEmail;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AvamJobAdvertisementAssemblerTest {
 
@@ -112,11 +98,6 @@ public class AvamJobAdvertisementAssemblerTest {
     }
 
     private JobAdvertisement createJobAdvertisementForCompanyAndEmployer(Company company, Employer employer) {
-        JobDescription jobDescription = new JobDescription.Builder()
-                .setLanguage(Locale.GERMAN)
-                .setTitle("title")
-                .setDescription("description")
-                .build();
         Employment employment = new Employment.Builder()
                 .setWorkloadPercentageMin(80)
                 .setWorkloadPercentageMax(100)
@@ -128,7 +109,8 @@ public class AvamJobAdvertisementAssemblerTest {
                 .setLanguageIsoCode("de")
                 .build();
         JobContent jobContent = new JobContent.Builder()
-                .setJobDescriptions(Collections.singletonList(jobDescription))
+                .setTitle("title")
+                .setDescription("description")
                 .setCompany(company)
                 .setEmployer(employer)
                 .setEmployment(employment)

@@ -1,20 +1,5 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import javax.validation.Valid;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-
 import ch.admin.seco.jobs.services.jobadservice.application.HtmlToMarkdownConverter;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
@@ -28,6 +13,12 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.CancellationResource;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/jobAdvertisements")
@@ -38,7 +29,7 @@ public class JobAdvertisementRestController {
     private final HtmlToMarkdownConverter htmlToMarkdownConverter;
 
     public JobAdvertisementRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService, EventStore eventStore,
-            HtmlToMarkdownConverter htmlToMarkdownConverter) {
+                                          HtmlToMarkdownConverter htmlToMarkdownConverter) {
         this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
         this.eventStore = eventStore;
         this.htmlToMarkdownConverter = htmlToMarkdownConverter;
@@ -47,15 +38,13 @@ public class JobAdvertisementRestController {
     @PostMapping()
     public JobAdvertisementDto createFromWebform(@RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
         JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService
-                .createFromWebForm(convertJobDescriptions(createJobAdvertisementDto));
+                .createFromWebForm(convertDescription(createJobAdvertisementDto));
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
     }
 
-    private CreateJobAdvertisementDto convertJobDescriptions(CreateJobAdvertisementDto createJobAdvertisementDto) {
-        createJobAdvertisementDto.getJobDescriptions().forEach(jobDescription -> {
-            final String convertedDescription = htmlToMarkdownConverter.convert(jobDescription.getDescription());
-            jobDescription.setDescription(convertedDescription);
-        });
+    private CreateJobAdvertisementDto convertDescription(CreateJobAdvertisementDto createJobAdvertisementDto) {
+        final String convertedDescription = htmlToMarkdownConverter.convert(createJobAdvertisementDto.getDescription());
+        createJobAdvertisementDto.setDescription(convertedDescription);
         return createJobAdvertisementDto;
     }
 

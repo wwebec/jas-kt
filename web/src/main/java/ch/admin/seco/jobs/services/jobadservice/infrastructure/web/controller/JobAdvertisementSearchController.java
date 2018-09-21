@@ -1,7 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobContentDto;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchRequest;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchService;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.PeaJobAdvertisementSearchRequest;
@@ -44,7 +44,7 @@ public class JobAdvertisementSearchController {
 
         Page<JobAdvertisementDto> resultPage = jobAdvertisementSearchService.search(jobAdvertisementSearchRequest, page, size, sort)
                 //todo: Discuss where to put the HTML cleanup. This is suboptimal concerning performance
-                .map(this::sanitizeJobDescription);
+                .map(this::sanitizeDescription);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(resultPage, "/api/_search/jobs");
         return new ResponseEntity<>(resultPage.getContent(), headers, HttpStatus.OK);
     }
@@ -68,19 +68,17 @@ public class JobAdvertisementSearchController {
         return new ResponseEntity<>(Collections.singletonMap("totalCount", totalCount), HttpStatus.OK);
     }
 
-    private JobAdvertisementDto sanitizeJobDescription(JobAdvertisementDto jobAdvertisementDto) {
-        for (JobDescriptionDto jobDescriptionDto : jobAdvertisementDto.getJobContent().getJobDescriptions()) {
-            String sanitizedDescription = "";
-            if (hasText(jobDescriptionDto.getDescription())) {
-                sanitizedDescription = Jsoup.clean(
-                        jobDescriptionDto.getDescription(),
-                        "",
-                        new Whitelist().addTags("em"),
-                        new Document.OutputSettings().prettyPrint(false));
-            }
-            jobDescriptionDto.setDescription(sanitizedDescription);
+    private JobAdvertisementDto sanitizeDescription(JobAdvertisementDto jobAdvertisementDto) {
+        JobContentDto jobContent = jobAdvertisementDto.getJobContent();
+        String sanitizedDescription = "";
+        if (hasText(jobContent.getDescription())) {
+            sanitizedDescription = Jsoup.clean(
+                    jobContent.getDescription(),
+                    "",
+                    new Whitelist().addTags("em"),
+                    new Document.OutputSettings().prettyPrint(false));
         }
-
+        jobContent.setDescription(sanitizedDescription);
         return jobAdvertisementDto;
     }
 

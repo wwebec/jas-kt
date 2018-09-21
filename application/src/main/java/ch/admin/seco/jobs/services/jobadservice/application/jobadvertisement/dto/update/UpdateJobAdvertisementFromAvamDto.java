@@ -1,21 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update;
 
-import java.time.LocalDate;
-import java.util.List;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
+import java.time.LocalDate;
+import java.util.List;
 
 public class UpdateJobAdvertisementFromAvamDto {
 
@@ -26,10 +17,6 @@ public class UpdateJobAdvertisementFromAvamDto {
     private String title;
 
     private String description;
-
-    @NotBlank
-    @LanguageIsoCode
-    private String languageIsoCode;
 
     private String numberOfJobs;
 
@@ -68,14 +55,13 @@ public class UpdateJobAdvertisementFromAvamDto {
         // For reflection libs
     }
 
-    public UpdateJobAdvertisementFromAvamDto(String stellennummerAvam, String title, String description, String languageIsoCode, String numberOfJobs,
+    public UpdateJobAdvertisementFromAvamDto(String stellennummerAvam, String title, String description, String numberOfJobs,
                                              boolean reportingObligation, LocalDate reportingObligationEndDate, String jobCenterCode, LocalDate approvalDate,
                                              EmploymentDto employment, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
                                              List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication) {
         this.stellennummerAvam = stellennummerAvam;
         this.title = title;
         this.description = description;
-        this.languageIsoCode = languageIsoCode;
         this.numberOfJobs = numberOfJobs;
         this.reportingObligation = reportingObligation;
         this.reportingObligationEndDate = reportingObligationEndDate;
@@ -113,14 +99,6 @@ public class UpdateJobAdvertisementFromAvamDto {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getLanguageIsoCode() {
-        return languageIsoCode;
-    }
-
-    public void setLanguageIsoCode(String languageIsoCode) {
-        this.languageIsoCode = languageIsoCode;
     }
 
     public String getNumberOfJobs() {

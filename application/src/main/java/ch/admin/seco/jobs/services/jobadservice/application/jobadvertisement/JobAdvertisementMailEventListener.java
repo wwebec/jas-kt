@@ -97,7 +97,7 @@ public class JobAdvertisementMailEventListener {
 				new MailSenderData.Builder()
 						.setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
 						.setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_CREATED_SUBJECT,
-								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), stellennummer}, contactLocale))
+								new Object[] {jobAdvertisement.getJobContent().getTitle(), stellennummer}, contactLocale))
 						.setTemplateName(JOB_ADVERTISEMENT_CREATED_TEMPLATE)
 						.setTemplateVariables(variables)
 						.setLocale(contactLocale)
@@ -136,7 +136,7 @@ public class JobAdvertisementMailEventListener {
 				new MailSenderData.Builder()
 						.setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
 						.setSubject(messageSource.getMessage(subject,
-								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), stellennummer}, contactLocale))
+								new Object[] {jobAdvertisement.getJobContent().getTitle(), stellennummer}, contactLocale))
 						.setTemplateName(template)
 						.setTemplateVariables(variables)
 						.setLocale(contactLocale)
@@ -165,7 +165,7 @@ public class JobAdvertisementMailEventListener {
 				new MailSenderData.Builder()
 						.setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
 						.setSubject(messageSource.getMessage(JOB_ADVERTISEMENT_REJECTED_SUBJECT,
-								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), stellennummer}, contactLocale))
+								new Object[] {jobAdvertisement.getJobContent().getTitle(), stellennummer}, contactLocale))
 						.setTemplateName(JOB_ADVERTISEMENT_REJECTED_TEMPLATE)
 						.setTemplateVariables(variables)
 						.setLocale(contactLocale)
@@ -200,7 +200,7 @@ public class JobAdvertisementMailEventListener {
 				new MailSenderData.Builder()
 						.setTo(parseMultipleAddresses(jobAdvertisement.getContact().getEmail()))
 						.setSubject(messageSource.getMessage(subject,
-								new Object[] {jobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(), stellennummer}, contactLocale))
+								new Object[] {jobAdvertisement.getJobContent().getTitle(), stellennummer}, contactLocale))
 						.setTemplateName(template)
 						.setTemplateVariables(variables)
 						.setLocale(contactLocale)

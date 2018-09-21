@@ -19,4 +19,3 @@ public interface LocationApiClient {
     @GetMapping(value = "/api/localities")
     Optional<LocationResource> findLocationByPostalCodeAndCity(@RequestParam("zipCode") String zipCode, @RequestParam("city") String city);
 }
-

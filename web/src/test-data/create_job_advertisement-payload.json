@@ -1,12 +1,8 @@
 {
   "reportToAvam": true,
   "numberOfJobs": "1",
-  "jobDescriptions": [{
-    "languageIsoCode": "de",
-    "title": "Bauspezialist Denkmalpflege",
-    "description": "Beschreibung.."
-  }
-  ],
+  "title": "Bauspezialist Denkmalpflege",
+  "description": "Beschreibung..",
   "occupation": {
     "avamOccupationCode": "89801",
     "workExperience": null,

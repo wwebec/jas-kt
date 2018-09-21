@@ -17,9 +17,6 @@ public class JobContentDto {
     private String numberOfJobs;
 
     @Valid
-    private List<JobDescriptionDto> jobDescriptions;
-
-    @Valid
     private CompanyDto company;
 
     @Valid
@@ -74,14 +71,6 @@ public class JobContentDto {
 
     public void setNumberOfJobs(String numberOfJobs) {
         this.numberOfJobs = numberOfJobs;
-    }
-
-    public List<JobDescriptionDto> getJobDescriptions() {
-        return jobDescriptions;
-    }
-
-    public void setJobDescriptions(List<JobDescriptionDto> jobDescriptions) {
-        this.jobDescriptions = jobDescriptions;
     }
 
     public CompanyDto getCompany() {

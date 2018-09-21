@@ -1,13 +1,17 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.util.List;
 
 public class ApiCreateJobAdvertisementDto {
+
+    @NotBlank
+    @Size(max=255)
+    private String title;
+
+    @Size(max=12000)
+    private String description;
 
     private boolean reportToAvam;
 
@@ -28,10 +32,6 @@ public class ApiCreateJobAdvertisementDto {
     @Size(max = 3)
     @Pattern(regexp = "[0-9]*")
     private String numberOfJobs;
-
-    @Valid
-    @NotEmpty
-    private List<ApiJobDescriptionDto> jobDescriptions;
 
     @Valid
     @NotNull
@@ -66,14 +66,15 @@ public class ApiCreateJobAdvertisementDto {
         // For reflection libs
     }
 
-    public ApiCreateJobAdvertisementDto(boolean reportToAvam, String externalUrl, String externalReference, ApiContactDto contact, ApiPublicationDto publication, String numberOfJobs, List<ApiJobDescriptionDto> jobDescriptions, ApiCompanyDto company, ApiEmployerDto employer, ApiEmploymentDto employment, ApiCreateLocationDto location, ApiOccupationDto occupation, List<ApiLanguageSkillDto> languageSkills, ApiApplyChannelDto applyChannel, ApiPublicContactDto publicContact) {
+    public ApiCreateJobAdvertisementDto(String title, String description, boolean reportToAvam, String externalUrl, String externalReference, ApiContactDto contact, ApiPublicationDto publication, String numberOfJobs, ApiCompanyDto company, ApiEmployerDto employer, ApiEmploymentDto employment, ApiCreateLocationDto location, ApiOccupationDto occupation, List<ApiLanguageSkillDto> languageSkills, ApiApplyChannelDto applyChannel, ApiPublicContactDto publicContact) {
+        this.title = title;
+        this.description = description;
         this.reportToAvam = reportToAvam;
         this.externalUrl = externalUrl;
         this.externalReference = externalReference;
         this.contact = contact;
         this.publication = publication;
         this.numberOfJobs = numberOfJobs;
-        this.jobDescriptions = jobDescriptions;
         this.company = company;
         this.employer = employer;
         this.employment = employment;
@@ -82,6 +83,22 @@ public class ApiCreateJobAdvertisementDto {
         this.languageSkills = languageSkills;
         this.applyChannel = applyChannel;
         this.publicContact = publicContact;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public boolean isReportToAvam() {
@@ -130,14 +147,6 @@ public class ApiCreateJobAdvertisementDto {
 
     public void setNumberOfJobs(String numberOfJobs) {
         this.numberOfJobs = numberOfJobs;
-    }
-
-    public List<ApiJobDescriptionDto> getJobDescriptions() {
-        return jobDescriptions;
-    }
-
-    public void setJobDescriptions(List<ApiJobDescriptionDto> jobDescriptions) {
-        this.jobDescriptions = jobDescriptions;
     }
 
     public ApiCompanyDto getCompany() {

@@ -244,12 +244,12 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(header().string("X-Total-Count", "2"))
 
                 .andExpect(jsonPath("$.[0].id").value(equalTo(JOB_ADVERTISEMENT_ID_01.getValue())))
-                .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].title").value(equalTo("c++ developer")))
-                .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].description").value(equalTo("c++ &amp; <em>java</em> <em>entwickler</em>")))
+                .andExpect(jsonPath("$.[0].jobContent.title").value(equalTo("c++ developer")))
+                .andExpect(jsonPath("$.[0].jobContent.description").value(equalTo("c++ &amp; <em>java</em> <em>entwickler</em>")))
 
                 .andExpect(jsonPath("$.[1].id").value(equalTo(JOB_ADVERTISEMENT_ID_02.getValue())))
-                .andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].title").value(equalTo("<em>java</em> & <em>javascript</em> developer")))
-                .andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].description").value(equalTo("jee <em>entwickler</em>")));
+                .andExpect(jsonPath("$.[1].jobContent.title").value(equalTo("<em>java</em> & <em>javascript</em> developer")))
+                .andExpect(jsonPath("$.[1].jobContent.description").value(equalTo("jee <em>entwickler</em>")));
     }
 
     @Test
@@ -274,8 +274,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(header().string("X-Total-Count", "1"))
 
                 .andExpect(jsonPath("$.[0].id").value(equalTo(JOB_ADVERTISEMENT_ID_01.getValue())))
-                .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].title").value(equalTo("c++ developer")))
-                .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].description").value(equalTo("c++ &amp; java entwickler")));
+                .andExpect(jsonPath("$.[0].jobContent.title").value(equalTo("c++ developer")))
+                .andExpect(jsonPath("$.[0].jobContent.description").value(equalTo("c++ &amp; java entwickler")));
     }
 
     @Test
@@ -690,7 +690,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setOwner(createOwnerWithCompanyId(jobAdvertisementId, companyId))
                 .setPublication(publication)
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
+                        .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                        .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                         .setDisplayCompany(createCompany(jobAdvertisementId))
                         .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
@@ -792,7 +793,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
+                        .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                        .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                         .setDisplayCompany(createCompany(jobAdvertisementId))
                         .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
@@ -822,7 +824,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
+                        .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                        .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                         .setDisplayCompany(createCompany(companyName))
                         .setCompany(createCompany(companyName))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
@@ -870,7 +873,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setOwner(owner)
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(title, description)))
+                        .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                        .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                         .setDisplayCompany(createCompany(jobAdvertisementId))
                         .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(skills)
@@ -902,7 +906,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
+                        .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                        .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                         .setDisplayCompany(createCompany(jobAdvertisementId))
                         .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
@@ -923,8 +928,9 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
+                        .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                        .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                         .setX28OccupationCodes(x28Codes)
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
                         .setDisplayCompany(createCompany(jobAdvertisementId))
                         .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
@@ -945,7 +951,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
+                        .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                        .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                         .setDisplayCompany(createCompany(jobAdvertisementId))
                         .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
@@ -966,7 +973,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setOwner(createOwner(jobAdvertisementId))
                 .setPublication(createPublication())
                 .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
+                        .setTitle(String.format("title-%s", jobAdvertisementId.getValue()))
+                        .setDescription(String.format("description-%s", jobAdvertisementId.getValue()))
                         .setDisplayCompany(createCompany(jobAdvertisementId))
                         .setCompany(createCompany(jobAdvertisementId))
                         .setLanguageSkills(Collections.singletonList(createLanguageSkill()))

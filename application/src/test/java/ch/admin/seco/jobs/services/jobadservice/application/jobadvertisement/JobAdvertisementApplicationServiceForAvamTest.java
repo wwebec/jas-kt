@@ -238,9 +238,8 @@ public class JobAdvertisementApplicationServiceForAvamTest {
         jobAdvertisementRepository.save(originalJobAdvertisement);
         UpdateJobAdvertisementFromAvamDto updateJobAdvertisement = new UpdateJobAdvertisementFromAvamDto(
                 originalJobAdvertisement.getStellennummerAvam(),
-                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(),
-                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getDescription(),
-                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getLanguage().getLanguage(),
+                originalJobAdvertisement.getJobContent().getTitle(),
+                originalJobAdvertisement.getJobContent().getDescription(),
                 originalJobAdvertisement.getJobContent().getNumberOfJobs(),
                 originalJobAdvertisement.isReportingObligation(),
                 originalJobAdvertisement.getReportingObligationEndDate(),
@@ -283,9 +282,8 @@ public class JobAdvertisementApplicationServiceForAvamTest {
         jobAdvertisementRepository.save(originalJobAdvertisement);
         UpdateJobAdvertisementFromAvamDto updateJobAdvertisement = new UpdateJobAdvertisementFromAvamDto(
                 originalJobAdvertisement.getStellennummerAvam(),
-                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getTitle(),
-                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getDescription(),
-                originalJobAdvertisement.getJobContent().getJobDescriptions().get(0).getLanguage().getLanguage(),
+                originalJobAdvertisement.getJobContent().getTitle(),
+                originalJobAdvertisement.getJobContent().getDescription(),
                 originalJobAdvertisement.getJobContent().getNumberOfJobs(),
                 originalJobAdvertisement.isReportingObligation(),
                 originalJobAdvertisement.getReportingObligationEndDate(),
@@ -318,7 +316,7 @@ public class JobAdvertisementApplicationServiceForAvamTest {
         assertThat(jobAdvertisement.isReportingObligation()).isTrue();
         assertThat(jobAdvertisement.getReportingObligationEndDate()).isEqualTo(LocalDate.of(2018, 10, 1));
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
-        assertThat(jobAdvertisement.getJobContent().getJobDescriptions().get(0).getDescription()).isEqualTo("OTHER VALUE");
+        assertThat(jobAdvertisement.getJobContent().getDescription()).isEqualTo("OTHER VALUE");
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
     }
 

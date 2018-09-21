@@ -18,13 +18,14 @@ public class ApiToNormalCreateJobAdvertisementDtoConverter {
 
     public CreateJobAdvertisementDto convert(ApiCreateJobAdvertisementDto apiCreateDto) {
         return new CreateJobAdvertisementDto(
+                apiCreateDto.getTitle(),
+                apiCreateDto.getDescription(),
                 apiCreateDto.isReportToAvam(),
                 apiCreateDto.getExternalUrl(),
                 apiCreateDto.getExternalReference(),
                 convertContact(apiCreateDto.getContact()),
                 convertPublication(apiCreateDto.getPublication()),
                 apiCreateDto.getNumberOfJobs(),
-                convertJobDescriptions(apiCreateDto.getJobDescriptions()),
                 convertCompany(apiCreateDto.getCompany()),
                 convertEmployer(apiCreateDto.getEmployer()),
                 convertEmployment(apiCreateDto.getEmployment()),
@@ -61,19 +62,6 @@ public class ApiToNormalCreateJobAdvertisementDtoConverter {
               apiPublication.isRestrictedDisplay(),
               apiPublication.isCompanyAnonymous()
             );
-        }
-        return null;
-    }
-
-    private List<JobDescriptionDto> convertJobDescriptions(List<ApiJobDescriptionDto> apiJobDescriptions) {
-        if(apiJobDescriptions != null) {
-            return apiJobDescriptions.stream()
-                    .map(apiJobDescription -> new JobDescriptionDto(
-                            apiJobDescription.getLanguageIsoCode(),
-                            apiJobDescription.getTitle(),
-                            htmlToMarkdownConverter.convert(apiJobDescription.getDescription())
-                    ))
-                    .collect(Collectors.toList());
         }
         return null;
     }
