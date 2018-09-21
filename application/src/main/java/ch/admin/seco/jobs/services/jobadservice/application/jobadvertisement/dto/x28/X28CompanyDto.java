@@ -1,34 +1,47 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
 
 public class X28CompanyDto {
 
     @NotBlank
+    @Size(max = 255)
     private String name;
 
+    @Size(max = 50)
     private String street;
 
+    @Size(max = 10)
     private String houseNumber;
 
+    @Size(max = 10)
     private String postalCode;
 
+    @Size(max = 100)
     private String city;
 
+    @Size(max = 2)
     private String countryIsoCode;
 
+    @Size(max = 10)
     private String postOfficeBoxNumber;
 
+    @Size(max = 255)
     private String postOfficeBoxPostalCode;
 
+    @Size(max = 255)
     private String postOfficeBoxCity;
 
+    @Size(max = 20)
     private String phone;
 
+    @Size(max = 255)
     private String email;
 
+    @Size(max = 255)
     private String website;
 
     private boolean surrogate;

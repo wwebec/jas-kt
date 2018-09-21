@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
+import javax.validation.constraints.Size;
+
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
@@ -8,14 +10,19 @@ public class X28ContactDto {
 
     private Salutation salutation;
 
+    @Size(max = 50)
     private String firstName;
 
+    @Size(max = 50)
     private String lastName;
 
+    @Size(max = 20)
     private String phone;
 
+    @Size(max = 255)
     private String email;
 
+    @Size(max = 5)
     private String languageIsoCode;
 
     protected X28ContactDto() {

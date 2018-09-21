@@ -1,14 +1,20 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 
 public class X28OccupationDto {
 
+    @NotBlank
+    @Size(max = 16)
     private String avamOccupationCode;
 
     private WorkExperience workExperience;
 
+    @Size(max = 8)
     private String educationCode;
 
     protected X28OccupationDto() {

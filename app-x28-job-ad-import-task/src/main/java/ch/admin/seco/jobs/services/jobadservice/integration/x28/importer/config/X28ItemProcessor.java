@@ -17,18 +17,18 @@ public class X28ItemProcessor implements ItemProcessor<Oste, CreateJobAdvertisem
 
     private static final Logger LOGGER = LoggerFactory.getLogger(X28ItemProcessor.class);
 
-    private final JobAdvertisementDtoAssembler jobAdvertisementDtoAssembler;
+    private final X28JobAdvertisementAssembler x28JobAdvertisementAssembler;
 
     private final Validator validator;
 
     X28ItemProcessor(Validator validator) {
         this.validator = validator;
-        this.jobAdvertisementDtoAssembler = new JobAdvertisementDtoAssembler();
+        this.x28JobAdvertisementAssembler = new X28JobAdvertisementAssembler();
     }
 
     @Override
     public CreateJobAdvertisementFromX28Dto process(Oste item) {
-        CreateJobAdvertisementFromX28Dto createItem = jobAdvertisementDtoAssembler.createJobAdvertisementFromX28Dto(item);
+        CreateJobAdvertisementFromX28Dto createItem = x28JobAdvertisementAssembler.createJobAdvertisementFromX28Dto(item);
         Set<ConstraintViolation<CreateJobAdvertisementFromX28Dto>> violations = validator.validate(createItem);
         if (violations.isEmpty()) {
             return createItem;

@@ -1,24 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.integration.x28.importer.config;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.*;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
-import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
-import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
-import org.apache.commons.lang3.EnumUtils;
-import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.safety.Whitelist;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
+import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
+import static java.util.stream.Collectors.toList;
+import static org.springframework.util.StringUtils.hasText;
+import static org.springframework.util.StringUtils.isEmpty;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -30,14 +17,36 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGES;
-import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.LANGUAGE_LEVEL;
-import static java.util.stream.Collectors.toList;
-import static org.springframework.util.StringUtils.*;
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
+import org.apache.commons.lang3.EnumUtils;
+import org.hibernate.validator.internal.constraintvalidators.hv.EmailValidator;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-class JobAdvertisementDtoAssembler {
+import org.springframework.util.StringUtils;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JobAdvertisementDtoAssembler.class);
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CompanyDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28ContactDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28LanguageSkillDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28LocationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28OccupationDto;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver;
+import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
+
+class X28JobAdvertisementAssembler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(X28JobAdvertisementAssembler.class);
 
     private static final Pattern COUNTRY_ZIPCODE_CITY_PATTERN = Pattern.compile("\\b(([A-Z]{2,3})?[ -]+)?(\\d{4,5})? ?([\\wäöüéèàâôÄÖÜÉÈÀ /.-]+)");
     private static final Pattern CITY_CANTON_PATTERN = Pattern.compile("(.* |^)\\(?([A-Z]{2})\\)?( \\d)?$");
@@ -71,7 +80,6 @@ class JobAdvertisementDtoAssembler {
                 .setPublicationStartDate(determineStartDate(publicationStartDate, publicationEndDate))
                 .setPublicationEndDate(determineEndDate(publicationStartDate, publicationEndDate))
                 .setCompanyAnonymous(fallbackAwareBoolean(x28JobAdvertisement.isWwwAnonym(), false));
-
     }
 
     private LocalDate determineStartDate(LocalDate startDate, LocalDate endDate) {

@@ -6,13 +6,16 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 
 public class X28LocationDto {
 
+    @Size(max = 255)
     private String remarks;
 
     @Size(max = 50)
     private String city;
 
+    @Size(max = 10)
     private String postalCode;
 
+    @Size(max = 2)
     private String countryIsoCode;
 
     protected X28LocationDto() {
