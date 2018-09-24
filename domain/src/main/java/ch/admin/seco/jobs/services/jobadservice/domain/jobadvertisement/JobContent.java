@@ -261,7 +261,9 @@ public class JobContent implements ValueObject<JobContent> {
 
     void setLanguageSkills(List<LanguageSkill> languageSkills) {
         this.languageSkills.clear();
-        this.languageSkills.addAll(languageSkills);
+        if (languageSkills != null) {
+            this.languageSkills.addAll(languageSkills);
+        }
     }
 
     public ApplyChannel getApplyChannel() {
