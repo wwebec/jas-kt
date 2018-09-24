@@ -1,8 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.x28;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testContact;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testOwner;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
 import static java.time.LocalDate.now;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,6 +40,8 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Publicat
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.ContactFixture;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.OwnerFixture;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -106,8 +106,8 @@ public class X28AdapterTest {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setFingerprint(fingerprint)
-                .setOwner(testOwner(jobAdvertisementId))
-                .setContact(testContact(jobAdvertisementId))
+                .setOwner(OwnerFixture.of(jobAdvertisementId).build())
+                .setContact(ContactFixture.of(jobAdvertisementId).build())
                 .setJobContent(testJobContent(jobAdvertisementId))
                 .setPublication(new Publication.Builder().setEndDate(now()).build())
                 .setSourceSystem(SourceSystem.EXTERN)

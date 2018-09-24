@@ -1,7 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testContact;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.spy;
@@ -18,6 +17,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.AuditUser;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.ContactFixture;
 
 public class JobAdvertisementFactoryTest {
 
@@ -80,7 +80,7 @@ public class JobAdvertisementFactoryTest {
 
     public static JobAdvertisementCreator testJobAdvertisementCreator() {
         return new JobAdvertisementCreator.Builder(createAuditUser())
-                .setContact(testContact(job01.id()))
+                .setContact(ContactFixture.of(job01.id()).build())
                 .setJobContent(testJobContent(job01.id()))
                 .setPublication(new Publication.Builder().build())
                 .build();

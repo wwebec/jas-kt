@@ -1,8 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testOwner;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
-
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationFixture.testPublication;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.never;
@@ -19,6 +17,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCancelledEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.OwnerFixture;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AvamRegistrationEventListenerTest {
@@ -29,7 +28,8 @@ public class AvamRegistrationEventListenerTest {
             .setStatus(JobAdvertisementStatus.CREATED)
             .setSourceSystem(SourceSystem.JOBROOM)
             .setJobContent(testJobContent(ID))
-            .setOwner(testOwner(ID))
+            .setOwner(OwnerFixture.of(ID)
+                    .build())
             .setPublication(testPublication()
                     .setPublicDisplay(true)
                     .build())

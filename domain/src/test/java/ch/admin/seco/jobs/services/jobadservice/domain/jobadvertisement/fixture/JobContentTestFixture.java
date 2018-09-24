@@ -1,14 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture;
 
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentFixture.*;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.createPublicContact;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testApplyChannel;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testLanguageSkill;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixtureProvider.testOccupation;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobDescriptionFixture.of;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.ApplyChannelFixture.testApplyChannel;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentFixture.testEmployment;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobDescriptionFixture.testJobDescription;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LanguageSkillFixture.testLanguageSkill;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationFixture.testLocation;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.OccupationFixture.testOccupation;
 import static java.util.Collections.singletonList;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
@@ -30,10 +28,10 @@ public class JobContentTestFixture {
                         .build()))
                 .setDisplayCompany(CompanyFixture.of(jobAdvertisementId).build())
                 .setCompany(CompanyFixture.of(jobAdvertisementId).build())
-                .setLanguageSkills(singletonList(testLanguageSkill()))
+                .setLanguageSkills(singletonList(testLanguageSkill().build()))
                 .setEmployment(employment)
-                .setPublicContact(createPublicContact(jobAdvertisementId))
-                .setApplyChannel(testApplyChannel())
+                .setPublicContact(PublicContactFixture.of(jobAdvertisementId).build())
+                .setApplyChannel(testApplyChannel().build())
                 .setLocation(location)
                 .setOccupations(singletonList(occupation))
                 .build();
@@ -44,7 +42,7 @@ public class JobContentTestFixture {
     }
 
     public static JobContent.Builder prepareJobContentBuilder(JobAdvertisementId jobAdvertisementId) {
-        return prepareJobContentBuilder(jobAdvertisementId, of(jobAdvertisementId).build(), testOccupation(), testLocation().build());
+        return prepareJobContentBuilder(jobAdvertisementId, JobDescriptionFixture.of(jobAdvertisementId).build(), testOccupation().build(), testLocation().build());
     }
 
     public static JobContent.Builder prepareJobContentBuilder(JobAdvertisementId jobAdvertisementId, JobDescription jobDescription, Occupation occupation, Location location) {
@@ -52,12 +50,12 @@ public class JobContentTestFixture {
                 .setJobDescriptions(singletonList(jobDescription))
                 .setDisplayCompany(CompanyFixture.of(jobAdvertisementId).build())
                 .setCompany(CompanyFixture.of(jobAdvertisementId).build())
-                .setLanguageSkills(singletonList(testLanguageSkill()))
+                .setLanguageSkills(singletonList(testLanguageSkill().build()))
                 .setEmployment(testEmployment()
                         .setShortEmployment(true)
                         .build())
-                .setPublicContact(createPublicContact(jobAdvertisementId))
-                .setApplyChannel(testApplyChannel())
+                .setPublicContact(PublicContactFixture.of(jobAdvertisementId).build())
+                .setApplyChannel(testApplyChannel().build())
                 .setLocation(location)
                 .setOccupations(singletonList(occupation));
     }
