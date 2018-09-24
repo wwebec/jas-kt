@@ -6,7 +6,6 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.f
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.prepareJobAdvertisementBuilder;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisement;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisementWithId01;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.fixture.JobCenterTestFixture.testJobCenter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,6 +19,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.conditions.ConditionExcepti
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentFixture;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
 
 public class JobAdvertisementTest {
@@ -89,7 +89,7 @@ public class JobAdvertisementTest {
     @Test
     public void testShortTermValidation() {
         //given
-        JobContent jobContent = testJobContent(job01.id());
+        JobContent jobContent = JobContentFixture.of(job01.id()).build();
         jobContent.setEmployment(testEmployment()
                 .setShortEmployment(true)
                 .setPermanent(true)
@@ -106,7 +106,7 @@ public class JobAdvertisementTest {
 
     @Test
     public void testUpdateJobCenter() {
-        JobAdvertisement jobAdvertisement = testJobAdvertisement(job01.id(), testJobContent(job01.id()), "jobCenterCode");
+        JobAdvertisement jobAdvertisement = testJobAdvertisement(job01.id(), JobContentFixture.of(job01.id()).build(), "jobCenterCode");
         JobCenter jobCenter = testJobCenter();
         jobAdvertisement.updateJobCenter(jobCenter);
 
@@ -116,7 +116,7 @@ public class JobAdvertisementTest {
     @Test
     public void testShouldNotUpdateJobCenter() {
         JobAdvertisementId id = job01.id();
-        JobContent jobContent = testJobContent(id);
+        JobContent jobContent = JobContentFixture.of(id).build();
         jobContent.setDisplayCompany(testCompany().build());
         JobAdvertisement jobAdvertisement = testJobAdvertisement(id, jobContent, "jobCenterCodeOther");
         JobCenter jobCenter = testJobCenter();

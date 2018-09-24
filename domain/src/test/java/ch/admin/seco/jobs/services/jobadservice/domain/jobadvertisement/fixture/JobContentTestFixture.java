@@ -37,9 +37,9 @@ public class JobContentTestFixture {
                 .build();
     }
 
-    public static JobContent testJobContent(JobAdvertisementId jobAdvertisementId) {
-        return prepareJobContentBuilder(jobAdvertisementId).build();
-    }
+//    public static JobContent testJobContent(JobAdvertisementId jobAdvertisementId) {
+//        return prepareJobContentBuilder(jobAdvertisementId).build();
+//    }
 
     public static JobContent.Builder prepareJobContentBuilder(JobAdvertisementId jobAdvertisementId) {
         return prepareJobContentBuilder(jobAdvertisementId, JobDescriptionFixture.of(jobAdvertisementId).build(), testOccupation().build(), testLocation().build());

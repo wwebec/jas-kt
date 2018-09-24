@@ -10,9 +10,7 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.f
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentFixture.testEmployment;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.prepareJobContentBuilder;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobDescriptionFixture.testJobDescription;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobDescriptionFixture.testJobDescriptionEmpty;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LanguageSkillFixture.testLanguageSkill;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationFixture.testLocation;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.OccupationFixture.testOccupation;
@@ -61,13 +59,13 @@ public class JobAdvertisementTestFixture {
     }
 
     public static JobAdvertisement testJobAdvertisementWithId01() {
-        return prepareJobAdvertisementBuilder(testJobContent(job01.id()), testPublication()
+        return prepareJobAdvertisementBuilder(JobContentFixture.of(job01.id()).build(), testPublication()
                 .setPublicDisplay(true)
                 .build()).build();
     }
 
     public static JobAdvertisement testJobAdvertisement() {
-        return prepareJobAdvertisementBuilder(testJobContent(job01.id()))
+        return prepareJobAdvertisementBuilder(JobContentFixture.of(job01.id()).build())
                 .setStellennummerEgov("stellennummerEgov")
                 .build();
     }
@@ -78,7 +76,7 @@ public class JobAdvertisementTestFixture {
                 .setOwner(OwnerFixture.of(jobAdvertisementId).build())
                 .setSourceSystem(JOBROOM)
                 .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .setStatus(status)
                 .setStellennummerEgov(jobAdvertisementId.getValue())
                 .setContact(ContactFixture.of(jobAdvertisementId).build())
@@ -143,7 +141,7 @@ public class JobAdvertisementTestFixture {
                 .setOwner(OwnerFixture.of(job01.id()).build())
                 .setSourceSystem(JOBROOM)
                 .setContact(ContactFixture.of(job01.id()).build())
-                .setJobContent(testJobContent(job01.id()))
+                .setJobContent(JobContentFixture.of(job01.id()).build())
                 .setPublication(testPublication().setPublicDisplay(true).build())
                 .setStellennummerEgov(job01.id().getValue())
                 .setStellennummerAvam(STELLENNUMMER_AVAM)
@@ -158,7 +156,7 @@ public class JobAdvertisementTestFixture {
                 .setOwner(OwnerFixture.of(id).build())
                 .setSourceSystem(sourceSystem)
                 .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(testJobContent(id))
+                .setJobContent(JobContentFixture.of(id).build())
                 .setStatus(CREATED)
                 .setReportToAvam(reportToAvam)
                 .setReportingObligation(reportToAvam)
@@ -185,7 +183,7 @@ public class JobAdvertisementTestFixture {
                 .setId(jobAdvertisementId)
                 .setOwner(OwnerFixture.of(jobAdvertisementId).build())
                 .setContact(ContactFixture.of(jobAdvertisementId).build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .setPublication(publication)
                 .setSourceSystem(JOBROOM)
                 .setStellennummerEgov(jobAdvertisementId.getValue())
@@ -200,7 +198,7 @@ public class JobAdvertisementTestFixture {
                 .setFingerprint(fingerprint)
                 .setOwner(OwnerFixture.of(jobAdvertisementId).build())
                 .setContact(ContactFixture.of(jobAdvertisementId).build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .setPublication(testPublication()
                         .setPublicDisplay(true)
                         .setEndDate(now())
@@ -219,7 +217,7 @@ public class JobAdvertisementTestFixture {
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(OwnerFixture.of(jobAdvertisementId).build())
                 .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .build();
 
     }
@@ -260,7 +258,7 @@ public class JobAdvertisementTestFixture {
                 .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
                 .setOwner(OwnerFixture.of(jobAdvertisementId).build())
                 .setPublication(testPublication().build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .setReportingObligation(true)
                 .build();
 
@@ -276,7 +274,7 @@ public class JobAdvertisementTestFixture {
                         .setPublicDisplay(true)
                         .setRestrictedDisplay(true)
                         .build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .setReportingObligation(true)
                 .build();
 
@@ -291,7 +289,7 @@ public class JobAdvertisementTestFixture {
                 .setPublication(testPublication()
                         .setRestrictedDisplay(true)
                         .build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .setReportingObligation(true)
                 .build();
 
@@ -306,7 +304,7 @@ public class JobAdvertisementTestFixture {
                 .setPublication(testPublication()
                         .setPublicDisplay(true)
                         .build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .setReportingObligation(true)
                 .build();
 
@@ -319,7 +317,7 @@ public class JobAdvertisementTestFixture {
                 .setStatus(JobAdvertisementStatus.PUBLISHED_RESTRICTED)
                 .setOwner(OwnerFixture.of(jobAdvertisementId).build())
                 .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .setReportingObligation(true)
                 .build();
 

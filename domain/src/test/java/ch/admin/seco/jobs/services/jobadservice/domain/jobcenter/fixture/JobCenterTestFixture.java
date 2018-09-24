@@ -14,7 +14,7 @@ public class JobCenterTestFixture {
                 "phone",
                 "jobCenterFax",
                 true,
-                JobCenterAddressTestFixture.testJobCenterAddress()
+                JobCenterAddressFixture.testJobCenterAddress()
         );
     }
 

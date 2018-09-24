@@ -13,15 +13,24 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.f
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.fixture.JobCenterFixture.testJobCenter;
 import static java.util.Collections.singletonList;
 
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobContent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobContent.Builder;
 
 public class JobContentFixture {
 
-    public JobContent.Builder testJobContentEmpty() {
-        return new JobContent.Builder();
+    public static Builder of(JobAdvertisementId id) {
+        return testJobContent()
+                .setDisplayCompany(CompanyFixture.of(id).build())
+                .setCompany(CompanyFixture.of(id).build())
+                .setLanguageSkills(singletonList(testLanguageSkill().build()))
+                .setPublicContact(PublicContactFixture.of(id).build());
     }
 
-    public JobContent.Builder testJobContent() {
+    public static Builder testJobContentEmpty() {
+        return new Builder();
+    }
+
+    public static Builder testJobContent() {
         return testJobContentEmpty()
                 .setExternalUrl("externalUr")
                 .setX28OccupationCodes("x28OccupationCodes")

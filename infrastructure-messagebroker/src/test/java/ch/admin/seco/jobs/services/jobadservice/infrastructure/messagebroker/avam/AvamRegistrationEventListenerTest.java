@@ -17,6 +17,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementCancelledEvent;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentFixture;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.OwnerFixture;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -27,7 +28,7 @@ public class AvamRegistrationEventListenerTest {
             .setId(ID)
             .setStatus(JobAdvertisementStatus.CREATED)
             .setSourceSystem(SourceSystem.JOBROOM)
-            .setJobContent(testJobContent(ID))
+            .setJobContent(JobContentFixture.of(ID).build())
             .setOwner(OwnerFixture.of(ID)
                     .build())
             .setPublication(testPublication()

@@ -18,6 +18,7 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMo
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvent;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.ContactFixture;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentFixture;
 
 public class JobAdvertisementFactoryTest {
 
@@ -81,7 +82,7 @@ public class JobAdvertisementFactoryTest {
     public static JobAdvertisementCreator testJobAdvertisementCreator() {
         return new JobAdvertisementCreator.Builder(createAuditUser())
                 .setContact(ContactFixture.of(job01.id()).build())
-                .setJobContent(testJobContent(job01.id()))
+                .setJobContent(JobContentFixture.of(job01.id()).build())
                 .setPublication(new Publication.Builder().build())
                 .build();
     }
