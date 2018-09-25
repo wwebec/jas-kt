@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_RESTRICTED;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.EXTERN;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.JOBROOM;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
@@ -119,14 +120,7 @@ public class JobAdvertisementTestFixture {
     }
 
     public static JobAdvertisement createJob(JobAdvertisementId jobAdvertisementId) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(JOBROOM)
-                .setStatus(PUBLISHED_PUBLIC)
-                .setOwner(OwnerFixture.of(jobAdvertisementId).build())
-                .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
-                .build();
+        return testJobAdvertisementWithContent(jobAdvertisementId, JobContentFixture.of(jobAdvertisementId).build());
 
     }
 
@@ -210,7 +204,7 @@ public class JobAdvertisementTestFixture {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_RESTRICTED)
+                .setStatus(PUBLISHED_RESTRICTED)
                 .setOwner(OwnerFixture.of(jobAdvertisementId).build())
                 .setPublication(testPublication().setPublicDisplay(true).build())
                 .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
@@ -220,45 +214,29 @@ public class JobAdvertisementTestFixture {
     }
 
     public static JobAdvertisement createJobWithContractType(JobAdvertisementId jobAdvertisementId, boolean isPermanent) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(JOBROOM)
-                .setStatus(PUBLISHED_PUBLIC)
-                .setOwner(OwnerFixture.of(jobAdvertisementId).build())
-                .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(
-                        JobContentFixture.of(jobAdvertisementId)
-                                .setEmployment(
-                                        testEmployment()
-                                        .setPermanent(isPermanent)
-                                        .build())
+        return testJobAdvertisementWithContent(jobAdvertisementId, JobContentFixture.of(jobAdvertisementId)
+                .setEmployment(
+                        testEmployment()
+                        .setPermanent(isPermanent)
                         .build())
-                .build();
+        .build());
 
     }
 
     public static JobAdvertisement createJobWithCompanyName(JobAdvertisementId jobAdvertisementId, String companyName) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(JOBROOM)
-                .setStatus(PUBLISHED_PUBLIC)
-                .setOwner(OwnerFixture.of(jobAdvertisementId).build())
-                .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(
-                        JobContentFixture.of(jobAdvertisementId)
-                                .setDisplayCompany(testCompany()
-                                        .setName(companyName)
-                                        .build())
-                                .setCompany(testCompany()
-                                        .setName(companyName)
-                                        .build())
+        return testJobAdvertisementWithContent(jobAdvertisementId, JobContentFixture.of(jobAdvertisementId)
+                .setDisplayCompany(testCompany()
+                        .setName(companyName)
                         .build())
-                .build();
+                .setCompany(testCompany()
+                        .setName(companyName)
+                        .build())
+        .build());
 
     }
 
     public static JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description) {
-        return createJobWithDescription(jobAdvertisementId, title, description, JOBROOM);
+        return createJobWithDescription(jobAdvertisementId, title, description, JOBROOM, OwnerFixture.of(jobAdvertisementId).build());
     }
 
     public static JobAdvertisement createJobWithDescriptionAndOwnerCompanyId(JobAdvertisementId jobAdvertisementId, String title, String description, String companyId) {
@@ -267,11 +245,6 @@ public class JobAdvertisementTestFixture {
                         .setCompanyId(companyId)
                         .build()
         );
-    }
-
-
-    public static JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem) {
-        return createJobWithDescription(jobAdvertisementId, title, description, sourceSystem, OwnerFixture.of(jobAdvertisementId).build());
     }
 
     public static JobAdvertisement createJobWithLanguageSkills(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, LanguageSkill... languageSkills) {
@@ -300,63 +273,47 @@ public class JobAdvertisementTestFixture {
     }
 
     public static JobAdvertisement createJobWithWorkload(JobAdvertisementId jobAdvertisementId, int workloadPercentageMin, int workloadPercentageMax) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(JOBROOM)
-                .setStatus(PUBLISHED_PUBLIC)
-                .setOwner(OwnerFixture.of(jobAdvertisementId).build())
-                .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(
-                        JobContentFixture.of(jobAdvertisementId)
-                                .setEmployment(
-                                        testEmployment()
-                                                .setWorkloadPercentageMin(workloadPercentageMin)
-                                                .setWorkloadPercentageMax(workloadPercentageMax)
-                                                .build())
-                                .build())
-                .build();
+        return testJobAdvertisementWithContent(jobAdvertisementId,
+                JobContentFixture.of(jobAdvertisementId)
+                        .setEmployment(
+                                testEmployment()
+                                        .setWorkloadPercentageMin(workloadPercentageMin)
+                                        .setWorkloadPercentageMax(workloadPercentageMax)
+                                        .build())
+                        .build());
     }
 
     public static JobAdvertisement createJobWithX28Code(JobAdvertisementId jobAdvertisementId, String x28Codes) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(JOBROOM)
-                .setStatus(PUBLISHED_PUBLIC)
-                .setOwner(OwnerFixture.of(jobAdvertisementId).build())
-                .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(
-                        JobContentFixture.of(jobAdvertisementId)
-                                .setX28OccupationCodes(x28Codes)
-                                .build())
-                .build();
+        return testJobAdvertisementWithContent(jobAdvertisementId,
+                JobContentFixture.of(jobAdvertisementId)
+                        .setX28OccupationCodes(x28Codes)
+                        .build());
     }
 
-    public static JobAdvertisement createJobWithOccupation(JobAdvertisementId jobAdvertisementId, Occupation occupation) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(JOBROOM)
-                .setStatus(PUBLISHED_PUBLIC)
-                .setOwner(OwnerFixture.of(jobAdvertisementId).build())
-                .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(
-                        JobContentFixture.of(jobAdvertisementId)
-                                .setOccupations(singletonList(occupation))
-                                .build()
-                )
-                .build();
+    public static JobAdvertisement createJobWithOccupation(JobAdvertisementId id, Occupation occupation) {
+        return testJobAdvertisementWithContent(id,
+                JobContentFixture.of(id)
+                        .setOccupations(singletonList(occupation))
+                        .build()
+        );
     }
 
     public static JobAdvertisement createJobWithLocation(JobAdvertisementId jobAdvertisementId, Location location) {
+        return testJobAdvertisementWithContent(jobAdvertisementId,
+                JobContentFixture.of(jobAdvertisementId)
+                        .setLocation(location)
+                        .build()
+        );
+    }
+
+    public static JobAdvertisement testJobAdvertisementWithContent(JobAdvertisementId jobAdvertisementId, JobContent jobContent) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
                 .setSourceSystem(JOBROOM)
                 .setStatus(PUBLISHED_PUBLIC)
                 .setOwner(OwnerFixture.of(jobAdvertisementId).build())
                 .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(
-                        JobContentFixture.of(jobAdvertisementId)
-                                .setLocation(location)
-                                .build())
+                .setJobContent(jobContent)
                 .build();
     }
 }

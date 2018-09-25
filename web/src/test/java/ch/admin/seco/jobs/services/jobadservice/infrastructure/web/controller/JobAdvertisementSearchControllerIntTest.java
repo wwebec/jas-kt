@@ -64,6 +64,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Language
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.OwnerFixture;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchRequest;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchService;
@@ -285,8 +286,7 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchBySourceSystemKeyword() throws Exception {
         // GIVEN
-        index(createJobWithDescription(job01.id(), "c++ developer", "c++ & java entwickler", SourceSystem.EXTERN));
-        index(createJobWithDescription(job02.id(), "java & javascript developer", "jee entwickler", SourceSystem.API));
+        index(createJobWithDescription(job02.id(), "java & javascript developer", "jee entwickler", SourceSystem.API, OwnerFixture.of(job02.id()).build()));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
