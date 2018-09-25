@@ -1,13 +1,11 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.CREATED;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.PUBLISHED_PUBLIC;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.EXTERN;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.JOBROOM;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompanyEmpty;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentFixture.testEmployment;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentFixture.testJobContent;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobDescriptionFixture.testJobDescription;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LanguageSkillFixture.testLanguageSkill;
@@ -85,35 +83,6 @@ public class JobAdvertisementTestFixture {
                 .setStatus(status)
                 .setJobCenterCode(jobCenterCode)
                 .setStellennummerAvam(STELLENNUMMER_AVAM)
-                .build();
-    }
-
-    public static JobAdvertisement testJobAdvertisement(SourceSystem sourceSystem, boolean reportToAvam) {
-        final JobAdvertisementId id = new JobAdvertisementId("id");
-        return new JobAdvertisement.Builder()
-                .setId(id)
-                .setOwner(OwnerFixture.of(id).build())
-                .setSourceSystem(sourceSystem)
-                .setPublication(testPublication().setPublicDisplay(true).build())
-                .setJobContent(JobContentFixture.of(id).build())
-                .setStatus(CREATED)
-                .setReportToAvam(reportToAvam)
-                .setReportingObligation(reportToAvam)
-                .build();
-    }
-
-    public static JobAdvertisement testJobAdvertisement(JobAdvertisementId id, JobContent jobContent, String jobCenterCodeOther) {
-        return new JobAdvertisement.Builder()
-                .setId(id)
-                .setJobCenterCode(jobCenterCodeOther)
-                .setOwner(OwnerFixture.of(id).build())
-                .setContact(ContactFixture.of(id).build())
-                .setJobContent(jobContent)
-                .setPublication(testPublication()
-                        .setCompanyAnonymous(true)
-                        .build())
-                .setSourceSystem(JOBROOM)
-                .setStatus(CREATED)
                 .build();
     }
 
