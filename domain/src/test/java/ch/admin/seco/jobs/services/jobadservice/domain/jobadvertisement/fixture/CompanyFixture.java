@@ -8,7 +8,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
 
 public class CompanyFixture {
 
-    static Builder of(JobAdvertisementId id){
+    public static Builder of(JobAdvertisementId id){
         return testCompany()
                 .setName(format("name-%s", id.getValue()));
     }
@@ -18,19 +18,20 @@ public class CompanyFixture {
     }
 
     public static Builder testCompany() {
-        return testCompanyEmpty().
-                setName("name").
-                setStreet("street").
-                setHouseNumber("houseNumber").
-                setPostalCode("postalCode").
-                setCity("city").
-                setCountryIsoCode("countryIsoCode").
-                setPostOfficeBoxNumber("postOfficeBoxNumber").
-                setPostOfficeBoxPostalCode("postOfficeBoxPostalCode").
-                setPostOfficeBoxCity("postOfficeBoxCity").
-                setPhone("phone").
-                setEmail("email").
-                setWebsite("website");
+        return testCompanyEmpty()
+                .setName("name")
+                .setStreet("street")
+                .setPostalCode("postalCode")
+                .setCity("city")
+                .setCountryIsoCode("ch")
+//                setHouseNumber("houseNumber").
+//                setPostOfficeBoxNumber("postOfficeBoxNumber").
+//                setPostOfficeBoxPostalCode("postOfficeBoxPostalCode").
+//                setPostOfficeBoxCity("postOfficeBoxCity").
+//                setPhone("phone").
+//                setEmail("email").
+//                setWebsite("website")
+ ;
     }
 
     public static Builder testDisplayCompany(JobCenter jobCenter) {

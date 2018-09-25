@@ -2,7 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.JOBROOM;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.RAV;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisement;
+
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementFixture.testJobAdvertisement;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -46,7 +47,11 @@ public class JobAdvertisementEventListenerTest {
 
     private void verifyRefiningAndInspectOfJobAdvertisement(SourceSystem sourceSystem, boolean reportToAvam, VerificationMode refiningVerificationMode, VerificationMode inspectVerificationMode) {
         // given
-        JobAdvertisement jobAdvertisement = testJobAdvertisement(sourceSystem, reportToAvam);
+        JobAdvertisement jobAdvertisement = testJobAdvertisement()
+                .setSourceSystem(sourceSystem)
+                .setReportToAvam(reportToAvam)
+                .build();
+
         JobAdvertisementCreatedEvent event = new JobAdvertisementCreatedEvent(jobAdvertisement);
         given(jobAdvertisementRepository.findById(jobAdvertisement.getId())).willReturn(Optional.of(jobAdvertisement));
 

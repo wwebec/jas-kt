@@ -2,10 +2,9 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmploymentFixture.testEmployment;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementFixture.testJobAdvertisement;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.prepareJobAdvertisementBuilder;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisement;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisementWithId01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationFixture.testPublication;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.fixture.JobCenterTestFixture.testJobCenter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,7 +38,7 @@ public class JobAdvertisementTest {
     //@Test
     public void testUpdate() {
         //given
-        JobAdvertisement jobAdvertisement = testJobAdvertisementWithId01();
+        JobAdvertisement jobAdvertisement = testJobAdvertisement().build();
 
         //when
         jobAdvertisement.update(new JobAdvertisementUpdater.Builder(null)
@@ -74,7 +73,7 @@ public class JobAdvertisementTest {
     @Test
     public void testInspect() {
         //given
-        JobAdvertisement jobAdvertisement = testJobAdvertisement();
+        JobAdvertisement jobAdvertisement = testJobAdvertisement().build();
 
         //when
         jobAdvertisement.inspect();
@@ -89,15 +88,21 @@ public class JobAdvertisementTest {
     @Test
     public void testShortTermValidation() {
         //given
-        JobContent jobContent = JobContentFixture.of(job01.id()).build();
-        jobContent.setEmployment(testEmployment()
-                .setShortEmployment(true)
-                .setPermanent(true)
-                .build()
-        );
+        JobAdvertisement.Builder jobAdBuilder = testJobAdvertisement()
+                .setJobContent(
+                        JobContentFixture.of(job01.id())
+                                .setEmployment(testEmployment()
+                                        .setShortEmployment(true)
+                                        .setPermanent(true)
+                                        .build()
+                                ).build())
+                .setPublication(
+                        testPublication()
+                                .setPublicDisplay(true)
+                                .build());
 
         //when
-        ConditionException exception = catchThrowableOfType(prepareJobAdvertisementBuilder(jobContent)::build, ConditionException.class);
+        ConditionException exception = catchThrowableOfType(jobAdBuilder::build, ConditionException.class);
 
         //then
         assertThat(exception).isNotNull();
@@ -106,7 +111,9 @@ public class JobAdvertisementTest {
 
     @Test
     public void testUpdateJobCenter() {
-        JobAdvertisement jobAdvertisement = testJobAdvertisement(job01.id(), JobContentFixture.of(job01.id()).build(), "jobCenterCode");
+        JobAdvertisement jobAdvertisement = testJobAdvertisement()
+                        .setJobCenterCode("jobCenterCode")
+                        .build();
         JobCenter jobCenter = testJobCenter();
         jobAdvertisement.updateJobCenter(jobCenter);
 
@@ -118,7 +125,9 @@ public class JobAdvertisementTest {
         JobAdvertisementId id = job01.id();
         JobContent jobContent = JobContentFixture.of(id).build();
         jobContent.setDisplayCompany(testCompany().build());
-        JobAdvertisement jobAdvertisement = testJobAdvertisement(id, jobContent, "jobCenterCodeOther");
+        JobAdvertisement jobAdvertisement = testJobAdvertisement()
+                .setJobCenterCode("jobCenterCodeOther")
+                .build();
         JobCenter jobCenter = testJobCenter();
 
         assertThatThrownBy(() -> jobAdvertisement.updateJobCenter(jobCenter))

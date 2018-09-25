@@ -1,6 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.dlq;
 
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisementWithId01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementFixture.testJobAdvertisement;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -49,7 +49,7 @@ public class DLQItemServiceTest {
     @Test
     public void testHandleDLQMessage() throws IOException {
         // given
-        JobAdvertisement jobAdvertisement = testJobAdvertisementWithId01();
+        JobAdvertisement jobAdvertisement = testJobAdvertisement().build();
 
         Message<JobAdvertisement> message = MessageBuilder.withPayload(jobAdvertisement)
                 .setHeader(DLQItemService.X_EXCEPTION_MESSAGE, "Test-Exception-Message")

@@ -2,7 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dt
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CompanyDto;
 
-public class X28CompanyDtoTestFixture {
+public class X28CompanyDtoFixture {
     public static X28CompanyDto testX28CompanyDto() {
         return new X28CompanyDto()
                 .setName("name")
@@ -15,6 +15,4 @@ public class X28CompanyDtoTestFixture {
                 .setEmail("email")
                 .setWebsite("website");
     }
-
-
 }

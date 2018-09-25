@@ -1,7 +1,6 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.x28;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentTestFixture.testJobContent;
 import static java.time.LocalDate.now;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
@@ -41,6 +40,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutati
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.ContactFixture;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentFixture;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.OwnerFixture;
 
 @RunWith(SpringRunner.class)
@@ -108,7 +108,7 @@ public class X28AdapterTest {
                 .setFingerprint(fingerprint)
                 .setOwner(OwnerFixture.of(jobAdvertisementId).build())
                 .setContact(ContactFixture.of(jobAdvertisementId).build())
-                .setJobContent(testJobContent(jobAdvertisementId))
+                .setJobContent(JobContentFixture.of(jobAdvertisementId).build())
                 .setPublication(new Publication.Builder().setEndDate(now()).build())
                 .setSourceSystem(SourceSystem.EXTERN)
                 .setStellennummerEgov(jobAdvertisementId.getValue())

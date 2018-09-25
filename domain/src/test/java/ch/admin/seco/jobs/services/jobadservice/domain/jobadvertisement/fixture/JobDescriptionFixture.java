@@ -8,7 +8,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobDescr
 
 public class JobDescriptionFixture {
 
-    static Builder of(JobAdvertisementId id){
+    public static Builder of(JobAdvertisementId id){
         return testJobDescription()
                 .setTitle(format("title-%s", id.getValue()))
                 .setDescription(format("description-%s", id.getValue()));

@@ -7,7 +7,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdver
 
 public class PublicContactFixture {
 
-    static Builder of(JobAdvertisementId id) {
+    public static Builder of(JobAdvertisementId id) {
         return testPublicContact()
                 .setEmail(String.format("mail-%s@mail.com", id.getValue()))
                 .setPhone(String.format("+41 %s", id.getValue()))

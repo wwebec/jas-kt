@@ -5,19 +5,21 @@ import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisem
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.CreateJobAdvertisementFromAvamDtoTestFixture.testCreateJobAdvertisementDtoWithCompanyAnonymous;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.RejectionDtoTestFixture.testRejectionDto;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.UpdateJobAdvertisementFromAvamDtoTestFixture.testUpdateJobAdvertisementFromAvamDto;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.APPROVED;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.INSPECTING;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REJECTED;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents.JOB_ADVERTISEMENT_REJECTED;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testDisplayCompany;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementFixture.testJobAdvertisement;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.testJobAdvertisementWithInspectingStatus;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationFixture.testLocation;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents.JOB_ADVERTISEMENT_APPROVED;
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.fixture.JobCenterTestFixture.testJobCenter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
 
 import org.junit.After;
 import org.junit.Before;
@@ -43,9 +45,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMo
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentFixture;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -104,7 +105,7 @@ public class JobAdvertisementApplicationServiceForAvamTest {
         //then
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
         assertThat(jobAdvertisement).isNotNull();
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(APPROVED);
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.RAV);
         assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
         assertThat(jobAdvertisement.getPublication().isEuresAnonymous()).isFalse();
@@ -127,7 +128,7 @@ public class JobAdvertisementApplicationServiceForAvamTest {
         //then
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
         assertThat(jobAdvertisement).isNotNull();
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(APPROVED);
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.RAV);
         assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
         assertThat(jobAdvertisement.getPublication().isEuresAnonymous()).isFalse();
@@ -145,20 +146,25 @@ public class JobAdvertisementApplicationServiceForAvamTest {
     @Test
     public void shouldApprove() {
         // given
-        JobAdvertisement jobAdvertisementWithInspectingStatus = jobAdvertisementRepository.save(testJobAdvertisementWithInspectingStatus());
-        UpdateJobAdvertisementFromAvamDto updateJobAdvertisementFromAvamDto = testUpdateJobAdvertisementFromAvamDto(jobAdvertisementWithInspectingStatus);
+        JobAdvertisement inspectingJobAd = jobAdvertisementRepository.save(
+                testJobAdvertisement()
+                        .setStatus(INSPECTING)
+                        .setJobContent(JobContentFixture.of(job01.id()).build())
+                        .build()
+        );
+        UpdateJobAdvertisementFromAvamDto updateJobAdvertisementFromAvamDto = testUpdateJobAdvertisementFromAvamDto(inspectingJobAd);
         ApprovalDto approvalDto = testApprovalDto(updateJobAdvertisementFromAvamDto);
 
         // when
         sut.approve(approvalDto);
 
         // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(job01.id());
-        assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
-        assertThat(jobAdvertisement.getApprovalDate()).isEqualTo(LocalDate.of(2018, 1, 1));
-        assertThat(jobAdvertisement.isReportingObligation()).isTrue();
-        assertThat(jobAdvertisement.getReportingObligationEndDate()).isEqualTo(LocalDate.of(2018, 10, 1));
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
+        JobAdvertisement repoJobAd = jobAdvertisementRepository.getOne(job01.id());
+        assertThat(repoJobAd.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
+        assertThat(repoJobAd.getApprovalDate()).isEqualTo(approvalDto.getDate());
+        assertThat(repoJobAd.isReportingObligation()).isTrue();
+        assertThat(repoJobAd.getReportingObligationEndDate()).isEqualTo(approvalDto.getReportingObligationEndDate());
+        assertThat(repoJobAd.getStatus()).isEqualTo(APPROVED);
         domainEventMockUtils.assertSingleDomainEventPublished(JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
     }
 
@@ -166,7 +172,11 @@ public class JobAdvertisementApplicationServiceForAvamTest {
     @Test
     public void shouldApproveWithUpdate() {
         // given
-        JobAdvertisement jobAdvertisementWithInspectingStatus = jobAdvertisementRepository.save(testJobAdvertisementWithInspectingStatus());
+        JobAdvertisement jobAdvertisementWithInspectingStatus = jobAdvertisementRepository.save(
+                testJobAdvertisement()
+                        .setStatus(INSPECTING)
+                        .setJobContent(JobContentFixture.of(job01.id()).build())
+                        .build());
         UpdateJobAdvertisementFromAvamDto updateJobAdvertisementFromAvamDto = testUpdateJobAdvertisementFromAvamDto(jobAdvertisementWithInspectingStatus);
         updateJobAdvertisementFromAvamDto.setDescription("OTHER VALUE");
         ApprovalDto approvalDto = testApprovalDto(updateJobAdvertisementFromAvamDto);
@@ -177,10 +187,10 @@ public class JobAdvertisementApplicationServiceForAvamTest {
         // then
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementWithInspectingStatus.getId());
         assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
-        assertThat(jobAdvertisement.getApprovalDate()).isEqualTo(LocalDate.of(2018, 1, 1));
+        assertThat(jobAdvertisement.getApprovalDate()).isEqualTo(approvalDto.getDate());
         assertThat(jobAdvertisement.isReportingObligation()).isTrue();
-        assertThat(jobAdvertisement.getReportingObligationEndDate()).isEqualTo(LocalDate.of(2018, 10, 1));
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.APPROVED);
+        assertThat(jobAdvertisement.getReportingObligationEndDate()).isEqualTo(approvalDto.getReportingObligationEndDate());
+        assertThat(jobAdvertisement.getStatus()).isEqualTo(APPROVED);
         assertThat(jobAdvertisement.getJobContent().getJobDescriptions().get(0).getDescription()).isEqualTo("OTHER VALUE");
         domainEventMockUtils.assertMultipleDomainEventPublished(2, JOB_ADVERTISEMENT_UPDATED.getDomainEventType());
     }
@@ -188,20 +198,24 @@ public class JobAdvertisementApplicationServiceForAvamTest {
     @Test
     public void shouldReject() {
         // given
-        jobAdvertisementRepository.save(testJobAdvertisementWithInspectingStatus());
+        jobAdvertisementRepository.save(
+                testJobAdvertisement()
+                        .setStatus(INSPECTING)
+                        .setJobContent(JobContentFixture.of(job01.id()).build())
+                        .build());
         RejectionDto rejectionDto = testRejectionDto();
 
         // when
         sut.reject(rejectionDto);
 
         // then
-        JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(job01.id());
-        assertThat(jobAdvertisement.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
-        assertThat(jobAdvertisement.getRejectionDate()).isEqualTo(LocalDate.of(2018, 1, 1));
-        assertThat(jobAdvertisement.getRejectionCode()).isEqualTo("code");
-        assertThat(jobAdvertisement.getRejectionReason()).isEqualTo("reason");
-        assertThat(jobAdvertisement.getJobCenterCode()).isEqualTo("jobcenterid");
-        assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.REJECTED);
-        domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_REJECTED.getDomainEventType());
+        JobAdvertisement repoJobAd = jobAdvertisementRepository.getOne(job01.id());
+        assertThat(repoJobAd.getStellennummerAvam()).isEqualTo(STELLENNUMMER_AVAM);
+        assertThat(repoJobAd.getRejectionDate()).isEqualTo(rejectionDto.getDate());
+        assertThat(repoJobAd.getRejectionCode()).isEqualTo("code");
+        assertThat(repoJobAd.getRejectionReason()).isEqualTo("reason");
+        assertThat(repoJobAd.getJobCenterCode()).isEqualTo("jobcenterid");
+        assertThat(repoJobAd.getStatus()).isEqualTo(REJECTED);
+        domainEventMockUtils.assertSingleDomainEventPublished(JOB_ADVERTISEMENT_REJECTED.getDomainEventType());
     }
 }

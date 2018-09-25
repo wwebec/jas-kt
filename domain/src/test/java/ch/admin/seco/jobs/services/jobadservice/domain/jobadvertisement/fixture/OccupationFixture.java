@@ -6,7 +6,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupati
 
 public class OccupationFixture {
     public static Builder testOccupation() {
-        return testOccuationEmpty()
+        return testOccupationEmpty()
         .setAvamOccupationCode("avamOccupationCode")
         .setSbn3Code("sbn3Code")
         .setSbn5Code("sbn5Code")
@@ -16,7 +16,7 @@ public class OccupationFixture {
         .setEducationCode("educationCode");
     }
 
-    public static Builder testOccuationEmpty() {
+    public static Builder testOccupationEmpty() {
         return new Builder();
     }
 }
