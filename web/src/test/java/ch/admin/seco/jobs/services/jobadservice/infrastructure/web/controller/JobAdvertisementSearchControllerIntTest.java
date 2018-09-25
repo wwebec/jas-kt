@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.API;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.EXTERN;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job02;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job03;
@@ -63,7 +65,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Language
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.OwnerFixture;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchRequest;
@@ -286,7 +287,8 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchBySourceSystemKeyword() throws Exception {
         // GIVEN
-        index(createJobWithDescription(job02.id(), "java & javascript developer", "jee entwickler", SourceSystem.API, OwnerFixture.of(job02.id()).build()));
+        index(createJobWithDescription(job01.id(), "c++ developer", "c++ & java entwickler", EXTERN, OwnerFixture.of(job01.id()).build()));
+        index(createJobWithDescription(job02.id(), "java & javascript developer", "jee entwickler", API, OwnerFixture.of(job02.id()).build()));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -314,8 +316,8 @@ public class JobAdvertisementSearchControllerIntTest {
         final LanguageSkill da = new LanguageSkill.Builder().setLanguageIsoCode("da").setSpokenLevel(LanguageLevel.PROFICIENT).setWrittenLevel(LanguageLevel.INTERMEDIATE).build();
         final LanguageSkill en = new LanguageSkill.Builder().setLanguageIsoCode("en").setSpokenLevel(LanguageLevel.PROFICIENT).setWrittenLevel(LanguageLevel.INTERMEDIATE).build();
 
-        index(createJobWithLanguageSkills(job01.id(), "c++ developer", "c++ & java entwickler", SourceSystem.EXTERN, da));
-        index(createJobWithLanguageSkills(job02.id(), "java & javascript developer", "jee entwickler", SourceSystem.API, en));
+        index(createJobWithLanguageSkills(job01.id(), "c++ developer", "c++ & java entwickler", EXTERN, da));
+        index(createJobWithLanguageSkills(job02.id(), "java & javascript developer", "jee entwickler", API, en));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
