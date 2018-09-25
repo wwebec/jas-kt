@@ -34,17 +34,6 @@ public class JobAdvertisementTestFixture {
 
     private static final String STELLENNUMMER_AVAM = "avam";
 
-//    public static JobAdvertisement.Builder prepareJobAdvertisementBuilder(JobContent jobContent, Publication publication) {
-//        return new JobAdvertisement.Builder()
-//                .setId(job01.id())
-//                .setSourceSystem(JOBROOM)
-//                .setStatus(CREATED)
-//                .setJobContent(jobContent)
-//                .setOwner(OwnerFixture.of(job01.id()).build())
-//                .setContact(ContactFixture.of(job01.id()).build())
-//                .setPublication(publication);
-//    }
-
     public static JobAdvertisement testJobAdvertisementJobWithStatusAndReportingObligationEndDate(JobAdvertisementId jobAdvertisementId, JobAdvertisementStatus status, LocalDate reportingObligationEndDate) {
         return new JobAdvertisement.Builder()
                 .setId(jobAdvertisementId)
