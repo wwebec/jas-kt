@@ -53,8 +53,8 @@ public class AvamService {
         LOG.debug("Send through the message broker for action: REGISTER, JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         jobAdEventChannel.send(MessageBuilder
                 .withPayload(jobAdvertisement)
-                .setHeader(PARTITION_KEY, jobAdvertisement.getId())
-                .setHeader(RELEVANT_ID, jobAdvertisement.getId())
+                .setHeader(PARTITION_KEY, jobAdvertisement.getId().getValue())
+                .setHeader(RELEVANT_ID, jobAdvertisement.getId().getValue())
                 .setHeader(EVENT, JOB_ADVERTISEMENT_INSPECTING.getDomainEventType().getValue())
                 .setHeader(SOURCE_SYSTEM, JOB_AD_SERVICE.name())
                 .setHeader(TARGET_SYSTEM, AVAM.name())
@@ -66,8 +66,8 @@ public class AvamService {
         LOG.debug("Send through the message broker for action: DEREGISTER, JobAdvertisementId: '{}'", jobAdvertisement.getId().getValue());
         jobAdEventChannel.send(MessageBuilder
                 .withPayload(jobAdvertisement)
-                .setHeader(PARTITION_KEY, jobAdvertisement.getId())
-                .setHeader(RELEVANT_ID, jobAdvertisement.getId())
+                .setHeader(PARTITION_KEY, jobAdvertisement.getId().getValue())
+                .setHeader(RELEVANT_ID, jobAdvertisement.getId().getValue())
                 .setHeader(EVENT, JOB_ADVERTISEMENT_CANCELLED.getDomainEventType().getValue())
                 .setHeader(SOURCE_SYSTEM, JOB_AD_SERVICE.name())
                 .setHeader(TARGET_SYSTEM, AVAM.name())
