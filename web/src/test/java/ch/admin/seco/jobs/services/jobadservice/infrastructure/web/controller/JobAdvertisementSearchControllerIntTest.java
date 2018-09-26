@@ -1,20 +1,48 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import ch.admin.seco.jobs.services.jobadservice.Application;
-import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
-import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.*;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementDocument;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementElasticsearchRepository;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.TestUtil;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.errors.ExceptionTranslator;
-import org.junit.After;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.API;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem.EXTERN;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job02;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job03;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job04;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job05;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job06;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job07;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job08;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job09;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job10;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJob;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithCompanyName;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithContractType;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithDescription;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithDescriptionAndOwnerCompanyId;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithLanguageSkills;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithLocation;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithOccupation;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithOwnerAndPublicationStartDate;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithPublicDisplayAndWithRestrictedDisplay;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithPublicDisplayAndWithoutRestrictedDisplay;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithWorkload;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithX28Code;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithoutPublicDisplayAndWithRestrictedDisplay;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createJobWithoutPublicDisplayAndWithoutRestrictedDisplay;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementTestFixture.createRestrictedJob;
+import static java.time.LocalDate.now;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
@@ -28,18 +56,26 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementTestDataProvider.*;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import ch.admin.seco.jobs.services.jobadservice.Application;
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
+import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageSkill;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Occupation;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.OwnerFixture;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.ElasticsearchConfiguration;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchRequest;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.JobAdvertisementSearchService;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.PeaJobAdvertisementSearchRequest;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.ProfessionCode;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.jobadvertisement.ProfessionCodeType;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementDocument;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.jobadvertisement.JobAdvertisementElasticsearchRepository;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.TestUtil;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.errors.ExceptionTranslator;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -104,16 +140,12 @@ public class JobAdvertisementSearchControllerIntTest {
                 .build();
     }
 
-    @After
-    public void tearDown() throws Exception {
-    }
-
     @Test
     public void shouldSearchWithoutQuery() throws Exception {
         // GIVEN
-        index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJob(JOB_ADVERTISEMENT_ID_02));
-        index(createJob(JOB_ADVERTISEMENT_ID_03));
+        index(createJob(job01.id()));
+        index(createJob(job02.id()));
+        index(createJob(job03.id()));
 
         // WHEN
         ResultActions resultActions = mockMvc.perform(
@@ -132,9 +164,9 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldNotSearchPeaJobsWithoutQuery() throws Exception {
         // GIVEN
-        index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJob(JOB_ADVERTISEMENT_ID_02));
-        index(createJob(JOB_ADVERTISEMENT_ID_03));
+        index(createJob(job01.id()));
+        index(createJob(job02.id()));
+        index(createJob(job03.id()));
 
         // WHEN
         ResultActions resultActions = mockMvc.perform(
@@ -151,9 +183,9 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchPeaJobsWithoutJobTitleInRequest() throws Exception {
         // GIVEN
-        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
-        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
-        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
+        index(createJobWithDescriptionAndOwnerCompanyId(job01.id(), "c++ developer", "c++ & java entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(job02.id(), "java & javascript developer", "jee entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(job03.id(), "php programmierer", "php programierer", "company-2"));
         PeaJobAdvertisementSearchRequest request = new PeaJobAdvertisementSearchRequest();
         request.setCompanyId("company-1");
 
@@ -174,10 +206,10 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchPeaJobsByPublicationDate() throws Exception {
         // GIVEN
-        index(createJobWithOwnerAndPublicationStartDate(JOB_ADVERTISEMENT_ID_01, "company-1", LocalDate.now().minusDays(30)));
-        index(createJobWithOwnerAndPublicationStartDate(JOB_ADVERTISEMENT_ID_02, "company-1", LocalDate.now().minusDays(7)));
-        index(createJobWithOwnerAndPublicationStartDate(JOB_ADVERTISEMENT_ID_03, "company-1", LocalDate.now()));
-        index(createJob(JOB_ADVERTISEMENT_ID_04));
+        index(createJobWithOwnerAndPublicationStartDate(job01.id(), "company-1", now().minusDays(30)));
+        index(createJobWithOwnerAndPublicationStartDate(job02.id(), "company-1", now().minusDays(7)));
+        index(createJobWithOwnerAndPublicationStartDate(job03.id(), "company-1", now()));
+        index(createJob(job04.id()));
         PeaJobAdvertisementSearchRequest request = new PeaJobAdvertisementSearchRequest();
         request.setCompanyId("company-1");
         request.setOnlineSinceDays(7);
@@ -199,10 +231,10 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchPeaJobsByJobTitle() throws Exception {
         // GIVEN
-        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", "company-1"));
-        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", "company-1"));
-        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer", "company-2"));
-        index(createJobWithDescriptionAndOwnerCompanyId(JOB_ADVERTISEMENT_ID_04, "javascript developer", "javascript developer", "company-3"));
+        index(createJobWithDescriptionAndOwnerCompanyId(job01.id(), "c++ developer", "c++ & java entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(job02.id(), "java & javascript developer", "jee entwickler", "company-1"));
+        index(createJobWithDescriptionAndOwnerCompanyId(job03.id(), "php programmierer", "php programierer", "company-2"));
+        index(createJobWithDescriptionAndOwnerCompanyId(job04.id(), "javascript developer", "javascript developer", "company-3"));
         PeaJobAdvertisementSearchRequest request = new PeaJobAdvertisementSearchRequest();
         request.setCompanyId("company-1");
         request.setJobTitle("developer");
@@ -224,9 +256,9 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchByKeyword() throws Exception {
         // GIVEN
-        index(createJobWithDescription(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler"));
-        index(createJobWithDescription(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler"));
-        index(createJobWithDescription(JOB_ADVERTISEMENT_ID_03, "php programmierer", "php programierer"));
+        index(createJobWithDescription(job01.id(), "c++ developer", "c++ & java entwickler"));
+        index(createJobWithDescription(job02.id(), "java & javascript developer", "jee entwickler"));
+        index(createJobWithDescription(job03.id(), "php programmierer", "php programierer"));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -243,11 +275,11 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "2"))
 
-                .andExpect(jsonPath("$.[0].id").value(equalTo(JOB_ADVERTISEMENT_ID_01.getValue())))
+                .andExpect(jsonPath("$.[0].id").value(equalTo(job01.name())))
                 .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].title").value(equalTo("c++ developer")))
                 .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].description").value(equalTo("c++ &amp; <em>java</em> <em>entwickler</em>")))
 
-                .andExpect(jsonPath("$.[1].id").value(equalTo(JOB_ADVERTISEMENT_ID_02.getValue())))
+                .andExpect(jsonPath("$.[1].id").value(equalTo(job02.name())))
                 .andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].title").value(equalTo("<em>java</em> & <em>javascript</em> developer")))
                 .andExpect(jsonPath("$.[1].jobContent.jobDescriptions[0].description").value(equalTo("jee <em>entwickler</em>")));
     }
@@ -255,8 +287,8 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldSearchBySourceSystemKeyword() throws Exception {
         // GIVEN
-        index(createJobWithDescription(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", SourceSystem.EXTERN));
-        index(createJobWithDescription(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", SourceSystem.API));
+        index(createJobWithDescription(job01.id(), "c++ developer", "c++ & java entwickler", EXTERN, OwnerFixture.of(job01.id()).build()));
+        index(createJobWithDescription(job02.id(), "java & javascript developer", "jee entwickler", API, OwnerFixture.of(job02.id()).build()));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -273,7 +305,7 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "1"))
 
-                .andExpect(jsonPath("$.[0].id").value(equalTo(JOB_ADVERTISEMENT_ID_01.getValue())))
+                .andExpect(jsonPath("$.[0].id").value(equalTo(job01.name())))
                 .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].title").value(equalTo("c++ developer")))
                 .andExpect(jsonPath("$.[0].jobContent.jobDescriptions[0].description").value(equalTo("c++ &amp; java entwickler")));
     }
@@ -284,8 +316,8 @@ public class JobAdvertisementSearchControllerIntTest {
         final LanguageSkill da = new LanguageSkill.Builder().setLanguageIsoCode("da").setSpokenLevel(LanguageLevel.PROFICIENT).setWrittenLevel(LanguageLevel.INTERMEDIATE).build();
         final LanguageSkill en = new LanguageSkill.Builder().setLanguageIsoCode("en").setSpokenLevel(LanguageLevel.PROFICIENT).setWrittenLevel(LanguageLevel.INTERMEDIATE).build();
 
-        index(createJobWithLanguageSkills(JOB_ADVERTISEMENT_ID_01, "c++ developer", "c++ & java entwickler", SourceSystem.EXTERN, da));
-        index(createJobWithLanguageSkills(JOB_ADVERTISEMENT_ID_02, "java & javascript developer", "jee entwickler", SourceSystem.API, en));
+        index(createJobWithLanguageSkills(job01.id(), "c++ developer", "c++ & java entwickler", EXTERN, da));
+        index(createJobWithLanguageSkills(job02.id(), "java & javascript developer", "jee entwickler", API, en));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -312,10 +344,10 @@ public class JobAdvertisementSearchControllerIntTest {
         Occupation occupation3 = new Occupation.Builder().setAvamOccupationCode(DEFAULT_AVAM_CODE).setBfsCode("dummy").build();
         Occupation occupation4 = new Occupation.Builder().setAvamOccupationCode(DEFAULT_AVAM_CODE).setBfsCode(DEFAULT_BFS_CODE).build();
 
-        index(createJobWithOccupation(JOB_ADVERTISEMENT_ID_01, occupation1));
-        index(createJobWithOccupation(JOB_ADVERTISEMENT_ID_02, occupation2));
-        index(createJobWithOccupation(JOB_ADVERTISEMENT_ID_03, occupation3));
-        index(createJobWithOccupation(JOB_ADVERTISEMENT_ID_04, occupation4));
+        index(createJobWithOccupation(job01.id(), occupation1));
+        index(createJobWithOccupation(job02.id(), occupation2));
+        index(createJobWithOccupation(job03.id(), occupation3));
+        index(createJobWithOccupation(job04.id(), occupation4));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -332,8 +364,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "2"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_04.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job01.name())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job04.name())))
         ;
     }
 
@@ -341,10 +373,10 @@ public class JobAdvertisementSearchControllerIntTest {
     public void shouldSearchByOccupation_X28() throws Exception {
 
         // GIVEN
-        index(createJobWithX28Code(JOB_ADVERTISEMENT_ID_01, "1111,2222"));
-        index(createJobWithX28Code(JOB_ADVERTISEMENT_ID_02, "1111"));
-        index(createJobWithX28Code(JOB_ADVERTISEMENT_ID_03, "3333"));
-        index(createJobWithX28Code(JOB_ADVERTISEMENT_ID_04, "4444"));
+        index(createJobWithX28Code(job01.id(), "1111,2222"));
+        index(createJobWithX28Code(job02.id(), "1111"));
+        index(createJobWithX28Code(job03.id(), "3333"));
+        index(createJobWithX28Code(job04.id(), "4444"));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -364,8 +396,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "2"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())));
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job01.name())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job02.name())));
     }
 
     @Test
@@ -381,9 +413,9 @@ public class JobAdvertisementSearchControllerIntTest {
                 .setRegionCode("regionCode").setCountryIsoCode("ch")
                 .setCantonCode("ZH").build();
 
-        index(createJobWithLocation(JOB_ADVERTISEMENT_ID_01, location1));
-        index(createJobWithLocation(JOB_ADVERTISEMENT_ID_02, location2));
-        index(createJobWithLocation(JOB_ADVERTISEMENT_ID_03, location3));
+        index(createJobWithLocation(job01.id(), location1));
+        index(createJobWithLocation(job02.id(), location2));
+        index(createJobWithLocation(job03.id(), location3));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -400,17 +432,17 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "2"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job01.name())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job02.name())))
         ;
     }
 
     @Test
     public void shouldFilterByWorkingTimeMinMax() throws Exception {
         // GIVEN
-        index(createJobWithWorkload(JOB_ADVERTISEMENT_ID_01, 1, 100));
-        index(createJobWithWorkload(JOB_ADVERTISEMENT_ID_02, 80, 100));
-        index(createJobWithWorkload(JOB_ADVERTISEMENT_ID_03, 50, 50));
+        index(createJobWithWorkload(job01.id(), 1, 100));
+        index(createJobWithWorkload(job02.id(), 80, 100));
+        index(createJobWithWorkload(job03.id(), 50, 50));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -428,17 +460,17 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "2"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job01.name())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job02.name())))
         ;
     }
 
     @Test
     public void shouldFilterByCompanyName() throws Exception {
         // GIVEN
-        index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJobWithCompanyName(JOB_ADVERTISEMENT_ID_02, "Gösser"));
-        index(createJob(JOB_ADVERTISEMENT_ID_03));
+        index(createJob(job01.id()));
+        index(createJobWithCompanyName(job02.id(), "Gösser"));
+        index(createJob(job03.id()));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -455,16 +487,16 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "1"))
-                .andExpect(jsonPath("$.*.id").value(JOB_ADVERTISEMENT_ID_02.getValue()))
+                .andExpect(jsonPath("$.*.id").value(job02.name()))
         ;
     }
 
     @Test
     public void shouldFilterByPermanentContractType() throws Exception {
         // GIVEN
-        index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJobWithContractType(JOB_ADVERTISEMENT_ID_02, true));
-        index(createJob(JOB_ADVERTISEMENT_ID_03));
+        index(createJob(job01.id()));
+        index(createJobWithContractType(job02.id(), true));
+        index(createJob(job03.id()));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -481,7 +513,7 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "1"))
-                .andExpect(jsonPath("$.*.id").value(JOB_ADVERTISEMENT_ID_02.getValue()))
+                .andExpect(jsonPath("$.*.id").value(job02.name()))
         ;
     }
 
@@ -489,9 +521,9 @@ public class JobAdvertisementSearchControllerIntTest {
     public void shouldFilterByDisplayRestricted() throws Exception {
         // GIVEN
         when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
-        index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_02));
-        index(createJob(JOB_ADVERTISEMENT_ID_03));
+        index(createJob(job01.id()));
+        index(createRestrictedJob(job02.id()));
+        index(createJob(job03.id()));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -508,7 +540,7 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "1"))
-                .andExpect(jsonPath("$.*.id").value(JOB_ADVERTISEMENT_ID_02.getValue()))
+                .andExpect(jsonPath("$.*.id").value(job02.name()))
         ;
     }
 
@@ -517,10 +549,10 @@ public class JobAdvertisementSearchControllerIntTest {
         // GIVEN
         when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
         //-------------------------------------------------------------------------------publicDisplay  restrictedDisplay
-        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
-        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
-        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));         //1 1
-        index(createJobWithPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_04));      //1 0
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(job01.id()));   //0 0
+        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(job02.id()));      //0 1
+        index(createJobWithPublicDisplayAndWithRestrictedDisplay(job03.id()));         //1 1
+        index(createJobWithPublicDisplayAndWithoutRestrictedDisplay(job04.id()));      //1 0
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -536,9 +568,9 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "3"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_04.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job02.name())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job03.name())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job04.name())))
         ;
 
     }
@@ -547,10 +579,10 @@ public class JobAdvertisementSearchControllerIntTest {
     public void shouldFilterByPublicationForAnonymusUser() throws Exception {
         // GIVEN
         //-------------------------------------------------------------------------------publicDisplay  restrictedDisplay
-        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_01));   //0 0
-        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_02));      //0 1
-        index(createJobWithPublicDisplayAndWithRestrictedDisplay(JOB_ADVERTISEMENT_ID_03));         //1 1
-        index(createJobWithPublicDisplayAndWithoutRestrictedDisplay(JOB_ADVERTISEMENT_ID_04));      //1 0
+        index(createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(job01.id()));   //0 0
+        index(createJobWithoutPublicDisplayAndWithRestrictedDisplay(job02.id()));      //0 1
+        index(createJobWithPublicDisplayAndWithRestrictedDisplay(job03.id()));         //1 1
+        index(createJobWithPublicDisplayAndWithoutRestrictedDisplay(job04.id()));      //1 0
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -566,8 +598,8 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "2"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_04.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job03.name())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job04.name())))
         ;
 
     }
@@ -575,9 +607,9 @@ public class JobAdvertisementSearchControllerIntTest {
     @Test
     public void shouldNotShowRestrictedJobsForAnonymusUsers() throws Exception {
         // GIVEN
-        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJob(JOB_ADVERTISEMENT_ID_02));
-        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_03));
+        index(createRestrictedJob(job01.id()));
+        index(createJob(job02.id()));
+        index(createRestrictedJob(job03.id()));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -593,16 +625,16 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "1"))
-                .andExpect(jsonPath("$.*.id").value(JOB_ADVERTISEMENT_ID_02.getValue()));
+                .andExpect(jsonPath("$.*.id").value(job02.name()));
     }
 
     @Test
     public void shouldShowRestrictedJobsForJobSeekers() throws Exception {
         // GIVEN
         when(this.mockCurrentUserContext.hasRole(Role.JOBSEEKER_CLIENT)).thenReturn(true);
-        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJob(JOB_ADVERTISEMENT_ID_02));
-        index(createRestrictedJob(JOB_ADVERTISEMENT_ID_03));
+        index(createRestrictedJob(job01.id()));
+        index(createJob(job02.id()));
+        index(createRestrictedJob(job03.id()));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -618,25 +650,25 @@ public class JobAdvertisementSearchControllerIntTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(header().string("X-Total-Count", "3"))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_01.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_02.getValue())))
-                .andExpect(jsonPath("$.[*].id").value(hasItem(JOB_ADVERTISEMENT_ID_03.getValue())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job01.name())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job02.name())))
+                .andExpect(jsonPath("$.[*].id").value(hasItem(job03.name())))
         ;
     }
 
     @Test
     public void countJobs() throws Exception {
         // GIVEN
-        index(createJob(JOB_ADVERTISEMENT_ID_01));
-        index(createJob(JOB_ADVERTISEMENT_ID_02));
-        index(createJobWithContractType(JOB_ADVERTISEMENT_ID_03, true));
-        index(createJobWithWorkload(JOB_ADVERTISEMENT_ID_04, 20, 50));
-        index(createJobWithDescription(JOB_ADVERTISEMENT_ID_05, "xxx", "yyyy"));
-        index(createJob(JOB_ADVERTISEMENT_ID_06));
-        index(createJob(JOB_ADVERTISEMENT_ID_07));
-        index(createJob(JOB_ADVERTISEMENT_ID_08));
-        index(createJob(JOB_ADVERTISEMENT_ID_09));
-        index(createJob(JOB_ADVERTISEMENT_ID_10));
+        index(createJob(job01.id()));
+        index(createJob(job02.id()));
+        index(createJobWithContractType(job03.id(), true));
+        index(createJobWithWorkload(job04.id(), 20, 50));
+        index(createJobWithDescription(job05.id(), "xxx", "yyyy"));
+        index(createJob(job06.id()));
+        index(createJob(job07.id()));
+        index(createJob(job08.id()));
+        index(createJob(job09.id()));
+        index(createJob(job10.id()));
 
         // WHEN
         JobAdvertisementSearchRequest searchRequest = new JobAdvertisementSearchRequest();
@@ -664,319 +696,4 @@ public class JobAdvertisementSearchControllerIntTest {
         this.jobAdvertisementElasticsearchRepository.save(new JobAdvertisementDocument(jobAdvertisement));
 
     }
-
-    private JobAdvertisement createJob(JobAdvertisementId jobAdvertisementId) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication())
-                .setJobContent(createJobContent(jobAdvertisementId))
-                .build();
-
-    }
-
-    private JobAdvertisement createJobWithOwnerAndPublicationStartDate(JobAdvertisementId jobAdvertisementId, String companyId, LocalDate startDate) {
-        Publication publication = new Publication.Builder()
-                .setStartDate(startDate)
-                .setEndDate(startDate.plusDays(5))
-                .build();
-
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwnerWithCompanyId(jobAdvertisementId, companyId))
-                .setPublication(publication)
-                .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(createCompany(jobAdvertisementId))
-                        .setCompany(createCompany(jobAdvertisementId))
-                        .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
-                        .setEmployment(createEmployment())
-                        .setPublicContact(createPublicContact(jobAdvertisementId))
-                        .setApplyChannel(createApplyChannel())
-                        .setLocation(createLocation())
-                        .setOccupations(Collections.singletonList(createOccupation()))
-                        .build())
-                .build();
-
-    }
-
-
-    private JobAdvertisement createJobWithoutPublicDisplayAndWithoutRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication(false, false))
-                .setJobContent(createJobContent(jobAdvertisementId))
-                .setReportingObligation(true)
-                .build();
-
-    }
-
-    private JobAdvertisement createJobWithPublicDisplayAndWithRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication(true, true))
-                .setJobContent(createJobContent(jobAdvertisementId))
-                .setReportingObligation(true)
-                .build();
-
-    }
-
-    private JobAdvertisement createJobWithoutPublicDisplayAndWithRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication(false, true))
-                .setJobContent(createJobContent(jobAdvertisementId))
-                .setReportingObligation(true)
-                .build();
-
-    }
-
-    private JobAdvertisement createJobWithPublicDisplayAndWithoutRestrictedDisplay(JobAdvertisementId jobAdvertisementId) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication(true, false))
-                .setJobContent(createJobContent(jobAdvertisementId))
-                .setReportingObligation(true)
-                .build();
-
-    }
-
-    private JobAdvertisement createJobWithPublicationWithoutPublicDisplay(JobAdvertisementId jobAdvertisementId) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication(false, true))
-                .setJobContent(createJobContent(jobAdvertisementId))
-                .setReportingObligation(true)
-                .build();
-
-    }
-
-    private JobAdvertisement createRestrictedJob(JobAdvertisementId jobAdvertisementId) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_RESTRICTED)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication())
-                .setJobContent(createJobContent(jobAdvertisementId))
-                .setReportingObligation(true)
-                .build();
-
-    }
-
-    private JobAdvertisement createJobWithContractType(JobAdvertisementId jobAdvertisementId, boolean isPermanent) {
-
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication())
-                .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(createCompany(jobAdvertisementId))
-                        .setCompany(createCompany(jobAdvertisementId))
-                        .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
-                        .setEmployment(new Employment.Builder()
-                                .setStartDate(TimeMachine.now().toLocalDate())
-                                .setShortEmployment(false)
-                                .setImmediately(false)
-                                .setPermanent(isPermanent)
-                                .setWorkloadPercentageMin(80)
-                                .setWorkloadPercentageMax(100)
-                                .build())
-                        .setPublicContact(createPublicContact(jobAdvertisementId))
-                        .setApplyChannel(createApplyChannel())
-                        .setLocation(createLocation())
-                        .setOccupations(Collections.singletonList(createOccupation()))
-                        .build())
-                .build();
-
-    }
-
-    private JobAdvertisement createJobWithCompanyName(JobAdvertisementId jobAdvertisementId, String companyName) {
-
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication())
-                .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(createCompany(companyName))
-                        .setCompany(createCompany(companyName))
-                        .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
-                        .setEmployment(createEmployment())
-                        .setPublicContact(createPublicContact(jobAdvertisementId))
-                        .setApplyChannel(createApplyChannel())
-                        .setLocation(createLocation())
-                        .setOccupations(Collections.singletonList(createOccupation()))
-                        .build())
-                .build();
-
-    }
-
-    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description) {
-        return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM);
-    }
-
-    private JobAdvertisement createJobWithDescriptionAndOwnerCompanyId(JobAdvertisementId jobAdvertisementId, String title, String description, String companyId) {
-        Owner owner = createOwnerWithCompanyId(jobAdvertisementId, companyId);
-        return createJobWithDescription(jobAdvertisementId, title, description, SourceSystem.JOBROOM, owner);
-    }
-
-    private Owner createOwnerWithCompanyId(JobAdvertisementId jobAdvertisementId, String companyId) {
-        return new Owner.Builder()
-                .setAccessToken(String.format("access-token-%s", jobAdvertisementId.getValue()))
-                .setCompanyId(companyId)
-                .setUserId(String.format("user-id-%s", jobAdvertisementId.getValue()))
-                .build();
-    }
-
-    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem) {
-        return createJobWithDescription(jobAdvertisementId, title, description, sourceSystem, createOwner(jobAdvertisementId));
-    }
-
-    private JobAdvertisement createJobWithLanguageSkills(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, LanguageSkill... languageSkills) {
-        return createJobWithDescription(jobAdvertisementId, title, description, sourceSystem, createOwner(jobAdvertisementId), languageSkills);
-    }
-
-    private JobAdvertisement createJobWithDescription(JobAdvertisementId jobAdvertisementId, String title, String description, SourceSystem sourceSystem, Owner owner, LanguageSkill... languageSkills) {
-        List<LanguageSkill> skills = languageSkills.length == 0 ? Collections.singletonList(createLanguageSkill()) : Arrays.asList(languageSkills);
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(sourceSystem)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(owner)
-                .setPublication(createPublication())
-                .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(title, description)))
-                        .setDisplayCompany(createCompany(jobAdvertisementId))
-                        .setCompany(createCompany(jobAdvertisementId))
-                        .setLanguageSkills(skills)
-                        .setEmployment(createEmployment())
-                        .setPublicContact(createPublicContact(jobAdvertisementId))
-                        .setApplyChannel(createApplyChannel())
-                        .setLocation(createLocation())
-                        .setOccupations(Collections.singletonList(createOccupation()))
-                        .build())
-                .build();
-    }
-
-    private JobAdvertisement createJobWithWorkload(JobAdvertisementId jobAdvertisementId, int workloadPercentageMin, int workloadPercentageMax) {
-
-        Employment employment = new Employment.Builder()
-                .setStartDate(TimeMachine.now().toLocalDate())
-                .setEndDate(TimeMachine.now().plusDays(31).toLocalDate())
-                .setShortEmployment(false)
-                .setImmediately(false)
-                .setPermanent(false)
-                .setWorkloadPercentageMin(workloadPercentageMin)
-                .setWorkloadPercentageMax(workloadPercentageMax)
-                .build();
-
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication())
-                .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(createCompany(jobAdvertisementId))
-                        .setCompany(createCompany(jobAdvertisementId))
-                        .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
-                        .setEmployment(employment)
-                        .setPublicContact(createPublicContact(jobAdvertisementId))
-                        .setApplyChannel(createApplyChannel())
-                        .setLocation(createLocation())
-                        .setOccupations(Collections.singletonList(createOccupation()))
-                        .build())
-                .build();
-    }
-
-    private JobAdvertisement createJobWithX28Code(JobAdvertisementId jobAdvertisementId, String x28Codes) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication())
-                .setJobContent(new JobContent.Builder()
-                        .setX28OccupationCodes(x28Codes)
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(createCompany(jobAdvertisementId))
-                        .setCompany(createCompany(jobAdvertisementId))
-                        .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
-                        .setEmployment(createEmployment())
-                        .setPublicContact(createPublicContact(jobAdvertisementId))
-                        .setApplyChannel(createApplyChannel())
-                        .setLocation(createLocation())
-                        .setOccupations(Collections.singletonList(createOccupation()))
-                        .build())
-                .build();
-    }
-
-    private JobAdvertisement createJobWithOccupation(JobAdvertisementId jobAdvertisementId, Occupation occupation) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication())
-                .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(createCompany(jobAdvertisementId))
-                        .setCompany(createCompany(jobAdvertisementId))
-                        .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
-                        .setEmployment(createEmployment())
-                        .setPublicContact(createPublicContact(jobAdvertisementId))
-                        .setApplyChannel(createApplyChannel())
-                        .setLocation(createLocation())
-                        .setOccupations(Collections.singletonList(occupation))
-                        .build())
-                .build();
-    }
-
-    private JobAdvertisement createJobWithLocation(JobAdvertisementId jobAdvertisementId, Location location) {
-        return new JobAdvertisement.Builder()
-                .setId(jobAdvertisementId)
-                .setSourceSystem(SourceSystem.JOBROOM)
-                .setStatus(JobAdvertisementStatus.PUBLISHED_PUBLIC)
-                .setOwner(createOwner(jobAdvertisementId))
-                .setPublication(createPublication())
-                .setJobContent(new JobContent.Builder()
-                        .setJobDescriptions(Collections.singletonList(createJobDescription(jobAdvertisementId)))
-                        .setDisplayCompany(createCompany(jobAdvertisementId))
-                        .setCompany(createCompany(jobAdvertisementId))
-                        .setLanguageSkills(Collections.singletonList(createLanguageSkill()))
-                        .setEmployment(createEmployment())
-                        .setPublicContact(createPublicContact(jobAdvertisementId))
-                        .setApplyChannel(createApplyChannel())
-                        .setLocation(location)
-                        .setOccupations(Collections.singletonList(createOccupation()))
-                        .build())
-                .build();
-    }
-
 }

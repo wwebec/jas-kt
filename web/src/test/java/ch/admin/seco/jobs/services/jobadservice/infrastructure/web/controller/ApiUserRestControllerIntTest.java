@@ -1,26 +1,25 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
 
-import ch.admin.seco.jobs.services.jobadservice.Application;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.ApiUserApplicationService;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.CreateApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateDetailsApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdatePasswordApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateStatusApiUserDto;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
-import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserTestDataProvider;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchRequest;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchService;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserDocument;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserElasticsearchRepository;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.TestUtil;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.errors.ExceptionTranslator;
+import static ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserTestFixture.createApiUser01;
+import static ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserTestFixture.createApiUser02;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -33,13 +32,22 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import ch.admin.seco.jobs.services.jobadservice.Application;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.ApiUserApplicationService;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.CreateApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateDetailsApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdatePasswordApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.UpdateStatusApiUserDto;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.EventStore;
+import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchRequest;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchService;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserDocument;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserElasticsearchRepository;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.TestUtil;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.errors.ExceptionTranslator;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -117,7 +125,7 @@ public class ApiUserRestControllerIntTest {
     @Test
     public void shouldCreateApiUser() throws Exception {
         // GIVEN
-        ApiUser expectedApiUser = ApiUserTestDataProvider.createApiUser01();
+        ApiUser expectedApiUser = createApiUser01();
         CreateApiUserDto createApiUserDto = new CreateApiUserDto(
                 expectedApiUser.getUsername(),
                 expectedApiUser.getPassword(),
@@ -166,7 +174,7 @@ public class ApiUserRestControllerIntTest {
     @Test
 	public void shouldNotSaveApiUserWithSameUsername() throws Exception {
 		// GIVEN
-		ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+		ApiUser originalApiUser = createApiUser01();
 		storeDatabase(originalApiUser);
 		// FIXME New Test
 
@@ -200,7 +208,7 @@ public class ApiUserRestControllerIntTest {
 	@Test
     public void shouldFindById() throws Exception {
         // GIVEN
-        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        ApiUser originalApiUser = createApiUser01();
         storeDatabase(originalApiUser);
 
         // WHEN
@@ -223,7 +231,7 @@ public class ApiUserRestControllerIntTest {
     @Test
     public void shouldUpdateApiUserDetails() throws Exception {
         // GIVEN
-        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        ApiUser originalApiUser = createApiUser01();
         storeDatabase(originalApiUser);
 
         UpdateDetailsApiUserDto updateDetailsApiUserDto = new UpdateDetailsApiUserDto(
@@ -268,7 +276,7 @@ public class ApiUserRestControllerIntTest {
     @Test
     public void shouldUpdateApiUserPassword() throws Exception {
         // GIVEN
-        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        ApiUser originalApiUser = createApiUser01();
         storeDatabase(originalApiUser);
 
         UpdatePasswordApiUserDto updatePasswordApiUserDto = new UpdatePasswordApiUserDto(
@@ -290,7 +298,7 @@ public class ApiUserRestControllerIntTest {
     @Test
     public void shouldUpdateApiUserStatus() throws Exception {
         // GIVEN
-        ApiUser originalApiUser = ApiUserTestDataProvider.createApiUser01();
+        ApiUser originalApiUser = createApiUser01();
         storeDatabase(originalApiUser);
 
         UpdateStatusApiUserDto updateStatusApiUserDto = new UpdateStatusApiUserDto(!originalApiUser.isActive());
@@ -310,8 +318,8 @@ public class ApiUserRestControllerIntTest {
     @Test
     public void shouldFindApiUser() throws Exception {
         // GIVEN
-        ApiUser originalApiUser1 = ApiUserTestDataProvider.createApiUser01();
-        ApiUser originalApiUser2 = ApiUserTestDataProvider.createApiUser02();
+        ApiUser originalApiUser1 = createApiUser01();
+        ApiUser originalApiUser2 = createApiUser02();
         storeElastic(originalApiUser1);
         storeElastic(originalApiUser2);
 
@@ -342,8 +350,8 @@ public class ApiUserRestControllerIntTest {
     @Test
     public void shouldFindAllApiUsers() throws Exception {
         // GIVEN
-        storeElastic(ApiUserTestDataProvider.createApiUser01());
-        storeElastic(ApiUserTestDataProvider.createApiUser02());
+        storeElastic(createApiUser01());
+        storeElastic(createApiUser02());
 
         ApiUserSearchRequest apiUserSearchRequest = new ApiUserSearchRequest("");
 

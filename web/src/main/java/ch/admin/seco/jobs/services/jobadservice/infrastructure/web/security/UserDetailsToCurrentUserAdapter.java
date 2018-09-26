@@ -24,5 +24,4 @@ public class UserDetailsToCurrentUserAdapter extends User {
     public CurrentUser getCurrentUser() {
         return currentUser;
     }
-
 }
