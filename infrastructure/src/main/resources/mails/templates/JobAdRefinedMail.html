@@ -7,6 +7,9 @@
     <body>
         <p th:text="#{mail.jobAd.refined.header}"></p>
         <p th:text="#{mail.jobAd.refined.body.paragraph1(${stellennummer})}"></p>
+        <p th:if="${numberOfJobs > 1}">
+            <strong th:text="#{mail.jobAd.refined.body.para.numberofjobs(${numberOfJobs})}"></strong>
+        </p>
         <p th:if="${reportingObligation}">
             <em th:text="#{mail.jobAd.refined.body.reporting.obligation}"></em><br>
             <br>

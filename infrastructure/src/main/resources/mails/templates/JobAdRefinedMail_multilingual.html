@@ -8,6 +8,9 @@
         <div>
             <p th:text="#{mail.jobAd.refined.header_de}"></p>
             <p th:text="#{mail.jobAd.refined.body.paragraph1_de(${stellennummer})}"></p>
+            <p th:if="${numberOfJobs > 1}">
+                <strong th:text="#{mail.jobAd.refined.body.para.numberofjobs_de(${numberOfJobs})}"></strong>
+            </p>
             <p th:if="${reportingObligation}">
                 <em th:text="#{mail.jobAd.refined.body.reporting.obligation_de}"></em><br>
                 <br>
@@ -37,6 +40,9 @@
         <div>
             <p th:text="#{mail.jobAd.refined.header_fr}"></p>
             <p th:text="#{mail.jobAd.refined.body.paragraph1_fr(${stellennummer})}"></p>
+            <p th:if="${numberOfJobs > 1}">
+                <strong th:text="#{mail.jobAd.refined.body.para.numberofjobs_fr(${numberOfJobs})}"></strong>
+            </p>
             <p th:if="${reportingObligation}">
                 <em th:text="#{mail.jobAd.refined.body.reporting.obligation_fr}"></em><br>
                 <br>
@@ -67,6 +73,9 @@
         <div>
             <p th:text="#{mail.jobAd.refined.header_it}"></p>
             <p th:text="#{mail.jobAd.refined.body.paragraph1_it(${stellennummer})}"></p>
+            <p th:if="${numberOfJobs > 1}">
+                <strong th:text="#{mail.jobAd.refined.body.para.numberofjobs_it(${numberOfJobs})}"></strong>
+            </p>
             <p th:if="${reportingObligation}">
                 <em th:text="#{mail.jobAd.refined.body.reporting.obligation_it}"></em><br>
                 <br>

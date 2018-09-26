@@ -115,6 +115,7 @@ public class JobAdvertisementMailEventListener {
 			return;
 		}
 		LOG.debug("EVENT catched for mail: JOB_ADVERTISEMENT_REFINED for JobAdvertisementId: '{}'", event.getAggregateId().getValue());
+
 		final JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobAdvertisement.getJobCenterCode());
 		final String stellennummer = extractStellennummer(jobAdvertisement);
 		Map<String, Object> variables = new HashMap<>();
@@ -124,6 +125,8 @@ public class JobAdvertisementMailEventListener {
 		variables.put("jobAdvertisementId", jobAdvertisement.getId().getValue());
 		variables.put("accessToken", jobAdvertisement.getOwner().getAccessToken());
 		variables.put("jobCenter", jobCenter);
+		variables.put("numberOfJobs", jobAdvertisement.getJobContent().getNumberOfJobs());
+
 		Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
 		String subject = JOB_ADVERTISEMENT_REFINED_MULTILINGUAL_SUBJECT;
 		String template = JOB_ADVERTISEMENT_REFINED_MULTILINGUAL_TEMPLATE;
