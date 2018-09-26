@@ -3,7 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService.COUNTRY_ISO_CODE_SWITZERLAND;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.CreateJobAdvertisementFromX28DtoTestFixture.createCreateJobAdvertisementDto;
-import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.CreateJobAdvertisementFromX28DtoTestFixture.testCreateJobAdvertisementFromX28Dto;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.X28CompanyDtoFixture.testX28CompanyDto;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.CREATED;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementFixture.testJobAdvertisement;
@@ -90,8 +89,7 @@ public class JobAdvertisementApplicationServiceForX28Test {
         X28CompanyDto x28CompanyDto = testX28CompanyDto();
         CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = createCreateJobAdvertisementDto(testX28CompanyDto());
 
-
-        //Execute
+        //when
         JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);
 
         //then
@@ -114,28 +112,8 @@ public class JobAdvertisementApplicationServiceForX28Test {
 
     @Test
     public void createFromX28WithEmptyCountry() {
-        //Prepare
-        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = new CreateJobAdvertisementFromX28Dto()
-                .setStellennummerEgov(null)
-                .setStellennummerAvam(null)
-                .setTitle("title")
-                .setDescription("description")
-                .setNumberOfJobs(null)
-                .setFingerprint("fingerprint")
-                .setExternalUrl("url")
-                .setJobCenterCode(null)
-                .setContact(null)
-                .setEmployment(new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null))
-                .setCompany(new X28CompanyDto("name", "street", "houseNumber", "postalCode", "city", "CH", null, null, null, "phone", "email", "website", false))
-                .setLocation(new X28LocationDto(null, "city", "postalCode", null))
-                .setOccupations(Collections.singletonList(new X28OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")))
-                .setProfessionCodes("1,2")
-                .setLanguageSkills(Collections.singletonList(new X28LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)))
-                .setPublicationStartDate(TimeMachine.now().toLocalDate())
-                .setPublicationEndDate(null)
-                .setCompanyAnonymous(false);
         //given
-        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = testCreateJobAdvertisementFromX28Dto();
+        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = createCreateJobAdvertisementDto(null);
 
         //when
         JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);
@@ -153,6 +131,7 @@ public class JobAdvertisementApplicationServiceForX28Test {
                 testJobAdvertisement()
                         .setStatus(CREATED)
                         .build());
+
         UpdateJobAdvertisementFromX28Dto updateJobAdvertisementFromX28Dto = new UpdateJobAdvertisementFromX28Dto(
                 job01.id().getValue(),
                 "fingerprint",
@@ -168,4 +147,5 @@ public class JobAdvertisementApplicationServiceForX28Test {
         assertThat(jobAdvertisement.getJobContent().getX28OccupationCodes()).isEqualTo("x28");
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_UPDATED.getDomainEventType());
     }
+
 }
