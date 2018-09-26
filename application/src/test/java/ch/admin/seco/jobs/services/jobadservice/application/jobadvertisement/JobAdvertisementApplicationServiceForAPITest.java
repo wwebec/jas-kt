@@ -1,13 +1,14 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+
+import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.CreateJobAdvertisementDtoTestFixture.testCreateJobAdvertisementDto;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationFixture.testLocation;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.util.Collections;
 
 import org.junit.After;
 import org.junit.Before;
@@ -25,28 +26,14 @@ import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ApplyChannelDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.CompanyDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.ContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobDescriptionDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.LanguageLevel;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents;
 
 @SpringBootTest
@@ -78,21 +65,12 @@ public class JobAdvertisementApplicationServiceForAPITest {
     private JobAdvertisementRepository jobAdvertisementRepository;
 
     @Autowired
-    private JobAdvertisementApplicationService sut; //System Under Test
+    private JobAdvertisementApplicationService service;
 
     @Before
     public void setUp() {
         domainEventMockUtils = new DomainEventMockUtils();
-
-        when(locationService.enrichCodes(any())).thenReturn(
-                new Location.Builder()
-                        .setRemarks("remarks")
-                        .setCity("city")
-                        .setPostalCode("postalCode")
-                        .setCantonCode("BE")
-                        .setCountryIsoCode("CH")
-                        .build()
-        );
+        when(locationService.enrichCodes(any())).thenReturn(testLocation().build());
         when(locationService.isLocationValid(any())).thenReturn(Boolean.TRUE);
         when(egovNumberGenerator.nextStringValue()).thenReturn(TEST_STELLEN_NUMMER_EGOV);
     }
@@ -104,53 +82,26 @@ public class JobAdvertisementApplicationServiceForAPITest {
 
     @Test
     public void createFromApi() {
-        //Prepare
-        Company company = new Company.Builder()
-                .setName("name")
-                .setStreet("street")
-                .setHouseNumber("houseNumber")
-                .setPostalCode("postalCode")
-                .setCity("city")
-                .setCountryIsoCode("CH")
-                .setPhone("phone")
-                .setEmail("email")
-                .setWebsite("website")
-                .build();
-        CreateJobAdvertisementDto createJobAdvertisementDto = new CreateJobAdvertisementDto(
-                false,
-                null,
-                null,
-                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new PublicationDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 3, 1), false, false, false, false, false),
-                null,
-                Collections.singletonList(new JobDescriptionDto("de", "title", "description")),
-                CompanyDto.toDto(company),
-                null,
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, null),
-                new CreateLocationDto("remarks", "city", "postalCode", "CH"),
-                new OccupationDto("avamCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode"),
-                Collections.singletonList(new LanguageSkillDto("de", LanguageLevel.PROFICIENT, LanguageLevel.PROFICIENT)),
-                new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
-                new PublicContactDto(Salutation.MR, "firstName", "lastName", "phone", "email")
-        );
+        //given
+         Company company = testCompany().build();
+         CreateJobAdvertisementDto createJobAdvertisementDto = testCreateJobAdvertisementDto(company);
 
-        //Execute
-        JobAdvertisementId jobAdvertisementId = sut.createFromApi(createJobAdvertisementDto);
+        //when
+        JobAdvertisementId jobAdvertisementId = service.createFromApi(createJobAdvertisementDto);
 
-        //Validate
+        //then
         JobAdvertisement jobAdvertisement = jobAdvertisementRepository.getOne(jobAdvertisementId);
+
         assertThat(jobAdvertisement).isNotNull();
         assertThat(jobAdvertisement.getStatus()).isEqualTo(JobAdvertisementStatus.CREATED);
         assertThat(jobAdvertisement.getSourceSystem()).isEqualTo(SourceSystem.API);
         assertThat(jobAdvertisement.getStellennummerEgov()).isEqualTo(TEST_STELLEN_NUMMER_EGOV);
         assertThat(jobAdvertisement.getPublication().isEuresAnonymous()).isFalse();
         assertThat(jobAdvertisement.getPublication().isCompanyAnonymous()).isFalse();
-
         assertThat(jobAdvertisement.isReportingObligation()).isFalse();
         assertThat(jobAdvertisement.getJobContent().getDisplayCompany()).isEqualTo(company);
 
         domainEventMockUtils.assertSingleDomainEventPublished(JobAdvertisementEvents.JOB_ADVERTISEMENT_CREATED.getDomainEventType());
         verify(locationService, times(1)).isLocationValid(any());
     }
-
 }

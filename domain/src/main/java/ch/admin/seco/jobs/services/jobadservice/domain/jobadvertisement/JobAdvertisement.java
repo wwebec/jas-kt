@@ -476,7 +476,7 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             getJobContent().setX28OccupationCodes(updater.getX28OccupationCodes());
         }
 
-        if (updater.hasAnyChangesIn(SECTION_NUMBER_OF_JOBS) && hasChanged(jobContent.getNumberOfJobs(), updater.getNumberOfJobs())) {
+        if (updater.hasAnyChangesIn(SECTION_NUMBER_OF_JOBS) && hasChanged(jobContent.getNumberOfJobs(), updater.getNumberOfJobs())) { // h
             changeLog.add("numberOfJobs", jobContent.getNumberOfJobs(), updater.getNumberOfJobs());
             jobContent.setNumberOfJobs(updater.getNumberOfJobs());
         }
@@ -501,12 +501,12 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
             }
         }
 
-        if (updater.hasAnyChangesIn(SECTION_JOB_CENTER_CODE) && hasChanged(jobCenterCode, updater.getJobCenterCode())) {
+        if (updater.hasAnyChangesIn(SECTION_JOB_CENTER_CODE) && hasChanged(jobCenterCode, updater.getJobCenterCode())) { //
             changeLog.add("jobCenterCode", jobCenterCode, updater.getJobCenterCode());
             this.jobCenterCode = updater.getJobCenterCode();
         }
 
-        if (updater.hasAnyChangesIn(SECTION_DISPLAY_COMPANY) && hasChanged(jobContent.getDisplayCompany(), updater.getDisplayCompany())) {
+        if (updater.hasAnyChangesIn(SECTION_DISPLAY_COMPANY) && hasChanged(jobContent.getDisplayCompany(), updater.getDisplayCompany())) { //
             changeLog.add("displayCompany", jobContent.getDisplayCompany(), updater.getDisplayCompany());
             jobContent.setDisplayCompany(updater.getDisplayCompany());
         }
