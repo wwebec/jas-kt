@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import static org.apache.commons.lang3.math.NumberUtils.toInt;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
@@ -7,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
+
 
 import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.application.MailSenderData;
@@ -125,8 +129,10 @@ public class JobAdvertisementMailEventListener {
 		variables.put("jobAdvertisementId", jobAdvertisement.getId().getValue());
 		variables.put("accessToken", jobAdvertisement.getOwner().getAccessToken());
 		variables.put("jobCenter", jobCenter);
-		variables.put("numberOfJobs", jobAdvertisement.getJobContent().getNumberOfJobs());
-
+		variables.put("numberOfJobs", toInt(
+				jobAdvertisement.getJobContent()
+						.getNumberOfJobs())
+		);
 		Locale contactLocale = new Locale(DEFAULT_LANGUAGE);
 		String subject = JOB_ADVERTISEMENT_REFINED_MULTILINGUAL_SUBJECT;
 		String template = JOB_ADVERTISEMENT_REFINED_MULTILINGUAL_TEMPLATE;
