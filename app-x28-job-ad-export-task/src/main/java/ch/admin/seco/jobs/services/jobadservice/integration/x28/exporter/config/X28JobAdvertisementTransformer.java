@@ -42,16 +42,18 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
     private void mapApplyChannel(ApplyChannel applyChannel, Oste x28JobAdvertisement) {
         if (applyChannel != null) {
             x28JobAdvertisement.setBewerbungSchriftlich(isNotBlank(applyChannel.getMailAddress()));
+
             x28JobAdvertisement.setBewerbungElektronisch(isNotBlank(applyChannel.getFormUrl()) || isNotBlank(applyChannel.getEmailAddress()));
+            x28JobAdvertisement.setUntUrl(applyChannel.getFormUrl());
+            x28JobAdvertisement.setUntEMail(applyChannel.getEmailAddress());
+
             x28JobAdvertisement.setBewerbungTelefonisch(isNotBlank(applyChannel.getPhoneNumber()));
+            x28JobAdvertisement.setUntTelefon(applyChannel.getPhoneNumber());
         }
     }
 
     private void mapCompany(Company company, Oste x28JobAdvertisement) {
         x28JobAdvertisement.setUntName(company.getName());
-        x28JobAdvertisement.setUntTelefon(company.getPhone());
-        x28JobAdvertisement.setUntEMail(company.getEmail());
-        x28JobAdvertisement.setUntUrl(company.getWebsite());
 
         x28JobAdvertisement.setUntLand(company.getCountryIsoCode());
         x28JobAdvertisement.setUntPlz(company.getPostalCode());
@@ -102,6 +104,15 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
     private void mapEmployment(Employment employment, Oste x28JobAdvertisement) {
         if (employment != null) {
             x28JobAdvertisement.setAbSofort(employment.isImmediately());
+            x28JobAdvertisement.setUnbefristet(employment.isPermanent());
+
+            if (employment.getStartDate() != null) {
+                x28JobAdvertisement.setStellenantritt(DATE_FORMATTER.format(employment.getStartDate()));
+            }
+
+            if (employment.getEndDate() != null) {
+                x28JobAdvertisement.setVertragsdauer(DATE_FORMATTER.format(employment.getEndDate()));
+            }
             x28JobAdvertisement.setPensumVon((long) employment.getWorkloadPercentageMin());
             x28JobAdvertisement.setPensumBis((long) employment.getWorkloadPercentageMax());
         }
