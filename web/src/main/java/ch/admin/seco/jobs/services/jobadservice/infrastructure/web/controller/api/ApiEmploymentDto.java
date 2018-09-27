@@ -1,11 +1,11 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.api;
 
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Employment;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
+
 import java.time.LocalDate;
 import java.util.Set;
 

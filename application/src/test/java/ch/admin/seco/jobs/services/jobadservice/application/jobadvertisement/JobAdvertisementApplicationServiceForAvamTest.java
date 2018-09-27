@@ -37,7 +37,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
 import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.AvamCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
@@ -97,7 +97,7 @@ public class JobAdvertisementApplicationServiceForAvamTest {
     @Test
     public void createFromAvam() {
         //given
-        CreateJobAdvertisementFromAvamDto createJobAdvertisementDto = testCreateJobAdvertisementDto();
+        AvamCreateJobAdvertisementDto createJobAdvertisementDto = testCreateJobAdvertisementDto();
 
         //when
         JobAdvertisementId jobAdvertisementId = sut.createFromAvam(createJobAdvertisementDto);
@@ -120,7 +120,7 @@ public class JobAdvertisementApplicationServiceForAvamTest {
     @Test
     public void createFromAvamWithCompanyAnonymous() {
         //given
-        CreateJobAdvertisementFromAvamDto createJobAdvertisementDto = testCreateJobAdvertisementDtoWithCompanyAnonymous();
+        AvamCreateJobAdvertisementDto createJobAdvertisementDto = testCreateJobAdvertisementDtoWithCompanyAnonymous();
 
         //when
         JobAdvertisementId jobAdvertisementId = sut.createFromAvam(createJobAdvertisementDto);

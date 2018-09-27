@@ -2,7 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.x2
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementAlreadyExistsException;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
@@ -59,7 +59,7 @@ public class X28Adapter {
     }
 
     @StreamListener(target = JOB_AD_ACTION_CHANNEL, condition = CREATE_FROM_X28_CONDITION)
-    public void handleCreateFromX28Action(CreateJobAdvertisementFromX28Dto createFromX28) {
+    public void handleCreateFromX28Action(X28CreateJobAdvertisementDto createFromX28) {
         try {
             logLastX28MessageDate(createFromX28.getFingerprint());
             Optional<JobAdvertisementId> jobAdvertisementId = determineJobAdvertisementId(createFromX28);
@@ -79,7 +79,7 @@ public class X28Adapter {
         }
     }
 
-    private Optional<JobAdvertisementId> determineJobAdvertisementId(CreateJobAdvertisementFromX28Dto createFromX28) {
+    private Optional<JobAdvertisementId> determineJobAdvertisementId(X28CreateJobAdvertisementDto createFromX28) {
         if (createFromX28.getStellennummerEgov() != null) {
             Optional<JobAdvertisementId> jobAdvertisementId = transactionTemplate.execute(status -> findByStellennummerEgov(createFromX28))
                     .map(JobAdvertisement::getId);
@@ -94,11 +94,11 @@ public class X28Adapter {
         return Optional.empty();
     }
 
-    private Optional<JobAdvertisement> findByStellennummerEgov(CreateJobAdvertisementFromX28Dto createFromX28) {
+    private Optional<JobAdvertisement> findByStellennummerEgov(X28CreateJobAdvertisementDto createFromX28) {
         return jobAdvertisementRepository.findByStellennummerEgov(createFromX28.getStellennummerEgov());
     }
 
-    private Optional<JobAdvertisement> findByStellennummerAvam(CreateJobAdvertisementFromX28Dto createFromX28) {
+    private Optional<JobAdvertisement> findByStellennummerAvam(X28CreateJobAdvertisementDto createFromX28) {
         return jobAdvertisementRepository.findByStellennummerAvam(createFromX28.getStellennummerAvam());
     }
 

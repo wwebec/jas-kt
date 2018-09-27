@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.api;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.api;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;

@@ -24,7 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CompanyDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28ContactDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28LanguageSkillDto;
@@ -70,7 +70,7 @@ public class X28AdapterTest {
     public void shouldCreateFromX28() {
         when(jobAdvertisementRepository.findByStellennummerEgov(any())).thenReturn(Optional.empty());
         when(jobAdvertisementRepository.findByStellennummerAvam(any())).thenReturn(Optional.empty());
-        CreateJobAdvertisementFromX28Dto x28Dto = createJobAdvertisementFromX28Dto();
+        X28CreateJobAdvertisementDto x28Dto = createJobAdvertisementFromX28Dto();
 
         sut.handleCreateFromX28Action(x28Dto);
 
@@ -82,7 +82,7 @@ public class X28AdapterTest {
     public void shouldUpdatefromEgov() {
         when(jobAdvertisementRepository.findByStellennummerEgov(any())).thenReturn(Optional.of(createExternalJobWithStatus(job01.id(), "fingerprint", JobAdvertisementStatus.PUBLISHED_PUBLIC)));
         when(jobAdvertisementRepository.findByStellennummerAvam(any())).thenReturn(Optional.empty());
-        CreateJobAdvertisementFromX28Dto x28Dto = createJobAdvertisementFromX28Dto();
+        X28CreateJobAdvertisementDto x28Dto = createJobAdvertisementFromX28Dto();
 
         sut.handleCreateFromX28Action(x28Dto);
 
@@ -94,7 +94,7 @@ public class X28AdapterTest {
     public void shouldUpdatefromAvam() {
         when(jobAdvertisementRepository.findByStellennummerEgov(any())).thenReturn(Optional.empty());
         when(jobAdvertisementRepository.findByStellennummerAvam(any())).thenReturn(Optional.of(createExternalJobWithStatus(job01.id(), "fingerprint", JobAdvertisementStatus.PUBLISHED_PUBLIC)));
-        CreateJobAdvertisementFromX28Dto x28Dto = createJobAdvertisementFromX28Dto();
+        X28CreateJobAdvertisementDto x28Dto = createJobAdvertisementFromX28Dto();
 
         sut.handleCreateFromX28Action(x28Dto);
 
@@ -117,8 +117,8 @@ public class X28AdapterTest {
                 .build();
     }
 
-    private CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto() {
-        return new CreateJobAdvertisementFromX28Dto()
+    private X28CreateJobAdvertisementDto createJobAdvertisementFromX28Dto() {
+        return new X28CreateJobAdvertisementDto()
                 .setStellennummerEgov("stellennummerEgov")
                 .setStellennummerAvam("stellennummerAvam")
                 .setTitle("title")
@@ -128,7 +128,16 @@ public class X28AdapterTest {
                 .setExternalUrl("externalUrl")
                 .setJobCenterCode("jobCenterCode")
                 .setContact(new X28ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"))
-                .setEmployment(new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 100, 100, null))
+                .setEmployment(
+                        new EmploymentDto()
+                                .setStartDate(LocalDate.of(2018, 1, 1))
+                                .setEndDate(LocalDate.of(2018, 12, 31))
+                                .setShortEmployment(false)
+                                .setImmediately(false)
+                                .setPermanent(false)
+                                .setWorkloadPercentageMin(100)
+                                .setWorkloadPercentageMax(100)
+                                .setWorkForms(null))
                 .setCompany(new X28CompanyDto("companyName", "companyStreet", "companyHouseNumber", "companyPostalCode", "companyCity", "CH", null, null, null, "companyPhone", "companyEmail", "companyWebside", false))
                 .setLocation(new X28LocationDto(null, "locationCity", "locationPostalCode", "CH"))
                 .setOccupations(Collections.singletonList(new X28OccupationDto("avamOccupationCode", WorkExperience.MORE_THAN_1_YEAR, "educationCode")))

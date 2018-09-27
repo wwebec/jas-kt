@@ -1,7 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.*;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.AvamCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
@@ -13,6 +13,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSArbeitsformArray;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSOsteEgov;
+
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -32,7 +33,6 @@ import java.util.stream.Stream;
 
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.*;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.parseToLocalDate;
-import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.util.StringUtils.hasText;
@@ -51,8 +51,8 @@ public class JobAdvertisementFromAvamAssembler {
         return (isNotBlank(value)) ? value.trim() : null;
     }
 
-    CreateJobAdvertisementFromAvamDto createCreateJobAdvertisementAvamDto(WSOsteEgov avamJobAdvertisement) {
-        return new CreateJobAdvertisementFromAvamDto(
+    AvamCreateJobAdvertisementDto createCreateJobAdvertisementAvamDto(WSOsteEgov avamJobAdvertisement) {
+        return new AvamCreateJobAdvertisementDto(
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 avamJobAdvertisement.getBezeichnung(),
                 avamJobAdvertisement.getBeschreibung(),
@@ -128,68 +128,65 @@ public class JobAdvertisementFromAvamAssembler {
                 hasText(avamJobAdvertisement.getKpName()) ||
                 hasText(avamJobAdvertisement.getKpTelefonNr()) ||
                 hasText(avamJobAdvertisement.getKpEmail())) {
-            return new ContactDto(
-                    hasText(avamJobAdvertisement.getKpAnredeCode()) ? SALUTATIONS.getRight(avamJobAdvertisement.getKpAnredeCode()) : Salutation.MR,
-                    avamJobAdvertisement.getKpVorname(),
-                    avamJobAdvertisement.getKpName(),
-                    sanitizePhoneNumber(avamJobAdvertisement.getKpTelefonNr(), avamJobAdvertisement),
-                    sanitizeEmail(avamJobAdvertisement.getKpEmail(), avamJobAdvertisement),
-                    "" // Not defined in this AVAM version
-            );
+
+            return new ContactDto()
+                    .setSalutation(hasText(avamJobAdvertisement.getKpAnredeCode()) ? SALUTATIONS.getRight(avamJobAdvertisement.getKpAnredeCode()) : Salutation.MR)
+                    .setFirstName(avamJobAdvertisement.getKpVorname())
+                    .setLastName(avamJobAdvertisement.getKpName())
+                    .setPhone(sanitizePhoneNumber(avamJobAdvertisement.getKpTelefonNr(), avamJobAdvertisement))
+                    .setEmail(sanitizeEmail(avamJobAdvertisement.getKpEmail(), avamJobAdvertisement))
+                    .setLanguageIsoCode(""); // Not defined in this AVAM version
         }
+
         return null;
     }
 
     private EmploymentDto createEmploymentDto(WSOsteEgov avamJobAdvertisement) {
         WorkingTimePercentage workingTimePercentage = WorkingTimePercentage.evaluate(avamJobAdvertisement.getPensumVon(), avamJobAdvertisement.getPensumBis());
-        return new EmploymentDto(
-                parseToLocalDate(avamJobAdvertisement.getStellenantritt()),
-                parseToLocalDate(avamJobAdvertisement.getVertragsdauer()),
-                safeBoolean(avamJobAdvertisement.isKurzeinsatz(), false),
-                safeBoolean(avamJobAdvertisement.isAbSofort(), avamJobAdvertisement.getStellenantritt() == null),
-                safeBoolean(avamJobAdvertisement.isUnbefristet(), avamJobAdvertisement.getVertragsdauer() == null),
-                workingTimePercentage.getMin(),
-                workingTimePercentage.getMax(),
-                createWorkForms(avamJobAdvertisement)
-        );
+        return new EmploymentDto()
+                .setStartDate(parseToLocalDate(avamJobAdvertisement.getStellenantritt()))
+                .setEndDate(parseToLocalDate(avamJobAdvertisement.getVertragsdauer()))
+                .setShortEmployment(safeBoolean(avamJobAdvertisement.isKurzeinsatz(), false))
+                .setImmediately(safeBoolean(avamJobAdvertisement.isAbSofort(), avamJobAdvertisement.getStellenantritt() == null))
+                .setPermanent(safeBoolean(avamJobAdvertisement.isUnbefristet(), avamJobAdvertisement.getVertragsdauer() == null))
+                .setWorkloadPercentageMin(workingTimePercentage.getMin())
+                .setWorkloadPercentageMax(workingTimePercentage.getMax())
+                .setWorkForms(createWorkForms(avamJobAdvertisement));
     }
 
     private CreateLocationDto createCreateLocationDto(WSOsteEgov avamJobAdvertisement) {
-        return new CreateLocationDto(
-                avamJobAdvertisement.getArbeitsOrtText(),
-                avamJobAdvertisement.getArbeitsOrtOrt(),
-                avamJobAdvertisement.getArbeitsOrtPlz(),
-                avamJobAdvertisement.getArbeitsOrtLand()
-        );
+        return new CreateLocationDto()
+                .setRemarks(avamJobAdvertisement.getArbeitsOrtText())
+                .setCity(avamJobAdvertisement.getArbeitsOrtOrt())
+                .setPostalCode(avamJobAdvertisement.getArbeitsOrtPlz())
+                .setCountryIsoCode(avamJobAdvertisement.getArbeitsOrtLand());
     }
 
     private CompanyDto createCompanyDto(WSOsteEgov avamJobAdvertisement) {
         // This fields are also used for ApplChannel from AVAM
-        return new CompanyDto(
-                avamJobAdvertisement.getUntName(),
-                avamJobAdvertisement.getUntStrasse(),
-                avamJobAdvertisement.getUntHausNr(),
-                avamJobAdvertisement.getUntPlz(),
-                avamJobAdvertisement.getUntOrt(),
-                avamJobAdvertisement.getUntLand(),
-                avamJobAdvertisement.getUntPostfach(),
-                avamJobAdvertisement.getUntPostfachPlz(),
-                avamJobAdvertisement.getUntPostfachOrt(),
-                null, // This is only used for ApplyChannel from AVAM
-                null, // This is only used for ApplyChannel from AVAM
-                null, // This is only used for ApplyChannel from AVAM
-                false
-        );
+        return new CompanyDto()
+                .setName(avamJobAdvertisement.getUntName())
+                .setStreet(avamJobAdvertisement.getUntStrasse())
+                .setHouseNumber(avamJobAdvertisement.getUntHausNr())
+                .setPostalCode(avamJobAdvertisement.getUntPlz())
+                .setCity(avamJobAdvertisement.getUntOrt())
+                .setCountryIsoCode(avamJobAdvertisement.getUntLand())
+                .setPostOfficeBoxNumber(avamJobAdvertisement.getUntPostfach())
+                .setPostOfficeBoxPostalCode(avamJobAdvertisement.getUntPostfachPlz())
+                .setPostOfficeBoxCity(avamJobAdvertisement.getUntPostfachOrt())
+                .setPhone(null) // This is only used for ApplyChannel from AVAM
+                .setEmail(null)// This is only used for ApplyChannel from AVAM
+                .setWebsite(null)// This is only used for ApplyChannel from AVAM
+                .setSurrogate(false);
     }
 
     private ApplyChannelDto createApplyChannelDto(WSOsteEgov avamJobAdvertisement) {
-        return new ApplyChannelDto(
-                avamJobAdvertisement.isBewerSchriftlich() ? createApplyMailAddress(avamJobAdvertisement) : null,
-                avamJobAdvertisement.isBewerElektronisch() ? sanitizeEmail(avamJobAdvertisement.getUntEmail(), avamJobAdvertisement) : null,
-                avamJobAdvertisement.isBewerTelefonisch() ? sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement) : null,
-                avamJobAdvertisement.isBewerElektronisch() ? sanitizeUrl(avamJobAdvertisement.getUntUrl(), avamJobAdvertisement) : null,
-                avamJobAdvertisement.getBewerAngaben()
-        );
+        return new ApplyChannelDto()
+                .setMailAddress(avamJobAdvertisement.isBewerSchriftlich() ? createApplyMailAddress(avamJobAdvertisement) : null)
+                .setEmailAddress(avamJobAdvertisement.isBewerElektronisch() ? sanitizeEmail(avamJobAdvertisement.getUntEmail(), avamJobAdvertisement) : null)
+                .setPhoneNumber(avamJobAdvertisement.isBewerTelefonisch() ? sanitizePhoneNumber(avamJobAdvertisement.getUntTelefon(), avamJobAdvertisement) : null)
+                .setFormUrl(avamJobAdvertisement.isBewerElektronisch() ? sanitizeUrl(avamJobAdvertisement.getUntUrl(), avamJobAdvertisement) : null)
+                .setAdditionalInfo(avamJobAdvertisement.getBewerAngaben());
     }
 
     private List<OccupationDto> createOccupationDtos(WSOsteEgov avamJobAdvertisement) {
@@ -204,14 +201,13 @@ public class JobAdvertisementFromAvamAssembler {
     }
 
     private OccupationDto createOccupationDto(BigInteger avamBerufNr, String erfahrungCode, String ausbildungCode) {
-        if (nonNull(avamBerufNr)) {
-            return new OccupationDto(
-                    avamBerufNr.toString(),
-                    getMappingValue(EXPERIENCES, erfahrungCode, "EXPERIENCES"),
-                    ausbildungCode
-            );
+        if (avamBerufNr == null) {
+            return null;
         }
-        return null;
+        return new OccupationDto()
+                .setAvamOccupationCode(avamBerufNr.toString())
+                .setWorkExperience(getMappingValue(EXPERIENCES, erfahrungCode, "EXPERIENCES"))
+                .setEducationCode(ausbildungCode);
     }
 
     private List<LanguageSkillDto> createLanguageSkillDtos(WSOsteEgov avamJobAdvertisement) {
@@ -229,25 +225,23 @@ public class JobAdvertisementFromAvamAssembler {
 
     private LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
         if (hasText(spracheCode)) {
-            return new LanguageSkillDto(
-                    getMappingValue(LANGUAGES, spracheCode, "LANGUAGES"),
-                    getMappingValue(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"),
-                    getMappingValue(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL")
-            );
+            return new LanguageSkillDto()
+                    .setLanguageIsoCode(getMappingValue(LANGUAGES, spracheCode, "LANGUAGES"))
+                    .setSpokenLevel(getMappingValue(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"))
+                    .setWrittenLevel(getMappingValue(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL"));
         }
         return null;
     }
 
     private PublicationDto createPublicationDto(WSOsteEgov avamJobAdvertisement) {
-        return new PublicationDto(
-                parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()),
-                parseToLocalDate(avamJobAdvertisement.getGueltigkeit()),
-                avamJobAdvertisement.isEures(),
-                avamJobAdvertisement.isEuresAnonym(),
-                avamJobAdvertisement.isPublikation(),
-                avamJobAdvertisement.isLoginPublikation(),
-                avamJobAdvertisement.isAnonym() || avamJobAdvertisement.isLoginAnonym()
-        );
+        return new PublicationDto()
+                .setStartDate(parseToLocalDate(avamJobAdvertisement.getAnmeldeDatum()))
+                .setEndDate(parseToLocalDate(avamJobAdvertisement.getGueltigkeit()))
+                .setEuresDisplay(avamJobAdvertisement.isEures())
+                .setEuresAnonymous(avamJobAdvertisement.isEuresAnonym())
+                .setPublicDisplay(avamJobAdvertisement.isPublikation())
+                .setRestrictedDisplay(avamJobAdvertisement.isLoginPublikation())
+                .setCompanyAnonymous(avamJobAdvertisement.isAnonym() || avamJobAdvertisement.isLoginAnonym());
     }
 
     private Set<WorkForm> createWorkForms(WSOsteEgov avamJobAdvertisement) {
@@ -305,6 +299,7 @@ public class JobAdvertisementFromAvamAssembler {
                     URL url = new URL("http://" + testObject);
                     return url.toExternalForm();
                 } catch (MalformedURLException e1) {
+                    LOG.debug(e1.getMessage());
                 }
             }
         }

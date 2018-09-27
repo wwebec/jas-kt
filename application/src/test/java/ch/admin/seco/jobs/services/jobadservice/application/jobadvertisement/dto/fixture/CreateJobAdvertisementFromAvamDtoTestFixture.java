@@ -7,9 +7,9 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.L
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkExperience.MORE_THAN_1_YEAR;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
 import static java.time.LocalDate.now;
-import static java.util.Arrays.asList;
 
 import java.time.LocalDate;
+import java.util.Collections;
 
 import org.assertj.core.util.Sets;
 
@@ -20,23 +20,23 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.LanguageSkillDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.AvamCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Company;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Salutation;
 
 public class CreateJobAdvertisementFromAvamDtoTestFixture {
 
-    public static CreateJobAdvertisementFromAvamDto testCreateJobAdvertisementDto() {
+    public static AvamCreateJobAdvertisementDto testCreateJobAdvertisementDto() {
         return testCreateJobAdvertisementDto(testCompany().build(), testPublicationDto());
     }
 
-    public static CreateJobAdvertisementFromAvamDto testCreateJobAdvertisementDtoWithCompanyAnonymous() {
+    public static AvamCreateJobAdvertisementDto testCreateJobAdvertisementDtoWithCompanyAnonymous() {
         return testCreateJobAdvertisementDto(testCompany().build(), testPublicationDtoWithCompanyAnonymous());
     }
 
-    private static CreateJobAdvertisementFromAvamDto testCreateJobAdvertisementDto(Company company, PublicationDto publicationDto) {
-        return new CreateJobAdvertisementFromAvamDto(
+    private static AvamCreateJobAdvertisementDto testCreateJobAdvertisementDto(Company company, PublicationDto publicationDto) {
+        return new AvamCreateJobAdvertisementDto(
                 STELLENNUMMER_AVAM,
                 "title",
                 "description",
@@ -46,16 +46,44 @@ public class CreateJobAdvertisementFromAvamDtoTestFixture {
                 LocalDate.of(2018, 1, 1),
                 "jobCenter",
                 now(),
-                new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 12, 31), false, false, false, 80, 100, Sets.newHashSet()),
-                new ApplyChannelDto("mailAddress", "emailAddress", "phoneNumber", "formUrl", "additionalInfo"),
+                new EmploymentDto()
+                        .setStartDate(LocalDate.of(2018, 1, 1))
+                        .setEndDate(LocalDate.of(2018, 12, 31))
+                        .setShortEmployment(false)
+                        .setImmediately(false)
+                        .setPermanent(false)
+                        .setWorkloadPercentageMin(80)
+                        .setWorkloadPercentageMax(100)
+                        .setWorkForms(Sets.newHashSet()),
+                new ApplyChannelDto()
+                        .setMailAddress("mailAddress")
+                        .setEmailAddress("emailAddress")
+                        .setPhoneNumber("phoneNumber")
+                        .setFormUrl("formUrl")
+                        .setAdditionalInfo("additionalInfo"),
                 CompanyDto.toDto(company),
-                new ContactDto(Salutation.MR, "firstName", "lastName", "phone", "email", "de"),
-                new CreateLocationDto("remarks", "city", "postalCode", "CH"),
-                asList(new OccupationDto("avamCode", MORE_THAN_1_YEAR, "educationCode")),
-                asList(new LanguageSkillDto("de", PROFICIENT, PROFICIENT)),
+                new ContactDto()
+                        .setSalutation(Salutation.MR)
+                        .setFirstName("firstName")
+                        .setLastName("lastName")
+                        .setPhone("phone")
+                        .setEmail("email")
+                        .setLanguageIsoCode("de"),
+                new CreateLocationDto()
+                        .setRemarks("remarks")
+                        .setCity("city")
+                        .setPostalCode("postalCode")
+                        .setCountryIsoCode("CH"),
+                Collections.singletonList(new OccupationDto()
+                        .setAvamOccupationCode("avamCode")
+                        .setWorkExperience(MORE_THAN_1_YEAR)
+                        .setEducationCode("educationCode")),
+                Collections.singletonList(new LanguageSkillDto()
+                        .setLanguageIsoCode("de")
+                        .setSpokenLevel(PROFICIENT)
+                        .setWrittenLevel(PROFICIENT)),
                 publicationDto
         );
     }
-
 
 }

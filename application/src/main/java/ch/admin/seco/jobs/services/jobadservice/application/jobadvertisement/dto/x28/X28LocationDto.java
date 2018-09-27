@@ -30,7 +30,11 @@ public class X28LocationDto {
     }
 
     CreateLocationDto toCreateLocationDto() {
-        return new CreateLocationDto(remarks, city, postalCode, countryIsoCode);
+        return new CreateLocationDto()
+                .setRemarks(remarks)
+                .setCity(city)
+                .setPostalCode(postalCode)
+                .setCountryIsoCode(countryIsoCode);
     }
 
     public String getRemarks() {

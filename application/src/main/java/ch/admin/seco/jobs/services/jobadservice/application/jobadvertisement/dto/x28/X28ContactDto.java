@@ -39,11 +39,22 @@ public class X28ContactDto {
     }
 
     ContactDto toContactDto() {
-        return new ContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email, this.languageIsoCode);
+        return new ContactDto()
+                .setSalutation(this.salutation)
+                .setFirstName(this.firstName)
+                .setLastName(this.lastName)
+                .setPhone(this.phone)
+                .setEmail(this.email)
+                .setLanguageIsoCode(this.languageIsoCode);
     }
 
     PublicContactDto toPublicContactDto() {
-        return new PublicContactDto(this.salutation, this.firstName, this.lastName, this.phone, this.email);
+        return new PublicContactDto()
+                .setSalutation(this.salutation)
+                .setFirstName(this.firstName)
+                .setLastName(this.lastName)
+                .setPhone(this.phone)
+                .setEmail(this.email);
     }
 
     public Salutation getSalutation() {

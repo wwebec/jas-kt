@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.api;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserTestFixture.createApiUser01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserTestFixture.createApiUser02;
@@ -47,6 +47,7 @@ import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.rea
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserDocument;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.write.apiuser.ApiUserElasticsearchRepository;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.TestUtil;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.api.ApiUserRestController;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.errors.ExceptionTranslator;
 
 @RunWith(SpringRunner.class)

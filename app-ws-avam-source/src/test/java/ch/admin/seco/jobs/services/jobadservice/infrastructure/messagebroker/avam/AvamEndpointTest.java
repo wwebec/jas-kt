@@ -27,14 +27,12 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.ws.test.server.MockWebServiceClient;
 import org.springframework.ws.test.server.ResponseMatchers;
 
-import ch.admin.seco.jobs.services.jobadservice.application.ProfileRegistry;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.AvamCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
@@ -48,7 +46,7 @@ public class AvamEndpointTest {
 
     private JacksonTester<ApprovalDto> approvalDtoJacksonTester;
     private JacksonTester<RejectionDto> rejectionDtoJacksonTester;
-    private JacksonTester<CreateJobAdvertisementFromAvamDto> createJobAdvertisementAvamDtoJacksonTester;
+    private JacksonTester<AvamCreateJobAdvertisementDto> createJobAdvertisementAvamDtoJacksonTester;
     private JacksonTester<CancellationDto> cancellationDtoJacksonTester;
 
     @Autowired
@@ -125,7 +123,7 @@ public class AvamEndpointTest {
         assertThat(received).isNotNull();
         assertThat(received.getHeaders().get(ACTION)).isEqualTo(CREATE_FROM_AVAM.name());
 
-        CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto = createJobAdvertisementAvamDtoJacksonTester.parse(received.getPayload()).getObject();
+        AvamCreateJobAdvertisementDto createJobAdvertisementFromAvamDto = createJobAdvertisementAvamDtoJacksonTester.parse(received.getPayload()).getObject();
         assertThat(createJobAdvertisementFromAvamDto.getStellennummerAvam()).isEqualTo("AVAM-0003");
         assertThat(createJobAdvertisementFromAvamDto.getTitle()).isEqualTo("Test Title");
         assertThat(createJobAdvertisementFromAvamDto.getDescription()).isEqualTo("Test Description");

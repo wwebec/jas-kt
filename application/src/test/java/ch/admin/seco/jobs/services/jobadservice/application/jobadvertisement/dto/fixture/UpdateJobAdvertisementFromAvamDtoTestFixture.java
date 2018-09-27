@@ -42,12 +42,11 @@ public class UpdateJobAdvertisementFromAvamDtoTestFixture {
         );
     }
 
-    public static CreateLocationDto testLocationDto(Location location) {
-        return new CreateLocationDto(
-                location.getRemarks(),
-                location.getCity(),
-                location.getPostalCode(),
-                location.getCountryIsoCode()
-        );
+    private static CreateLocationDto testLocationDto(Location location) {
+        return new CreateLocationDto()
+                .setRemarks(location.getRemarks())
+                .setCity(location.getCity())
+                .setPostalCode(location.getPostalCode())
+                .setCountryIsoCode(location.getCountryIsoCode());
     }
 }

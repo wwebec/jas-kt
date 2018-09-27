@@ -12,63 +12,54 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.Su
 
 public class LanguageSkillDto {
 
-	@NotBlank
-	@SupportedLanguageIsoCode
-	private String languageIsoCode;
+    @NotBlank
+    @SupportedLanguageIsoCode
+    private String languageIsoCode;
 
-	@NotNull
-	private LanguageLevel spokenLevel;
+    @NotNull
+    private LanguageLevel spokenLevel;
 
-	@NotNull
-	private LanguageLevel writtenLevel;
+    @NotNull
+    private LanguageLevel writtenLevel;
 
-	protected LanguageSkillDto() {
-		// For reflection libs
-	}
+    public String getLanguageIsoCode() {
+        return languageIsoCode;
+    }
 
-	public LanguageSkillDto(String languageIsoCode, LanguageLevel spokenLevel, LanguageLevel writtenLevel) {
-		this.languageIsoCode = languageIsoCode;
-		this.spokenLevel = spokenLevel;
-		this.writtenLevel = writtenLevel;
-	}
+    public LanguageSkillDto setLanguageIsoCode(String languageIsoCode) {
+        this.languageIsoCode = languageIsoCode;
+        return this;
+    }
 
-	public String getLanguageIsoCode() {
-		return languageIsoCode;
-	}
+    public LanguageLevel getSpokenLevel() {
+        return spokenLevel;
+    }
 
-	public void setLanguageIsoCode(String languageIsoCode) {
-		this.languageIsoCode = languageIsoCode;
-	}
+    public LanguageSkillDto setSpokenLevel(LanguageLevel spokenLevel) {
+        this.spokenLevel = spokenLevel;
+        return this;
+    }
 
-	public LanguageLevel getSpokenLevel() {
-		return spokenLevel;
-	}
+    public LanguageLevel getWrittenLevel() {
+        return writtenLevel;
+    }
 
-	public void setSpokenLevel(LanguageLevel spokenLevel) {
-		this.spokenLevel = spokenLevel;
-	}
+    public LanguageSkillDto setWrittenLevel(LanguageLevel writtenLevel) {
+        this.writtenLevel = writtenLevel;
+        return this;
+    }
 
-	public LanguageLevel getWrittenLevel() {
-		return writtenLevel;
-	}
+    public static LanguageSkillDto toDto(LanguageSkill languageSkill) {
+        return new LanguageSkillDto()
+                .setLanguageIsoCode(languageSkill.getLanguageIsoCode())
+                .setSpokenLevel(languageSkill.getSpokenLevel())
+                .setWrittenLevel(languageSkill.getWrittenLevel());
+    }
 
-	public void setWrittenLevel(LanguageLevel writtenLevel) {
-		this.writtenLevel = writtenLevel;
-	}
-
-	public static LanguageSkillDto toDto(LanguageSkill languageSkill) {
-		LanguageSkillDto languageSkillDto = new LanguageSkillDto();
-		languageSkillDto.setLanguageIsoCode(languageSkill.getLanguageIsoCode());
-		languageSkillDto.setSpokenLevel(languageSkill.getSpokenLevel());
-		languageSkillDto.setWrittenLevel(languageSkill.getWrittenLevel());
-		return languageSkillDto;
-	}
-
-	public static List<LanguageSkillDto> toDto(List<LanguageSkill> languageSkills) {
-		if (languageSkills != null) {
-			return languageSkills.stream().map(LanguageSkillDto::toDto).collect(Collectors.toList());
-		}
-
-		return null;
-	}
+    public static List<LanguageSkillDto> toDto(List<LanguageSkill> languageSkills) {
+        if (languageSkills == null) {
+            return null;
+        }
+            return languageSkills.stream().map(LanguageSkillDto::toDto).collect(Collectors.toList());
+        }
 }

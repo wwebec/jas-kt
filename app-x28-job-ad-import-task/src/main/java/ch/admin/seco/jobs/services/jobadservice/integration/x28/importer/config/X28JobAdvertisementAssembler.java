@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.EmploymentDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CompanyDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28ContactDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28LanguageSkillDto;
@@ -57,11 +57,11 @@ class X28JobAdvertisementAssembler {
     private static final String DEFAULT_AVAM_OCCUPATION_CODE = "99999";
     private static final String COUNTRY_ISO_CODE_SWITZERLAND = "CH";
 
-    CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto(Oste x28JobAdvertisement) {
+    X28CreateJobAdvertisementDto createJobAdvertisementFromX28Dto(Oste x28JobAdvertisement) {
         LocalDate publicationStartDate = parseDate(x28JobAdvertisement.getAnmeldeDatum());
         LocalDate publicationEndDate = parseDate(x28JobAdvertisement.getGueltigkeit());
 
-        return new CreateJobAdvertisementFromX28Dto()
+        return new X28CreateJobAdvertisementDto()
                 .setStellennummerEgov(x28JobAdvertisement.getStellennummerEGov())
                 .setStellennummerAvam(x28JobAdvertisement.getStellennummerAvam())
                 .setTitle(sanitize(x28JobAdvertisement.getBezeichnung()))
@@ -257,16 +257,15 @@ class X28JobAdvertisementAssembler {
         LocalDate startDate = parseDate(x28JobAdvertisement.getStellenantritt());
         LocalDate endDate = parseDate(x28JobAdvertisement.getVertragsdauer());
         WorkingTimePercentage workingTimePercentage = WorkingTimePercentage.evaluate(x28JobAdvertisement.getPensumVon(), x28JobAdvertisement.getPensumBis());
-        return new EmploymentDto(
-                startDate,
-                endDate,
-                false,
-                fallbackAwareBoolean(x28JobAdvertisement.isAbSofort(), false),
-                fallbackAwareBoolean(x28JobAdvertisement.isUnbefristet(), (endDate != null)),
-                workingTimePercentage.getMin(),
-                workingTimePercentage.getMax(),
-                null
-        );
+        return new EmploymentDto()
+                .setStartDate(startDate)
+                .setEndDate(endDate)
+                .setShortEmployment(false)
+                .setImmediately(fallbackAwareBoolean(x28JobAdvertisement.isAbSofort(), false))
+                .setPermanent(fallbackAwareBoolean(x28JobAdvertisement.isUnbefristet(), (endDate != null)))
+                .setWorkloadPercentageMin(workingTimePercentage.getMin())
+                .setWorkloadPercentageMax(workingTimePercentage.getMax())
+                .setWorkForms(null);
     }
 
     private Salutation resolveSalutation(String kpAnredeCode) {

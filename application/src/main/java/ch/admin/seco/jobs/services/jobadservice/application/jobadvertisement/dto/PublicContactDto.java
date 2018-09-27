@@ -23,68 +23,61 @@ public class PublicContactDto {
     @NotBlank
     private String email;
 
-    protected PublicContactDto() {
-        // For reflection libs
-    }
-
-    public PublicContactDto(Salutation salutation, String firstName, String lastName, String phone, String email) {
-        this.salutation = salutation;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phone = phone;
-        this.email = email;
-    }
-
-    public static PublicContactDto toDto(PublicContact publicContact) {
-        if (publicContact == null) {
-            return null;
-        }
-        PublicContactDto publicContactDto = new PublicContactDto();
-        publicContactDto.setSalutation(publicContact.getSalutation());
-        publicContactDto.setFirstName(publicContact.getFirstName());
-        publicContactDto.setLastName(publicContact.getLastName());
-        publicContactDto.setPhone(publicContact.getPhone());
-        publicContactDto.setEmail(publicContact.getEmail());
-        return publicContactDto;
-    }
-
     public Salutation getSalutation() {
         return salutation;
     }
 
-    public void setSalutation(Salutation salutation) {
+    public PublicContactDto setSalutation(Salutation salutation) {
         this.salutation = salutation;
+        return this;
     }
 
     public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public PublicContactDto setFirstName(String firstName) {
         this.firstName = firstName;
+        return this;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public PublicContactDto setLastName(String lastName) {
         this.lastName = lastName;
+        return this;
     }
 
     public String getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public PublicContactDto setPhone(String phone) {
         this.phone = phone;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public PublicContactDto setEmail(String email) {
         this.email = email;
+        return this;
     }
+
+    public static PublicContactDto toDto(PublicContact publicContact) {
+        if (publicContact == null) {
+            return null;
+        }
+        return new PublicContactDto()
+                .setSalutation(publicContact.getSalutation())
+                .setFirstName(publicContact.getFirstName())
+                .setLastName(publicContact.getLastName())
+                .setPhone(publicContact.getPhone())
+                .setEmail(publicContact.getEmail());
+    }
+
 }

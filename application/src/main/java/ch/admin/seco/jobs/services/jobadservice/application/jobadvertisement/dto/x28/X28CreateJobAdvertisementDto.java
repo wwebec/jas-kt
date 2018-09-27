@@ -18,7 +18,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 
-public class CreateJobAdvertisementFromX28Dto {
+public class X28CreateJobAdvertisementDto {
 
     private String stellennummerEgov;
 
@@ -92,10 +92,6 @@ public class CreateJobAdvertisementFromX28Dto {
     }
 
     public CompanyDto toCompanyDto() {
-        if (company == null) {
-            return null;
-        }
-
         return company.toCompanyDto();
     }
 
@@ -122,7 +118,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return stellennummerEgov;
     }
 
-    public CreateJobAdvertisementFromX28Dto setStellennummerEgov(String stellennummerEgov) {
+    public X28CreateJobAdvertisementDto setStellennummerEgov(String stellennummerEgov) {
         this.stellennummerEgov = stellennummerEgov;
         return this;
     }
@@ -131,7 +127,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return stellennummerAvam;
     }
 
-    public CreateJobAdvertisementFromX28Dto setStellennummerAvam(String stellennummerAvam) {
+    public X28CreateJobAdvertisementDto setStellennummerAvam(String stellennummerAvam) {
         this.stellennummerAvam = stellennummerAvam;
         return this;
     }
@@ -140,7 +136,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return title;
     }
 
-    public CreateJobAdvertisementFromX28Dto setTitle(String title) {
+    public X28CreateJobAdvertisementDto setTitle(String title) {
         this.title = title;
         return this;
     }
@@ -149,7 +145,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return description;
     }
 
-    public CreateJobAdvertisementFromX28Dto setDescription(String description) {
+    public X28CreateJobAdvertisementDto setDescription(String description) {
         this.description = description;
         return this;
     }
@@ -158,7 +154,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return numberOfJobs;
     }
 
-    public CreateJobAdvertisementFromX28Dto setNumberOfJobs(String numberOfJobs) {
+    public X28CreateJobAdvertisementDto setNumberOfJobs(String numberOfJobs) {
         this.numberOfJobs = numberOfJobs;
         return this;
     }
@@ -167,7 +163,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return fingerprint;
     }
 
-    public CreateJobAdvertisementFromX28Dto setFingerprint(String fingerprint) {
+    public X28CreateJobAdvertisementDto setFingerprint(String fingerprint) {
         this.fingerprint = fingerprint;
         return this;
     }
@@ -176,7 +172,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return externalUrl;
     }
 
-    public CreateJobAdvertisementFromX28Dto setExternalUrl(String externalUrl) {
+    public X28CreateJobAdvertisementDto setExternalUrl(String externalUrl) {
         this.externalUrl = externalUrl;
         return this;
     }
@@ -185,7 +181,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return jobCenterCode;
     }
 
-    public CreateJobAdvertisementFromX28Dto setJobCenterCode(String jobCenterCode) {
+    public X28CreateJobAdvertisementDto setJobCenterCode(String jobCenterCode) {
         this.jobCenterCode = jobCenterCode;
         return this;
     }
@@ -194,7 +190,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return contact;
     }
 
-    public CreateJobAdvertisementFromX28Dto setContact(X28ContactDto contact) {
+    public X28CreateJobAdvertisementDto setContact(X28ContactDto contact) {
         this.contact = contact;
         return this;
     }
@@ -203,7 +199,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return employment;
     }
 
-    public CreateJobAdvertisementFromX28Dto setEmployment(EmploymentDto employment) {
+    public X28CreateJobAdvertisementDto setEmployment(EmploymentDto employment) {
         this.employment = employment;
         return this;
     }
@@ -212,7 +208,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return company;
     }
 
-    public CreateJobAdvertisementFromX28Dto setCompany(X28CompanyDto company) {
+    public X28CreateJobAdvertisementDto setCompany(X28CompanyDto company) {
         this.company = company;
         return this;
     }
@@ -221,7 +217,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return location;
     }
 
-    public CreateJobAdvertisementFromX28Dto setLocation(X28LocationDto location) {
+    public X28CreateJobAdvertisementDto setLocation(X28LocationDto location) {
         this.location = location;
         return this;
     }
@@ -230,7 +226,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return occupations;
     }
 
-    public CreateJobAdvertisementFromX28Dto setOccupations(List<X28OccupationDto> occupations) {
+    public X28CreateJobAdvertisementDto setOccupations(List<X28OccupationDto> occupations) {
         this.occupations = occupations;
         return this;
     }
@@ -239,7 +235,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return professionCodes;
     }
 
-    public CreateJobAdvertisementFromX28Dto setProfessionCodes(String professionCodes) {
+    public X28CreateJobAdvertisementDto setProfessionCodes(String professionCodes) {
         this.professionCodes = professionCodes;
         return this;
     }
@@ -248,7 +244,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return languageSkills;
     }
 
-    public CreateJobAdvertisementFromX28Dto setLanguageSkills(List<X28LanguageSkillDto> languageSkills) {
+    public X28CreateJobAdvertisementDto setLanguageSkills(List<X28LanguageSkillDto> languageSkills) {
         this.languageSkills = languageSkills;
         return this;
     }
@@ -257,7 +253,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return publicationStartDate;
     }
 
-    public CreateJobAdvertisementFromX28Dto setPublicationStartDate(LocalDate publicationStartDate) {
+    public X28CreateJobAdvertisementDto setPublicationStartDate(LocalDate publicationStartDate) {
         this.publicationStartDate = publicationStartDate;
         return this;
     }
@@ -266,7 +262,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return publicationEndDate;
     }
 
-    public CreateJobAdvertisementFromX28Dto setPublicationEndDate(LocalDate publicationEndDate) {
+    public X28CreateJobAdvertisementDto setPublicationEndDate(LocalDate publicationEndDate) {
         this.publicationEndDate = publicationEndDate;
         return this;
     }
@@ -275,7 +271,7 @@ public class CreateJobAdvertisementFromX28Dto {
         return companyAnonymous;
     }
 
-    public CreateJobAdvertisementFromX28Dto setCompanyAnonymous(boolean companyAnonymous) {
+    public X28CreateJobAdvertisementDto setCompanyAnonymous(boolean companyAnonymous) {
         this.companyAnonymous = companyAnonymous;
         return this;
     }

@@ -38,7 +38,7 @@ import org.springframework.messaging.Message;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
 
 @RunWith(SpringRunner.class)
@@ -66,7 +66,7 @@ public class X28JobAdImportTaskTest {
     @Autowired
     private JobLauncherTestUtils jobLauncherTestUtils;
 
-    private JacksonTester<CreateJobAdvertisementFromX28Dto> createJobAdvertisementX28DtoJacksonTester;
+    private JacksonTester<X28CreateJobAdvertisementDto> createJobAdvertisementX28DtoJacksonTester;
 
     private JacksonTester<UpdateJobAdvertisementFromX28Dto> updateJobAdvertisementFromX28DtoJacksonTester;
 

@@ -125,7 +125,15 @@ public class JobAdvertisementApplicationServiceTest {
     public void shouldSetReportingObligationToFalseWhenShortEmployment() {
         //given
         CreateJobAdvertisementDto createJobAdvertisementDto = testCreateJobAdvertisementDto();
-        createJobAdvertisementDto.setEmployment(new EmploymentDto(LocalDate.of(2018, 1, 1), LocalDate.of(2018, 1, 10), true, false, false, 80, 100, null));
+        createJobAdvertisementDto.setEmployment(new EmploymentDto()
+                .setStartDate(LocalDate.of(2018, 1, 1))
+                .setEndDate(LocalDate.of(2018, 12, 10))
+                .setShortEmployment(true)
+                .setImmediately(false)
+                .setPermanent(false)
+                .setWorkloadPercentageMin(80)
+                .setWorkloadPercentageMax(100)
+                .setWorkForms(null));
         when(reportingObligationService.hasReportingObligation(any(), any(), any())).thenReturn(true);
 
         checkReportingObligation(createJobAdvertisementDto, false);
@@ -144,7 +152,11 @@ public class JobAdvertisementApplicationServiceTest {
     public void shouldSetReportingObligationToFalseWhenLocationIsGermany() {
         //Prepare
         CreateJobAdvertisementDto createJobAdvertisementDto = testCreateJobAdvertisementDto();
-        createJobAdvertisementDto.setLocation(new CreateLocationDto("remarks", "city", "postalCode", "DE"));
+        createJobAdvertisementDto.setLocation(new CreateLocationDto()
+                .setRemarks("remarks")
+                .setCity("city")
+                .setPostalCode("postalCode")
+                .setCountryIsoCode("DE"));
         when(locationService.enrichCodes(any(Location.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         checkReportingObligation(createJobAdvertisementDto, false);
@@ -248,7 +260,7 @@ public class JobAdvertisementApplicationServiceTest {
         jobAdvertisementRepository.save(testJobAdvertisementWithStatusAndPublicationEndDate(job01.id(), ARCHIVED, now().plusDays(60)));
         reset();
 
-                // when
+        // when
         sut.republishIfArchived(job01.id());
 
         // then

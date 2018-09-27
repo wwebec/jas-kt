@@ -14,56 +14,49 @@ public class ApplyChannelDto {
 
     private String additionalInfo;
 
-    protected ApplyChannelDto() {
-        // For reflection libs
-    }
-
-    public ApplyChannelDto(String mailAddress, String emailAddress, String phoneNumber, String formUrl, String additionalInfo) {
-        this.mailAddress = mailAddress;
-        this.emailAddress = emailAddress;
-        this.phoneNumber = phoneNumber;
-        this.formUrl = formUrl;
-        this.additionalInfo = additionalInfo;
-    }
-
     public String getMailAddress() {
         return mailAddress;
     }
 
-    public void setMailAddress(String mailAddress) {
+    public ApplyChannelDto setMailAddress(String mailAddress) {
         this.mailAddress = mailAddress;
+        return this;
     }
 
     public String getEmailAddress() {
         return emailAddress;
     }
 
-    public void setEmailAddress(String emailAddress) {
+    public ApplyChannelDto setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+        return this;
     }
 
     public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public ApplyChannelDto setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+        return this;
     }
 
     public String getFormUrl() {
         return formUrl;
     }
 
-    public void setFormUrl(String formUrl) {
+    public ApplyChannelDto setFormUrl(String formUrl) {
         this.formUrl = formUrl;
+        return this;
     }
 
     public String getAdditionalInfo() {
         return additionalInfo;
     }
 
-    public void setAdditionalInfo(String additionalInfo) {
+    public ApplyChannelDto setAdditionalInfo(String additionalInfo) {
         this.additionalInfo = additionalInfo;
+        return this;
     }
 
     public static ApplyChannelDto toDto(ApplyChannel applyChannel) {

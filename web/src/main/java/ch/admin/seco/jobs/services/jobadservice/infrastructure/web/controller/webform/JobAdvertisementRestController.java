@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.webform;
 
 import javax.validation.Valid;
 
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import ch.admin.seco.jobs.services.jobadservice.application.HtmlToMarkdownConverter;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
@@ -26,37 +25,30 @@ import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.CancellationResource;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.CancellationResource;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.PageResource;
 
 @RestController
 @RequestMapping("/api/jobAdvertisements")
 public class JobAdvertisementRestController {
 
     private final JobAdvertisementApplicationService jobAdvertisementApplicationService;
-    private final EventStore eventStore;
-    private final HtmlToMarkdownConverter htmlToMarkdownConverter;
 
-    public JobAdvertisementRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService, EventStore eventStore,
-            HtmlToMarkdownConverter htmlToMarkdownConverter) {
+    private final EventStore eventStore;
+
+    private final JobAdvertisementFromWebAssembler jobAdvertisementFromWebAssembler;
+
+    public JobAdvertisementRestController(JobAdvertisementApplicationService jobAdvertisementApplicationService, EventStore eventStore, JobAdvertisementFromWebAssembler jobAdvertisementFromWebAssembler) {
         this.jobAdvertisementApplicationService = jobAdvertisementApplicationService;
         this.eventStore = eventStore;
-        this.htmlToMarkdownConverter = htmlToMarkdownConverter;
+        this.jobAdvertisementFromWebAssembler = jobAdvertisementFromWebAssembler;
     }
 
     @PostMapping()
-    public JobAdvertisementDto createFromWebform(@RequestBody @Valid CreateJobAdvertisementDto createJobAdvertisementDto) throws AggregateNotFoundException {
-        JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService
-                .createFromWebForm(convertJobDescriptions(createJobAdvertisementDto));
+    public JobAdvertisementDto createFromWebform(@RequestBody @Valid WebformCreateJobAdvertisementDto createJobAdvertisementFromWebDto) throws AggregateNotFoundException {
+        CreateJobAdvertisementDto createJobAdvertisementDto = jobAdvertisementFromWebAssembler.convert(createJobAdvertisementFromWebDto);
+        JobAdvertisementId jobAdvertisementId = jobAdvertisementApplicationService.createFromWebForm(createJobAdvertisementDto);
         return jobAdvertisementApplicationService.getById(jobAdvertisementId);
-    }
-
-    private CreateJobAdvertisementDto convertJobDescriptions(CreateJobAdvertisementDto createJobAdvertisementDto) {
-        createJobAdvertisementDto.getJobDescriptions().forEach(jobDescription -> {
-            final String convertedDescription = htmlToMarkdownConverter.convert(jobDescription.getDescription());
-            jobDescription.setDescription(convertedDescription);
-        });
-        return createJobAdvertisementDto;
     }
 
     @GetMapping

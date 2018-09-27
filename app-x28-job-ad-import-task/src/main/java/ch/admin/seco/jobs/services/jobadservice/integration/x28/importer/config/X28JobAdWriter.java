@@ -18,10 +18,10 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.messages.JobAdvertisementAction;
 
-public class X28JobAdWriter implements ItemWriter<CreateJobAdvertisementFromX28Dto> {
+public class X28JobAdWriter implements ItemWriter<X28CreateJobAdvertisementDto> {
 
     private static final Logger LOG = LoggerFactory.getLogger(X28JobAdWriter.class);
 
@@ -32,12 +32,12 @@ public class X28JobAdWriter implements ItemWriter<CreateJobAdvertisementFromX28D
     }
 
     @Override
-    public void write(List<? extends CreateJobAdvertisementFromX28Dto> items) {
+    public void write(List<? extends X28CreateJobAdvertisementDto> items) {
         LOG.debug("Send x28 JobAdvertisements ({}) to JobAd service", items.size());
         items.forEach(item -> send(item, item.getFingerprint()));
     }
 
-    private void send(CreateJobAdvertisementFromX28Dto createFromX28, String key) {
+    private void send(X28CreateJobAdvertisementDto createFromX28, String key) {
         output.send(MessageBuilder
                 .withPayload(createFromX28)
                 .setHeader(PARTITION_KEY, key)

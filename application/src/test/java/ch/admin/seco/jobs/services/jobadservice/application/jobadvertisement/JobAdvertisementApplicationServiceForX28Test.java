@@ -29,7 +29,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
 import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
 import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CompanyDto;
 import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
@@ -87,7 +87,7 @@ public class JobAdvertisementApplicationServiceForX28Test {
     public void createFromX28() {
         //given
         X28CompanyDto x28CompanyDto = testX28CompanyDto();
-        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = createCreateJobAdvertisementDto(testX28CompanyDto());
+        X28CreateJobAdvertisementDto createJobAdvertisementDto = createCreateJobAdvertisementDto(testX28CompanyDto());
 
         //when
         JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);
@@ -113,7 +113,7 @@ public class JobAdvertisementApplicationServiceForX28Test {
     @Test
     public void createFromX28WithEmptyCountry() {
         //given
-        CreateJobAdvertisementFromX28Dto createJobAdvertisementDto = createCreateJobAdvertisementDto(null);
+        X28CreateJobAdvertisementDto createJobAdvertisementDto = createCreateJobAdvertisementDto(null);
 
         //when
         JobAdvertisementId jobAdvertisementId = sut.createFromX28(createJobAdvertisementDto);

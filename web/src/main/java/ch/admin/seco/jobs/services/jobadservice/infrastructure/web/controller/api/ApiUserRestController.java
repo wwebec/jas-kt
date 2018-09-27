@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.api;
 
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.ApiUserApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.apiuser.dto.*;
@@ -9,7 +9,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserId;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchRequest;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.elasticsearch.read.apiuser.ApiUserSearchService;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.resources.PageResource;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.PageResource;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.util.PaginationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +26,9 @@ import java.util.List;
 public class ApiUserRestController {
 
     private final ApiUserApplicationService apiUserApplicationService;
+
     private final ApiUserSearchService apiUserSearchService;
+
     private final EventStore eventStore;
 
     public ApiUserRestController(ApiUserApplicationService apiUserApplicationService, ApiUserSearchService apiUserSearchService, EventStore eventStore) {

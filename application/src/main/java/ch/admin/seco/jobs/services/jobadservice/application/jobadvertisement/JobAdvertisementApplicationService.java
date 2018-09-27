@@ -44,13 +44,13 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.AvamCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromX28Dto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
 import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUserContext;
 import ch.admin.seco.jobs.services.jobadservice.core.conditions.Condition;
@@ -111,12 +111,12 @@ public class JobAdvertisementApplicationService {
 
     @Autowired
     public JobAdvertisementApplicationService(CurrentUserContext currentUserContext,
-                                              JobAdvertisementRepository jobAdvertisementRepository,
-                                              JobAdvertisementFactory jobAdvertisementFactory,
-                                              ReportingObligationService reportingObligationService,
-                                              LocationService locationService,
-                                              ProfessionService professionService,
-                                              JobCenterService jobCenterService, TransactionTemplate transactionTemplate) {
+            JobAdvertisementRepository jobAdvertisementRepository,
+            JobAdvertisementFactory jobAdvertisementFactory,
+            ReportingObligationService reportingObligationService,
+            LocationService locationService,
+            ProfessionService professionService,
+            JobCenterService jobCenterService, TransactionTemplate transactionTemplate) {
         this.currentUserContext = currentUserContext;
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.jobAdvertisementFactory = jobAdvertisementFactory;
@@ -131,7 +131,6 @@ public class JobAdvertisementApplicationService {
         LOG.debug("Start creating new job ad from WebForm");
         Condition.notNull(createJobAdvertisementDto, "CreateJobAdvertisementDto can't be null");
         LOG.debug("Create '{}'", createJobAdvertisementDto.getJobDescriptions().get(0).getTitle());
-
         final JobAdvertisementCreator creator = getJobAdvertisementCreatorFromInternal(createJobAdvertisementDto);
         JobAdvertisement jobAdvertisement = jobAdvertisementFactory.createFromWebForm(creator);
         return jobAdvertisement.getId();
@@ -147,7 +146,7 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.getId();
     }
 
-    public JobAdvertisementId createFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+    public JobAdvertisementId createFromAvam(AvamCreateJobAdvertisementDto createJobAdvertisementFromAvamDto) {
         LOG.debug("Start creating new job ad from AVAM");
 
         Condition.notNull(createJobAdvertisementFromAvamDto, "CreateJobAdvertisementFromAvamDto can't be null");
@@ -205,7 +204,7 @@ public class JobAdvertisementApplicationService {
         return jobAdvertisement.getId();
     }
 
-    public JobAdvertisementId createFromX28(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
+    public JobAdvertisementId createFromX28(X28CreateJobAdvertisementDto createJobAdvertisementFromX28Dto) {
         LOG.debug("Start creating new job ad from X28");
 
         Condition.notNull(createJobAdvertisementFromX28Dto, "CreateJobAdvertisementFromX28Dto can't be null");
@@ -393,7 +392,7 @@ public class JobAdvertisementApplicationService {
         }
     }
 
-    private JobAdvertisementUpdater prepareUpdaterFromAvam(CreateJobAdvertisementFromAvamDto createJobAdvertisement) {
+    private JobAdvertisementUpdater prepareUpdaterFromAvam(AvamCreateJobAdvertisementDto createJobAdvertisement) {
         Condition.notNull(createJobAdvertisement.getLocation(), "Location can't be null");
         Location location = toLocation(createJobAdvertisement.getLocation());
         location = locationService.enrichCodes(location);
@@ -548,7 +547,7 @@ public class JobAdvertisementApplicationService {
 
     }
 
-    private void checkIfJobAdvertisementAlreadyExists(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
+    private void checkIfJobAdvertisementAlreadyExists(X28CreateJobAdvertisementDto createJobAdvertisementFromX28Dto) {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByFingerprint(createJobAdvertisementFromX28Dto.getFingerprint());
         jobAdvertisement.ifPresent(jobAd -> {
             String message = String.format("JobAdvertisement '%s' with fingerprint '%s' already exists", jobAd.getId().getValue(), jobAd.getFingerprint());
@@ -556,7 +555,7 @@ public class JobAdvertisementApplicationService {
         });
     }
 
-    private void checkIfJobAdvertisementAlreadyExists(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+    private void checkIfJobAdvertisementAlreadyExists(AvamCreateJobAdvertisementDto createJobAdvertisementFromAvamDto) {
         Optional<JobAdvertisement> jobAdvertisement = jobAdvertisementRepository.findByStellennummerAvam(createJobAdvertisementFromAvamDto.getStellennummerAvam());
         jobAdvertisement.ifPresent(jobAd -> {
             String message = String.format("JobAdvertisement '%s' with stellennummerAvam '%s' already exists", jobAd.getId().getValue(), jobAd.getStellennummerAvam());
@@ -741,7 +740,7 @@ public class JobAdvertisementApplicationService {
     }
 
 
-    private Company determineDisplayCompany(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+    private Company determineDisplayCompany(AvamCreateJobAdvertisementDto createJobAdvertisementFromAvamDto) {
         return this.determineDisplayCompany(
                 toCompany(createJobAdvertisementFromAvamDto.getCompany()),
                 createJobAdvertisementFromAvamDto.getPublication().isCompanyAnonymous(),
@@ -749,7 +748,7 @@ public class JobAdvertisementApplicationService {
         );
     }
 
-    private Company determineDisplayCompany(CreateJobAdvertisementFromX28Dto createJobAdvertisementFromX28Dto) {
+    private Company determineDisplayCompany(X28CreateJobAdvertisementDto createJobAdvertisementFromX28Dto) {
         return this.determineDisplayCompany(
                 toCompany(createJobAdvertisementFromX28Dto.toCompanyDto()),
                 createJobAdvertisementFromX28Dto.isCompanyAnonymous(),

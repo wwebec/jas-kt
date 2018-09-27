@@ -67,20 +67,20 @@ public class X28CompanyDto {
     }
 
     CompanyDto toCompanyDto() {
-        return new CompanyDto(name,
-                street,
-                houseNumber,
-                postalCode,
-                city,
-                countryIsoCode,
-                postOfficeBoxNumber,
-                postOfficeBoxPostalCode,
-                postOfficeBoxCity,
-                phone,
-                email,
-                website,
-                surrogate
-        );
+        return new CompanyDto()
+                .setName(name)
+                .setStreet(street)
+                .setHouseNumber(houseNumber)
+                .setPostalCode(postalCode)
+                .setCity(city)
+                .setCountryIsoCode(countryIsoCode)
+                .setPostOfficeBoxNumber(postOfficeBoxNumber)
+                .setPostOfficeBoxPostalCode(postOfficeBoxPostalCode)
+                .setPostOfficeBoxCity(postOfficeBoxCity)
+                .setPhone(phone)
+                .setEmail(email)
+                .setWebsite(website)
+                .setSurrogate(surrogate);
     }
 
     public String getName() {

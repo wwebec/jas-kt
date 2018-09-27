@@ -18,47 +18,39 @@ public class CreateLocationDto {
     @CountryIsoCode
     private String countryIsoCode;
 
-    protected CreateLocationDto() {
-        // For reflection libs
-    }
-
-    public CreateLocationDto(String remarks, String city, String postalCode, String countryIsoCode) {
-        this.remarks = remarks;
-        this.city = city;
-        this.postalCode = postalCode;
-        this.countryIsoCode = countryIsoCode;
-    }
-
     public String getRemarks() {
         return remarks;
     }
 
-    public void setRemarks(String remarks) {
+    public CreateLocationDto setRemarks(String remarks) {
         this.remarks = remarks;
+        return this;
     }
 
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public CreateLocationDto setCity(String city) {
         this.city = city;
+        return this;
     }
 
     public String getPostalCode() {
         return postalCode;
     }
 
-    public void setPostalCode(String postalCode) {
+    public CreateLocationDto setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+        return this;
     }
 
     public String getCountryIsoCode() {
         return countryIsoCode;
     }
 
-    public void setCountryIsoCode(String countryIsoCode) {
+    public CreateLocationDto setCountryIsoCode(String countryIsoCode) {
         this.countryIsoCode = countryIsoCode;
+        return this;
     }
-
 }

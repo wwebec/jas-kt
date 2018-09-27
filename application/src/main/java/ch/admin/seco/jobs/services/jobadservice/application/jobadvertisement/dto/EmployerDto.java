@@ -18,58 +18,50 @@ public class EmployerDto {
     @CountryIsoCode
     private String countryIsoCode;
 
-    protected EmployerDto() {
-        // For reflection libs
-    }
-
-    public EmployerDto(String name, String postalCode, String city, String countryIsoCode) {
-        this.name = name;
-        this.postalCode = postalCode;
-        this.city = city;
-        this.countryIsoCode = countryIsoCode;
-    }
-
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public EmployerDto setName(String name) {
         this.name = name;
+        return this;
     }
 
     public String getPostalCode() {
         return postalCode;
     }
 
-    public void setPostalCode(String postalCode) {
+    public EmployerDto setPostalCode(String postalCode) {
         this.postalCode = postalCode;
+        return this;
     }
 
     public String getCity() {
         return city;
     }
 
-    public void setCity(String city) {
+    public EmployerDto setCity(String city) {
         this.city = city;
+        return this;
     }
 
     public String getCountryIsoCode() {
         return countryIsoCode;
     }
 
-    public void setCountryIsoCode(String countryIsoCode) {
+    public EmployerDto setCountryIsoCode(String countryIsoCode) {
         this.countryIsoCode = countryIsoCode;
+        return this;
     }
 
     public static EmployerDto toDto(Employer employer) {
         if (employer == null) {
             return null;
         }
-        EmployerDto employerDto = new EmployerDto();
-        employerDto.setName(employer.getName());
-        employerDto.setPostalCode(employer.getPostalCode());
-        employerDto.setCity(employer.getCity());
-        employerDto.setCountryIsoCode(employer.getCountryIsoCode());
-        return employerDto;
+        return new EmployerDto()
+        .setName(employer.getName())
+        .setPostalCode(employer.getPostalCode())
+        .setCity(employer.getCity())
+        .setCountryIsoCode(employer.getCountryIsoCode());
     }
 }

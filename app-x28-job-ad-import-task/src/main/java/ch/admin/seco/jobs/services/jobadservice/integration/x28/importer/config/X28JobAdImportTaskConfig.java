@@ -38,7 +38,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.OsteList;
 
@@ -87,7 +87,7 @@ public class X28JobAdImportTaskConfig {
                 .to(stepBuilderFactory
                         .get("send-to-job-ad-service")
                         .listener(itemLoggerListener())
-                        .<Oste, CreateJobAdvertisementFromX28Dto>chunk(10)
+                        .<Oste, X28CreateJobAdvertisementDto>chunk(10)
                         .reader(xmlFileReader)
                         .processor(x28ItemProcessor())
                         .writer(x28JobAdWriter)

@@ -16,7 +16,7 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.LanguageIsoCode;
 
-public class CreateJobAdvertisementFromAvamDto {
+public class AvamCreateJobAdvertisementDto {
 
     @NotEmpty
     private String stellennummerAvam;
@@ -63,14 +63,14 @@ public class CreateJobAdvertisementFromAvamDto {
     @NotNull
     private PublicationDto publication;
 
-    protected CreateJobAdvertisementFromAvamDto() {
+    protected AvamCreateJobAdvertisementDto() {
         // For reflection libs
     }
 
-    public CreateJobAdvertisementFromAvamDto(String stellennummerAvam, String title, String description, String languageIsoCode, String numberOfJobs,
-                                             boolean reportingObligation, LocalDate reportingObligationEndDate, String jobCenterCode, LocalDate approvalDate,
-                                             EmploymentDto employment, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
-                                             List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication) {
+    public AvamCreateJobAdvertisementDto(String stellennummerAvam, String title, String description, String languageIsoCode, String numberOfJobs,
+                                         boolean reportingObligation, LocalDate reportingObligationEndDate, String jobCenterCode, LocalDate approvalDate,
+                                         EmploymentDto employment, ApplyChannelDto applyChannel, CompanyDto company, ContactDto contact, CreateLocationDto location,
+                                         List<OccupationDto> occupations, List<LanguageSkillDto> languageSkills, PublicationDto publication) {
         this.stellennummerAvam = stellennummerAvam;
         this.title = title;
         this.description = description;

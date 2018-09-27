@@ -15,12 +15,13 @@ public class PublicationDtoTestFixture {
     }
 
     private static PublicationDto testPublicationDto(boolean companyAnonymous) {
-        return new PublicationDto(
-                LocalDate.of(2018, 1, 1),
-                LocalDate.of(2018, 3, 1),
-                false,
-                false,
-                false,
-                false, companyAnonymous);
+        return new PublicationDto()
+                .setStartDate(LocalDate.of(2018, 1, 1))
+                .setEndDate(LocalDate.of(2018, 3, 1))
+                .setEuresDisplay(false)
+                .setEuresAnonymous(false)
+                .setPublicDisplay(false)
+                .setRestrictedDisplay(false)
+                .setCompanyAnonymous(companyAnonymous);
     }
 }

@@ -19,38 +19,31 @@ public class JobDescriptionDto {
 
     private String description;
 
-    protected JobDescriptionDto() {
-        // For reflection libs
-    }
-
-    public JobDescriptionDto(String languageIsoCode, String title, String description) {
-        this.languageIsoCode = languageIsoCode;
-        this.title = title;
-        this.description = description;
-    }
-
     public String getLanguageIsoCode() {
         return languageIsoCode;
     }
 
-    public void setLanguageIsoCode(String languageIsoCode) {
+    public JobDescriptionDto setLanguageIsoCode(String languageIsoCode) {
         this.languageIsoCode = languageIsoCode;
+        return this;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public JobDescriptionDto setTitle(String title) {
         this.title = title;
+        return this;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public JobDescriptionDto setDescription(String description) {
         this.description = description;
+        return this;
     }
 
     public static JobDescriptionDto toDto(JobDescription jobDescription) {

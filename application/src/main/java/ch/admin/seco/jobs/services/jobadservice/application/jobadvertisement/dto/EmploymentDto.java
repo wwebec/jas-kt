@@ -31,95 +31,88 @@ public class EmploymentDto {
 
     private Set<WorkForm> workForms;
 
-    protected EmploymentDto() {
-        // For reflection libs
-    }
-
-    public EmploymentDto(LocalDate startDate, LocalDate endDate, boolean shortEmployment, boolean immediately, boolean permanent, int workloadPercentageMin, int workloadPercentageMax, Set<WorkForm> workForms) {
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.shortEmployment = shortEmployment;
-        this.immediately = immediately;
-        this.permanent = permanent;
-        this.workloadPercentageMin = workloadPercentageMin;
-        this.workloadPercentageMax = workloadPercentageMax;
-        this.workForms = workForms;
-    }
-
-    public static EmploymentDto toDto(Employment employment) {
-        EmploymentDto employmentDto = new EmploymentDto();
-        employmentDto.setStartDate(employment.getStartDate());
-        employmentDto.setEndDate(employment.getEndDate());
-        employmentDto.setShortEmployment(employment.isShortEmployment());
-        employmentDto.setImmediately(employment.isImmediately());
-        employmentDto.setPermanent(employment.isPermanent());
-        employmentDto.setWorkloadPercentageMin(employment.getWorkloadPercentageMin());
-        employmentDto.setWorkloadPercentageMax(employment.getWorkloadPercentageMax());
-        employmentDto.setWorkForms(employment.getWorkForms());
-        return employmentDto;
-    }
 
     public LocalDate getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public EmploymentDto setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+        return this;
     }
 
     public LocalDate getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public EmploymentDto setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+        return this;
     }
 
     public boolean isShortEmployment() {
         return shortEmployment;
     }
 
-    public void setShortEmployment(boolean shortEmployment) {
+    public EmploymentDto setShortEmployment(boolean shortEmployment) {
         this.shortEmployment = shortEmployment;
+        return this;
     }
 
     public boolean isImmediately() {
         return immediately;
     }
 
-    public void setImmediately(boolean immediately) {
+    public EmploymentDto setImmediately(boolean immediately) {
         this.immediately = immediately;
+        return this;
     }
 
     public boolean isPermanent() {
         return permanent;
     }
 
-    public void setPermanent(boolean permanent) {
+    public EmploymentDto setPermanent(boolean permanent) {
         this.permanent = permanent;
+        return this;
     }
 
     public int getWorkloadPercentageMin() {
         return workloadPercentageMin;
     }
 
-    public void setWorkloadPercentageMin(int workloadPercentageMin) {
+    public EmploymentDto setWorkloadPercentageMin(int workloadPercentageMin) {
         this.workloadPercentageMin = workloadPercentageMin;
+        return this;
     }
 
     public int getWorkloadPercentageMax() {
         return workloadPercentageMax;
     }
 
-    public void setWorkloadPercentageMax(int workloadPercentageMax) {
+    public EmploymentDto setWorkloadPercentageMax(int workloadPercentageMax) {
         this.workloadPercentageMax = workloadPercentageMax;
+        return this;
     }
 
     public Set<WorkForm> getWorkForms() {
         return workForms;
     }
 
-    public void setWorkForms(Set<WorkForm> workForms) {
+    public EmploymentDto setWorkForms(Set<WorkForm> workForms) {
         this.workForms = workForms;
+        return this;
+    }
+
+    public static EmploymentDto toDto(Employment employment) {
+        return new EmploymentDto()
+                .setStartDate(employment.getStartDate())
+                .setEndDate(employment.getEndDate())
+                .setShortEmployment(employment.isShortEmployment())
+                .setImmediately(employment.isImmediately())
+                .setPermanent(employment.isPermanent())
+                .setWorkloadPercentageMin(employment.getWorkloadPercentageMin())
+                .setWorkloadPercentageMax(employment.getWorkloadPercentageMax())
+                .setWorkForms(employment.getWorkForms());
     }
 }

@@ -1,4 +1,4 @@
-package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create;
+package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.controller.webform;
 
 import java.util.List;
 
@@ -16,8 +16,9 @@ import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.OccupationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicContactDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateLocationDto;
 
-public class CreateJobAdvertisementDto {
+public class WebformCreateJobAdvertisementDto {
 
     private boolean reportToAvam;
 
@@ -66,13 +67,14 @@ public class CreateJobAdvertisementDto {
     private ApplyChannelDto applyChannel;
 
     @Valid
+    @NotNull
     private PublicContactDto publicContact;
 
     public boolean isReportToAvam() {
         return reportToAvam;
     }
 
-    public CreateJobAdvertisementDto setReportToAvam(boolean reportToAvam) {
+    public WebformCreateJobAdvertisementDto setReportToAvam(boolean reportToAvam) {
         this.reportToAvam = reportToAvam;
         return this;
     }
@@ -81,7 +83,7 @@ public class CreateJobAdvertisementDto {
         return externalUrl;
     }
 
-    public CreateJobAdvertisementDto setExternalUrl(String externalUrl) {
+    public WebformCreateJobAdvertisementDto setExternalUrl(String externalUrl) {
         this.externalUrl = externalUrl;
         return this;
     }
@@ -90,7 +92,7 @@ public class CreateJobAdvertisementDto {
         return externalReference;
     }
 
-    public CreateJobAdvertisementDto setExternalReference(String externalReference) {
+    public WebformCreateJobAdvertisementDto setExternalReference(String externalReference) {
         this.externalReference = externalReference;
         return this;
     }
@@ -99,7 +101,7 @@ public class CreateJobAdvertisementDto {
         return contact;
     }
 
-    public CreateJobAdvertisementDto setContact(ContactDto contact) {
+    public WebformCreateJobAdvertisementDto setContact(ContactDto contact) {
         this.contact = contact;
         return this;
     }
@@ -108,7 +110,7 @@ public class CreateJobAdvertisementDto {
         return publication;
     }
 
-    public CreateJobAdvertisementDto setPublication(PublicationDto publication) {
+    public WebformCreateJobAdvertisementDto setPublication(PublicationDto publication) {
         this.publication = publication;
         return this;
     }
@@ -117,7 +119,7 @@ public class CreateJobAdvertisementDto {
         return numberOfJobs;
     }
 
-    public CreateJobAdvertisementDto setNumberOfJobs(String numberOfJobs) {
+    public WebformCreateJobAdvertisementDto setNumberOfJobs(String numberOfJobs) {
         this.numberOfJobs = numberOfJobs;
         return this;
     }
@@ -126,7 +128,7 @@ public class CreateJobAdvertisementDto {
         return jobDescriptions;
     }
 
-    public CreateJobAdvertisementDto setJobDescriptions(List<JobDescriptionDto> jobDescriptions) {
+    public WebformCreateJobAdvertisementDto setJobDescriptions(List<JobDescriptionDto> jobDescriptions) {
         this.jobDescriptions = jobDescriptions;
         return this;
     }
@@ -135,7 +137,7 @@ public class CreateJobAdvertisementDto {
         return company;
     }
 
-    public CreateJobAdvertisementDto setCompany(CompanyDto company) {
+    public WebformCreateJobAdvertisementDto setCompany(CompanyDto company) {
         this.company = company;
         return this;
     }
@@ -144,7 +146,7 @@ public class CreateJobAdvertisementDto {
         return employer;
     }
 
-    public CreateJobAdvertisementDto setEmployer(EmployerDto employer) {
+    public WebformCreateJobAdvertisementDto setEmployer(EmployerDto employer) {
         this.employer = employer;
         return this;
     }
@@ -153,7 +155,7 @@ public class CreateJobAdvertisementDto {
         return employment;
     }
 
-    public CreateJobAdvertisementDto setEmployment(EmploymentDto employment) {
+    public WebformCreateJobAdvertisementDto setEmployment(EmploymentDto employment) {
         this.employment = employment;
         return this;
     }
@@ -162,7 +164,7 @@ public class CreateJobAdvertisementDto {
         return location;
     }
 
-    public CreateJobAdvertisementDto setLocation(CreateLocationDto location) {
+    public WebformCreateJobAdvertisementDto setLocation(CreateLocationDto location) {
         this.location = location;
         return this;
     }
@@ -171,7 +173,7 @@ public class CreateJobAdvertisementDto {
         return occupation;
     }
 
-    public CreateJobAdvertisementDto setOccupation(OccupationDto occupation) {
+    public WebformCreateJobAdvertisementDto setOccupation(OccupationDto occupation) {
         this.occupation = occupation;
         return this;
     }
@@ -180,7 +182,7 @@ public class CreateJobAdvertisementDto {
         return languageSkills;
     }
 
-    public CreateJobAdvertisementDto setLanguageSkills(List<LanguageSkillDto> languageSkills) {
+    public WebformCreateJobAdvertisementDto setLanguageSkills(List<LanguageSkillDto> languageSkills) {
         this.languageSkills = languageSkills;
         return this;
     }
@@ -189,7 +191,7 @@ public class CreateJobAdvertisementDto {
         return applyChannel;
     }
 
-    public CreateJobAdvertisementDto setApplyChannel(ApplyChannelDto applyChannel) {
+    public WebformCreateJobAdvertisementDto setApplyChannel(ApplyChannelDto applyChannel) {
         this.applyChannel = applyChannel;
         return this;
     }
@@ -198,7 +200,7 @@ public class CreateJobAdvertisementDto {
         return publicContact;
     }
 
-    public CreateJobAdvertisementDto setPublicContact(PublicContactDto publicContact) {
+    public WebformCreateJobAdvertisementDto setPublicContact(PublicContactDto publicContact) {
         this.publicContact = publicContact;
         return this;
     }

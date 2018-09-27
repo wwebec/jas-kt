@@ -28,7 +28,10 @@ public class X28OccupationDto {
     }
 
     OccupationDto toOccupationDto() {
-        return new OccupationDto(avamOccupationCode, workExperience, educationCode);
+        return new OccupationDto()
+                .setAvamOccupationCode(avamOccupationCode)
+                .setWorkExperience(workExperience)
+                .setEducationCode(educationCode);
     }
 
     public String getAvamOccupationCode() {

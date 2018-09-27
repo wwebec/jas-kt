@@ -17,50 +17,42 @@ public class OccupationDto {
 
     private String educationCode;
 
-    protected OccupationDto() {
-        // For reflection libs
-    }
-
-    public OccupationDto(String avamOccupationCode, WorkExperience workExperience, String educationCode) {
-        this.avamOccupationCode = avamOccupationCode;
-        this.workExperience = workExperience;
-        this.educationCode = educationCode;
-    }
-
-    public static OccupationDto toDto(Occupation occupation) {
-        OccupationDto occupationDto = new OccupationDto();
-        occupationDto.setAvamOccupationCode(occupation.getAvamOccupationCode());
-        occupationDto.setWorkExperience(occupation.getWorkExperience());
-        occupationDto.setEducationCode(occupation.getEducationCode());
-        return occupationDto;
-    }
-
     public String getAvamOccupationCode() {
         return avamOccupationCode;
+    }
+
+    public OccupationDto setAvamOccupationCode(String avamOccupationCode) {
+        this.avamOccupationCode = avamOccupationCode;
+        return this;
     }
 
     public WorkExperience getWorkExperience() {
         return workExperience;
     }
 
-    public void setWorkExperience(WorkExperience workExperience) {
+    public OccupationDto setWorkExperience(WorkExperience workExperience) {
         this.workExperience = workExperience;
-    }
-
-    public void setAvamOccupationCode(String avamOccupationCode) {
-        this.avamOccupationCode = avamOccupationCode;
+        return this;
     }
 
     public String getEducationCode() {
         return educationCode;
     }
 
-    public void setEducationCode(String educationCode) {
+    public OccupationDto setEducationCode(String educationCode) {
         this.educationCode = educationCode;
+        return this;
+    }
+
+    public static OccupationDto toDto(Occupation occupation) {
+        return new OccupationDto()
+                .setAvamOccupationCode(occupation.getAvamOccupationCode())
+                .setWorkExperience(occupation.getWorkExperience())
+                .setEducationCode(occupation.getEducationCode());
     }
 
     public static List<OccupationDto> toDto(List<Occupation> occupations) {
-        if(occupations != null) {
+        if (occupations != null) {
             return occupations.stream().map(OccupationDto::toDto).collect(Collectors.toList());
         }
         return null;

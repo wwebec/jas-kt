@@ -10,10 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.batch.item.ItemProcessor;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.CreateJobAdvertisementFromX28Dto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.x28.X28CreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.integration.x28.jobadimport.Oste;
 
-public class X28ItemProcessor implements ItemProcessor<Oste, CreateJobAdvertisementFromX28Dto> {
+public class X28ItemProcessor implements ItemProcessor<Oste, X28CreateJobAdvertisementDto> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(X28ItemProcessor.class);
 
@@ -27,9 +27,9 @@ public class X28ItemProcessor implements ItemProcessor<Oste, CreateJobAdvertisem
     }
 
     @Override
-    public CreateJobAdvertisementFromX28Dto process(Oste item) {
-        CreateJobAdvertisementFromX28Dto createItem = x28JobAdvertisementAssembler.createJobAdvertisementFromX28Dto(item);
-        Set<ConstraintViolation<CreateJobAdvertisementFromX28Dto>> violations = validator.validate(createItem);
+    public X28CreateJobAdvertisementDto process(Oste item) {
+        X28CreateJobAdvertisementDto createItem = x28JobAdvertisementAssembler.createJobAdvertisementFromX28Dto(item);
+        Set<ConstraintViolation<X28CreateJobAdvertisementDto>> violations = validator.validate(createItem);
         if (violations.isEmpty()) {
             return createItem;
         }

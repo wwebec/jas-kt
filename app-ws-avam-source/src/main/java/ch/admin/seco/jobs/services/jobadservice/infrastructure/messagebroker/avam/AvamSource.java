@@ -18,7 +18,7 @@ import org.springframework.cloud.stream.messaging.Source;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.MessageChannel;
 
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.AvamCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
@@ -56,7 +56,7 @@ public class AvamSource {
                 .build());
     }
 
-    public void create(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+    public void create(AvamCreateJobAdvertisementDto createJobAdvertisementFromAvamDto) {
         output.send(MessageBuilder
                 .withPayload(createJobAdvertisementFromAvamDto)
                 .setHeader(PARTITION_KEY, createJobAdvertisementFromAvamDto.getStellennummerAvam())

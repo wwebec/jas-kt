@@ -27,7 +27,10 @@ public class X28LanguageSkillDto {
     }
 
     LanguageSkillDto toLanguageSkillDto() {
-        return new LanguageSkillDto(this.languageIsoCode, this.spokenLevel, this.writtenLevel);
+        return new LanguageSkillDto()
+                .setLanguageIsoCode(this.languageIsoCode)
+                .setSpokenLevel(this.spokenLevel)
+                .setWrittenLevel(this.writtenLevel);
     }
 
     public String getLanguageIsoCode() {

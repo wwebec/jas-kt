@@ -27,7 +27,7 @@ import org.springframework.messaging.MessageChannel;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementAlreadyExistsException;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.JobAdvertisementApplicationService;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.JobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.CreateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.AvamCreateJobAdvertisementDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.CancellationDto;
 import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
@@ -86,7 +86,7 @@ public class AvamService {
     }
 
     @StreamListener(target = JOB_AD_ACTION_CHANNEL, condition = CREATE_FROM_AVAM_CONDITION)
-    public void handleCreateAction(CreateJobAdvertisementFromAvamDto createJobAdvertisementFromAvamDto) {
+    public void handleCreateAction(AvamCreateJobAdvertisementDto createJobAdvertisementFromAvamDto) {
         try {
             jobAdvertisementApplicationService.createFromAvam(createJobAdvertisementFromAvamDto);
         } catch (JobAdvertisementAlreadyExistsException e) {
