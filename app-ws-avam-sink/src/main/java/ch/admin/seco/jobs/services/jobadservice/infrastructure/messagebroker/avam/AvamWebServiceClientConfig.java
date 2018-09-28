@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.WebServiceTemplate;
 
+import java.util.Collections;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static javax.xml.bind.Marshaller.JAXB_ENCODING;
+
 @Configuration
 @EnableConfigurationProperties(AvamProperties.class)
 public class AvamWebServiceClientConfig {
@@ -38,6 +43,8 @@ public class AvamWebServiceClientConfig {
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         marshaller.setClassesToBeBound(DeliverOste.class, DeliverOsteResponse.class);
+        marshaller.setMarshallerProperties(Collections.singletonMap(JAXB_ENCODING, UTF_8.name()));
+
         return marshaller;
     }
 }
