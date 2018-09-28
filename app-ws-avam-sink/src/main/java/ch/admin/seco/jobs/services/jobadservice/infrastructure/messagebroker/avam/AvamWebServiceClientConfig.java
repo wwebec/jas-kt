@@ -15,6 +15,10 @@ import org.springframework.ws.client.support.interceptor.ClientInterceptorAdapte
 import org.springframework.ws.context.MessageContext;
 
 import javax.xml.soap.SOAPMessage;
+import java.util.Collections;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static javax.xml.bind.Marshaller.JAXB_ENCODING;
 
 @Configuration
 @EnableConfigurationProperties(AvamProperties.class)
@@ -36,7 +40,7 @@ public class AvamWebServiceClientConfig {
         webServiceTemplate.setInterceptors(new ClientInterceptor[]{new ClientInterceptorAdapter() {
             @Override
             public boolean handleRequest(MessageContext messageContext) throws WebServiceClientException {
-                messageContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, "UTF-8");
+                messageContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, UTF_8.name());
                 return true;
             }
         }});
@@ -56,6 +60,7 @@ public class AvamWebServiceClientConfig {
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         marshaller.setClassesToBeBound(DeliverOste.class, DeliverOsteResponse.class);
+        marshaller.setMarshallerProperties(Collections.singletonMap(JAXB_ENCODING, UTF_8.name()));
 
         return marshaller;
     }
