@@ -68,7 +68,7 @@ public class WebformCreateJobAdvertisementDto {
 
     @Valid
     @NotNull
-    private PublicContactDto publicContact;
+    private WebFormPublicContactDto publicContact;
 
     public boolean isReportToAvam() {
         return reportToAvam;
@@ -196,11 +196,11 @@ public class WebformCreateJobAdvertisementDto {
         return this;
     }
 
-    public PublicContactDto getPublicContact() {
+    public WebFormPublicContactDto getPublicContact() {
         return publicContact;
     }
 
-    public WebformCreateJobAdvertisementDto setPublicContact(PublicContactDto publicContact) {
+    public WebformCreateJobAdvertisementDto setPublicContact(WebFormPublicContactDto publicContact) {
         this.publicContact = publicContact;
         return this;
     }
