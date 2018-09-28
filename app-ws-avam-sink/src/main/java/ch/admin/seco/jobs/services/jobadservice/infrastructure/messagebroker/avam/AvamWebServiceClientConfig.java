@@ -13,12 +13,8 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.client.support.interceptor.ClientInterceptor;
 import org.springframework.ws.client.support.interceptor.ClientInterceptorAdapter;
 import org.springframework.ws.context.MessageContext;
-import org.springframework.ws.transport.HeadersAwareSenderWebServiceConnection;
-import org.springframework.ws.transport.WebServiceConnection;
-import org.springframework.ws.transport.context.TransportContext;
-import org.springframework.ws.transport.context.TransportContextHolder;
 
-import java.io.IOException;
+import javax.xml.soap.SOAPMessage;
 
 @Configuration
 @EnableConfigurationProperties(AvamProperties.class)
@@ -40,16 +36,7 @@ public class AvamWebServiceClientConfig {
         webServiceTemplate.setInterceptors(new ClientInterceptor[]{new ClientInterceptorAdapter() {
             @Override
             public boolean handleRequest(MessageContext messageContext) throws WebServiceClientException {
-                TransportContext context = TransportContextHolder.getTransportContext();
-                WebServiceConnection connection = context.getConnection();
-                if (connection instanceof HeadersAwareSenderWebServiceConnection) {
-                    try {
-                        ((HeadersAwareSenderWebServiceConnection) connection).addRequestHeader("Content-Type", "text/xml;charset=UTF-8");
-                    } catch (IOException e) {
-                        LOG.error("Failed to add Content-Type header", e);
-                    }
-                }
-
+                messageContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, "UTF-8");
                 return true;
             }
         }});
