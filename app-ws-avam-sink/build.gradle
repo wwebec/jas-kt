@@ -6,11 +6,17 @@ apply from: "${rootProject.rootDir}/gradle/maven-publish.gradle"
 dependencies {
     compile project(':infrastructure')
     compile project(':infrastructure-messagebroker-shared')
-    compile 'org.springframework.ws:spring-ws-core'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
     compile 'org.springframework.boot:spring-boot-starter-undertow'
+    compile 'org.springframework.boot:spring-boot-starter-web-services'
     compile 'org.springframework.cloud:spring-cloud-starter-stream-kafka'
+
+    compile 'org.apache.ws.commons.axiom:axiom-api:1.2.20'
+    compile 'org.apache.ws.commons.axiom:axiom-impl:1.2.20'
+    compile 'javax.xml.stream:stax-api:1.0-2'
+    compile 'org.apache.commons:commons-text:1.4'
+
 
     compile 'org.codehaus.jackson:jackson-core-asl'
     compile 'com.fasterxml.jackson.core:jackson-annotations'

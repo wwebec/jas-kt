@@ -2,28 +2,21 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOste;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOsteResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler;
+import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.ws.client.WebServiceClientException;
 import org.springframework.ws.client.core.WebServiceTemplate;
-import org.springframework.ws.client.support.interceptor.ClientInterceptor;
-import org.springframework.ws.client.support.interceptor.ClientInterceptorAdapter;
-import org.springframework.ws.context.MessageContext;
+import org.springframework.ws.soap.SoapMessageFactory;
+import org.springframework.ws.soap.axiom.AxiomSoapMessageFactory;
 
-import javax.xml.soap.SOAPMessage;
-import java.util.Collections;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static javax.xml.bind.Marshaller.JAXB_ENCODING;
+import java.util.HashMap;
 
 @Configuration
 @EnableConfigurationProperties(AvamProperties.class)
 public class AvamWebServiceClientConfig {
-    private static final Logger LOG = LoggerFactory.getLogger(AvamWebServiceClientConfig.class);
 
     private final AvamProperties avamProperties;
 
@@ -37,15 +30,17 @@ public class AvamWebServiceClientConfig {
         webServiceTemplate.setDefaultUri(avamProperties.getEndPointUrl());
         webServiceTemplate.setMarshaller(marshaller());
         webServiceTemplate.setUnmarshaller(marshaller());
-        webServiceTemplate.setInterceptors(new ClientInterceptor[]{new ClientInterceptorAdapter() {
-            @Override
-            public boolean handleRequest(MessageContext messageContext) throws WebServiceClientException {
-                messageContext.setProperty(SOAPMessage.CHARACTER_SET_ENCODING, UTF_8.name());
-                return true;
-            }
-        }});
+        webServiceTemplate.setMessageFactory(messageFactory());
 
         return webServiceTemplate;
+    }
+
+    @Bean
+    public SoapMessageFactory messageFactory() {
+        AxiomSoapMessageFactory messageFactory = new AxiomSoapMessageFactory();
+        messageFactory.setPayloadCaching(false);
+
+        return messageFactory;
     }
 
     @Bean
@@ -60,7 +55,11 @@ public class AvamWebServiceClientConfig {
     public Jaxb2Marshaller marshaller() {
         Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
         marshaller.setClassesToBeBound(DeliverOste.class, DeliverOsteResponse.class);
-        marshaller.setMarshallerProperties(Collections.singletonMap(JAXB_ENCODING, UTF_8.name()));
+
+        HashMap<String, Object> marshallerProperties = new HashMap<>();
+        marshallerProperties.put(CharacterEscapeHandler.class.getName(), (CharacterEscapeHandler) (ch, start, length, isAttVal, out)
+                -> out.write(StringEscapeUtils.escapeXml10(new String(ch, start, length))));
+        marshaller.setMarshallerProperties(marshallerProperties);
 
         return marshaller;
     }
