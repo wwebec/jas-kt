@@ -15,6 +15,7 @@ dependencies {
     compile 'org.apache.ws.commons.axiom:axiom-api:1.2.20'
     compile 'org.apache.ws.commons.axiom:axiom-impl:1.2.20'
     compile 'javax.xml.stream:stax-api:1.0-2'
+    compile 'org.glassfish.jaxb:jaxb-runtime:2.4.0-b180830.0438'
     compile 'org.apache.commons:commons-text:1.4'
 
 

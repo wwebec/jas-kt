@@ -2,7 +2,7 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOste;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOsteResponse;
-import com.sun.xml.internal.bind.marshaller.CharacterEscapeHandler;
+import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
 import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
