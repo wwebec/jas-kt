@@ -25,6 +25,7 @@ dependencies {
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
     compile 'com.fasterxml.jackson.module:jackson-module-afterburner'
 
+    testCompile 'org.springframework.ws:spring-ws-test'
     testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
 
     optional "org.springframework.boot:spring-boot-configuration-processor"

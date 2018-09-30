@@ -3,7 +3,6 @@ package ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.av
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOste;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.DeliverOsteResponse;
 import com.sun.xml.bind.marshaller.CharacterEscapeHandler;
-import org.apache.commons.text.StringEscapeUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +12,9 @@ import org.springframework.ws.soap.SoapMessageFactory;
 import org.springframework.ws.soap.axiom.AxiomSoapMessageFactory;
 
 import java.util.HashMap;
+
+import static org.apache.commons.text.StringEscapeUtils.escapeXml10;
+import static org.apache.commons.text.StringEscapeUtils.unescapeXml;
 
 @Configuration
 @EnableConfigurationProperties(AvamProperties.class)
@@ -62,7 +64,7 @@ public class AvamWebServiceClientConfig {
 
         HashMap<String, Object> marshallerProperties = new HashMap<>();
         marshallerProperties.put(CharacterEscapeHandler.class.getName(), (CharacterEscapeHandler) (ch, start, length, isAttVal, out)
-                -> out.write(StringEscapeUtils.escapeXml10(new String(ch, start, length))));
+                -> out.write(unescapeXml(escapeXml10(new String(ch, start, length)))));
         marshaller.setMarshallerProperties(marshallerProperties);
 
         return marshaller;
