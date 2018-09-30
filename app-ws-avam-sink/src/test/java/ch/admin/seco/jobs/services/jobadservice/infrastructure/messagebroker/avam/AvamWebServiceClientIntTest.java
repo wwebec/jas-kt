@@ -55,7 +55,7 @@ public class AvamWebServiceClientIntTest {
 
         mockServer.expect(payload(expectedRequestPayload)).andRespond(withPayload(responsePayload));
 
-        JobAdvertisement jobAdvertisement = createJobAdvertisement("test-\u001Fdescription \u0026 more");
+        JobAdvertisement jobAdvertisement = createJobAdvertisement("test-\u001Fdescription & more");
         sut.register(jobAdvertisement);
     }
 
