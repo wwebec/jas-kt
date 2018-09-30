@@ -38,6 +38,10 @@ public class AvamWebServiceClientConfig {
     @Bean
     public SoapMessageFactory messageFactory() {
         AxiomSoapMessageFactory messageFactory = new AxiomSoapMessageFactory();
+        //We must set payload caching to false otherwise the the marshaller does not call our CharacterEscapeHandler implementation.
+        //As side effect, if we set the logging.level.org.springframework.ws.client.MessageTracing.received
+        //to DEBUG or TRACE the WebServiceTemplate#hasFault method call throws an exception as it tries to read the payload for the
+        //second time.
         messageFactory.setPayloadCaching(false);
 
         return messageFactory;
