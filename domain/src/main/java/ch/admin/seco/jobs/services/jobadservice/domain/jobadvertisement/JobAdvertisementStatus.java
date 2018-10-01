@@ -26,7 +26,7 @@ public enum JobAdvertisementStatus {
         PUBLISHED_RESTRICTED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, PUBLISHED_PUBLIC};
         PUBLISHED_PUBLIC.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED, ARCHIVED};
         CANCELLED.allowedDestinationStates = new JobAdvertisementStatus[]{CANCELLED};
-        ARCHIVED.allowedDestinationStates = new JobAdvertisementStatus[]{PUBLISHED_PUBLIC};
+        ARCHIVED.allowedDestinationStates = new JobAdvertisementStatus[]{PUBLISHED_PUBLIC, CANCELLED};
     }
 
     private JobAdvertisementStatus[] allowedDestinationStates;
