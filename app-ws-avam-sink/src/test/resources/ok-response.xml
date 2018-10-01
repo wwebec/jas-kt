@@ -1,0 +1,3 @@
+<ns2:deliverOsteResponse xmlns:ns2="http://valueobjects.common.avam.bit.admin.ch">
+    <ns2:deliverOsteReturn>NK_AVAM: OK</ns2:deliverOsteReturn>
+</ns2:deliverOsteResponse>
