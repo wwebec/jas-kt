@@ -17,10 +17,8 @@ public class PublicContactDto {
     @NotBlank
     private String lastName;
 
-    @NotBlank
     private String phone;
 
-    @NotBlank
     private String email;
 
     public Salutation getSalutation() {
