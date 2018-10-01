@@ -56,6 +56,11 @@ public class AvamCodeResolver {
             .put("38", "km")
             .put("39", "vi")
             .put("40", "ro")
+            .put("41", "fa")
+            .put("42", "prs")
+            .put("43", "ti")
+            .put("98", "other")
+            .put("99", "ns")
             .toImmutable();
 
     public static final MappingBuilder<String, Salutation> SALUTATIONS = new MappingBuilder<String, Salutation>()
