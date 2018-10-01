@@ -13,7 +13,6 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.WorkForm
 import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.WorkingTimePercentage;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSArbeitsformArray;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.ws.avam.source.WSOsteEgov;
-
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -118,7 +117,7 @@ public class JobAdvertisementFromAvamAssembler {
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerEgov()),
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 parseToLocalDate(avamJobAdvertisement.getAbmeldeDatum()),
-                getMappingValue(CANCELLATION_CODE, avamJobAdvertisement.getAbmeldeGrundCode(), "CANCELLATION_CODE")
+                resolveMapping(CANCELLATION_CODE, avamJobAdvertisement.getAbmeldeGrundCode(), "CANCELLATION_CODE")
         );
     }
 
@@ -206,7 +205,7 @@ public class JobAdvertisementFromAvamAssembler {
         }
         return new OccupationDto()
                 .setAvamOccupationCode(avamBerufNr.toString())
-                .setWorkExperience(getMappingValue(EXPERIENCES, erfahrungCode, "EXPERIENCES"))
+                .setWorkExperience(resolveMapping(EXPERIENCES, erfahrungCode, "EXPERIENCES"))
                 .setEducationCode(ausbildungCode);
     }
 
@@ -226,9 +225,9 @@ public class JobAdvertisementFromAvamAssembler {
     private LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
         if (hasText(spracheCode)) {
             return new LanguageSkillDto()
-                    .setLanguageIsoCode(getMappingValue(LANGUAGES, spracheCode, "LANGUAGES"))
-                    .setSpokenLevel(getMappingValue(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"))
-                    .setWrittenLevel(getMappingValue(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL"));
+                    .setLanguageIsoCode(resolveMapping(LANGUAGES, spracheCode, "LANGUAGES"))
+                    .setSpokenLevel(resolveMapping(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"))
+                    .setWrittenLevel(resolveMapping(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL"));
         }
         return null;
     }
@@ -249,7 +248,7 @@ public class JobAdvertisementFromAvamAssembler {
         if (arbeitsformCodeList != null) {
             return arbeitsformCodeList.getWSArbeitsformArrayItem()
                     .stream()
-                    .map(item -> getMappingValue(WORK_FORMS, item.getArbeitsformCode(), "WORK_FORMS"))
+                    .map(item -> resolveMapping(WORK_FORMS, item.getArbeitsformCode(), "WORK_FORMS"))
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
@@ -332,11 +331,12 @@ public class JobAdvertisementFromAvamAssembler {
     }
 
 
-    private <T> T getMappingValue(MappingBuilder<String, T> mapping, String key, String mappingName) {
-        final T value = mapping.getRight(key);
+    private <T> T resolveMapping(MappingBuilder<String, T> mapping, String key, String mappingName) {
+        final String trimmedKey = safeTrimOrNull(key);
+        final T value = mapping.getRight(trimmedKey);
 
-        if (value == null) {
-            LOG.warn("Mapping {} not found for key: {}", mappingName, key);
+        if ((trimmedKey != null) && (value == null)) {
+            LOG.warn("Mapping {} not found for key: {}", mappingName, trimmedKey);
         }
 
         return value;

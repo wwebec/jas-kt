@@ -64,6 +64,7 @@ public class AvamCodeResolver {
             .toImmutable();
 
     public static final MappingBuilder<String, WorkExperience> EXPERIENCES = new MappingBuilder<String, WorkExperience>()
+            .put("01", WorkExperience.NO_EXPERIENCE)
             .put("05", WorkExperience.LESS_THAN_1_YEAR)
             .put("10", WorkExperience.MORE_THAN_1_YEAR)
             .put("20", WorkExperience.MORE_THAN_3_YEARS)
