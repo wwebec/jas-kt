@@ -79,6 +79,11 @@ subprojects {
             dependency 'com.googlecode.libphonenumber:libphonenumber:8.9.2'
             dependency 'junit:junit:4.12'
             dependency 'org.awaitility:awaitility:3.1.2'
+            dependency 'org.apache.ws.commons.axiom:axiom-api:1.2.20'
+            dependency 'org.apache.ws.commons.axiom:axiom-impl:1.2.20'
+            dependency 'javax.xml.stream:stax-api:1.0-2'
+            dependency 'org.glassfish.jaxb:jaxb-runtime:2.4.0-b180830.0438'
+            dependency 'org.apache.commons:commons-text:1.4'
         }
         imports {
             mavenBom "org.springframework.boot:spring-boot-dependencies:${spring_boot_version}"
