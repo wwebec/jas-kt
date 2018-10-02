@@ -7,6 +7,8 @@ import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddress;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -52,8 +54,8 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         ApplyChannel that = (ApplyChannel) o;
         return Objects.equals(mailAddress, that.mailAddress) &&
                 Objects.equals(emailAddress, that.emailAddress) &&
@@ -86,6 +88,18 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         private String additionalInfo;
 
         public Builder() {
+        }
+
+        // TODO: CLARIFY MAPPINGS
+        public Builder(JobCenter jobCenter) {
+            JobCenterAddress jobCenterAddress = jobCenter.getAddress();
+            this.setMailAddress(jobCenterAddress.getZipCode() + jobCenterAddress.getCity()
+                    + jobCenterAddress.getStreet() + jobCenterAddress.getHouseNumber());
+            this.setAdditionalInfo(jobCenterAddress.getName());
+            this.setFormUrl(jobCenter.getFax());
+            if (jobCenter.isShowContactDetailsToPublic()) {
+                this.setPhoneNumber(jobCenter.getPhone()).setEmailAddress(jobCenter.getEmail());
+            }
         }
 
         public ApplyChannel build() {

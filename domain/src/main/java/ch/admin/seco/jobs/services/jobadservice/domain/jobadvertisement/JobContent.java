@@ -141,6 +141,17 @@ public class JobContent implements ValueObject<JobContent> {
 
     @Embedded
     @AttributeOverrides({
+            @AttributeOverride(name = "mailAddress", column = @Column(name = "DISPLAY_APPLY_CHANNEL_MAIL_ADDRESS")),
+            @AttributeOverride(name = "emailAddress", column = @Column(name = "DISPLAY_APPLY_CHANNEL_EMAIL_ADDRESS")),
+            @AttributeOverride(name = "phoneNumber", column = @Column(name = "DISPLAY_APPLY_CHANNEL_PHONE_NUMBER")),
+            @AttributeOverride(name = "formUrl", column = @Column(name = "DISPLAY_APPLY_CHANNEL_FORM_URL")),
+            @AttributeOverride(name = "additionalInfo", column = @Column(name = "DISPLAY_APPLY_CHANNEL_ADDITIONAL_INFO"))
+    })
+    @Valid
+    private ApplyChannel displayApplyChannel;
+
+    @Embedded
+    @AttributeOverrides({
             @AttributeOverride(name = "salutation", column = @Column(name = "PUBLIC_CONTACT_SALUTATION")),
             @AttributeOverride(name = "firstName", column = @Column(name = "PUBLIC_CONTACT_FIRST_NAME")),
             @AttributeOverride(name = "lastName", column = @Column(name = "PUBLIC_CONTACT_LAST_NAME")),
@@ -167,6 +178,7 @@ public class JobContent implements ValueObject<JobContent> {
         this.setEmployment(builder.employment);
         this.publicContact = builder.publicContact;
         this.applyChannel = builder.applyChannel;
+        this.displayApplyChannel = builder.displayApplyChannel;
         this.location = builder.location;
         this.setOccupations(builder.occupations);
     }
@@ -274,6 +286,14 @@ public class JobContent implements ValueObject<JobContent> {
         this.applyChannel = applyChannel;
     }
 
+    public ApplyChannel getDisplayApplyChannel() {
+        return displayApplyChannel;
+    }
+
+    void setDisplayApplyChannel(ApplyChannel displayApplyChannel) {
+        this.displayApplyChannel = displayApplyChannel;
+    }
+
     public PublicContact getPublicContact() {
         return publicContact;
     }
@@ -299,12 +319,13 @@ public class JobContent implements ValueObject<JobContent> {
                 Objects.equals(occupations, that.occupations) &&
                 Objects.equals(languageSkills, that.languageSkills) &&
                 Objects.equals(applyChannel, that.applyChannel) &&
+                Objects.equals(displayApplyChannel, that.displayApplyChannel) &&
                 Objects.equals(publicContact, that.publicContact);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(externalUrl, x28OccupationCodes, numberOfJobs, jobDescriptions, displayCompany, company, employer, employment, location, occupations, languageSkills, applyChannel, publicContact);
+        return Objects.hash(externalUrl, x28OccupationCodes, numberOfJobs, jobDescriptions, displayCompany, company, employer, employment, location, occupations, languageSkills, applyChannel, displayApplyChannel, publicContact);
     }
 
     @Override
@@ -322,6 +343,7 @@ public class JobContent implements ValueObject<JobContent> {
                 ", occupations=" + occupations +
                 ", languageSkills=" + languageSkills +
                 ", applyChannel=" + applyChannel +
+                ", displayApplyChannel=" + displayApplyChannel +
                 ", publicContact=" + publicContact +
                 '}';
     }
@@ -341,6 +363,7 @@ public class JobContent implements ValueObject<JobContent> {
         private List<Occupation> occupations;
         private List<LanguageSkill> languageSkills;
         private ApplyChannel applyChannel;
+        private ApplyChannel displayApplyChannel;
         private PublicContact publicContact;
 
         public Builder() {
@@ -403,6 +426,11 @@ public class JobContent implements ValueObject<JobContent> {
 
         public Builder setApplyChannel(ApplyChannel applyChannel) {
             this.applyChannel = applyChannel;
+            return this;
+        }
+
+        public Builder setDisplayApplyChannel(ApplyChannel displayApplyChannel) {
+            this.displayApplyChannel = displayApplyChannel;
             return this;
         }
 
