@@ -56,7 +56,7 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.getBezeichnung(),
                 avamJobAdvertisement.getBeschreibung(),
                 "de", // Not defined in this AVAM version
-                avamJobAdvertisement.getGleicheOste(),
+                safeTrimOrNull(avamJobAdvertisement.getGleicheOste()),
                 avamJobAdvertisement.isMeldepflicht(),
                 parseToLocalDate(avamJobAdvertisement.getSperrfrist()),
                 avamJobAdvertisement.getArbeitsamtBereich(),
