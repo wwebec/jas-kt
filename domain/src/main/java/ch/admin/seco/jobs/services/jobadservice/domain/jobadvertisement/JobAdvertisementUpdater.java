@@ -251,7 +251,7 @@ public class JobAdvertisementUpdater {
         }
 
         public Builder setDisplayApplyChannel(ApplyChannel displayApplyChannel) {
-            this.changedSections.add(SECTION_APPLY_CHANNEL);
+            this.changedSections.add(SECTION_DISPLAY_APPLY_CHANNEL);
             this.displayApplyChannel = displayApplyChannel;
             return this;
         }

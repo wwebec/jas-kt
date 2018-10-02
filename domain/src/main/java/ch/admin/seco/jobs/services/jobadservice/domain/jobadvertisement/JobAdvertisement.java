@@ -382,7 +382,6 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
                 changeLog.add("displayApplyChannel", jobContent.getDisplayApplyChannel(), updatedDisplayApplyChannel);
                 DomainEventPublisher.publish(new JobAdvertisementUpdatedEvent(this, changeLog));
             }
-
         }
     }
 

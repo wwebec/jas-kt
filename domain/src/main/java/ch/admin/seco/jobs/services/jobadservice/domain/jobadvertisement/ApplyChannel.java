@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import static org.springframework.util.StringUtils.hasText;
+
 import java.util.Objects;
 
 import javax.persistence.Access;
@@ -90,15 +92,16 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         public Builder() {
         }
 
-        // TODO: CLARIFY MAPPINGS
         public Builder(JobCenter jobCenter) {
             JobCenterAddress jobCenterAddress = jobCenter.getAddress();
-            this.setMailAddress(jobCenterAddress.getZipCode() + jobCenterAddress.getCity()
-                    + jobCenterAddress.getStreet() + jobCenterAddress.getHouseNumber());
-            this.setAdditionalInfo(jobCenterAddress.getName());
-            this.setFormUrl(jobCenter.getFax());
+            this.setMailAddress(createApplyMailAddress(jobCenterAddress))
+                    .setFormUrl(null)
+                    .setAdditionalInfo(null)
+                    .setPhoneNumber(null)
+                    .setEmailAddress(null);
             if (jobCenter.isShowContactDetailsToPublic()) {
-                this.setPhoneNumber(jobCenter.getPhone()).setEmailAddress(jobCenter.getEmail());
+                this.setPhoneNumber(jobCenter.getPhone())
+                        .setEmailAddress(jobCenter.getEmail());
             }
         }
 
@@ -129,6 +132,24 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         public Builder setAdditionalInfo(String additionalInfo) {
             this.additionalInfo = additionalInfo;
             return this;
+        }
+
+        private String createApplyMailAddress(JobCenterAddress jobCenterAddress) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(jobCenterAddress.getName());
+            if (hasText(jobCenterAddress.getStreet())) {
+                sb.append(", ");
+                sb.append(jobCenterAddress.getStreet());
+                sb.append(' ');
+                sb.append(jobCenterAddress.getHouseNumber());
+            }
+            if (hasText(jobCenterAddress.getZipCode())) {
+                sb.append(", ");
+                sb.append(jobCenterAddress.getZipCode());
+                sb.append(' ');
+                sb.append(jobCenterAddress.getCity());
+            }
+            return sb.toString();
         }
     }
 }
