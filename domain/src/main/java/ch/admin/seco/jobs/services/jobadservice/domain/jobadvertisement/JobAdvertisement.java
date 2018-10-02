@@ -373,12 +373,16 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
         if (publication.isCompanyAnonymous()) {
             Company updatedDisplayCompany = new Company.Builder<>(jobCenter).build();
-            if (!Objects.equals(jobContent.getDisplayCompany(), updatedDisplayCompany)) {
+            ApplyChannel updatedDisplayApplyChannel = new ApplyChannel.Builder(jobCenter).build();
+            if (!Objects.equals(jobContent.getDisplayCompany(), updatedDisplayCompany) && !Objects.equals(jobContent.getDisplayApplyChannel(), updatedDisplayApplyChannel)) {
                 jobContent.setDisplayCompany(updatedDisplayCompany);
+                jobContent.setDisplayApplyChannel(updatedDisplayApplyChannel);
                 ChangeLog changeLog = new ChangeLog();
                 changeLog.add("displayCompany", jobContent.getDisplayCompany(), updatedDisplayCompany);
+                changeLog.add("displayApplyChannel", jobContent.getDisplayApplyChannel(), updatedDisplayApplyChannel);
                 DomainEventPublisher.publish(new JobAdvertisementUpdatedEvent(this, changeLog));
             }
+
         }
     }
 
