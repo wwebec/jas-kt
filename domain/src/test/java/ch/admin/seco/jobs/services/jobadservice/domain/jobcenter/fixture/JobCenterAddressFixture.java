@@ -5,11 +5,11 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddres
 public class JobCenterAddressFixture {
     public static JobCenterAddress testJobCenterAddress() {
         return new JobCenterAddress(
-                "name",
-                "city",
-                "street",
-                "houseNumber",
-                "postalCode"
+                "jobCenter-name",
+                "jobCenter-city",
+                "jobCenter-street",
+                "jobCenter-houseNumber",
+                "jobCenter-postalCode"
         );
     }
 }
