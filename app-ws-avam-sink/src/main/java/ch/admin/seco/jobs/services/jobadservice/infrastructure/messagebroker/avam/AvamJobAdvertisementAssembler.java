@@ -9,6 +9,7 @@ import org.springframework.util.Assert;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.CancellationCode.*;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.SOURCE_SYSTEM;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamCodeResolver.WORK_FORMS;
 import static ch.admin.seco.jobs.services.jobadservice.infrastructure.messagebroker.avam.AvamDateTimeFormatter.formatLocalDate;
@@ -21,15 +22,13 @@ public class AvamJobAdvertisementAssembler {
     }
 
     private static String tempMapCancellationCode(CancellationCode code) {
-        String avamCode = AvamCodeResolver.CANCELLATION_CODE.getLeft(code);
-        switch (avamCode) {
-            case "6":
-                return "5";
-            case "0":
-                return "7";
-            default:
-                return avamCode;
+        if (code == NOT_OCCUPIED || code == CHANGE_OR_REPOSE) {
+            return "7";
+        } else if (code == OCCUPIED_OTHER) {
+            return "5";
         }
+
+        return AvamCodeResolver.CANCELLATION_CODE.getLeft(code);
     }
 
     public TOsteEgov toOsteEgov(JobAdvertisement jobAdvertisement, AvamAction action) {

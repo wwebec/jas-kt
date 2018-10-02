@@ -35,7 +35,7 @@ public class CreateJobAdvertisementFromAvamDtoTestFixture {
         return testCreateJobAdvertisementDto(testCompany().build(), testPublicationDtoWithCompanyAnonymous());
     }
 
-    private static AvamCreateJobAdvertisementDto testCreateJobAdvertisementDto(Company company, PublicationDto publicationDto) {
+    public static AvamCreateJobAdvertisementDto testCreateJobAdvertisementDto(Company company, PublicationDto publicationDto) {
         return new AvamCreateJobAdvertisementDto(
                 STELLENNUMMER_AVAM,
                 "title",

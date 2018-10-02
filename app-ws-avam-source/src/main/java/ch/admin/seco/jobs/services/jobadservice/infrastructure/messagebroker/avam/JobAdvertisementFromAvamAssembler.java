@@ -23,10 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,6 +38,7 @@ public class JobAdvertisementFromAvamAssembler {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobAdvertisementFromAvamAssembler.class);
     private static final EmailValidator emailValidator = new EmailValidator();
+    private static final Set<String> LANGUAGE_CODES_TO_IGNORE = new HashSet<>(Arrays.asList("99", "98"));
 
     private static boolean safeBoolean(Boolean value, boolean defaultValue) {
         return (value != null) ? value.booleanValue() : defaultValue;
@@ -56,7 +54,7 @@ public class JobAdvertisementFromAvamAssembler {
                 avamJobAdvertisement.getBezeichnung(),
                 avamJobAdvertisement.getBeschreibung(),
                 "de", // Not defined in this AVAM version
-                avamJobAdvertisement.getGleicheOste(),
+                safeTrimOrNull(avamJobAdvertisement.getGleicheOste()),
                 avamJobAdvertisement.isMeldepflicht(),
                 parseToLocalDate(avamJobAdvertisement.getSperrfrist()),
                 avamJobAdvertisement.getArbeitsamtBereich(),
@@ -223,13 +221,20 @@ public class JobAdvertisementFromAvamAssembler {
     }
 
     private LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
-        if (hasText(spracheCode)) {
-            return new LanguageSkillDto()
-                    .setLanguageIsoCode(resolveMapping(LANGUAGES, spracheCode, "LANGUAGES"))
-                    .setSpokenLevel(resolveMapping(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"))
-                    .setWrittenLevel(resolveMapping(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL"));
+        if (LANGUAGE_CODES_TO_IGNORE.contains(safeTrimOrNull(spracheCode))) {
+            return null;
         }
-        return null;
+
+        final String resolvedLanguageCode = resolveMapping(LANGUAGES, spracheCode, "LANGUAGES");
+        if (resolvedLanguageCode == null) {
+            return null;
+        }
+
+        return new LanguageSkillDto()
+                .setLanguageIsoCode(resolvedLanguageCode)
+                .setSpokenLevel(resolveMapping(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"))
+                .setWrittenLevel(resolveMapping(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL"));
+
     }
 
     private PublicationDto createPublicationDto(WSOsteEgov avamJobAdvertisement) {

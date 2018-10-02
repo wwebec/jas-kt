@@ -59,8 +59,6 @@ public class AvamCodeResolver {
             .put("41", "fa")
             .put("42", "prs")
             .put("43", "ti")
-            .put("98", "other")
-            .put("99", "ns")
             .toImmutable();
 
     public static final MappingBuilder<String, Salutation> SALUTATIONS = new MappingBuilder<String, Salutation>()
@@ -99,9 +97,11 @@ public class AvamCodeResolver {
     public static final MappingBuilder<String, CancellationCode> CANCELLATION_CODE = new MappingBuilder<String, CancellationCode>()
             .put("1", CancellationCode.OCCUPIED_JOBCENTER)
             .put("2", CancellationCode.OCCUPIED_AGENCY)
+            .put("3", CancellationCode.OCCUPIED_AGENCY_JOBCENTER)
+            .put("4", CancellationCode.OCCUPIED_NEWSPAPER)
             .put("5", CancellationCode.OCCUPIED_JOBROOM)
             .put("6", CancellationCode.OCCUPIED_OTHER)
-            .put("7", CancellationCode.NOT_OCCUPIED)
-            .put("0", CancellationCode.CHANGE_OR_REPOSE)
+            .put("7", CancellationCode.AVAM_OTHER)
+            .put("8", CancellationCode.AVAM_SYSTEM_CANCEL)
             .toImmutable();
 }

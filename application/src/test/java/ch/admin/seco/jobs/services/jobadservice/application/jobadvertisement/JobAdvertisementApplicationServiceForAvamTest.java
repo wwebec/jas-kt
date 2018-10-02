@@ -1,10 +1,35 @@
 package ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement;
 
+import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
+import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
+import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
+import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.PublicationDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.AvamCreateJobAdvertisementDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
+import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
+import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.*;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentFixture;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.ApprovalDtoTestFixture.testApprovalDto;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.CreateJobAdvertisementFromAvamDtoTestFixture.testCreateJobAdvertisementDto;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.CreateJobAdvertisementFromAvamDtoTestFixture.testCreateJobAdvertisementDtoWithCompanyAnonymous;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.RejectionDtoTestFixture.testRejectionDto;
 import static ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.fixture.UpdateJobAdvertisementFromAvamDtoTestFixture.testUpdateJobAdvertisementFromAvamDto;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.*;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.events.JobAdvertisementEvents.*;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.APPROVED;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.INSPECTING;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementStatus.REJECTED;
@@ -18,37 +43,12 @@ import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.f
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementFixture.testJobAdvertisement;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobAdvertisementIdFixture.job01;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.LocationFixture.testLocation;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.PublicationFixture.testPublicationEmpty;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.fixture.JobCenterTestFixture.testJobCenter;
+import static java.time.LocalDate.now;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.jdbc.support.incrementer.DataFieldMaxValueIncrementer;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
-
-import ch.admin.seco.jobs.services.jobadservice.application.JobCenterService;
-import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
-import ch.admin.seco.jobs.services.jobadservice.application.ProfessionService;
-import ch.admin.seco.jobs.services.jobadservice.application.ReportingObligationService;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.create.AvamCreateJobAdvertisementDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.ApprovalDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.RejectionDto;
-import ch.admin.seco.jobs.services.jobadservice.application.jobadvertisement.dto.update.UpdateJobAdvertisementFromAvamDto;
-import ch.admin.seco.jobs.services.jobadservice.core.domain.events.DomainEventMockUtils;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisement;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementId;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementRepository;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.SourceSystem;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.JobContentFixture;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -148,6 +148,66 @@ public class JobAdvertisementApplicationServiceForAvamTest {
         );
 
         domainEventMockUtils.assertSingleDomainEventPublished(JOB_ADVERTISEMENT_APPROVED.getDomainEventType());
+    }
+
+    @Test
+    public void updateFromAvam() {
+        // given
+        JobAdvertisement inspectingJobAd = jobAdvertisementRepository.save(
+                testJobAdvertisement()
+                        .setStatus(PUBLISHED_PUBLIC)
+                        .setJobContent(JobContentFixture.of(job01.id()).build())
+                        .setStellennummerAvam(STELLENNUMMER_AVAM)
+                        .setJobCenterCode("blahblah")
+                        .setRejectionDate(null)
+                        .setRejectionCode(null)
+                        .setRejectionReason(null)
+                        .setCancellationDate(null)
+                        .setCancellationCode(null)
+                        .build()
+        );
+        AvamCreateJobAdvertisementDto createJobAdvertisementDto = testCreateJobAdvertisementDto();
+
+        // when
+        sut.createFromAvam(createJobAdvertisementDto);
+
+        // then
+        JobAdvertisement repoJobAd = jobAdvertisementRepository.getOne(job01.id());
+        assertThat(repoJobAd.getJobCenterCode()).isEqualTo(createJobAdvertisementDto.getJobCenterCode());
+    }
+
+    @Test
+    public void updateFromAvamWithRepublish() {
+        // given
+        JobAdvertisement inspectingJobAd = jobAdvertisementRepository.save(
+                testJobAdvertisement()
+                        .setStatus(ARCHIVED)
+                        .setJobContent(JobContentFixture.of(job01.id()).build())
+                        .setStellennummerAvam(STELLENNUMMER_AVAM)
+                        .setRejectionDate(null)
+                        .setRejectionCode(null)
+                        .setRejectionReason(null)
+                        .setCancellationDate(null)
+                        .setCancellationCode(null)
+                        .setPublication(testPublicationEmpty()
+                                .setStartDate(now().minusDays(10))
+                                .setEndDate(now().minusDays(2))
+                                .build())
+                        .build()
+        );
+        AvamCreateJobAdvertisementDto createJobAdvertisementDto = testCreateJobAdvertisementDto(
+                inspectingJobAd.getJobContent().getCompany(),
+                new PublicationDto()
+                        .setStartDate(now().minusDays(10))
+                        .setEndDate(now().plusDays(2))
+        );
+
+        // when
+        sut.createFromAvam(createJobAdvertisementDto);
+
+        // then
+        JobAdvertisement repoJobAd = jobAdvertisementRepository.getOne(job01.id());
+        assertThat(repoJobAd.getStatus()).isEqualTo(JobAdvertisementStatus.PUBLISHED_PUBLIC);
     }
 
     @Test
