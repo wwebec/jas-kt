@@ -1,0 +1,17 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet author="fago" id="20181002080000-1">
+        <addColumn tableName="JOB_ADVERTISEMENT">
+            <column name="DISPLAY_APPLY_CHANNEL_MAIL_ADDRESS" type="VARCHAR(255)"/>
+            <column name="DISPLAY_APPLY_CHANNEL_EMAIL_ADDRESS" type="VARCHAR(255)"/>
+            <column name="DISPLAY_APPLY_CHANNEL_PHONE_NUMBER" type="VARCHAR(20)"/>
+            <column name="DISPLAY_APPLY_CHANNEL_FORM_URL" type="VARCHAR(1024)"/>
+            <column name="DISPLAY_APPLY_CHANNEL_ADDITIONAL_INFO" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>
+
