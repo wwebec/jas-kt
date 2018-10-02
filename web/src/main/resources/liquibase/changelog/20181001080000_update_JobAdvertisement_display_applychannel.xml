@@ -13,5 +13,17 @@
         </addColumn>
     </changeSet>
 
+    <changeSet author="fago" id="20181002080000-2">
+        <sql>
+            update JOB_ADVERTISEMENT
+            set
+            DISPLAY_APPLY_CHANNEL_MAIL_ADDRESS = APPLY_CHANNEL_MAIL_ADDRESS,
+            DISPLAY_APPLY_CHANNEL_EMAIL_ADDRESS = APPLY_CHANNEL_EMAIL_ADDRESS,
+            DISPLAY_APPLY_CHANNEL_PHONE_NUMBER = APPLY_CHANNEL_PHONE_NUMBER,
+            DISPLAY_APPLY_CHANNEL_FORM_URL = APPLY_CHANNEL_FORM_URL,
+            DISPLAY_APPLY_CHANNEL_ADDITIONAL_INFO = APPLY_CHANNEL_ADDITIONAL_INFO,
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
 
