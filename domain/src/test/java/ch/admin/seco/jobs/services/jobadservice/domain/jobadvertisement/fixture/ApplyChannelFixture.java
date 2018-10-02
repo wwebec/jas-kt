@@ -2,6 +2,8 @@ package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.ApplyChannel.Builder;
 
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
+
 public class ApplyChannelFixture {
     public static Builder testApplyChannelEmpty() {
         return new Builder();
@@ -14,5 +16,9 @@ public class ApplyChannelFixture {
             .setPhoneNumber("phoneNumber")
             .setFormUrl("formUrl")
             .setAdditionalInfo("additionalInfo");
+    }
+
+    public static Builder testDisplayApplyChannel(JobCenter jobCenter) {
+        return new Builder(jobCenter);
     }
 }
