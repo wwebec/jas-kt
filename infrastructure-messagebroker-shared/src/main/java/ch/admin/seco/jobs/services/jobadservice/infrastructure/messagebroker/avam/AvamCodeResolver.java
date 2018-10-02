@@ -59,8 +59,6 @@ public class AvamCodeResolver {
             .put("41", "fa")
             .put("42", "prs")
             .put("43", "ti")
-            .put("98", "98")
-            .put("99", "99")
             .toImmutable();
 
     public static final MappingBuilder<String, Salutation> SALUTATIONS = new MappingBuilder<String, Salutation>()
