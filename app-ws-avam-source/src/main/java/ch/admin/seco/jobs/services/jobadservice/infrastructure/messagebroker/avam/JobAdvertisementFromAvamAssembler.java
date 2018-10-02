@@ -117,7 +117,7 @@ public class JobAdvertisementFromAvamAssembler {
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerEgov()),
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 parseToLocalDate(avamJobAdvertisement.getAbmeldeDatum()),
-                resolveMapping(CANCELLATION_CODE, avamJobAdvertisement.getAbmeldeGrundCode(), "CANCELLATION_CODE")
+                resolveAndLogMapping(CANCELLATION_CODE, avamJobAdvertisement.getAbmeldeGrundCode(), "CANCELLATION_CODE")
         );
     }
 
@@ -205,7 +205,7 @@ public class JobAdvertisementFromAvamAssembler {
         }
         return new OccupationDto()
                 .setAvamOccupationCode(avamBerufNr.toString())
-                .setWorkExperience(resolveMapping(EXPERIENCES, erfahrungCode, "EXPERIENCES"))
+                .setWorkExperience(resolveAndLogMapping(EXPERIENCES, erfahrungCode, "EXPERIENCES"))
                 .setEducationCode(ausbildungCode);
     }
 
@@ -223,11 +223,12 @@ public class JobAdvertisementFromAvamAssembler {
     }
 
     private LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
-        if (hasText(spracheCode)) {
+        final String resolvedLanguageCode = LANGUAGES.getRight(safeTrimOrNull(spracheCode));
+        if (hasText(resolvedLanguageCode)) {
             return new LanguageSkillDto()
-                    .setLanguageIsoCode(resolveMapping(LANGUAGES, spracheCode, "LANGUAGES"))
-                    .setSpokenLevel(resolveMapping(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"))
-                    .setWrittenLevel(resolveMapping(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL"));
+                    .setLanguageIsoCode(resolvedLanguageCode)
+                    .setSpokenLevel(resolveAndLogMapping(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"))
+                    .setWrittenLevel(resolveAndLogMapping(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL"));
         }
         return null;
     }
@@ -248,7 +249,7 @@ public class JobAdvertisementFromAvamAssembler {
         if (arbeitsformCodeList != null) {
             return arbeitsformCodeList.getWSArbeitsformArrayItem()
                     .stream()
-                    .map(item -> resolveMapping(WORK_FORMS, item.getArbeitsformCode(), "WORK_FORMS"))
+                    .map(item -> resolveAndLogMapping(WORK_FORMS, item.getArbeitsformCode(), "WORK_FORMS"))
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
@@ -331,7 +332,7 @@ public class JobAdvertisementFromAvamAssembler {
     }
 
 
-    private <T> T resolveMapping(MappingBuilder<String, T> mapping, String key, String mappingName) {
+    private <T> T resolveAndLogMapping(MappingBuilder<String, T> mapping, String key, String mappingName) {
         final String trimmedKey = safeTrimOrNull(key);
         final T value = mapping.getRight(trimmedKey);
 
