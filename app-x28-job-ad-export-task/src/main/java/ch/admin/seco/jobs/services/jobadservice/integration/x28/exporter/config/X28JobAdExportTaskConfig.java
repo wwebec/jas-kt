@@ -125,10 +125,11 @@ public class X28JobAdExportTaskConfig {
     @Bean
     JpaPagingItemReader<JobAdvertisement> jpaPagingItemReader(EntityManagerFactory jobAdServiceEntityManagerFactory) {
         JpaPagingItemReader<JobAdvertisement> jpaPagingItemReader = new JpaPagingItemReader<>();
+        // FIXME Workaround because Eures interface only gets job ads from X28
         jpaPagingItemReader.setQueryString("select j from JobAdvertisement j " +
                 "where j.status = 'PUBLISHED_PUBLIC' and " +
                 "j.sourceSystem in ('API', 'JOBROOM', 'RAV') and " +
-                "j.publication.publicDisplay is TRUE " +
+                "(j.publication.publicDisplay is TRUE OR j.publication.euresDisplay is TRUE)" +
                 "order by j.id");
         jpaPagingItemReader.setEntityManagerFactory(jobAdServiceEntityManagerFactory);
         jpaPagingItemReader.setPageSize(10);
