@@ -23,10 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,6 +38,7 @@ public class JobAdvertisementFromAvamAssembler {
 
     private static final Logger LOG = LoggerFactory.getLogger(JobAdvertisementFromAvamAssembler.class);
     private static final EmailValidator emailValidator = new EmailValidator();
+    private static final Set<String> LANGUAGE_CODES_TO_IGNORE = new HashSet<>(Arrays.asList("99", "98"));
 
     private static boolean safeBoolean(Boolean value, boolean defaultValue) {
         return (value != null) ? value.booleanValue() : defaultValue;
@@ -117,7 +115,7 @@ public class JobAdvertisementFromAvamAssembler {
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerEgov()),
                 safeTrimOrNull(avamJobAdvertisement.getStellennummerAvam()),
                 parseToLocalDate(avamJobAdvertisement.getAbmeldeDatum()),
-                resolveAndLogMapping(CANCELLATION_CODE, avamJobAdvertisement.getAbmeldeGrundCode(), "CANCELLATION_CODE")
+                resolveMapping(CANCELLATION_CODE, avamJobAdvertisement.getAbmeldeGrundCode(), "CANCELLATION_CODE")
         );
     }
 
@@ -205,7 +203,7 @@ public class JobAdvertisementFromAvamAssembler {
         }
         return new OccupationDto()
                 .setAvamOccupationCode(avamBerufNr.toString())
-                .setWorkExperience(resolveAndLogMapping(EXPERIENCES, erfahrungCode, "EXPERIENCES"))
+                .setWorkExperience(resolveMapping(EXPERIENCES, erfahrungCode, "EXPERIENCES"))
                 .setEducationCode(ausbildungCode);
     }
 
@@ -223,14 +221,20 @@ public class JobAdvertisementFromAvamAssembler {
     }
 
     private LanguageSkillDto createLanguageSkillDto(String spracheCode, String muendlichCode, String schriftlichCode) {
-        final String resolvedLanguageCode = LANGUAGES.getRight(safeTrimOrNull(spracheCode));
-        if (hasText(resolvedLanguageCode)) {
-            return new LanguageSkillDto()
-                    .setLanguageIsoCode(resolvedLanguageCode)
-                    .setSpokenLevel(resolveAndLogMapping(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"))
-                    .setWrittenLevel(resolveAndLogMapping(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL"));
+        if (LANGUAGE_CODES_TO_IGNORE.contains(safeTrimOrNull(spracheCode))) {
+            return null;
         }
-        return null;
+
+        final String resolvedLanguageCode = resolveMapping(LANGUAGES, spracheCode, "LANGUAGES");
+        if (resolvedLanguageCode == null) {
+            return null;
+        }
+
+        return new LanguageSkillDto()
+                .setLanguageIsoCode(resolvedLanguageCode)
+                .setSpokenLevel(resolveMapping(LANGUAGE_LEVEL, muendlichCode, "LANGUAGE_LEVEL"))
+                .setWrittenLevel(resolveMapping(LANGUAGE_LEVEL, schriftlichCode, "LANGUAGE_LEVEL"));
+
     }
 
     private PublicationDto createPublicationDto(WSOsteEgov avamJobAdvertisement) {
@@ -249,7 +253,7 @@ public class JobAdvertisementFromAvamAssembler {
         if (arbeitsformCodeList != null) {
             return arbeitsformCodeList.getWSArbeitsformArrayItem()
                     .stream()
-                    .map(item -> resolveAndLogMapping(WORK_FORMS, item.getArbeitsformCode(), "WORK_FORMS"))
+                    .map(item -> resolveMapping(WORK_FORMS, item.getArbeitsformCode(), "WORK_FORMS"))
                     .collect(Collectors.toSet());
         }
         return Collections.emptySet();
@@ -332,7 +336,7 @@ public class JobAdvertisementFromAvamAssembler {
     }
 
 
-    private <T> T resolveAndLogMapping(MappingBuilder<String, T> mapping, String key, String mappingName) {
+    private <T> T resolveMapping(MappingBuilder<String, T> mapping, String key, String mappingName) {
         final String trimmedKey = safeTrimOrNull(key);
         final T value = mapping.getRight(trimmedKey);
 
