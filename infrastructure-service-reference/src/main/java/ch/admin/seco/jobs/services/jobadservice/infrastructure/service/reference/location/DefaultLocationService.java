@@ -1,21 +1,16 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.service.reference.location;
 
-import static org.apache.commons.lang3.StringUtils.upperCase;
-import static org.springframework.util.StringUtils.hasText;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
+import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 
-import ch.admin.seco.jobs.services.jobadservice.application.LocationService;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.GeoPoint;
-import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.Location;
+import java.util.*;
+
+import static org.apache.commons.lang3.StringUtils.upperCase;
+import static org.springframework.util.StringUtils.hasText;
 
 @Service
 @EnableCaching
@@ -52,8 +47,7 @@ public class DefaultLocationService implements LocationService {
         if (location == null) {
             return false;
         }
-        return isManagedLocation(location) ? findLocationIfHasPostalCode(location).isPresent() :
-                true;
+        return !isManagedLocation(location) || findLocationIfHasPostalCode(location).isPresent();
     }
 
     private Optional<LocationResource> findLocationIfHasPostalCode(Location location) {
