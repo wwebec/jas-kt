@@ -26,7 +26,7 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         // For reflection libs
     }
 
-    public ApplyChannel(Builder builder) {
+    private ApplyChannel(Builder builder) {
         this.mailAddress = builder.mailAddress;
         this.emailAddress = builder.emailAddress;
         this.phoneNumber = builder.phoneNumber;
