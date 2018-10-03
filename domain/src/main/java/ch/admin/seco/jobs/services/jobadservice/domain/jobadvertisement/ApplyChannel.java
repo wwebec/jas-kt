@@ -94,14 +94,14 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
 
         public Builder(JobCenter jobCenter) {
             JobCenterAddress jobCenterAddress = jobCenter.getAddress();
-            this.setMailAddress(createApplyMailAddress(jobCenterAddress))
-                    .setFormUrl(null)
-                    .setAdditionalInfo(null)
-                    .setPhoneNumber(null)
-                    .setEmailAddress(null);
+            this.mailAddress = createApplyMailAddress(jobCenterAddress);
+            this.formUrl = null;
+            this.additionalInfo = null;
+            this.phoneNumber = null;
+            this.emailAddress = null;
             if (jobCenter.isShowContactDetailsToPublic()) {
-                this.setPhoneNumber(jobCenter.getPhone())
-                        .setEmailAddress(jobCenter.getEmail());
+                this.phoneNumber = jobCenter.getPhone();
+                this.emailAddress = jobCenter.getEmail();
             }
         }
 
