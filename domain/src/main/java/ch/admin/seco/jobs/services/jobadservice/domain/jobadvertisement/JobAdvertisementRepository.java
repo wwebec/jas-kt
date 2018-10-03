@@ -50,7 +50,7 @@ public interface JobAdvertisementRepository extends JpaRepository<JobAdvertiseme
     @QueryHints({
             @QueryHint(name = HINT_FETCH_SIZE, value = "1000"),
             @QueryHint(name = HINT_CACHE_MODE, value = "IGNORE")})
-    @Query("select j from JobAdvertisement j")
+    @Query("select j from JobAdvertisement j order by j.publication.startDate desc")
     Stream<JobAdvertisement> streamAll();
 
     @Query("select j from JobAdvertisement j where j.owner.userId = :userId or j.owner.companyId = :companyId")
