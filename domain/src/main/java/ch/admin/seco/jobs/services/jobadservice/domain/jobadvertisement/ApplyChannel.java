@@ -95,10 +95,6 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         public Builder(JobCenter jobCenter) {
             JobCenterAddress jobCenterAddress = jobCenter.getAddress();
             this.mailAddress = createApplyMailAddress(jobCenterAddress);
-            this.formUrl = null;
-            this.additionalInfo = null;
-            this.phoneNumber = null;
-            this.emailAddress = null;
             if (jobCenter.isShowContactDetailsToPublic()) {
                 this.phoneNumber = jobCenter.getPhone();
                 this.emailAddress = jobCenter.getEmail();
