@@ -107,11 +107,11 @@ public class X28JobAdvertisementTransformer implements ItemProcessor<JobAdvertis
             x28JobAdvertisement.setUnbefristet(employment.isPermanent());
 
             if (employment.getStartDate() != null) {
-                x28JobAdvertisement.setStellenantritt(DATE_FORMATTER.format(employment.getStartDate()));
+                x28JobAdvertisement.setStellenantritt(DATE_FORMATTER.format(employment.getStartDate().atStartOfDay()));
             }
 
             if (employment.getEndDate() != null) {
-                x28JobAdvertisement.setVertragsdauer(DATE_FORMATTER.format(employment.getEndDate()));
+                x28JobAdvertisement.setVertragsdauer(DATE_FORMATTER.format(employment.getEndDate().atStartOfDay().plusDays(1).minus(1, ChronoUnit.SECONDS)));
             }
             x28JobAdvertisement.setPensumVon((long) employment.getWorkloadPercentageMin());
             x28JobAdvertisement.setPensumBis((long) employment.getWorkloadPercentageMax());
