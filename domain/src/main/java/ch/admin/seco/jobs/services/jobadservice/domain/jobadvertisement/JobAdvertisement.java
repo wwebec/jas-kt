@@ -5,6 +5,7 @@ import static ch.admin.seco.jobs.services.jobadservice.core.utils.CompareUtils.h
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_APPLY_CHANNEL;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_COMPANY;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_CONTACT;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_DISPLAY_APPLY_CHANNEL;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_DISPLAY_COMPANY;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_EMPLOYMENT;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.JobAdvertisementUpdater.SECTION_FINGERPRINT;
@@ -372,10 +373,13 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         }
         if (publication.isCompanyAnonymous()) {
             Company updatedDisplayCompany = new Company.Builder<>(jobCenter).build();
-            if (!Objects.equals(jobContent.getDisplayCompany(), updatedDisplayCompany)) {
+            ApplyChannel updatedDisplayApplyChannel = new ApplyChannel.Builder(jobCenter).build();
+            if (!Objects.equals(jobContent.getDisplayCompany(), updatedDisplayCompany) && !Objects.equals(jobContent.getDisplayApplyChannel(), updatedDisplayApplyChannel)) {
                 jobContent.setDisplayCompany(updatedDisplayCompany);
+                jobContent.setDisplayApplyChannel(updatedDisplayApplyChannel);
                 ChangeLog changeLog = new ChangeLog();
                 changeLog.add("displayCompany", jobContent.getDisplayCompany(), updatedDisplayCompany);
+                changeLog.add("displayApplyChannel", jobContent.getDisplayApplyChannel(), updatedDisplayApplyChannel);
                 DomainEventPublisher.publish(new JobAdvertisementUpdatedEvent(this, changeLog));
             }
         }
@@ -539,6 +543,11 @@ public class JobAdvertisement implements Aggregate<JobAdvertisement, JobAdvertis
         if (updater.hasAnyChangesIn(SECTION_APPLY_CHANNEL) && hasChanged(jobContent.getApplyChannel(), updater.getApplyChannel())) {
             changeLog.add("applyChannel", jobContent.getApplyChannel(), updater.getApplyChannel());
             jobContent.setApplyChannel(updater.getApplyChannel());
+        }
+
+        if (updater.hasAnyChangesIn(SECTION_DISPLAY_APPLY_CHANNEL) && hasChanged(jobContent.getDisplayApplyChannel(), updater.getDisplayApplyChannel())) {
+            changeLog.add("displayApplyChannel", jobContent.getDisplayApplyChannel(), updater.getDisplayApplyChannel());
+            jobContent.setDisplayApplyChannel(updater.getDisplayApplyChannel());
         }
 
         if (updater.hasAnyChangesIn(SECTION_CONTACT) && hasChanged(contact, updater.getContact())) {

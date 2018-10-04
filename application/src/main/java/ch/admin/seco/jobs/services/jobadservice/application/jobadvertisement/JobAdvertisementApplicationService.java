@@ -155,6 +155,7 @@ public class JobAdvertisementApplicationService {
                 .setOccupations(occupations)
                 .setEmployment(toEmployment(createJobAdvertisementFromAvamDto.getEmployment()))
                 .setApplyChannel(toApplyChannel(createJobAdvertisementFromAvamDto.getApplyChannel()))
+                .setDisplayApplyChannel(determineApplyChannel(createJobAdvertisementFromAvamDto))
                 .setDisplayCompany(determineDisplayCompany(createJobAdvertisementFromAvamDto))
                 .setCompany(company)
                 .setPublicContact(toPublicContact(createJobAdvertisementFromAvamDto.getContact()))
@@ -386,6 +387,7 @@ public class JobAdvertisementApplicationService {
                 .setOccupations(occupations)
                 .setLanguageSkills(toLanguageSkills(createJobAdvertisement.getLanguageSkills()))
                 .setApplyChannel(toApplyChannel(createJobAdvertisement.getApplyChannel()))
+                .setDisplayApplyChannel(determineApplyChannel(createJobAdvertisement))
                 .setContact(toContact(createJobAdvertisement.getContact()))
                 .setPublication(toPublication(createJobAdvertisement.getPublication()))
                 .build();
@@ -412,6 +414,7 @@ public class JobAdvertisementApplicationService {
                 .setOccupations(occupations)
                 .setLanguageSkills(toLanguageSkills(updateJobAdvertisement.getLanguageSkills()))
                 .setApplyChannel(toApplyChannel(updateJobAdvertisement.getApplyChannel()))
+                .setDisplayApplyChannel(determineApplyChannel(updateJobAdvertisement))
                 .setContact(toContact(updateJobAdvertisement.getContact()))
                 .setPublication(toPublication(updateJobAdvertisement.getPublication()))
                 .build();
@@ -698,6 +701,14 @@ public class JobAdvertisementApplicationService {
         return null;
     }
 
+    private ApplyChannel toApplyChannel(JobCenter jobCenter) {
+        if (jobCenter == null) {
+            return null;
+        }
+        return new ApplyChannel.Builder(jobCenter)
+                .build();
+    }
+
     private ApplyChannel toApplyChannel(ApplyChannelDto applyChannelDto) {
         if (applyChannelDto != null) {
             return new ApplyChannel.Builder()
@@ -747,6 +758,35 @@ public class JobAdvertisementApplicationService {
 
         JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobCenterCode);
         return toCompany(jobCenter);
+    }
+
+    private ApplyChannel determineApplyChannel(AvamCreateJobAdvertisementDto createJobAdvertisementFromAvamDto) {
+        return this.determineApplyChannel(
+                toApplyChannel(createJobAdvertisementFromAvamDto.getApplyChannel()),
+                createJobAdvertisementFromAvamDto.getPublication().isCompanyAnonymous(),
+                createJobAdvertisementFromAvamDto.getJobCenterCode()
+        );
+    }
+
+    private ApplyChannel determineApplyChannel(UpdateJobAdvertisementFromAvamDto updateJobAdvertisement) {
+        return this.determineApplyChannel(
+                toApplyChannel(updateJobAdvertisement.getApplyChannel()),
+                updateJobAdvertisement.getPublication().isCompanyAnonymous(),
+                updateJobAdvertisement.getJobCenterCode()
+        );
+    }
+
+    private ApplyChannel determineApplyChannel(ApplyChannel applyChannel, boolean companyAnonymous, String jobCenterCode) {
+        if(!companyAnonymous) {
+            return applyChannel;
+        }
+
+        if(!hasText(jobCenterCode)) {
+            return null;
+        }
+
+        JobCenter jobCenter = jobCenterService.findJobCenterByCode(jobCenterCode);
+        return toApplyChannel(jobCenter);
     }
 
     private Company toCompany(JobCenter jobCenter) {

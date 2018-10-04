@@ -1,5 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement;
 
+import static org.springframework.util.StringUtils.hasText;
+
 import java.util.Objects;
 
 import javax.persistence.Access;
@@ -7,6 +9,8 @@ import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 
 import ch.admin.seco.jobs.services.jobadservice.core.domain.ValueObject;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenter;
+import ch.admin.seco.jobs.services.jobadservice.domain.jobcenter.JobCenterAddress;
 
 @Embeddable
 @Access(AccessType.FIELD)
@@ -22,7 +26,7 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         // For reflection libs
     }
 
-    public ApplyChannel(Builder builder) {
+    private ApplyChannel(Builder builder) {
         this.mailAddress = builder.mailAddress;
         this.emailAddress = builder.emailAddress;
         this.phoneNumber = builder.phoneNumber;
@@ -52,8 +56,8 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) { return true; }
+        if (o == null || getClass() != o.getClass()) { return false; }
         ApplyChannel that = (ApplyChannel) o;
         return Objects.equals(mailAddress, that.mailAddress) &&
                 Objects.equals(emailAddress, that.emailAddress) &&
@@ -88,6 +92,15 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         public Builder() {
         }
 
+        public Builder(JobCenter jobCenter) {
+            JobCenterAddress jobCenterAddress = jobCenter.getAddress();
+            this.mailAddress = createApplyMailAddress(jobCenterAddress);
+            if (jobCenter.isShowContactDetailsToPublic()) {
+                this.phoneNumber = jobCenter.getPhone();
+                this.emailAddress = jobCenter.getEmail();
+            }
+        }
+
         public ApplyChannel build() {
             return new ApplyChannel(this);
         }
@@ -115,6 +128,24 @@ public class ApplyChannel implements ValueObject<ApplyChannel> {
         public Builder setAdditionalInfo(String additionalInfo) {
             this.additionalInfo = additionalInfo;
             return this;
+        }
+
+        private String createApplyMailAddress(JobCenterAddress jobCenterAddress) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(jobCenterAddress.getName());
+            if (hasText(jobCenterAddress.getStreet())) {
+                sb.append(", ");
+                sb.append(jobCenterAddress.getStreet());
+                sb.append(' ');
+                sb.append(jobCenterAddress.getHouseNumber());
+            }
+            if (hasText(jobCenterAddress.getZipCode())) {
+                sb.append(", ");
+                sb.append(jobCenterAddress.getZipCode());
+                sb.append(' ');
+                sb.append(jobCenterAddress.getCity());
+            }
+            return sb.toString();
         }
     }
 }

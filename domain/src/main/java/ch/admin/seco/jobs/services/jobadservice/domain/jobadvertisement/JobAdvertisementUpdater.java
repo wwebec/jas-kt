@@ -18,6 +18,7 @@ public class JobAdvertisementUpdater {
     static final String SECTION_EMPLOYMENT = "SECTION_EMPLOYMENT";
     static final String SECTION_JOB_CENTER_CODE = "SECTION_JOB_CENTER_CODE";
     static final String SECTION_APPLY_CHANNEL = "SECTION_APPLY_CHANNEL";
+    static final String SECTION_DISPLAY_APPLY_CHANNEL = "SECTION_DISPLAY_APPLY_CHANNEL";
     static final String SECTION_DISPLAY_COMPANY = "SECTION_DISPLAY_COMPANY";
     static final String SECTION_COMPANY = "SECTION_COMPANY";
     static final String SECTION_CONTACT = "SECTION_CONTACT";
@@ -46,6 +47,8 @@ public class JobAdvertisementUpdater {
     private Employment employment;
 
     private String jobCenterCode;
+
+    private ApplyChannel displayApplyChannel;
 
     private ApplyChannel applyChannel;
 
@@ -76,6 +79,7 @@ public class JobAdvertisementUpdater {
         this.employment = builder.employment;
         this.jobCenterCode = builder.jobCenterCode;
         this.applyChannel = builder.applyChannel;
+        this.displayApplyChannel = builder.displayApplyChannel;
         this.displayCompany = builder.displayCompany;
         this.company = builder.company;
         this.contact = builder.contact;
@@ -133,6 +137,10 @@ public class JobAdvertisementUpdater {
         return applyChannel;
     }
 
+    public ApplyChannel getDisplayApplyChannel() {
+        return displayApplyChannel;
+    }
+
     public Company getDisplayCompany() {
         return displayCompany;
     }
@@ -175,6 +183,7 @@ public class JobAdvertisementUpdater {
         private Employment employment;
         private String jobCenterCode;
         private ApplyChannel applyChannel;
+        private ApplyChannel displayApplyChannel;
         private Company displayCompany;
         private Company company;
         private Contact contact;
@@ -238,6 +247,12 @@ public class JobAdvertisementUpdater {
         public Builder setApplyChannel(ApplyChannel applyChannel) {
             this.changedSections.add(SECTION_APPLY_CHANNEL);
             this.applyChannel = applyChannel;
+            return this;
+        }
+
+        public Builder setDisplayApplyChannel(ApplyChannel displayApplyChannel) {
+            this.changedSections.add(SECTION_DISPLAY_APPLY_CHANNEL);
+            this.displayApplyChannel = displayApplyChannel;
             return this;
         }
 

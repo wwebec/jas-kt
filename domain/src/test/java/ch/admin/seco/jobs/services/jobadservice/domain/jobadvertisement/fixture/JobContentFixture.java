@@ -1,6 +1,7 @@
 package ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture;
 
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.ApplyChannelFixture.testApplyChannel;
+import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.ApplyChannelFixture.testDisplayApplyChannel;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testCompany;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.CompanyFixture.testDisplayCompany;
 import static ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.fixture.EmployerFixture.testEmployer;
@@ -23,7 +24,9 @@ public class JobContentFixture {
                 .setDisplayCompany(CompanyFixture.of(id).build())
                 .setCompany(CompanyFixture.of(id).build())
                 .setLanguageSkills(singletonList(testLanguageSkill().build()))
-                .setPublicContact(PublicContactFixture.of(id).build());
+                .setPublicContact(PublicContactFixture.of(id).build())
+                .setApplyChannel(ApplyChannelFixture.of(id).build())
+                .setDisplayApplyChannel(ApplyChannelFixture.of(id).build());
     }
 
     public static Builder testJobContentEmpty() {
@@ -47,6 +50,7 @@ public class JobContentFixture {
                                 .build()))
                 .setLanguageSkills(singletonList(testLanguageSkill().build()))
                 .setApplyChannel(testApplyChannel().build())
+                .setDisplayApplyChannel(testDisplayApplyChannel(testJobCenter()).build())
                 .setPublicContact(testPublicContact().build());
     }
 }

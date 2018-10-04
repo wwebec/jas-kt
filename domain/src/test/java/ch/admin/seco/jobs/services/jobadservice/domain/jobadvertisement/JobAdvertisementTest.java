@@ -117,7 +117,7 @@ public class JobAdvertisementTest {
         JobCenter jobCenter = testJobCenter();
         jobAdvertisement.updateJobCenter(jobCenter);
 
-        assertThat(jobAdvertisement.getJobContent().getDisplayCompany().getName()).isEqualTo("name");
+        assertThat(jobAdvertisement.getJobContent().getDisplayCompany().getName()).isEqualTo("jobCenter-name");
     }
 
     @Test
