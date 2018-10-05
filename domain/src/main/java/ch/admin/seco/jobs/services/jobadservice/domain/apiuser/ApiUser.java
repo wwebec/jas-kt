@@ -143,6 +143,9 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
 
     public void changeStatus(boolean active) {
         this.active = active;
+        if (active) {
+            resetCountLoginFailure();
+        }
         DomainEventPublisher.publish(new ApiUserUpdatedStatusEvent(this));
     }
 
