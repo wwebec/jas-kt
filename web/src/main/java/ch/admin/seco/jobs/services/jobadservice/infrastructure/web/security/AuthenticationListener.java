@@ -44,6 +44,7 @@ public class AuthenticationListener implements ApplicationListener<AbstractAuthe
         extractApiUserId(event)
                 .flatMap(apiUserRepository::findById)
                 .ifPresent(apiUser -> {
+                    LOG.warn("API-User " + apiUser.getUsername() + " with bad credentials");
                     apiUser.changeLastAccessDate(TimeMachine.now().toLocalDate());
                     apiUser.incrementCountLoginFailure();
                     if (apiUser.getCountLoginFailure() >= jobAdServiceSecurityProperties.getApiUserMaxLoginAttempts()) {
