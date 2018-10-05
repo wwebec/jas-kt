@@ -25,8 +25,8 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
     @Valid
     private ApiUserId id;
 
-	@NotEmpty
-	@Column(unique = true)
+    @NotEmpty
+    @Column(unique = true)
     private String username;
 
     @NotEmpty
@@ -43,6 +43,8 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
 
     @NotEmpty
     private String technicalContactEmail;
+
+    private int countLoginFailure;
 
     private boolean active;
 
@@ -63,6 +65,7 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
         this.companyEmail = Condition.notBlank(builder.companyEmail);
         this.technicalContactName = Condition.notBlank(builder.technicalContactName);
         this.technicalContactEmail = Condition.notBlank(builder.technicalContactEmail);
+        this.countLoginFailure = 0;
         this.active = builder.active;
         this.createDate = Condition.notNull(builder.createDate);
         this.lastAccessDate = builder.lastAccessDate;
@@ -94,6 +97,10 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
 
     public String getTechnicalContactEmail() {
         return technicalContactEmail;
+    }
+
+    public int getCountLoginFailure() {
+        return countLoginFailure;
     }
 
     public boolean isActive() {
@@ -134,7 +141,7 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
         DomainEventPublisher.publish(new ApiUserUpdatedDetailsEvent(this));
     }
 
-    public void changeStatus(Boolean active) {
+    public void changeStatus(boolean active) {
         this.active = active;
         DomainEventPublisher.publish(new ApiUserUpdatedStatusEvent(this));
     }
@@ -146,6 +153,14 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
 
     public void changeLastAccessDate(LocalDate lastAccessDate) {
         this.lastAccessDate = lastAccessDate;
+    }
+
+    public void resetCountLoginFailure() {
+        this.countLoginFailure = 0;
+    }
+
+    public void incrementCountLoginFailure() {
+        this.countLoginFailure++;
     }
 
     public static final class Builder {

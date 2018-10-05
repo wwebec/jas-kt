@@ -1,8 +1,12 @@
 package ch.admin.seco.jobs.services.jobadservice.infrastructure.web.config;
 
-import java.util.Collections;
-
+import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
+import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
+import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
+import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.UserDetailsToCurrentUserAdapter;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -11,14 +15,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import ch.admin.seco.jobs.services.jobadservice.application.security.CurrentUser;
-import ch.admin.seco.jobs.services.jobadservice.application.security.Role;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUser;
-import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
-import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.security.UserDetailsToCurrentUserAdapter;
+import java.util.Collections;
 
 @Configuration
 @Order(SecurityProperties.BASIC_AUTH_ORDER - 1)
+@EnableConfigurationProperties(JobAdServiceSecurityProperties.class)
 public class ApiSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 
     private final ApiUserRepository apiUserRepository;
@@ -48,7 +49,8 @@ public class ApiSecurityConfigurationAdapter extends WebSecurityConfigurerAdapte
             return new UserDetailsToCurrentUserAdapter(
                     apiUser,
                     currentUser,
-                    Collections.singleton(new SimpleGrantedAuthority(Role.API.getValue())));
+                    Collections.singleton(new SimpleGrantedAuthority(Role.API.getValue()))
+            );
         });
     }
 
