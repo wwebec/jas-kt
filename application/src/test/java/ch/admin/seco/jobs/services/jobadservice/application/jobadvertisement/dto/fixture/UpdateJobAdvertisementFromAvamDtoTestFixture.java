@@ -32,7 +32,7 @@ public class UpdateJobAdvertisementFromAvamDtoTestFixture {
                 jobAdvertisement.getJobCenterCode(),
                 jobAdvertisement.getApprovalDate(),
                 EmploymentDto.toDto(jobContent.getEmployment()),
-                ApplyChannelDto.toDto(jobContent.getApplyChannel()),
+                ApplyChannelDto.toDto(jobContent.getApplyChannel()), // This is only for test purpose. Generally only the displayApplyChannel is converted to ApplyChannelDto
                 CompanyDto.toDto(jobContent.getCompany()), // This is only for test purpose. Generally only the displayCompany is converted to CompanyDto
                 ContactDto.toDto(jobAdvertisement.getContact()),
                 locationDto,

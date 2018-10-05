@@ -130,7 +130,7 @@ public class JobContentDto {
         jobContentDto.setLocation(LocationDto.toDto(jobContent.getLocation()));
         jobContentDto.setOccupations(OccupationDto.toDto(jobContent.getOccupations()));
         jobContentDto.setLanguageSkills(LanguageSkillDto.toDto(jobContent.getLanguageSkills()));
-        jobContentDto.setApplyChannel(ApplyChannelDto.toDto(jobContent.getApplyChannel()));
+        jobContentDto.setApplyChannel(ApplyChannelDto.toDto(jobContent.getDisplayApplyChannel()));
         jobContentDto.setPublicContact(PublicContactDto.toDto(jobContent.getPublicContact()));
         return jobContentDto;
     }
