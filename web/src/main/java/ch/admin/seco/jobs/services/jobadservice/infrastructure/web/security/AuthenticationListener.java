@@ -4,6 +4,8 @@ import ch.admin.seco.jobs.services.jobadservice.core.time.TimeMachine;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserId;
 import ch.admin.seco.jobs.services.jobadservice.domain.apiuser.ApiUserRepository;
 import ch.admin.seco.jobs.services.jobadservice.infrastructure.web.config.JobAdServiceSecurityProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AbstractAuthenticationEvent;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 @Component
 public class AuthenticationListener implements ApplicationListener<AbstractAuthenticationEvent> {
+
+    private static Logger LOG = LoggerFactory.getLogger(AuthenticationListener.class);
 
     private final ApiUserRepository apiUserRepository;
 
@@ -43,6 +47,7 @@ public class AuthenticationListener implements ApplicationListener<AbstractAuthe
                     apiUser.changeLastAccessDate(TimeMachine.now().toLocalDate());
                     apiUser.incrementCountLoginFailure();
                     if (apiUser.getCountLoginFailure() >= jobAdServiceSecurityProperties.getApiUserMaxLoginAttempts()) {
+                        LOG.warn("API-User " + apiUser.getUsername() + " is inactivated due to many bad credentials");
                         apiUser.changeStatus(false);
                     }
                 });
