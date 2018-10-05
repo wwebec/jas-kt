@@ -26,4 +26,5 @@
     <include file="classpath:/liquibase/changelog/20180919120000_update_DLQitem_payload_type.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20180920080000_update_JobAdvertisement_display_company.xml" relativeToChangelogFile="false"/>
     <include file="classpath:/liquibase/changelog/20181001080000_update_JobAdvertisement_display_applychannel.xml" relativeToChangelogFile="false"/>
+    <include file="classpath:/liquibase/changelog/20181005080000_update_ApiUser_add_countLoginFailure.xml" relativeToChangelogFile="false"/>
 </databaseChangeLog>
