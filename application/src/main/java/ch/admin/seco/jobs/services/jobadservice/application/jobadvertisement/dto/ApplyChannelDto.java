@@ -59,16 +59,16 @@ public class ApplyChannelDto {
         return this;
     }
 
-    public static ApplyChannelDto toDto(ApplyChannel applyChannel) {
-        if (applyChannel == null) {
+    public static ApplyChannelDto toDto(ApplyChannel displayApplyChannel) {
+        if (displayApplyChannel == null) {
             return null;
         }
         ApplyChannelDto applyChannelDto = new ApplyChannelDto();
-        applyChannelDto.setMailAddress(applyChannel.getMailAddress());
-        applyChannelDto.setEmailAddress(applyChannel.getEmailAddress());
-        applyChannelDto.setPhoneNumber(applyChannel.getPhoneNumber());
-        applyChannelDto.setFormUrl(applyChannel.getFormUrl());
-        applyChannelDto.setAdditionalInfo(applyChannel.getAdditionalInfo());
+        applyChannelDto.setMailAddress(displayApplyChannel.getMailAddress());
+        applyChannelDto.setEmailAddress(displayApplyChannel.getEmailAddress());
+        applyChannelDto.setPhoneNumber(displayApplyChannel.getPhoneNumber());
+        applyChannelDto.setFormUrl(displayApplyChannel.getFormUrl());
+        applyChannelDto.setAdditionalInfo(displayApplyChannel.getAdditionalInfo());
         return applyChannelDto;
     }
 }
