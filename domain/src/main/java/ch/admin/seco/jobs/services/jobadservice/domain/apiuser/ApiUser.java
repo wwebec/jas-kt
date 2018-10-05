@@ -44,14 +44,14 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
     @NotEmpty
     private String technicalContactEmail;
 
-    private int countLoginFailure;
-
     private boolean active;
 
     @NotNull
     private LocalDate createDate;
 
     private LocalDate lastAccessDate;
+
+    private int countLoginFailure;
 
     protected ApiUser() {
         // For reflection libs
@@ -65,10 +65,10 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
         this.companyEmail = Condition.notBlank(builder.companyEmail);
         this.technicalContactName = Condition.notBlank(builder.technicalContactName);
         this.technicalContactEmail = Condition.notBlank(builder.technicalContactEmail);
-        this.countLoginFailure = 0;
         this.active = builder.active;
         this.createDate = Condition.notNull(builder.createDate);
-        this.lastAccessDate = builder.lastAccessDate;
+        this.lastAccessDate = null;
+        this.countLoginFailure = 0;
     }
 
     public ApiUserId getId() {
@@ -99,10 +99,6 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
         return technicalContactEmail;
     }
 
-    public int getCountLoginFailure() {
-        return countLoginFailure;
-    }
-
     public boolean isActive() {
         return active;
     }
@@ -113,6 +109,10 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
 
     public LocalDate getLastAccessDate() {
         return lastAccessDate;
+    }
+
+    public int getCountLoginFailure() {
+        return countLoginFailure;
     }
 
     @Override
@@ -173,7 +173,6 @@ public class ApiUser implements Aggregate<ApiUser, ApiUserId> {
         private String technicalContactEmail;
         private boolean active;
         private LocalDate createDate;
-        private LocalDate lastAccessDate;
 
         public Builder() {
         }
