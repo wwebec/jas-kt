@@ -7,6 +7,7 @@ import ch.admin.seco.jobs.services.jobadservice.domain.jobadvertisement.utils.Co
 
 public class CreateLocationDto {
 
+    @Size(max = 50)
     private String remarks;
 
     @Size(max = 50)
